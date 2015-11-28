@@ -11,12 +11,12 @@ package com.huotu.ymr.interceptor;
 
 
 import com.alibaba.fastjson.JSON;
-import com.huotu.huobanplus.sis.common.PublicParameterHolder;
-import com.huotu.huobanplus.sis.model.app.AppSisPublicModel;
-import com.huotu.huobanplus.sis.service.CommonConfigService;
+import com.huotu.ymr.common.PublicParameterHolder;
+import com.huotu.ymr.model.AppPublicModel;
+
+import com.huotu.ymr.service.CommonConfigService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -40,7 +40,6 @@ public class CommonInterceptor implements HandlerInterceptor {
     @Autowired
     private CommonConfigService commonConfigService;
 
-    private String appSecret = "";//
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -69,27 +68,30 @@ public class CommonInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        AppSisPublicModel appPublicModel = initPublicParam(request);
+        AppPublicModel appPublicModel = initPublicParam(request);
         PublicParameterHolder.put(appPublicModel);
 
         return true;
     }
 
-    private AppSisPublicModel initPublicParam(HttpServletRequest request) {
+    private AppPublicModel initPublicParam(HttpServletRequest request) {
 
-        AppSisPublicModel model = new AppSisPublicModel();
+        AppPublicModel model = new AppPublicModel();
         String sign = StringUtils.isEmpty(request.getParameter("sign")) ? "" : request.getParameter("sign");
         long timestamp = StringUtils.isEmpty(request.getParameter("timestamp")) ? 0 : Long.parseLong(request.getParameter("timestamp"));
-        String appid = StringUtils.isEmpty(request.getParameter("appid")) ? "" : request.getParameter("appid");
         String version = StringUtils.isEmpty(request.getParameter("version")) ? "" : request.getParameter("version");
         String operation = StringUtils.isEmpty(request.getParameter("operation")) ? "" : request.getParameter("operation");
+        String imei = StringUtils.isEmpty(request.getParameter("imei")) ? "" : request.getParameter("imei");
+        String token = StringUtils.isEmpty(request.getParameter("token")) ? "" : request.getParameter("token");
+        if (!StringUtils.isEmpty(token)) {
+            model.setCurrentUser(null);//todo 设置当前用户
+        }
 
         model.setSign(sign);
         model.setTimestamp(timestamp);
-        model.setAppid(appid);
         model.setVersion(version);
         model.setOperation(operation);
-
+        model.setImei(imei);
         return model;
     }
 
@@ -104,19 +106,17 @@ public class CommonInterceptor implements HandlerInterceptor {
 
     private String getSign(HttpServletRequest request) throws UnsupportedEncodingException {
         Map<String, String> resultMap = new TreeMap<String, String>();
+        resultMap.put("appSecret", commonConfigService.getAppKeySecret());
         Map map = request.getParameterMap();
         for (Object key : map.keySet()) {
-            resultMap.put(key.toString().toLowerCase(), request.getParameter(key.toString()));
+            resultMap.put(key.toString(), request.getParameter(key.toString()));
         }
 
         StringBuilder strB = new StringBuilder();
 
-        resultMap.keySet().stream().filter(key -> !"sign".equals(key)).forEach(key -> strB.append("&" + key + "=" + resultMap.get(key)));
+        resultMap.keySet().stream().filter(key -> !"sign".equals(key)).forEach(key -> strB.append(resultMap.get(key)));
 
-        String result = strB.toString().substring(1) + commonConfigService.getAppKeySecret();
-
-        log.info(result);
-        return DigestUtils.md5DigestAsHex(result.getBytes("UTF-8")).toLowerCase();
+        return DigestUtils.md5DigestAsHex(strB.toString().getBytes("UTF-8")).toLowerCase();
     }
 
 

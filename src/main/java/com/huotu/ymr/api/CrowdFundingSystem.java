@@ -2,6 +2,7 @@ package com.huotu.ymr.api;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.ymr.model.AppCrowdFundingModel;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -11,6 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 public interface CrowdFundingSystem {
 
+    /**
+     * 获取众筹列表
+     * @param list
+     * @param lastId
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getList(Output<>) throws Exception;
+    ApiResult getCrowdFundingList(Output<AppCrowdFundingModel> list, Long lastId) throws Exception;
 }

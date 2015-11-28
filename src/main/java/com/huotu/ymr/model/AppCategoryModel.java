@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AppCategoryModel {
-    private Integer id;
+    private Integer pId;
     /**
      * 分类名称
      */
