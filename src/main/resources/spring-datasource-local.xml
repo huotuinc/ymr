@@ -25,10 +25,10 @@
         <property name="jpaPropertyMap">
             <map>
                 <entry key="javax.persistence.jdbc.url"
-                       value="jdbc:jtds:sqlserver://115.28.160.96:1433/HotPdMall_Test"/>
-                <entry key="javax.persistence.jdbc.user" value="mall"/>
-                <entry key="javax.persistence.jdbc.driver" value="net.sourceforge.jtds.jdbc.Driver"/>
-                <entry key="javax.persistence.jdbc.password" value="root"/>
+                       value="jdbc:mysql://mysql.flashymall.com:3307/beauty?useUnicode=true&amp;characterEncoding=UTF8"/>
+                <entry key="javax.persistence.jdbc.user" value="dbuser"/>
+                <entry key="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+                <entry key="javax.persistence.jdbc.password" value="ddbbuusseerr"/>
                 <entry key="javax.persistence.schema-generation.database.action" value="create"/>
                 <entry key="eclipselink.weaving" value="false"/>
                 <entry key="eclipselink.logging.level" value="FINE"/>
