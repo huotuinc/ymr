@@ -54,5 +54,6 @@ public class CrowdFundingBooking {
     /**
      * 预约时间
      */
+    @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 }

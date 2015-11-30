@@ -52,6 +52,7 @@ public class CrowdFundingPublic {
     /**
      * 发起时间
      */
+    @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
 

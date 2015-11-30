@@ -27,7 +27,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(value = {"com.huotu.ymr.service.impl"})
+@ComponentScan(value = {"com.huotu.ymr.service.impl,com.huotu.ymr.controller"})
 @ImportResource(value = "classpath:spring-jpa.xml")
 @EnableJpaRepositories(value = "com.huotu.ymr.repository")
 public class MvcConfig extends WebMvcConfigurerAdapter {

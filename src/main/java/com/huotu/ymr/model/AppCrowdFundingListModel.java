@@ -1,25 +1,21 @@
 package com.huotu.ymr.model;
 
-import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
 /**
- * Created by lgh on 2015/11/28.
+ * Created by lgh on 2015/11/30.
  */
 @Getter
 @Setter
-public class AppCrowdFundingModel {
-
+public class AppCrowdFundingListModel {
     private Long pId;
-
     /**
-     * 众筹类型
+     * 封面图片
      */
-    private CommonEnum.CrowdFundingType type;
-
+    private String puctureUrl;
     /**
      * 项目标题
      */
@@ -29,9 +25,9 @@ public class AppCrowdFundingModel {
      */
     private Date time;
     /**
-     * 介绍
+     * 简介
      */
-    private String content;
+    private String summary;
     /**
      * 目标金额
      */
@@ -41,6 +37,7 @@ public class AppCrowdFundingModel {
      * 目前金额
      */
     private Float currentMoeny;
+
     /**
      * 起购金额
      */

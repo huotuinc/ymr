@@ -15,7 +15,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-          p:packagesToScan="com.huotu.huobanmall.entity">
+          p:packagesToScan="com.huotu.ymr.entity">
         <property name="persistenceProvider">
             <bean class="org.eclipse.persistence.jpa.PersistenceProvider"/>
         </property>
