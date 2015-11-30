@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 众筹预约人或（合作者）
+ * 众筹合作者
  * Created by lgh on 2015/11/28.
  */
 @Entity
@@ -31,15 +31,15 @@ public class CrowdFundingBooking {
     private CrowdFundingPublic crowdFundingPublic;
 
     /**
-     * 预约人
+     * 合作者
      */
     private Long ownerId;
     /**
-     * 预约人头像
+     * 合作者头像
      */
     private String userHeadUrl;
     /**
-     * 预约人姓名
+     * 合作者姓名
      */
     private String name;
     /**
@@ -47,12 +47,18 @@ public class CrowdFundingBooking {
      */
     private String phone;
     /**
-     * 预约金额
+     * 金额
      */
     private Float money;
 
     /**
-     * 预约时间
+     * 备注
+     */
+    @Column(length = 500)
+    private String remark;
+
+    /**
+     * 时间
      */
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;

@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 预约或合作发起人、 众筹认购人
+ * 预约、合作发起人、 众筹认购人
  * Created by lgh on 2015/11/28.
  */
 
@@ -50,10 +50,17 @@ public class CrowdFundingPublic {
     private Float money;
 
     /**
+     * 备注
+     */
+    @Column(length = 500)
+    private String remark;
+
+    /**
      * 发起时间
      */
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
+
 
 
 }

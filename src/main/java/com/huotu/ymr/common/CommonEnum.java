@@ -47,9 +47,9 @@ public interface CommonEnum {
          */
         booking(0, "预约"),
         /**
-         * partner(1, "合伙")
+         * cooperation(1, "合作")
          */
-        partner(1, "合伙"),
+        cooperation(1, "合作"),
         /**
          * subscription(2, "认购")
          */

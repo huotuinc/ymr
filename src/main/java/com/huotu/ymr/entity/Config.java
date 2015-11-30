@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 /**
  * 美投设置项
- * 如全局奖励设置
+ * 如全局奖励设置 中介费率
  * Created by lgh on 2015/11/27.
  */
 @Entity

@@ -26,13 +26,19 @@ public class CrowdFunding {
      */
     private CommonEnum.CrowdFundingType crowdFundingType;
     /**
-     * 名称
+     * 项目名称
      */
     @Column(length = 100)
     private String name;
+
+    /**
+     * 可见等级 如1,2,3
+     */
+    private String visibleLevel;
     /**
      * 封面图片
      */
+    @Column(length = 200)
     private String puctureUrl;
 
     /**
@@ -55,7 +61,7 @@ public class CrowdFunding {
     private Date endTime;
 
     /**
-     * 起购金额
+     * 起购金额(预约金额)
      */
     private Float startMoeny;
 
@@ -65,8 +71,22 @@ public class CrowdFunding {
     private Float toMoeny;
 
     /**
-     * 目标众筹人数
+     * 目标众筹人数 上限人数
+     * 只限预约类
+     * 如果项目预约成交人数已经到达此值，需要进行退款处理
      */
     private Long toBooking;
+
+    /**
+     * 中介费率 0-100
+     * 如50 代表50%
+     */
+    private Integer agencyFeeRate;
+
+    /**
+     * 是否推送到爱美容资讯栏目
+     * 默认false
+     */
+    private boolean pushToShare = false;
 
 }
