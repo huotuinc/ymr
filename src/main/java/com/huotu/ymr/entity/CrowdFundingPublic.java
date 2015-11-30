@@ -1,5 +1,6 @@
 package com.huotu.ymr.entity;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -61,6 +62,25 @@ public class CrowdFundingPublic {
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
+    /**
+     * 中介费
+     */
+    private Float agencyFee;
 
+    /**
+     * 支付状态
+     */
+    private CommonEnum.PayType payType;
 
+    /**
+     * 支付流水号
+     */
+    @Column(length = 100)
+    private String payFlowNo;
+
+    /**
+     * 状态 1成功2失败
+     * 默认0
+     */
+    private Integer status;
 }

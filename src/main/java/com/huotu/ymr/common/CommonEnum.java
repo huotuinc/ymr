@@ -119,4 +119,43 @@ public interface CommonEnum {
             this.name = name;
         }
     }
+
+    /**
+     * 支付状态
+     */
+    enum PayType implements ICommonEnum {
+        /**
+         *  paying(0, "支付中")
+         */
+        paying(0, "支付中"),
+        /**
+         *  payed(1, "支付成功")
+         */
+        payed(1, "支付成功");
+        private int value;
+
+        private String name;
+
+        PayType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }

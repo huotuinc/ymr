@@ -62,4 +62,15 @@ public class CrowdFundingBooking {
      */
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
+
+    /**
+     * 中介费
+     */
+    private Float agencyFee;
+
+    /**
+     * 状态 1成功2失败
+     * 默认0
+     */
+    private Integer status;
 }
