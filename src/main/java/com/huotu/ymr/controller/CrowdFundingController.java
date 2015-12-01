@@ -28,13 +28,13 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/raiseBooking")
     @Override
-    public ApiResult raiseBooking(Float money, String name, String phone, String remark) throws Exception {
+    public ApiResult raiseBooking(Double money, String name, String phone, String remark) throws Exception {
         return null;
     }
 
     @RequestMapping("/pay")
     @Override
-    public ApiResult pay(Integer type, Float money) throws Exception {
+    public ApiResult pay(Integer type, Double money) throws Exception {
         return null;
     }
 
@@ -58,7 +58,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/raiseCooperation")
     @Override
-    public ApiResult raiseCooperation(Float money, String name, String phone, String remark) throws Exception {
+    public ApiResult raiseCooperation(Double money, String name, String phone, String remark) throws Exception {
         return null;
     }
 
@@ -70,13 +70,13 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/goCooperation")
     @Override
-    public ApiResult goCooperation(Float money, String name, String phone, String remark) throws Exception {
+    public ApiResult goCooperation(Double money, String name, String phone, String remark) throws Exception {
         return null;
     }
 
     @RequestMapping("/raiseSubscription")
     @Override
-    public ApiResult raiseSubscription(Float money, String name, String phone, String remark) throws Exception {
+    public ApiResult raiseSubscription(Double money, String name, String phone, String remark) throws Exception {
         return null;
     }
 
