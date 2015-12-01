@@ -53,14 +53,14 @@ public interface UserSystem {
     @RequestMapping(method = RequestMethod.POST)
     ApiResult bindMobile(String code, String phone) throws Exception;
 
-    /**
-     * @param data        用户数据
-     * @param oldPassword 旧密码
-     * @param newPassword 新密码
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    ApiResult modifyPassword(Output<AppUserInfoModel> data, String oldPassword, String newPassword) throws Exception;
+//    /**
+//     * @param data        用户数据
+//     * @param oldPassword 旧密码
+//     * @param newPassword 新密码
+//     * @return
+//     * @throws Exception
+//     */
+//    @RequestMapping(method = RequestMethod.POST)
+//    ApiResult modifyPassword(Output<AppUserInfoModel> data, String oldPassword, String newPassword) throws Exception;
 
 }
