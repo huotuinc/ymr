@@ -1,5 +1,6 @@
 package com.huotu.ymr.model;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +28,7 @@ public class AppUserInfoModel {
     /**
      * 用户等级
      */
-    private Integer level;
+    private CommonEnum.UserLevel userLevel;
     /**
      * 姓名
      */
@@ -44,4 +45,10 @@ public class AppUserInfoModel {
      * 是否绑定手机号
      */
     private boolean isBindMobile;
+
+    /**
+     * 用户token身份标示
+     * 32位的UUID
+     */
+    private String token;
 }

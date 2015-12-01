@@ -97,5 +97,14 @@ public class Share {
      */
     private Integer relayReward;
 
+    /**
+     * 总分
+     */
+    private Integer score;
+    /**
+     * 已使用积分
+     */
+    private Integer usedScore;
+
 
 }

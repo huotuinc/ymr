@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by xhk on 2015/12/1.
  */
-@Service("ArticleService")
+@Service
 public class ArticleServiceImpl implements ArticleService {
 
     @Autowired

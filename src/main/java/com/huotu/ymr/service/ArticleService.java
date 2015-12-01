@@ -14,6 +14,6 @@ public interface ArticleService {
      * 获取一页文章
      * @return
      */
-    public List<Article> findArticleListFromlastIdWithNumber(Integer categoryId, Long lastId,int number);
+    List<Article> findArticleListFromlastIdWithNumber(Integer categoryId, Long lastId,int number);
 
 }

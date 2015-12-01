@@ -1,5 +1,6 @@
 package com.huotu.ymr.common;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.huotu.common.api.ICommonEnum;
 
 /**
@@ -125,11 +126,11 @@ public interface CommonEnum {
      */
     enum PayType implements ICommonEnum {
         /**
-         *  paying(0, "支付中")
+         * paying(0, "支付中")
          */
         paying(0, "支付中"),
         /**
-         *  payed(1, "支付成功")
+         * payed(1, "支付成功")
          */
         payed(1, "支付成功");
         private int value;
@@ -137,6 +138,49 @@ public interface CommonEnum {
         private String name;
 
         PayType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    /**
+     * 用户级别
+     */
+    enum UserLevel implements ICommonEnum {
+        /**
+         * one(0, "LV1")
+         */
+        one(0, "LV1"),
+        /**
+         * two(1, "LV2")
+         */
+        two(1, "LV2"),
+        /**
+         * three(2, "LV3")
+         */
+        three(2, "LV3");
+        private int value;
+
+        private String name;
+
+        UserLevel(int value, String name) {
             this.value = value;
             this.name = name;
         }

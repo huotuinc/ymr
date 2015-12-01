@@ -43,7 +43,7 @@ public class CommonConfigServiceImpl implements CommonConfigService {
 
     @Override
     public String getAppKeySecret() {
-        return env.getProperty("ymr.appsecrect", "9389e8a5c32eefa3134340640fb4ceaa");
+        return env.getProperty("ymr.appsecrect", "1165a8d240b29af3f418b8d10599d0da");
     }
 
 

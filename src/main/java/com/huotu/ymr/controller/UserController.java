@@ -18,9 +18,6 @@ import org.springframework.web.servlet.ViewResolver;
 @RequestMapping("/app")
 public class UserController implements UserSystem {
 
-    @Autowired
-    private ViewResolver viewResolver;
-
     @RequestMapping("/login")
     @Override
     public ApiResult login(Output<AppUserInfoModel> data, Integer unionId) throws Exception {
