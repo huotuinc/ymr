@@ -8,7 +8,7 @@ import javax.persistence.Id;
 
 /**
  * 众筹金额范围
- * 只限合伙和认购
+ * 只限合作和认购
  * Created by lgh on 2015/11/30.
  */
 public class CrowdFundingMoneyRange {
@@ -25,5 +25,5 @@ public class CrowdFundingMoneyRange {
     /**
      * 金额
      */
-    private Float money;
+    private Double money;
 }

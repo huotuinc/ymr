@@ -29,5 +29,5 @@ public class AppSubscriptionListModel {
     /**
      * 金额
      */
-    private Float money;
+    private Double money;
 }
