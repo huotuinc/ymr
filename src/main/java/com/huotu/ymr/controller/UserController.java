@@ -21,33 +21,19 @@ import java.util.Map;
  * Created by lgh on 2015/11/20.
  */
 @Controller
-public class UserController implements UserSystem{
+@RequestMapping("/app")
+public class UserController implements UserSystem {
 
     @Autowired
     private ViewResolver viewResolver;
 
-    @RequestMapping("/index")
-    public String index(Locale locale, Model model) throws Exception {
-        model.addAttribute("a", "ni hao");
-        System.out.println("enter");
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("a", "hao");
-//        return new  ModelAndView("test", map);
-        return "test";
-//        return viewResolver.resolveViewName("test",null);
-    }
-
-    @Override
-    public ApiResult login(Output<AppUserInfoModel> data, Integer unionId) throws Exception {
-        return null;
-    }
-
+    @RequestMapping("/sendSMS")
     @Override
     public ApiResult sendSMS(String phone, int type, @RequestParam(required = false) Integer codeType) throws Exception {
         return null;
     }
 
+    @RequestMapping("/bindMobile")
     @Override
     public ApiResult bindMobile(String code, String phone) throws Exception {
         return null;

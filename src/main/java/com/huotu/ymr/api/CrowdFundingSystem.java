@@ -45,7 +45,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseBooking(Float money, String name, String phone, String remark) throws Exception;
+    ApiResult raiseBooking(Double money, String name, String phone, String remark) throws Exception;
 
     /**
      * 支付金额
@@ -58,7 +58,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult pay(Integer type, Float money) throws Exception;
+    ApiResult pay(Integer type, Double money) throws Exception;
 
     /**
      * 支付回调(微信) todo 待完善
@@ -103,7 +103,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseCooperation(Float money, String name, String phone, String remark) throws Exception;
+    ApiResult raiseCooperation(Double money, String name, String phone, String remark) throws Exception;
 
 
     /**
@@ -129,7 +129,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult goCooperation(Float money, String name, String phone, String remark) throws Exception;
+    ApiResult goCooperation(Double money, String name, String phone, String remark) throws Exception;
 
 
     /**
@@ -143,7 +143,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseSubscription(Float money, String name, String phone, String remark) throws Exception;
+    ApiResult raiseSubscription(Double money, String name, String phone, String remark) throws Exception;
 
     /**
      * 获取认购列表

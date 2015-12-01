@@ -63,12 +63,12 @@ public class CrowdFunding {
     /**
      * 起购金额(预约金额)
      */
-    private Float startMoeny;
+    private Double startMoeny;
 
     /**
      * 目标金额
      */
-    private Float toMoeny;
+    private Double toMoeny;
 
     /**
      * 目标众筹人数 上限人数

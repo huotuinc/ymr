@@ -31,17 +31,17 @@ public class AppCrowdFundingListModel {
     /**
      * 目标金额
      */
-    private Float toMoeny;
+    private Double toMoeny;
 
     /**
      * 目前金额
      */
-    private Float currentMoeny;
+    private Double currentMoeny;
 
     /**
      * 起购金额
      */
-    private Float startMoeny;
+    private Double startMoeny;
 
     /**
      * 目标众筹人数

@@ -48,7 +48,7 @@ public class CrowdFundingPublic {
     /**
      * 购买金额
      */
-    private Float money;
+    private Double money;
 
     /**
      * 备注
@@ -65,7 +65,7 @@ public class CrowdFundingPublic {
     /**
      * 中介费
      */
-    private Float agencyFee;
+    private Double agencyFee;
 
     /**
      * 支付状态

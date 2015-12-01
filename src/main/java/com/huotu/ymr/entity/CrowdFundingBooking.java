@@ -49,7 +49,7 @@ public class CrowdFundingBooking {
     /**
      * 金额
      */
-    private Float money;
+    private Double money;
 
     /**
      * 备注
@@ -66,7 +66,7 @@ public class CrowdFundingBooking {
     /**
      * 中介费
      */
-    private Float agencyFee;
+    private Double agencyFee;
 
     /**
      * 状态 1成功2失败
