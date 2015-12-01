@@ -46,23 +46,5 @@ public class ShareControllerTest extends SpringBaseTest {
 
     }
 
-    @Test
-    public void testSearchShareList1() throws Exception {
 
-    }
-
-    @Test
-    public void testShare1() throws Exception {
-
-    }
-
-    @Test
-    public void testGetShareInfo1() throws Exception {
-
-    }
-
-    @Test
-    public void testSearchShareCommentList1() throws Exception {
-
-    }
 }

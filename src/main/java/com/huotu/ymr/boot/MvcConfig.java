@@ -11,10 +11,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
@@ -32,8 +29,14 @@ import java.util.List;
 @EnableJpaRepositories(value = "com.huotu.ymr.repository")
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
+    @Override
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+        configurer.enable();
+    }
+
+
     @Bean
-    CommonInterceptor commonInterceptor (){
+    CommonInterceptor commonInterceptor() {
         return new CommonInterceptor();
     }
 
@@ -65,7 +68,6 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     public void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> returnValueHandlers) {
         returnValueHandlers.add(new ApiResultHandler());
     }
-
 
 
     public void configureViewResolvers(ViewResolverRegistry registry) {
