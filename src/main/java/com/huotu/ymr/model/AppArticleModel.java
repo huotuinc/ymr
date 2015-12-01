@@ -1,11 +1,16 @@
 package com.huotu.ymr.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
  * 文章
  * Created by lgh on 2015/11/26.
  */
+@Getter
+@Setter
 public class AppArticleModel {
     /**
      * n标题

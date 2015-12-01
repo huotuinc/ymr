@@ -11,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AppArticleListModel {
-    private Integer pId;
+    private Long pId;
 
 
     /**

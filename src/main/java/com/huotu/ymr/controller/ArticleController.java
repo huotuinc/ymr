@@ -4,9 +4,14 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.ymr.api.ArticleSystem;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.entity.Article;
+import com.huotu.ymr.entity.Category;
 import com.huotu.ymr.model.AppArticleListModel;
 import com.huotu.ymr.model.AppArticleModel;
 import com.huotu.ymr.model.AppCategoryModel;
+import com.huotu.ymr.repository.ArticleRepository;
+import com.huotu.ymr.repository.CategoryRepository;
+import com.huotu.ymr.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,15 +28,27 @@ public class ArticleController implements ArticleSystem {
 
     @Autowired
     ArticleRepository articleRepository;
+
+    @Autowired
+    ArticleService articleService;
+    @Autowired
+    CategoryRepository categoryRepository;
     @Override
     @RequestMapping("/getCategoryList")
     public ApiResult getCategoryList(Output<AppCategoryModel[]> list) throws Exception {
 
-        List<AppCategoryModel> categoryList=new ArrayList<AppCategoryModel>();
-        categoryList=articleRepository.findAll();
+        List<AppCategoryModel> appCategoryList=new ArrayList<AppCategoryModel>();
 
-        list.outputData(categoryList.toArray(new AppCategoryModel[categoryList.size()]));
-        return ApiResult.resultWith(CommonEnum.SUCCESS);
+        List<Category> categoryList=categoryRepository.findAll();
+        for(Category category:categoryList) {
+            AppCategoryModel appCategoryModel= new AppCategoryModel();
+            appCategoryModel.setName(category.getName());
+            appCategoryModel.setPicture(category.getPicture());
+            appCategoryModel.setPId(category.getId());
+            appCategoryList.add(appCategoryModel);
+        }
+        list.outputData(appCategoryList.toArray(new AppCategoryModel[categoryList.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
 
     }
 
@@ -40,18 +57,34 @@ public class ArticleController implements ArticleSystem {
     public ApiResult getArticleList(Output<AppArticleListModel[]> list, Integer categoryId, Long lastId) throws Exception {
 
         int number=0;
-        List<AppArticleListModel> articleList=articleRepository.findArticleListFromlastIdWithNumber(categoryId, lastId, number);
-
-        list.outputData(articleList.toArray(new AppArticleListModel[articleList.size()]));
-        return ApiResult.resultWith(CommonEnum.SUCCESS);
+        if(lastId==null){}//todo change the null value
+        List<Article>  articleList=articleService.findArticleListFromlastIdWithNumber(categoryId, lastId, number);
+        List<AppArticleListModel> appArticleListModels=new ArrayList<AppArticleListModel>();
+        for(Article article:articleList){
+            AppArticleListModel appArticleListModel=new AppArticleListModel();
+            appArticleListModel.setPId(article.getId());
+            appArticleListModel.setPicture(article.getPicture());
+            appArticleListModel.setTitle(article.getTitle());
+            appArticleListModel.setSummary(article.getSummary());
+            appArticleListModel.setView(article.getView());
+            appArticleListModels.add(appArticleListModel);
+        }
+        list.outputData(appArticleListModels.toArray(new AppArticleListModel[articleList.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @Override
     @RequestMapping("getArticleInfo")
     public ApiResult getArticleInfo(Output<AppArticleModel> data, Long id) throws Exception {
 
-        AppArticleModel article=articleRepository.findOne(id);
-        data.outputData(article);
-        return ApiResult.resultWith(CommonEnum.SUCCESS);
+        Article article=articleRepository.findOne(id);
+        AppArticleModel articleModel=new AppArticleModel();
+        articleModel.setView(article.getView());
+        articleModel.setContent(article.getContent());
+        articleModel.setTitle(article.getTitle());
+        articleModel.setPicture(article.getPicture());
+        articleModel.setTime(article.getTime());
+        data.outputData(articleModel);
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 }
