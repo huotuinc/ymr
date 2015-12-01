@@ -7,15 +7,9 @@ import com.huotu.ymr.api.UserSystem;
 import com.huotu.ymr.model.AppUserInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ViewResolver;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by lgh on 2015/11/20.
@@ -26,6 +20,12 @@ public class UserController implements UserSystem {
 
     @Autowired
     private ViewResolver viewResolver;
+
+    @RequestMapping("/login")
+    @Override
+    public ApiResult login(Output<AppUserInfoModel> data, Integer unionId) throws Exception {
+        return null;
+    }
 
     @RequestMapping("/sendSMS")
     @Override
