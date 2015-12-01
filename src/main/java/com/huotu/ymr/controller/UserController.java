@@ -1,11 +1,16 @@
 package com.huotu.ymr.controller;
 
 
+import com.huotu.common.api.ApiResult;
+import com.huotu.common.api.Output;
+import com.huotu.ymr.api.UserSystem;
+import com.huotu.ymr.model.AppUserInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ViewResolver;
 
 import java.util.HashMap;
@@ -16,7 +21,7 @@ import java.util.Map;
  * Created by lgh on 2015/11/20.
  */
 @Controller
-public class UserController {
+public class UserController implements UserSystem{
 
     @Autowired
     private ViewResolver viewResolver;
@@ -31,5 +36,20 @@ public class UserController {
 //        return new  ModelAndView("test", map);
         return "test";
 //        return viewResolver.resolveViewName("test",null);
+    }
+
+    @Override
+    public ApiResult login(Output<AppUserInfoModel> data, Integer unionId) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult sendSMS(String phone, int type, @RequestParam(required = false) Integer codeType) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult bindMobile(String code, String phone) throws Exception {
+        return null;
     }
 }
