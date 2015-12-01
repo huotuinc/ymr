@@ -48,6 +48,40 @@ public interface CrowdFundingSystem {
     ApiResult raiseBooking(Float money, String name, String phone, String remark) throws Exception;
 
     /**
+     * 支付金额
+     * 支持支付宝和微信
+     * 记录一条支付订单
+     *
+     * @param type  类型 1支付宝2微信
+     * @param money 金额
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult pay(Integer type, Float money) throws Exception;
+
+    /**
+     * 支付回调(微信) todo 待完善
+     * 确认支付订单 记录支付流水
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult callBackWeiXin() throws Exception;
+
+
+    /**
+     * 支付回调(支付宝)  todo 待完善
+     * 确认支付订单 记录支付流水
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult callBackAlipay() throws Exception;
+
+    /**
      * 获取预约人列表
      *
      * @param list
