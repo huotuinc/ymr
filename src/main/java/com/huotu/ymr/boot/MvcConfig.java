@@ -76,6 +76,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
     }
 
 
+    @Bean
     public ThymeleafViewResolver viewResolver() {
         ThymeleafViewResolver resolver = new ThymeleafViewResolver();
         SpringTemplateEngine engine = new SpringTemplateEngine();
