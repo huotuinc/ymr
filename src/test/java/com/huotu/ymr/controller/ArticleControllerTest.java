@@ -48,7 +48,7 @@ public class ArticleControllerTest extends SpringBaseTest  {
 
     @Before
     public void init() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(this.context).build();
+
     }
 
 
