@@ -16,4 +16,9 @@ public interface ArticleService {
      */
     List<Article> findArticleListFromlastIdWithNumber(Integer categoryId, Long lastId,int number);
 
+    /**
+     * 获取w文章表中最大的id值
+     * @return
+     */
+    long getMaxId();
 }

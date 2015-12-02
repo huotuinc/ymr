@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/12/1.
+ * Created by xhk on 2015/12/1.
  */
 @Controller
 @RequestMapping("/article")
@@ -31,8 +31,10 @@ public class ArticleController implements ArticleSystem {
 
     @Autowired
     ArticleService articleService;
+
     @Autowired
     CategoryRepository categoryRepository;
+
     @Override
     @RequestMapping("/getCategoryList")
     public ApiResult getCategoryList(Output<AppCategoryModel[]> list) throws Exception {
@@ -56,8 +58,10 @@ public class ArticleController implements ArticleSystem {
     @RequestMapping("/getArticleList")
     public ApiResult getArticleList(Output<AppArticleListModel[]> list, Integer categoryId, Long lastId) throws Exception {
 
-        int number=0;
-        if(lastId==null){}//todo change the null value
+        int number=3;//todo 每页的文章条数暂定测试条数：3
+        if(lastId==null){
+            lastId=articleService.getMaxId()+1;
+        }//如果为空则默认第一页
         List<Article>  articleList=articleService.findArticleListFromlastIdWithNumber(categoryId, lastId, number);
         List<AppArticleListModel> appArticleListModels=new ArrayList<AppArticleListModel>();
         for(Article article:articleList){

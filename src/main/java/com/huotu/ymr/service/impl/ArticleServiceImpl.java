@@ -20,17 +20,26 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public List<Article> findArticleListFromlastIdWithNumber(Integer categoryId, Long lastId,int number) {
-        StringBuffer hql = new StringBuffer();
-        if (lastId == 0L) {
-            hql.append("from Article where category.id=:catId and catId<:lastId");
-        } else {
-            hql.append("from Article where category.id=:catId");
-        }
+
+        StringBuilder hql = new StringBuilder();
+        hql.append("from Article as art where art.category.id=:catId and art.id<:lastId order by art.id desc");
         Query query = entityManager.createQuery(hql.toString());
         query.setParameter("catId", categoryId);
         query.setParameter("lastId", lastId);
         query.setMaxResults(number);
         List<Article> articleList = query.getResultList();
         return articleList;
+    }
+
+    @Override
+    public long getMaxId() {
+        StringBuilder hql =new StringBuilder("select max(art.id) from Article as art");
+        Query query=entityManager.createQuery(hql.toString());
+        List<Long> maxIds=query.getResultList();
+        long maxId=0L;
+        if(maxIds.size()!=0){
+            maxId=maxIds.get(0);
+        }
+        return maxId;
     }
 }
