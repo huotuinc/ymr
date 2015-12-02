@@ -1,11 +1,16 @@
 package com.huotu.ymr.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
  * 爱分享列表
  * Created by lgh on 2015/11/27.
  */
+@Getter
+@Setter
 public class AppShareListModel {
 
     private Long pId;

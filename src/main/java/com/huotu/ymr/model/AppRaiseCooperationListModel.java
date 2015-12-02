@@ -1,8 +1,13 @@
 package com.huotu.ymr.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Created by lgh on 2015/11/30.
  */
+@Getter
+@Setter
 public class AppRaiseCooperationListModel {
 
     private Long pid;

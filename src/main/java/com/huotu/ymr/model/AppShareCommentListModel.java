@@ -1,10 +1,15 @@
 package com.huotu.ymr.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 
 /**
  * Created by lgh on 2015/11/27.
  */
+@Getter
+@Setter
 public class AppShareCommentListModel {
 
     private Long pid;
