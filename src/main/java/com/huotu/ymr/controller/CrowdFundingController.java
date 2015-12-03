@@ -6,7 +6,7 @@ import com.huotu.ymr.api.CrowdFundingSystem;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.model.*;
-import com.huotu.ymr.service.CrowdFoundingService;
+import com.huotu.ymr.service.CrowdFundingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.List;
 public class CrowdFundingController implements CrowdFundingSystem {
 
     @Autowired
-    CrowdFoundingService crowdFoundingService;
+    CrowdFundingService crowdFundingService;
 
     @RequestMapping("/getCrowdFundingList")
     @Override
@@ -95,10 +95,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
     public ApiResult getSubscriptionList(Output<AppSubscriptionListModel[]> list,Long crowdId, Long lastId) throws Exception {
 
         if(lastId==null){
-            lastId=crowdFoundingService.getMaxId()+1;
+            lastId=crowdFundingService.getMaxId()+1;
         }//如果为null则默认第一页
-        int number=3; //todo 单页表格的数据个数
-        List<CrowdFundingPublic> crowdFundingPublicList=crowdFoundingService.findCrowdListFromLastIdWithNumber(crowdId, lastId, number);
+        int number=10; //todo 单页表格的数据个数
+        List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdId, lastId, number);
         List<AppSubscriptionListModel> appSubscriptionListModelList=new ArrayList<AppSubscriptionListModel>();
         for(CrowdFundingPublic crowdFundingPublic:crowdFundingPublicList){
             AppSubscriptionListModel appSubscriptionListModel=new AppSubscriptionListModel();
@@ -106,7 +106,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             appSubscriptionListModel.setMoney(crowdFundingPublic.getMoney());
             appSubscriptionListModel.setName(crowdFundingPublic.getName());
             appSubscriptionListModel.setStatus(crowdFundingPublic.getStatus());
-            appSubscriptionListModel.setPid(crowdFundingPublic.getId());
+            appSubscriptionListModel.setPid(crowdFundingPublic.getOwnerId());
             appSubscriptionListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
             appSubscriptionListModelList.add(appSubscriptionListModel);
         }

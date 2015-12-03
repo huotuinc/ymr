@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by xhk on 2015/12/2.
  */
-public interface CrowdFoundingService {
+public interface CrowdFundingService {
     /**
      * 通过文章类型，前一页最后一个id，每页显示的条数
      * 获取一页认购表格
