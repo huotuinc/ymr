@@ -24,7 +24,7 @@ public interface ShareSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult searchShareList(Output<AppShareListModel> list, String key, Long lastId) throws Exception;
+    ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId) throws Exception;
 
     /**
      * 分享内容

@@ -3,6 +3,7 @@ package com.huotu.ymr.boot;
 import com.huotu.common.api.ApiResultHandler;
 import com.huotu.common.api.OutputHandler;
 import com.huotu.ymr.interceptor.CommonInterceptor;
+import org.luffy.lib.libspring.data.ClassicsRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,7 +27,7 @@ import java.util.List;
 @EnableWebMvc
 @ComponentScan(value = {"com.huotu.ymr.service.impl,com.huotu.ymr.controller"})
 @ImportResource(value = "classpath:spring-jpa.xml")
-@EnableJpaRepositories(value = "com.huotu.ymr.repository")
+@EnableJpaRepositories(value = "com.huotu.ymr.repository",repositoryFactoryBeanClass = ClassicsRepositoryFactoryBean.class)
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Override

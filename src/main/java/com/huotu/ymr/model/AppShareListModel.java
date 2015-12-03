@@ -19,9 +19,9 @@ public class AppShareListModel {
      */
     private String userHeadUrl;
     /**
-     * 状态 1 置顶
+     * 状态
      */
-    private Integer status;
+    private Boolean status;
     /**
      * 标题
      */
@@ -58,5 +58,5 @@ public class AppShareListModel {
     /**
      * 转发可得积分
      */
-    private Long relayScore;
+    private Integer relayScore;
 }

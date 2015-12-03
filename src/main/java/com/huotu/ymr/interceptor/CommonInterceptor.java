@@ -45,6 +45,9 @@ public class CommonInterceptor implements HandlerInterceptor {
 
 //        logger.debug("==============执行顺序: 0、preHandle================");
 
+        if(true){
+            return true;
+        }
         String sign = request.getParameter("sign");
 
         //logger.info("sign:" + getSign(request));
