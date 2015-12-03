@@ -3,12 +3,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-    <script src="resource/3rdParty/js/jquery-1.8.3.min.js"></script>
-    <script src="resource/3rdParty/js/admin.js"></script>
-    <script src="resource/3rdParty/js/jquery.utils.js"></script>
+    <script src="../resource/3rdParty/js/jquery-1.8.3.min.js"></script>
+    <script src="../resource/3rdParty/js/admin.js"></script>
+    <script src="../resource/3rdParty/js/jquery.utils.js"></script>
     <title></title>
 
-    <link href="resource/3rdParty/ResPdmall/css/houtaikk.css" rel="stylesheet"/>
+    <link href="../resource/3rdParty/ResPdmall/css/houtaikk.css" rel="stylesheet"/>
 
     <script type="text/javascript">
         /*<![CDATA[*/
@@ -201,11 +201,21 @@
 <div class="leftpanelinner" id="menuContainer" style="height: 776px; overflow-y: auto;">
     <ul class="nav nav-pills nav-stacked nav-bracket" id="menuList">
         <li class="nav-parent nav-active active" style="cursor: pointer;">
-            <a class="aparent1"    href="javascript:checkDd(1)"><i class="fa fa-chevron-circle-right"></i><span>订单管理</span></a>
+            <a class="aparent1"    href="javascript:checkDd(1)"><i class="fa fa-chevron-circle-right"></i><span>配置项管理</span></a>
             <ul class="children" style="display: block">
                 <li class="childMenus active" style="cursor: pointer;" id="id020101">
                     <div id="msg020101" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('getOrdersPage','020101')"><i class="fa fa-caret-right"></i>订单列表<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
+                    <a  onclick="openUrl('getShareList','020101')"><i class="fa fa-caret-right"></i>积分<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
+        </span>
+                    </a>
+                    <ul class="children" style="display: none; margin-left: 20px;">
+                        {childMenus}
+                    </ul>
+                </li>
+
+                <li class="childMenus active" style="cursor: pointer;" id="id020102">
+                    <div id="msg020102" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a  onclick="openUrl('getShareList','020102')"><i class="fa fa-caret-right"></i>底部广告<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -215,11 +225,11 @@
             </ul>
         </li>
         <li class="nav-parent nav-active active" style="cursor: pointer;">
-            <a class="aparent2" href="javascript:checkDd(2)"><i class="fa fa-chevron-circle-right"></i><span>单据管理</span></a>
+            <a class="aparent2" href="javascript:checkDd(2)"><i class="fa fa-chevron-circle-right"></i><span>帖子管理</span></a>
             <ul class="children" style="display: block">
                 <li class="childMenus" style="cursor: pointer;" id="id020203">
                     <div id="msg020203" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a onclick="openUrl('deliveries','020203')"><i class="fa fa-caret-right"></i>发货单<span onmouseover="showMsg('020203')" onmouseout="hideMsg('020203')" class="fa pull-right badge badge-success" id="warning020203" style="display: none;background-color:red;">!
+                    <a onclick="openUrl('getShareList','020203')"><i class="fa fa-caret-right"></i>文章<span onmouseover="showMsg('020203')" onmouseout="hideMsg('020203')" class="fa pull-right badge badge-success" id="warning020203" style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -229,7 +239,7 @@
 
                 <li class="childMenus" style="cursor: pointer;" id="id020204">
                     <div id="msg020204" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a onclick="openUrl('showRefundsList','020204')"><i class="fa fa-caret-right"></i>退货单<span onmouseover="showMsg('020204')" onmouseout="hideMsg('020204')" class="fa pull-right badge badge-success" id="warning020204" style="display: none;background-color:red;">!
+                    <a onclick="openUrl('getShareList','020204')"><i class="fa fa-caret-right"></i>草稿箱<span onmouseover="showMsg('020204')" onmouseout="hideMsg('020204')" class="fa pull-right badge badge-success" id="warning020204" style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">

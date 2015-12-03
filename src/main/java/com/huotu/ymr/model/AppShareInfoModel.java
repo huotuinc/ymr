@@ -29,5 +29,9 @@ public class AppShareInfoModel {
      */
     private Long praise;
 
+    private Integer totalScore;
+
+    private Integer leaveScore;
+
 
 }

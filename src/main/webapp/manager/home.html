@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns="http://java.sun.com/jsf/composite"
-      xmlns:sec="http://xmlns.jcp.org/jsf/html">
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
@@ -51,7 +50,7 @@
             var width = $('#con_left').width();
             var scrolling = 'auto';
             var height = this._getLeftHeight();
-            var ifSrc = /*[["ordersManage"]]*/ "ordersManage.html";
+            var ifSrc = /*[["ordersManage"]]*/ "shareManager.html";
             document.write('<iframe id="content_left" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + ifSrc + '" style="overflow-x:hidden;"></iframe>');
         };
 
@@ -75,42 +74,55 @@
                 $('.dropdown-menu').toggle();
             });
             $('#menu01').click(function () {
-                mallMenuManager.showOrders();
+                mallMenuManager.showShares();
             });
             $('#menu02').click(function () {
-                mallMenuManager.showAccounts();
+                mallMenuManager.showArticles();
             });
-            /*$('#menu03').click(function() {
-             mallMenuManager.showSettlementQuery();
-             });*/
+            $('#menu03').click(function () {
+                mallMenuManager.showCrowdFundings();
+            });
+            $('#menu03').click(function () {
+                mallMenuManager.showUsers();
+            });
         };
-        mallMenuManager.showSettlementQuery = function () {
-            $(".active").removeClass("active");
-            $("#menu03").addClass("active");
-            var _url = /*[['settlements']]*/ "settlements_query.html";
-            _loadMain(_url);
-            _loadLeftMenu('');
-        };
-        mallMenuManager.showAccounts = function () {
-            $(".active").removeClass("active");
-            $("#menu02").addClass("active");
-            var _url = /*[['accountManage']]*/ "accountManage.html";
-            _loadMain(_url);
-            _loadLeftMenu('');
-        };
-        mallMenuManager.showOrders = function () {
+
+
+        mallMenuManager.showShares = function () {
             $(".active").removeClass("active");
             $("#menu01").addClass("active");
-            var _url = /*[['getOrdersPage']]*/ "ordersList.html";
+            var _url = /*[['getShareList']]*/ "shareList.html";
             _loadMain(_url);
-            _loadLeftMenu('ordersManage.html');
+            _loadLeftMenu('shareManager.html');
         };
+        mallMenuManager.showArticles = function () {
+            $(".active").removeClass("active");
+            $("#menu02").addClass("active");
+            var _url = /*[['getArticleList']]*/ "articleList.html";
+            _loadMain(_url);
+            _loadLeftMenu('articleManager.html');
+        };
+
+        mallMenuManager.showCrowdFundings = function () {
+            $(".active").removeClass("active");
+            $("#menu03").addClass("active");
+            var _url = /*[['getCrowdFundingList']]*/ "crowdFundingList.html";
+            _loadMain(_url);
+            _loadLeftMenu('crowdFundingManager.html');
+        }
+        mallMenuManager.showUsers = function () {
+            $(".active").removeClass("active");
+            $("#menu03").addClass("active");
+            var _url = /*[['getUserList']]*/ "userList.html";
+            _loadMain(_url);
+            _loadLeftMenu('userManager.html');
+        }
         //#endregion
 
         $(function () {
             adaptFrame.init();
             mallMenuManager.init();
-            mallMenuManager.showOrders();
+            mallMenuManager.showShares();
         });
 
         function clickMenu(menuid) {
@@ -149,7 +161,8 @@
     <div class="leftpanel">
         <div class="logopanel">
 
-            <img src="../resource/3rdParty/ResPdmall/images/bglogo_Ultimate.png" height="48px" style="margin-left: 15px"/>
+            <img src="../resource/3rdParty/ResPdmall/images/bglogo_Ultimate.png" height="48px"
+                 style="margin-left: 15px"/>
         </div>
         <!--账号信息BEGIN-->
         <div class="leftpanelinner" style="border-bottom: 1px dotted #444;">
@@ -192,18 +205,24 @@
                     <ul class="nav nav-horizontal">
                         <li class="active" id="menu01">
                             <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
-                                <span>订单管理</span></a>
+                                <span>爱美容</span></a>
                         </li>
 
                         <li class="" id="menu02">
                             <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
-                                <span>账号管理</span><span class="fa pull-right badge badge-success" id="warning02"
-                                                       style="display: none; background-color: red;">!</span></a>
+                                <span>关于美投</span></a>
                         </li>
-                        <!-- <li class="" id="menu03" sec:authorize="hasAnyRole('ACCOUNT','SUPPLIER')">
-                             <a style="cursor: pointer;" ><i class="fa fa-folder-o"></i>
-                                 <span>结算管理</span></a>
-                         </li>-->
+
+                        <li class="" id="menu03">
+                            <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
+                                <span>众筹合伙人</span></a>
+                        </li>
+
+                        <li class="" id="menu04">
+                            <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
+                                <span>用户管理</span></a>
+                        </li>
+
 
                     </ul>
                 </div>
