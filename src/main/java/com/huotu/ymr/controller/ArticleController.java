@@ -62,7 +62,7 @@ public class ArticleController implements ArticleSystem {
         if(lastId==null){
             lastId=articleService.getMaxId()+1;
         }//如果为空则默认第一页
-        List<Article>  articleList=articleService.findArticleListFromlastIdWithNumber(categoryId, lastId, number);
+        List<Article>  articleList=articleService.findArticleListFromLastIdWithNumber(categoryId, lastId, number);
         List<AppArticleListModel> appArticleListModels=new ArrayList<AppArticleListModel>();
         for(Article article:articleList){
             AppArticleListModel appArticleListModel=new AppArticleListModel();

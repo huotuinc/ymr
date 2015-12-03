@@ -14,10 +14,10 @@ public interface ArticleService {
      * 获取一页文章
      * @return
      */
-    List<Article> findArticleListFromlastIdWithNumber(Integer categoryId, Long lastId,int number);
+    List<Article> findArticleListFromLastIdWithNumber(Integer categoryId, Long lastId,int number);
 
     /**
-     * 获取w文章表中最大的id值
+     * 获取文章表中最大的id值
      * @return
      */
     long getMaxId();

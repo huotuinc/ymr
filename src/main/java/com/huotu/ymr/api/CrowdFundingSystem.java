@@ -149,12 +149,13 @@ public interface CrowdFundingSystem {
      * 获取认购列表
      *
      * @param list
+     * @param crowdId 所属的众筹项目Id
      * @param lastId 上一页最后一个Id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getSubscriptionList(Output<AppSubscriptionListModel> list, Long lastId) throws Exception;
+    ApiResult getSubscriptionList(Output<AppSubscriptionListModel[]> list, Long crowdId,Long lastId) throws Exception;
 
 
 }

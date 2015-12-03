@@ -29,7 +29,7 @@ public class AppSubscriptionListModel {
     /**
      * 状态
      */
-    private String status;
+    private Integer status;
 
     /**
      * 金额

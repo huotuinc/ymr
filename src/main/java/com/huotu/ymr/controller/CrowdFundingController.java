@@ -3,9 +3,16 @@ package com.huotu.ymr.controller;
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.ymr.api.CrowdFundingSystem;
+import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.model.*;
+import com.huotu.ymr.service.CrowdFoundingService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lgh on 2015/12/1.
@@ -13,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/app")
 public class CrowdFundingController implements CrowdFundingSystem {
+
+    @Autowired
+    CrowdFoundingService crowdFoundingService;
 
     @RequestMapping("/getCrowdFundingList")
     @Override
@@ -82,7 +92,25 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/getSubscriptionList")
     @Override
-    public ApiResult getSubscriptionList(Output<AppSubscriptionListModel> list, Long lastId) throws Exception {
-        return null;
+    public ApiResult getSubscriptionList(Output<AppSubscriptionListModel[]> list,Long crowdId, Long lastId) throws Exception {
+
+        if(lastId==null){
+            lastId=crowdFoundingService.getMaxId()+1;
+        }//如果为null则默认第一页
+        int number=3; //todo 单页表格的数据个数
+        List<CrowdFundingPublic> crowdFundingPublicList=crowdFoundingService.findCrowdListFromLastIdWithNumber(crowdId, lastId, number);
+        List<AppSubscriptionListModel> appSubscriptionListModelList=new ArrayList<AppSubscriptionListModel>();
+        for(CrowdFundingPublic crowdFundingPublic:crowdFundingPublicList){
+            AppSubscriptionListModel appSubscriptionListModel=new AppSubscriptionListModel();
+            appSubscriptionListModel.setTime(crowdFundingPublic.getTime());
+            appSubscriptionListModel.setMoney(crowdFundingPublic.getMoney());
+            appSubscriptionListModel.setName(crowdFundingPublic.getName());
+            appSubscriptionListModel.setStatus(crowdFundingPublic.getStatus());
+            appSubscriptionListModel.setPid(crowdFundingPublic.getId());
+            appSubscriptionListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
+            appSubscriptionListModelList.add(appSubscriptionListModel);
+        }
+        list.outputData(appSubscriptionListModelList.toArray(new AppSubscriptionListModel[crowdFundingPublicList.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 }

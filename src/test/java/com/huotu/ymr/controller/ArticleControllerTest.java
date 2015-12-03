@@ -16,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -33,8 +31,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Transactional
 public class ArticleControllerTest extends SpringBaseTest  {
 
-    @Autowired
-    private WebApplicationContext context;
 
     @Autowired
     ArticleService articleService;
@@ -127,7 +123,7 @@ public class ArticleControllerTest extends SpringBaseTest  {
                 .andReturn().getResponse().getContentAsString();
         //System.out.println(result);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
-        List<Article> articleList=articleService.findArticleListFromlastIdWithNumber(20,articleService.getMaxId()+1,3);
+        List<Article> articleList=articleService.findArticleListFromLastIdWithNumber(20, articleService.getMaxId() + 1, 3);
         for(int i=0;i<articleList.size();i++) {
             Assert.assertEquals("请求存在文章第一页id断言",articleList.get(i).getId().longValue(),Long.parseLong(list.get(i).get("pid") + ""));
             //Assert.assertEquals("请求存在文章第一页time断言",articleList.get(i).getTime(),list.get(i).get("time"));
@@ -139,18 +135,31 @@ public class ArticleControllerTest extends SpringBaseTest  {
                 .andReturn().getResponse().getContentAsString();
         //System.out.println(result1);
         List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
-        List<Article> articleList1=articleService.findArticleListFromlastIdWithNumber(20,38L,3);
+        List<Article> articleList1=articleService.findArticleListFromLastIdWithNumber(20, 38L, 3);
         for(int i=0;i<articleList1.size();i++) {
             Assert.assertEquals("请求存在文章第二页id断言",articleList1.get(i).getId().longValue(),Long.parseLong(list1.get(i).get("pid")+""));
             //Assert.assertEquals("请求存在文章第二页time断言",articleList1.get(i).getTime(),list1.get(i).get("time"));
             Assert.assertEquals("请求存在文章第二页picture断言",articleList1.get(i).getPicture(),list1.get(i).get("picture"));
         }
+
+        //请求存在文章最后一篇之后的
+        String result2=mockMvc.perform(get("/article/getArticleList").param("categoryId","20").param("lastId","0"))
+                .andReturn().getResponse().getContentAsString();
+        //System.out.println(result1);
+        List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
+        List<Article> articleList2=articleService.findArticleListFromLastIdWithNumber(20,0L,3);
+        Assert.assertEquals("请求存在文章最后一篇之后的获取的数据量断言",articleList2.size(),list2.size());
+        for(int i=0;i<articleList2.size();i++) {
+            Assert.assertEquals("请求存在文章最后一篇之后的id断言",articleList2.get(i).getId().longValue(),Long.parseLong(list2.get(i).get("pid")+""));
+            Assert.assertEquals("请求存在文章最后一篇之后的picture断言",articleList2.get(i).getPicture(),list2.get(i).get("picture"));
+        }
+
         //请求不存在的分类文章
-        String result2=mockMvc.perform(get("/article/getArticleList").param("categoryId","2"))
+        String result3=mockMvc.perform(get("/article/getArticleList").param("categoryId","2"))
                 .andReturn().getResponse().getContentAsString();
         //System.out.println(result2);
-        List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
-        Assert.assertEquals("断言请求不存在的分类文章",0,list2.size());
+        List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
+        Assert.assertEquals("断言请求不存在的分类文章",0,list3.size());
     }
 
     @Test

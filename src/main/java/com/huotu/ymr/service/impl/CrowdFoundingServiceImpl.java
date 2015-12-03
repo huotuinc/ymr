@@ -1,7 +1,7 @@
 package com.huotu.ymr.service.impl;
 
-import com.huotu.ymr.entity.Article;
-import com.huotu.ymr.service.ArticleService;
+import com.huotu.ymr.entity.CrowdFundingPublic;
+import com.huotu.ymr.service.CrowdFoundingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,30 +10,29 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Created by xhk on 2015/12/1.
+ * Created by xhk on 2015/12/2.
  */
 @Service
-public class ArticleServiceImpl implements ArticleService {
+public class CrowdFoundingServiceImpl implements CrowdFoundingService{
 
     @Autowired
     private EntityManager entityManager;
 
     @Override
-    public List<Article> findArticleListFromLastIdWithNumber(Integer categoryId, Long lastId,int number) {
-
+    public List<CrowdFundingPublic> findCrowdListFromLastIdWithNumber(Long crowdId, Long lastId, int number) {
         StringBuilder hql = new StringBuilder();
-        hql.append("from Article as art where art.category.id=:catId and art.id<:lastId order by art.id desc");
+        hql.append("from CrowdFundingPublic as crowd where crowd.crowdFunding.id=:crowdId and crowd.id<:lastId order by crowd.id desc");
         Query query = entityManager.createQuery(hql.toString());
-        query.setParameter("catId", categoryId);
+        query.setParameter("catId", crowdId);
         query.setParameter("lastId", lastId);
         query.setMaxResults(number);
-        List<Article> articleList = query.getResultList();
-        return articleList;
+        List<CrowdFundingPublic> crowdList = query.getResultList();
+        return crowdList;
     }
 
     @Override
     public long getMaxId() {
-        StringBuilder hql =new StringBuilder("select max(art.id) from Article as art");
+        StringBuilder hql =new StringBuilder("select max(crowd.id) from CrowdFundingPublic as crowd");
         Query query=entityManager.createQuery(hql.toString());
         List<Long> maxIds=query.getResultList();
         long maxId=0L;
