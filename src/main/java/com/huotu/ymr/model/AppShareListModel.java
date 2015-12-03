@@ -28,6 +28,16 @@ public class AppShareListModel {
     private String title;
 
     /**
+     * 图片
+     */
+    private String img;
+
+    /**
+     * 简介
+     */
+    private String intro;
+
+    /**
      * 内容
      */
     private String content;

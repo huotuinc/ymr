@@ -38,6 +38,16 @@ public class Share {
     private CommonEnum.ShareType shareType;
 
     /**
+     * 图片
+     */
+    private String img;
+
+    /**
+     * 简介
+     */
+    private String intro;
+
+    /**
      * 内容
      */
     @Lob

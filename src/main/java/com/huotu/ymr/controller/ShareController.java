@@ -39,6 +39,8 @@ public class ShareController implements ShareSystem {
                 AppShareListModel appShareListModel=new AppShareListModel();
                 appShareListModel.setPId(share.getId());
                 appShareListModel.setTitle(share.getTitle());
+                appShareListModel.setImg(share.getImg());//todo ͼƬ
+                appShareListModel.setIntro(share.getIntro());
                 appShareListModel.setComment(share.getComment());
                 appShareListModel.setContent(share.getContent());
                 appShareListModel.setPraise(share.getPraise());
@@ -47,7 +49,7 @@ public class ShareController implements ShareSystem {
                 appShareListModel.setStatus(share.getStatus());
                 appShareListModel.setTime(share.getTime());
                 appShareListModel.setTop(share.getTop());
-                appShareListModel.setUserHeadUrl(share.getLinkUrl());
+                appShareListModel.setUserHeadUrl(share.getLinkUrl());//todo ͼƬ
                 appShareListModels[i]=appShareListModel;
             }
             list.outputData(appShareListModels);
@@ -58,6 +60,7 @@ public class ShareController implements ShareSystem {
     @RequestMapping("/share")
     @Override
     public ApiResult share(String title, String content) throws Exception {
+
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
