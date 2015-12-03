@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Cacheable(value = false)
-public class ShareComment {
+public class ShareComment implements YmrReply {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Cacheable(value = false)
-public class Share {
+public class Share implements YmrComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
