@@ -2,16 +2,24 @@ package com.huotu.ymr.controller;
 
 import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
+import com.huotu.common.base.RegexHelper;
 import com.huotu.ymr.api.CrowdFundingSystem;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingPublic;
+import com.huotu.ymr.entity.User;
+import com.huotu.ymr.exception.CrowdException;
 import com.huotu.ymr.model.*;
+import com.huotu.ymr.repository.CrowdFundingPublicRepository;
+import com.huotu.ymr.repository.CrowdFundingRepository;
+import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CrowdFundingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,6 +31,15 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @Autowired
     CrowdFundingService crowdFundingService;
+
+    @Autowired
+    CrowdFundingRepository crowdFundingRepository;
+
+    @Autowired
+    CrowdFundingPublicRepository crowdFundingPublicRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @RequestMapping("/getCrowdFundingList")
     @Override
@@ -86,8 +103,35 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/raiseSubscription")
     @Override
-    public ApiResult raiseSubscription(Double money, String name, String phone, String remark) throws Exception {
-        return null;
+    public ApiResult raiseSubscription(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception {
+        CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
+        double startMoeny=crowdFunding.getStartMoeny();
+        User user=new User();
+        if(userId==null){
+            throw new CrowdException("用户请求非法");
+        }else{
+            user=userRepository.findOne(userId);
+        }
+        if(user==null){
+            throw new CrowdException("用户不存在");
+            //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER);
+        }else if (RegexHelper.IsValidMobileNo(phone)) {
+            throw new CrowdException("手机号码格式不正确");
+            //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE);
+        }else if(startMoeny>money){
+            throw new CrowdException("认购金额小于起购金额");
+            //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MONEY);
+        }else {
+            CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
+            crowdFundingPublic.setOwnerId(userId);
+            crowdFundingPublic.setTime(new Date());
+            crowdFundingPublic.setMoney(money);
+            crowdFundingPublic.setPhone(phone);
+            crowdFundingPublic.setRemark(remark);
+            //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中
+            return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+
+        }
     }
 
     @RequestMapping("/getSubscriptionList")

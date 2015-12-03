@@ -2,16 +2,14 @@ package com.huotu.ymr.controller;
 
 import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.MvcConfig;
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingPublic;
-import com.huotu.ymr.repository.CrowdFundingBookingRepository;
-import com.huotu.ymr.repository.CrowdFundingMoneyRangeRepository;
-import com.huotu.ymr.repository.CrowdFundingPublicRepository;
-import com.huotu.ymr.repository.CrowdFundingRepository;
+import com.huotu.ymr.entity.User;
+import com.huotu.ymr.repository.*;
 import com.huotu.ymr.service.CrowdFundingService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,10 +47,8 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Autowired
     CrowdFundingMoneyRangeRepository crowdFundingMoneyRangeRepository;
 
-    @Before
-    public void init() {
-
-    }
+    @Autowired
+    UserRepository userRepository;
 
     //众筹项目的存储
     public List<CrowdFunding> saveCrowdFunding(){
@@ -89,6 +85,18 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             crowdFundingPublicList.add(crowdFundingPublic);
         }
         return crowdFundingPublicList;
+    }
+
+    //存储一个用户
+    public User saveOneUser(){
+        User user=new User();
+        String token=UUID.randomUUID().toString().replace("-", "");
+        user.setScore(0);
+        user.setToken(token);
+        user.setId(1L);//todo 用户信息完善
+        user.setUserLevel(CommonEnum.UserLevel.three);
+        user=userRepository.saveAndFlush(user);
+        return user;
     }
 
     @Test
@@ -144,6 +152,69 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Test
     public void testRaiseSubscription() throws Exception {
 
+        //进行用户存在判断
+        List<User> users=userRepository.findAll();
+        if(users.size()<=0){
+            saveOneUser();
+            users=userRepository.findAll();
+        }
+        //进行认购项目存储
+        CrowdFunding crowdFunding=new CrowdFunding();
+        crowdFunding.setToMoeny(200000.00);
+        crowdFunding.setStartMoeny(50000.00);
+        crowdFunding.setName("认购项目0");
+        crowdFunding.setStartTime(new Date());
+        crowdFunding.setAgencyFeeRate(10);
+        crowdFunding.setContent("这是认购项目0");
+        crowdFunding.setCrowdFundingType(CommonEnum.CrowdFundingType.subscription);
+
+        //删除认购中与要认购项目同名的项目
+        List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
+        for(CrowdFunding crowF:crowdFundings){
+            if(crowF.getName().equals(crowdFunding.getName())){
+                crowdFundingRepository.delete(crowF);
+            }
+        }
+        crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+
+        //正常请求
+        mockMvc.perform(get("/app/raiseSubscription")
+                .param("money", 50000 + "")
+                .param("phone", 13852108585.0 + "")
+                .param("remark", "我要认购hahaha!")
+                .param("crowdId", crowdFunding.getId() + "")
+                .param("userId", users.get(0).getId() + ""))
+                .andReturn();
+
+        //获取请求后的认购数据表信息进行断言
+        CrowdFunding crowdFCheck=new CrowdFunding();
+        crowdFundings=crowdFundingRepository.findAll();
+        for(CrowdFunding crowF:crowdFundings){
+            if(crowF.getName().equals(crowdFunding.getName())){
+                crowdFCheck=crowF;
+            }
+        }
+        Assert.assertSame("提交认购，断言获取的对象与提交的对象是否相同", crowdFunding,crowdFCheck);
+
+//        //认购金额小于起购金额报错
+//        String result=mockMvc.perform(get("/app/raiseSubscription")
+//                .param("money", 40000 + "")
+//                .param("phone",13852108585.0+"")
+//                .param("remark", "我要认购hahaha!")
+//                .param("crowdId",crowdFunding.getId()+"")
+//                .param("userId",users.get(0).getId()+""))
+//                .andReturn().getResponse().getErrorMessage();
+//        Assert.assertEquals("认购金额小于起购金额报错断言","认购金额小于起购金额",result);
+//
+//        //认购手机格式错误报错
+//        String result1=mockMvc.perform(get("/app/raiseSubscription")
+//                .param("money", 50000 + "")
+//                .param("phone",138521085.0+"")
+//                .param("remark", "我要认购hahaha!")
+//                .param("crowdId",crowdFunding.getId()+"")
+//                .param("userId",users.get(0).getId()+""))
+//                .andReturn().getResponse().getErrorMessage();
+//        Assert.assertEquals("认购手机格式错误报错","手机号码格式不正确",result1);
     }
 
 
