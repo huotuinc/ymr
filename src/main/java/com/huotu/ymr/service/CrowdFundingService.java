@@ -20,4 +20,11 @@ public interface CrowdFundingService {
      * @return
      */
     long getMaxId();
+
+    /**
+     * 通过关键字和每页条数查找合作发起人的下一页
+     * @return
+     */
+    List<CrowdFundingPublic> searchCooperationgList(String key, Long lastId, Long crowdId, int number);
+
 }

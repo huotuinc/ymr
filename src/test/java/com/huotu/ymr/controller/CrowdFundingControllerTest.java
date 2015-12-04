@@ -87,6 +87,24 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         }
         return crowdFundingPublicList;
     }
+    //规律的中文名字存储认购人的存储
+    private List<CrowdFundingPublic> saveChineseCrowdFundingPublic(List<CrowdFunding> crowdFundings) {
+        List<CrowdFundingPublic> crowdFundingPublicList=new ArrayList<CrowdFundingPublic>();
+        String[] chinese={"徐和","和康","徐康"};
+        for(int i=0;i<80;i++) {
+            CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
+            String name = UUID.randomUUID().toString();
+            crowdFundingPublic.setName(name+chinese[i%3]);
+            crowdFundingPublic.setMoney(50000.00);
+            crowdFundingPublic.setCrowdFunding(crowdFundings.get((int) (Math.random() * 2)));
+            crowdFundingPublic.setOwnerId(Long.parseLong(i + ""));
+            crowdFundingPublic.setTime(new Date());
+            crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
+            crowdFundingPublicList.add(crowdFundingPublic);
+        }
+        return crowdFundingPublicList;
+    }
+
 
     //存储一个用户
     public List<User> saveUsers(){
@@ -146,7 +164,68 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 
     @Test
     public void testGetRaiseCooperationList() throws Exception {
+        //进行众筹和中文认购者的存贮
+        List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
+        List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingPublicRepository.findAll();
+        if(crowdFundings.size()<2){
+            saveCrowdFunding();
+            crowdFundings=crowdFundingRepository.findAll();
+        }
+            saveChineseCrowdFundingPublic(crowdFundings);
+            crowdFundingPublicList=crowdFundingPublicRepository.findAll();
 
+
+        String key="和";
+        //进行认购者列表第一页的请求
+        String result=mockMvc.perform(get("/app/getRaiseCooperationList").param("crowdId", crowdFundings.get(0).getId() + "").param("key",key))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.searchCooperationgList(key, crowdFundings.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
+        List<HashMap> list = JsonPath.read(result, "$.resultData.list");
+        System.out.println(result);
+        for(int i=0;i<crowdFundingPublics.size();i++) {
+            Assert.assertEquals("请求搜索的认购者列表第一页pid断言", crowdFundingPublics.get(i).getOwnerId().longValue(),Long.parseLong(list.get(i).get("pid") + ""));
+           // Assert.assertEquals("请求搜索的认购者列表第一页time断言",crowdFundingPublics.get(i).getTime().getTime(),list.get(i).get("time"));
+            Assert.assertEquals("请求搜索的认购者列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
+        }
+        //进行认购者列表下页页的请求
+        String result1=mockMvc.perform(get("/app/getRaiseCooperationList").param("key", key).param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+""))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.searchCooperationgList(key, crowdFundings.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);
+        List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
+        System.out.println(result1);
+        for(int i=0;i<crowdFundingPublics1.size();i++) {
+            Assert.assertEquals("请求搜索的认购者列表下页pid断言", crowdFundingPublics1.get(i).getOwnerId().longValue(), Long.parseLong(list1.get(i).get("pid") + ""));
+           // Assert.assertEquals("请求搜索的认购者列表下页time断言",crowdFundingPublics1.get(i).getTime().getTime(),list1.get(i).get("time"));
+            Assert.assertEquals("请求搜索的认购者列表下页name断言", crowdFundingPublics1.get(i).getName(), list1.get(i).get("name"));
+        }
+
+        //进行认购者列表最后一页的请求
+        String result2=mockMvc.perform(get("/app/getRaiseCooperationList").param("key", key).param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+""))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFundingPublic> crowdFundingPublics2=crowdFundingService.searchCooperationgList(key, crowdFundings.get(0).getId(), 0L, 10);
+        List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
+        System.out.println(result2);
+        for(int i=0;i<crowdFundingPublics2.size();i++) {
+            Assert.assertEquals("请求搜索的认购者列表下页pid断言", crowdFundingPublics2.get(i).getOwnerId().longValue(), Long.parseLong(list2.get(i).get("pid") + ""));
+           // Assert.assertEquals("请求搜索的认购者列表下页time断言",crowdFundingPublics2.get(i).getTime().getTime(),list2.get(i).get("time"));
+            Assert.assertEquals("请求搜索的认购者列表下页name断言", crowdFundingPublics2.get(i).getName(), list2.get(i).get("name"));
+        }
+
+        //进行搜索的认购者列表不存在页的请求
+        long maxId=0;
+        for(CrowdFunding funding:crowdFundings){
+            if(funding.getId()>maxId){
+                maxId=funding.getId();
+            }
+        }
+        key="罗";
+        String result3=mockMvc.perform(get("/app/getRaiseCooperationList")
+                .param("key", key)
+                .param("crowdId", crowdFundings.get(0).getId() + "")
+                .param("lastId",crowdFundingPublicList.get(40).getId()+""))
+                .andReturn().getResponse().getContentAsString();
+        List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
+        Assert.assertEquals("请求搜索的认购者列表下页条数断言", 0, list3.size());
     }
 
     @Test
@@ -235,15 +314,6 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFunding.setContent("这是认购项目0");
         crowdFunding.setCrowdFundingType(CommonEnum.CrowdFundingType.subscription);
         crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
-
-//        //删除该认购项目中的认购者，保证认购者只有一个传入的，保证断言
-//        List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingPublicRepository.findAll();
-//        for(CrowdFundingPublic crowF:crowdFundingPublicList) {
-//            if (crowF.getCrowdFunding().getId().equals(crowdFunding.getId())){
-//                crowdFundingPublicRepository.delete(crowF);
-//            }
-//        }
-
 
         double lastMoney=50000.00*(100-crowdFunding.getAgencyFeeRate())/100;
         CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();

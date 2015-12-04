@@ -99,11 +99,12 @@ public interface CrowdFundingSystem {
      * @param name   姓名
      * @param phone  联系电话
      * @param remark 备注
+     * @param crowdId 众筹项目id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseCooperation(Double money, String name, String phone, String remark) throws Exception;
+    ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId) throws Exception;
 
 
     /**
@@ -112,11 +113,12 @@ public interface CrowdFundingSystem {
      * @param list
      * @param key    搜索关键字
      * @param lastId 上一页最后一个Id
+     * @param crowdId  众筹id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getRaiseCooperationList(Output<AppRaiseCooperationListModel> list, String key, Long lastId) throws Exception;
+    ApiResult getRaiseCooperationList(Output<AppRaiseCooperationListModel[]> list, String key, Long lastId,Long crowdId) throws Exception;
 
     /**
      * 合作

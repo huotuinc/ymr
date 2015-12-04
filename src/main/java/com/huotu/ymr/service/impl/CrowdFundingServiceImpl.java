@@ -41,4 +41,19 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
         }
         return maxId;
     }
+
+    @Override
+    public List<CrowdFundingPublic> searchCooperationgList(String key, Long lastId, Long crowdId, int number) {
+        StringBuilder hql=new StringBuilder("from CrowdFundingPublic as crowd where crowd.crowdFunding.id=:crowdId " +
+                " and crowd.id<:lastId" +
+                " and crowd.name like :key"+
+                " order by crowd.id desc");
+        Query query=entityManager.createQuery(hql.toString());
+        query.setParameter("key","%"+key+"%");
+        query.setParameter("crowdId", crowdId);
+        query.setParameter("lastId", lastId);
+        query.setMaxResults(number);
+        List<CrowdFundingPublic> crowdList = query.getResultList();
+        return crowdList;
+    }
 }

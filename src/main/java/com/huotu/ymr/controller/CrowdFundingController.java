@@ -90,14 +90,31 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/raiseCooperation")
     @Override
-    public ApiResult raiseCooperation(Double money, String name, String phone, String remark) throws Exception {
-        return null;
+    public ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId) throws Exception {
+      return null;
     }
 
     @RequestMapping("/getRaiseCooperationList")
     @Override
-    public ApiResult getRaiseCooperationList(Output<AppRaiseCooperationListModel> list, String key, Long lastId) throws Exception {
-        return null;
+    public ApiResult getRaiseCooperationList(Output<AppRaiseCooperationListModel[]> list, String key, Long lastId,Long crowdId) throws Exception {
+        int number=10; //todo 每页条数
+        if(lastId==null){
+            lastId=crowdFundingService.getMaxId()+1;
+        }//如果为null则默认第一页
+        List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingService.searchCooperationgList(key,lastId,crowdId,number);
+        List<AppRaiseCooperationListModel> appRaiseCooperationListModels=new ArrayList<AppRaiseCooperationListModel>();
+        for(CrowdFundingPublic crowdFundingPublic:crowdFundingPublicList){
+            AppRaiseCooperationListModel appRaiseCooperationListModel=new AppRaiseCooperationListModel();
+            appRaiseCooperationListModel.setName(crowdFundingPublic.getName());
+            appRaiseCooperationListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
+            appRaiseCooperationListModel.setPid(crowdFundingPublic.getOwnerId());//todo pid是什么id
+            //appRaiseCooperationListModel.setAmount(crowdFundingPublic.getAmount);// todo 合作人数是否在实体类中加一个字段
+            String tip="我有"+crowdFundingPublic.getMoney()/10000+"万，找人合作筹募";//todo 以什么为单位
+            appRaiseCooperationListModel.setTip(tip);
+            appRaiseCooperationListModels.add(appRaiseCooperationListModel);
+        }
+        list.outputData(appRaiseCooperationListModels.toArray(new AppRaiseCooperationListModel[crowdFundingPublicList.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/goCooperation")
@@ -196,7 +213,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             appSubscriptionListModel.setMoney(crowdFundingPublic.getMoney());
             appSubscriptionListModel.setName(crowdFundingPublic.getName());
             appSubscriptionListModel.setStatus(crowdFundingPublic.getStatus());
-            appSubscriptionListModel.setPid(crowdFundingPublic.getOwnerId());
+            appSubscriptionListModel.setPid(crowdFundingPublic.getOwnerId()); //todo pid是什么id
             appSubscriptionListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
             appSubscriptionListModelList.add(appSubscriptionListModel);
         }
