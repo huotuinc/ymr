@@ -100,11 +100,12 @@ public interface CrowdFundingSystem {
      * @param phone  联系电话
      * @param remark 备注
      * @param crowdId 众筹项目id
+     * @param userId 认购人id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId) throws Exception;
+    ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
 
 
     /**

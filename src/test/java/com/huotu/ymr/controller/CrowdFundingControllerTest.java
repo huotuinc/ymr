@@ -160,6 +160,74 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Test
     public void testRaiseCooperation() throws Exception {
 
+        //进行用户存在判断
+        List<User> users=userRepository.findAll();
+        if(users.size()<=0){
+            saveUsers();
+            users=userRepository.findAll();
+        }
+        //进行合作项目存储
+        CrowdFunding crowdFunding=new CrowdFunding();
+        crowdFunding.setToMoeny(200000.00);
+        crowdFunding.setStartMoeny(50000.00);
+        crowdFunding.setName("合作项目0");
+        crowdFunding.setStartTime(new Date());
+        crowdFunding.setAgencyFeeRate(10);
+        crowdFunding.setContent("这是合作项目0");
+        crowdFunding.setCrowdFundingType(CommonEnum.CrowdFundingType.booking);
+        crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+
+        double lastMoney=50000.00*(100-crowdFunding.getAgencyFeeRate())/100;
+        CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
+        crowdFundingPublic.setMoney(lastMoney);
+        crowdFundingPublic.setPhone(13852108585.0+"");
+        crowdFundingPublic.setRemark("我要发起合作hahaha!");
+        crowdFundingPublic.setAgencyFee(50000.00 - lastMoney);
+        crowdFundingPublic.setName("发起合作者");
+        //正常请求
+        mockMvc.perform(get("/app/raiseSubscription")
+                .param("money", 50000 + "")
+                .param("name", crowdFundingPublic.getName())
+                .param("phone", crowdFundingPublic.getPhone())
+                .param("remark", crowdFundingPublic.getRemark())
+                .param("crowdId", crowdFunding.getId() + "")
+                .param("userId", users.get(0).getId() + ""))
+                .andReturn();
+
+        //获取请求后的合作数据表信息进行断言
+        CrowdFundingPublic crowdFCheck=new CrowdFundingPublic();
+        List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingPublicRepository.findAll();
+        for(CrowdFundingPublic crowF:crowdFundingPublicList){
+            if(crowF.getCrowdFunding()!=null) {
+                if (crowF.getCrowdFunding().getId() == crowdFunding.getId()&&crowF.getOwnerId()==users.get(0).getId()) {
+                    crowdFCheck = crowF;
+                }
+            }
+        }
+        Assert.assertEquals("提交合作，断言Money", lastMoney+"", (double) crowdFCheck.getMoney()+"");
+        Assert.assertEquals("提交合作，断言Phone", crowdFundingPublic.getPhone(), crowdFCheck.getPhone());
+        Assert.assertEquals("提交合作，断言Name", crowdFundingPublic.getName(), crowdFCheck.getName());
+        Assert.assertEquals("提交合作，断言Remark", crowdFundingPublic.getRemark(), crowdFCheck.getRemark());
+
+//        //合作金额小于起购金额报错
+//        String result=mockMvc.perform(get("/app/raiseSubscription")
+//                .param("money", 40000 + "")
+//                .param("phone",13852108585.0+"")
+//                .param("remark", "我要认购hahaha!")
+//                .param("crowdId",crowdFunding.getId()+"")
+//                .param("userId",users.get(0).getId()+""))
+//                .andReturn().getResponse().getErrorMessage();
+//        Assert.assertEquals("认购金额小于起购金额报错断言","认购金额小于起购金额",result);
+//
+//        //合作手机格式错误报错
+//        String result1=mockMvc.perform(get("/app/raiseSubscription")
+//                .param("money", 50000 + "")
+//                .param("phone",138521085.0+"")
+//                .param("remark", "我要认购hahaha!")
+//                .param("crowdId",crowdFunding.getId()+"")
+//                .param("userId",users.get(0).getId()+""))
+//                .andReturn().getResponse().getErrorMessage();
+//        Assert.assertEquals("认购手机格式错误报错","手机号码格式不正确",result1);
     }
 
     @Test
