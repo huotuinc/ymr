@@ -155,6 +155,61 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Test
     public void testGetBookingList() throws Exception {
 
+        //进行众筹和预约者的存贮
+        List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
+        List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingPublicRepository.findAll();
+        if(crowdFundings.size()<2){
+            saveCrowdFunding();
+            crowdFundings=crowdFundingRepository.findAll();
+        }
+        if(crowdFundingPublicList.size()<80){
+            saveCrowdFundingPublic(crowdFundings);
+            crowdFundingPublicList=crowdFundingPublicRepository.findAll();
+        }
+        //进行预约者列表第一页的请求
+        String result=mockMvc.perform(get("/app/getBookingList").param("crowdId",crowdFundings.get(0).getId()+""))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
+        List<HashMap> list = JsonPath.read(result, "$.resultData.list");
+        for(int i=0;i<crowdFundingPublics.size();i++) {
+            Assert.assertEquals("请求预约者列表第一页pid断言", crowdFundingPublics.get(i).getOwnerId().longValue(), Long.parseLong(list.get(i).get("pid") + ""));
+            Assert.assertEquals("请求预约者列表第一页time断言",crowdFundingPublics.get(i).getTime().getTime(),list.get(i).get("time"));
+            Assert.assertEquals("请求预约者列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
+        }
+        //进行认购者列表下页页的请求
+        String result1=mockMvc.perform(get("/app/getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+""))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);
+        List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
+        for(int i=0;i<crowdFundingPublics1.size();i++) {
+            Assert.assertEquals("请求预约者列表下页pid断言", crowdFundingPublics1.get(i).getOwnerId().longValue(), Long.parseLong(list1.get(i).get("pid") + ""));
+            Assert.assertEquals("请求预约者列表下页time断言",crowdFundingPublics1.get(i).getTime().getTime(),list1.get(i).get("time"));
+            Assert.assertEquals("请求预约者列表下页name断言", crowdFundingPublics1.get(i).getName(), list1.get(i).get("name"));
+        }
+
+        //进行认购者列表最后一页的请求
+        String result2=mockMvc.perform(get("/app/getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+""))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFundingPublic> crowdFundingPublics2=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(),0L, 10);
+        List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
+        for(int i=0;i<crowdFundingPublics2.size();i++) {
+            Assert.assertEquals("请求预约者列表下页pid断言", crowdFundingPublics2.get(i).getOwnerId().longValue(), Long.parseLong(list2.get(i).get("pid") + ""));
+            Assert.assertEquals("请求预约者列表下页time断言",crowdFundingPublics2.get(i).getTime().getTime(),list2.get(i).get("time"));
+            Assert.assertEquals("请求预约者列表下页name断言", crowdFundingPublics2.get(i).getName(), list2.get(i).get("name"));
+        }
+
+        //进行认购者列表不存在页的请求
+        long maxId=0;
+        for(CrowdFunding funding:crowdFundings){
+            if(funding.getId()>maxId){
+                maxId=funding.getId();
+            }
+        }
+        String result3=mockMvc.perform(get("/app/getBookingList").param("crowdId",(maxId+1)+""))
+                .andReturn().getResponse().getContentAsString();
+        List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
+        Assert.assertEquals("请求预约者列表下页条数断言", 0, list3.size());
+
     }
 
     @Test

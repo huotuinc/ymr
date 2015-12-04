@@ -86,11 +86,12 @@ public interface CrowdFundingSystem {
      *
      * @param list
      * @param lastId 上一页最后一个Id
+     * @param crowdId 上一页最后一个Id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getBookingList(Output<AppBookingListModel> list, Long lastId) throws Exception;
+    ApiResult getBookingList(Output<AppBookingListModel[]> list, Long lastId,Long crowdId) throws Exception;
 
     /**
      * 发起合作

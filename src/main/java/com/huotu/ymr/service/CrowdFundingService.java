@@ -27,4 +27,5 @@ public interface CrowdFundingService {
      */
     List<CrowdFundingPublic> searchCooperationgList(String key, Long lastId, Long crowdId, int number);
 
+
 }

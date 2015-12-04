@@ -84,8 +84,23 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/getBookingList")
     @Override
-    public ApiResult getBookingList(Output<AppBookingListModel> list, Long lastId) throws Exception {
-        return null;
+    public ApiResult getBookingList(Output<AppBookingListModel[]> list, Long lastId,Long crowdId) throws Exception {
+        if(lastId==null){
+            lastId=crowdFundingService.getMaxId()+1;
+        }//如果为null则默认第一页
+        int number=10; //todo 单页表格的数据个数
+        List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdId, lastId, number);
+        List<AppBookingListModel> appBookingListModels=new ArrayList<AppBookingListModel>();
+        for(CrowdFundingPublic crowdFundingPublic:crowdFundingPublicList){
+            AppBookingListModel appBookingListModel=new AppBookingListModel();
+            appBookingListModel.setTime(crowdFundingPublic.getTime());
+            appBookingListModel.setName(crowdFundingPublic.getName());
+            appBookingListModel.setPid(crowdFundingPublic.getOwnerId()); //todo pid是什么id
+            appBookingListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
+            appBookingListModels.add(appBookingListModel);
+        }
+        list.outputData(appBookingListModels.toArray(new AppBookingListModel[crowdFundingPublicList.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/raiseCooperation")
