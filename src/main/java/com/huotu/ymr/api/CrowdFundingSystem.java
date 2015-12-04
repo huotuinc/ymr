@@ -125,11 +125,14 @@ public interface CrowdFundingSystem {
      * @param name   姓名
      * @param phone  联系电话
      * @param remark 备注
-     * @return
+     * @param crowdId 众筹id
+     * @param crowdPublicId 合作发起人id
+     * @param userId 合作者的id
+     * @returnid
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult goCooperation(Double money, String name, String phone, String remark) throws Exception;
+    ApiResult goCooperation(Double money, String name, String phone, String remark,Long crowdId,Long crowdPublicId,Long userId) throws Exception;
 
 
     /**
@@ -140,12 +143,12 @@ public interface CrowdFundingSystem {
      * @param phone  联系电话
      * @param remark 备注
      * @param crowdId 众筹项目id
-     * @param ownerId 认购人id
+     * @param userId 认购人id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseSubscription(Double money, String name, String phone, String remark,Long crowdId,Long ownerId) throws Exception;
+    ApiResult raiseSubscription(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
 
     /**
      * 获取认购列表

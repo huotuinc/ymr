@@ -6,10 +6,12 @@ import com.huotu.common.base.RegexHelper;
 import com.huotu.ymr.api.CrowdFundingSystem;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.CrowdFunding;
+import com.huotu.ymr.entity.CrowdFundingBooking;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.exception.CrowdException;
 import com.huotu.ymr.model.*;
+import com.huotu.ymr.repository.CrowdFundingBookingRepository;
 import com.huotu.ymr.repository.CrowdFundingPublicRepository;
 import com.huotu.ymr.repository.CrowdFundingRepository;
 import com.huotu.ymr.repository.UserRepository;
@@ -37,6 +39,9 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @Autowired
     CrowdFundingPublicRepository crowdFundingPublicRepository;
+
+    @Autowired
+    CrowdFundingBookingRepository crowdFundingBookingRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -97,8 +102,44 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/goCooperation")
     @Override
-    public ApiResult goCooperation(Double money, String name, String phone, String remark) throws Exception {
-        return null;
+    public ApiResult goCooperation(Double money, String name, String phone, String remark,Long crowdId,Long crowdPublicId,Long userId) throws Exception {
+        CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
+        CrowdFundingPublic crowdFundingPublic=new CrowdFundingPublic();
+        User user=new User();
+        if(userId==null){
+            throw new CrowdException("用户请求非法");
+        }else{
+            user=userRepository.findOne(userId);
+        }
+        if(crowdPublicId==null){
+            throw new CrowdException("所要合作的合作人身份不合法");
+        }else{
+            crowdFundingPublic=crowdFundingPublicRepository.findOne(crowdPublicId);
+        }
+        if(crowdFundingPublic==null){
+            throw new CrowdException("发起人用户不存在");
+        }else if(crowdFunding==null){
+            throw new CrowdException("众筹项目不存在");
+        }else if (RegexHelper.IsValidMobileNo(phone)) {
+            throw new CrowdException("手机号码格式不正确");
+        }
+        else {
+            double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
+            CrowdFundingBooking crowdFundingBooking = new CrowdFundingBooking();
+            crowdFundingBooking.setName(name);
+            crowdFundingBooking.setMoney(lastMoney);
+            crowdFundingBooking.setCrowdFunding(crowdFunding);
+            crowdFundingBooking.setCrowdFundingPublic(crowdFundingPublic);
+            crowdFundingBooking.setPhone(phone);
+            crowdFundingBooking.setRemark(remark);
+            crowdFundingBooking.setTime(new Date());
+            crowdFundingBooking.setOwnerId(userId);
+            crowdFundingBooking.setAgencyFee(money-lastMoney);
+            //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中
+            crowdFundingBooking=crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking);
+            return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+
+        }
     }
 
     @RequestMapping("/raiseSubscription")
@@ -122,13 +163,18 @@ public class CrowdFundingController implements CrowdFundingSystem {
             throw new CrowdException("认购金额小于起购金额");
             //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MONEY);
         }else {
+            double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
             CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
             crowdFundingPublic.setOwnerId(userId);
             crowdFundingPublic.setTime(new Date());
-            crowdFundingPublic.setMoney(money);
+            crowdFundingPublic.setMoney(lastMoney);
             crowdFundingPublic.setPhone(phone);
             crowdFundingPublic.setRemark(remark);
+            crowdFundingPublic.setAgencyFee(money-lastMoney);
+            crowdFundingPublic.setName(name);
+            crowdFundingPublic.setCrowdFunding(crowdFunding);
             //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中
+            crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
             return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
 
         }

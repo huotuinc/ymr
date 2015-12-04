@@ -43,9 +43,7 @@ public class CommonInterceptor implements HandlerInterceptor {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        if(1==1){
-            return true;
-        }
+
 //        logger.debug("==============执行顺序: 0、preHandle================");
 
         if(true){
