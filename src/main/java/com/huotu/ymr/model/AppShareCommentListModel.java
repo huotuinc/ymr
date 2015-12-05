@@ -1,5 +1,6 @@
 package com.huotu.ymr.model;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,11 +13,21 @@ import java.util.Date;
 @Setter
 public class AppShareCommentListModel {
 
+    /**
+     * 评论ID
+     */
     private Long pid;
     /**
      * 评论人
      */
     private String name;
+
+    /**
+     * 评论人等级
+     */
+    private CommonEnum.UserLevel level;
+
+
     /**
      * 头像地址
      */
@@ -31,4 +42,21 @@ public class AppShareCommentListModel {
      * 评论时间
      */
     private Date time;
+
+    /**
+     * 被评论数量
+     */
+    private Integer commentQuantity;
+
+    /**
+     * 被点赞数量
+     */
+    private Integer praiseQuantity;
+
+    /**
+     * 回复内容
+     */
+    private AppShareReplyModel[] replyModels;
+
+
 }

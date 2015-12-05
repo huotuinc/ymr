@@ -2,8 +2,14 @@ package com.huotu.ymr.controller;
 
 import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.MvcConfig;
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.entity.ShareComment;
+import com.huotu.ymr.entity.User;
+import com.huotu.ymr.repository.ShareCommentRepository;
 import com.huotu.ymr.repository.ShareRepository;
+import com.huotu.ymr.repository.UserRepository;
+import com.huotu.ymr.service.ShareCommentService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Assert;
 import org.junit.Before;
@@ -31,6 +37,15 @@ public class ShareControllerTest extends SpringBaseTest {
 
     @Autowired
     ShareRepository shareRepository;
+
+    @Autowired
+    ShareCommentRepository shareCommentRepository;
+
+    @Autowired
+    ShareCommentService shareCommentService;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Before
     public void init() throws Exception {
@@ -127,7 +142,81 @@ public class ShareControllerTest extends SpringBaseTest {
     }
 
     @Test
-    public void testShare() {
+    public void testShare() throws Exception{
+        //测试数据
+        Calendar calendar=Calendar.getInstance();
+        Share share=new Share();
+        share.setOwnerId(123L);
+        share.setTitle("测试分享文章");
+        share.setStatus(true);
+        share.setCommentQuantity(2265L);
+        share.setPraiseQuantity(44L);
+        share=shareRepository.saveAndFlush(share);
+
+        User user=new User();
+        user.setId(123456L);
+        user.setUserLevel(CommonEnum.UserLevel.one);
+        user.setScore(1555);
+        user.setToken("123456789");
+        user=userRepository.saveAndFlush(user);
+
+        ShareComment shareComment=new ShareComment();
+        shareComment.setShare(share);
+        shareComment.setContent("一楼~~");
+        shareComment.setParentId(0L);
+        calendar.add(Calendar.HOUR,1);
+        shareComment.setTime(calendar.getTime());
+        shareComment.setUser(user);
+        shareComment.setParentName("文章");
+        shareComment=shareCommentRepository.saveAndFlush(shareComment);
+        shareComment.setCommentPath("|"+shareComment.getId()+"|");
+        shareCommentRepository.saveAndFlush(shareComment);
+
+
+        ShareComment shareComment1=new ShareComment();
+        shareComment1.setShare(share);
+        shareComment1.setContent("哇靠一楼被抢了");
+        shareComment1.setParentId(shareComment.getId());
+        calendar.add(Calendar.HOUR,1);
+        shareComment1.setTime(calendar.getTime());
+        shareComment1.setUser(user);
+        shareComment1.setParentName("第一名姓名");
+        shareComment1=shareCommentRepository.saveAndFlush(shareComment1);
+        shareComment1.setCommentPath("|"+shareComment.getId()+"|"+shareComment1.getId()+"|");
+        shareCommentRepository.saveAndFlush(shareComment1);
+
+        ShareComment shareComment3=new ShareComment();
+        shareComment3.setShare(share);
+        shareComment3.setContent("你这么喜欢抢一楼啊");
+        shareComment3.setParentId(shareComment1.getId());
+        calendar.add(Calendar.HOUR,1);
+        shareComment3.setTime(calendar.getTime());
+        shareComment3.setUser(user);
+        shareComment3.setParentName("第二名姓名");
+        shareComment3=shareCommentRepository.saveAndFlush(shareComment3);
+        shareComment3.setCommentPath("|"+shareComment.getId()+"|"+shareComment1.getId()+"|"+shareComment3.getId()+"|");
+        shareCommentRepository.saveAndFlush(shareComment1);
+
+        ShareComment shareComment4=new ShareComment();
+        shareComment4.setShare(share);
+        shareComment4.setContent("我是二楼");
+        shareComment4.setParentId(0L);
+        calendar.add(Calendar.HOUR,1);
+        shareComment4.setTime(calendar.getTime());
+        shareComment4.setUser(user);
+        shareComment4.setParentName("文章");
+        shareComment4=shareCommentRepository.saveAndFlush(shareComment4);
+        shareComment4.setCommentPath("|"+shareComment4.getId()+"|");
+        shareCommentRepository.saveAndFlush(shareComment4);
+
+        String result=mockMvc.perform(get("/app/searchShareCommentList")
+                .param("shareId",  share.getId()+"")
+                .param("lastId", "0"))
+                .andReturn().getResponse().getContentAsString();
+        List<Object> resultList= JsonPath.read(result, "$.resultData.list");
+
+
+
 
     }
 

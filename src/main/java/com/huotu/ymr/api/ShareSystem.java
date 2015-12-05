@@ -50,13 +50,14 @@ public interface ShareSystem {
 
 
     /**
-     * 分享评论列表
-     *
-     * @param list
-     * @param lastId
+     * 爱分享评论列表
+
+     * @param list      输出给app的评论列表
+     * @param shareId   爱分享文章ID
+     * @param lastId    最后一条评论的id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult searchShareCommentList(Output<AppShareCommentListModel> list, Long lastId) throws Exception;
+    ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId) throws Exception;
 }

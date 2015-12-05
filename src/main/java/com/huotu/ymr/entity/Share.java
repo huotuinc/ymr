@@ -66,12 +66,12 @@ public class Share implements YmrComment {
     /**
      * 点赞量
      */
-    private Long praise;
+    private Long praiseQuantity;
 
     /**
      * 评论量
      */
-    private Long comment;
+    private Long commentQuantity;
 
     /**
      * 转发量
