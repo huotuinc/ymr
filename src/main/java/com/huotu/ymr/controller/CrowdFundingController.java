@@ -49,19 +49,66 @@ public class CrowdFundingController implements CrowdFundingSystem {
     @RequestMapping("/getCrowdFundingList")
     @Override
     public ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel> list, Long lastId) throws Exception {
+
         return null;
     }
 
     @RequestMapping("/getCrowFindingInfo")
     @Override
     public ApiResult getCrowFindingInfo(Output<AppCrowdFundingModel> data, Long id) throws Exception {
-        return null;
+        CrowdFunding crowdFunding= crowdFundingRepository.findOne(id);
+        AppCrowdFundingModel appCrowdFundingModel=new AppCrowdFundingModel();
+        appCrowdFundingModel.setContent(crowdFunding.getContent());
+        //appCrowdFundingModel.setCurrentBooking(); //TODO 是否增加一个字段记录当前预约人数
+        //appCrowdFundingModel.setCurrentMoeny();  //TODO 是否增加一个字段记录当前money
+        appCrowdFundingModel.setPId(crowdFunding.getId()); //TODO 什么id 这个名字不是personId么，怎么感觉是众筹id.认为是众筹id
+        appCrowdFundingModel.setTime(crowdFunding.getEndTime()); //todo 什么时间 认为是截止时间
+        appCrowdFundingModel.setTitle(crowdFunding.getName());
+        appCrowdFundingModel.setToBooking(crowdFunding.getToBooking());
+        appCrowdFundingModel.setToMoeny(crowdFunding.getToMoeny());
+        appCrowdFundingModel.setStartMoeny(crowdFunding.getStartMoeny());
+        appCrowdFundingModel.setType(crowdFunding.getCrowdFundingType());
+        data.outputData(appCrowdFundingModel);
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/raiseBooking")
     @Override
-    public ApiResult raiseBooking(Double money, String name, String phone, String remark) throws Exception {
-        return null;
+    public ApiResult raiseBooking(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception {
+
+        //todo 支付之后才能下面的操作，暂时缺少支付操作
+        CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
+        double startMoeny=crowdFunding.getStartMoeny();
+        User user=new User();
+        if(userId==null){
+            throw new CrowdException("用户请求非法");
+        }else{
+            user=userRepository.findOne(userId);
+        }
+        if(user==null){
+            throw new CrowdException("用户不存在");
+            //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER);
+        }else if (RegexHelper.IsValidMobileNo(phone)) {
+            throw new CrowdException("手机号码格式不正确");
+            //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE);
+        }else if(startMoeny>money){
+            throw new CrowdException("认购金额小于起购金额");
+            //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MONEY);
+        }else {
+            double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
+            CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
+            crowdFundingPublic.setOwnerId(userId);
+            crowdFundingPublic.setTime(new Date());
+            crowdFundingPublic.setMoney(lastMoney);
+            crowdFundingPublic.setPhone(phone);
+            crowdFundingPublic.setRemark(remark);
+            crowdFundingPublic.setAgencyFee(money-lastMoney);
+            crowdFundingPublic.setName(name);
+            crowdFundingPublic.setCrowdFunding(crowdFunding);
+            //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人人信息，存入合作发起表中
+            crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
+            return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+        }
     }
 
     @RequestMapping("/pay")

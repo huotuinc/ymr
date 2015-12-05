@@ -130,6 +130,21 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Test
     public void testGetCrowFindingInfo() throws Exception {
 
+        //进行众筹项目的预处理
+        List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
+        if(crowdFundings.size()<2){
+            saveCrowdFunding();
+            crowdFundings=crowdFundingRepository.findAll();
+        }
+
+        //进行众筹项目信息请求
+        String result=mockMvc.perform(get("/app/getCrowFindingInfo").param("id",crowdFundings.get(0).getId()+""))
+                .andReturn().getResponse().getContentAsString();
+        System.out.println(result);
+        HashMap map = JsonPath.read(result, "$.resultData.data");
+        Assert.assertEquals("断言众筹项目的id",crowdFundings.get(0).getId()+"",map.get("pid")+"");
+        Assert.assertEquals("断言众筹项目的name",crowdFundings.get(0).getName(),map.get("title"));
+        Assert.assertEquals("断言众筹项目的content",crowdFundings.get(0).getContent(),map.get("content"));
     }
 
     @Test
@@ -176,7 +191,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             Assert.assertEquals("请求预约者列表第一页time断言",crowdFundingPublics.get(i).getTime().getTime(),list.get(i).get("time"));
             Assert.assertEquals("请求预约者列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
         }
-        //进行认购者列表下页页的请求
+        //进行预约者列表下页页的请求
         String result1=mockMvc.perform(get("/app/getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+""))
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);

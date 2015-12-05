@@ -41,11 +41,13 @@ public interface CrowdFundingSystem {
      * @param name   姓名
      * @param phone  联系电话
      * @param remark 备注
+     * @param crowdId 众筹项目id
+     * @param userId 预约用户id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseBooking(Double money, String name, String phone, String remark) throws Exception;
+    ApiResult raiseBooking(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
 
     /**
      * 支付金额
