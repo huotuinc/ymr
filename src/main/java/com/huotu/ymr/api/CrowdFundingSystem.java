@@ -21,7 +21,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel> list, Long lastId) throws Exception;
+    ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception;
 
     /**
      * 众筹详情

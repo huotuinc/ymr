@@ -47,10 +47,30 @@ public class CrowdFundingController implements CrowdFundingSystem {
     UserRepository userRepository;
 
     @RequestMapping("/getCrowdFundingList")
-    @Override
-    public ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel> list, Long lastId) throws Exception {
+    @Override    //todo 传入参数缺少一个用户id，或者用户级别
+    public ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {//todo 通过用户等级来显示可见的众筹项目
+        int number=10; //todo 每页条数
+        if(lastId==null){
+            lastId=crowdFundingService.getCrowdFundingMaxId()+1;
+        }//如果为null则默认第一页
+        List<CrowdFunding> crowdFundings=crowdFundingService.searchCrowdFundingList(lastId,number);
+        List<AppCrowdFundingListModel> appCrowdFundingListModels=new ArrayList<AppCrowdFundingListModel>();
+        for(CrowdFunding crowdFunding:crowdFundings){
+            AppCrowdFundingListModel appCrowdFundingListModel=new AppCrowdFundingListModel();
+            appCrowdFundingListModel.setStartMoeny(crowdFunding.getStartMoeny());
+            appCrowdFundingListModel.setToMoeny(crowdFunding.getToMoeny());
+            appCrowdFundingListModel.setTitle(crowdFunding.getName());
+            //appCrowdFundingListModel.setCurrentBooking(); //todo 是否增加一个字段
+            //appCrowdFundingListModel.setCurrentMoeny(); //todo 是否增加一个字段
+            //appCrowdFundingListModel.setPId(crowdFunding.getId());//todo 什么id
+            appCrowdFundingListModel.setPuctureUrl(crowdFunding.getPuctureUrl());
+            appCrowdFundingListModel.setSummary(crowdFunding.getContent());
+            //appCrowdFundingListModel.setTime();//todo 什么时间，应该有起始和终止时间
 
-        return null;
+            appCrowdFundingListModels.add(appCrowdFundingListModel);
+        }
+        list.outputData(appCrowdFundingListModels.toArray(new AppCrowdFundingListModel[crowdFundings.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/getCrowFindingInfo")

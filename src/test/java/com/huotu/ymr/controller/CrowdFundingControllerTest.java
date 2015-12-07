@@ -122,10 +122,75 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         return userList;
     }
 
+    //通过传入的参数来构建相应数量的众筹项目
+    public List<CrowdFunding> saveSeveralCrowdFunding(int number) {
+        List<CrowdFunding> crowdFundings=new ArrayList<CrowdFunding>();
+        for(int i=0;i<number;i++){
+            CrowdFunding crowdFunding=new CrowdFunding();
+            String name=UUID.randomUUID().toString();
+            crowdFunding.setName(name);
+            crowdFunding.setStartTime(new Date());
+            crowdFunding.setContent("这个是众筹项目" + name);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+            crowdFundings.add(crowdFunding);
+        }
+        return crowdFundings;
+    }
+
     @Test
     public void testGetCrowdFundingList() throws Exception {
+        //进行众筹的存贮
+        List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
+        if(crowdFundings.size()<40){
+            saveSeveralCrowdFunding(40);
+            crowdFundings=crowdFundingRepository.findAll();
+        }
 
+        //进行众筹列表第一页的请求
+        String result=mockMvc.perform(get("/app/getCrowdFundingList"))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFunding> crowdFunding=crowdFundingService.searchCrowdFundingList(crowdFundingService.getMaxId() + 1, 10);
+        List<HashMap> list = JsonPath.read(result, "$.resultData.list");
+        for(int i=0;i<crowdFunding.size();i++) {
+//            Assert.assertEquals("请求众筹表第一页pid断言", crowdFunding.get(i).getOwnerId().longValue(), Long.parseLong(list.get(i).get("pid") + ""));
+//            Assert.assertEquals("请求众筹表第一页time断言",crowdFunding.get(i).getTime().getTime(),list.get(i).get("time"));
+            Assert.assertEquals("请求众筹表第一页name断言",crowdFunding.get(i).getName(),list.get(i).get("title"));
+        }
+        //进行众筹列表下页页的请求
+        String result1=mockMvc.perform(get("/app/getCrowdFundingList").param("lastId",crowdFundings.get(20).getId()+""))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFunding> crowdFunding1=crowdFundingService.searchCrowdFundingList(crowdFundings.get(20).getId(), 10);
+        List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
+        for(int i=0;i<crowdFunding1.size();i++) {
+//            Assert.assertEquals("请求众筹表下页pid断言", crowdFunding1.get(i).getOwnerId().longValue(), Long.parseLong(list1.get(i).get("pid") + ""));
+//            Assert.assertEquals("请求众筹表下页time断言",crowdFunding1.get(i).getTime().getTime(),list1.get(i).get("time"));
+            Assert.assertEquals("请求众筹表下页name断言", crowdFunding1.get(i).getName(), list1.get(i).get("title"));
+        }
+
+        //进行众筹列表最后一页的请求
+        String result2=mockMvc.perform(get("/app/getCrowdFundingList").param("lastId",0+""))
+                .andReturn().getResponse().getContentAsString();
+        List<CrowdFunding> crowdFunding2=crowdFundingService.searchCrowdFundingList(0L, 10);
+        List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
+        for(int i=0;i<crowdFunding2.size();i++) {
+//            Assert.assertEquals("请求众筹列表下页pid断言", crowdFunding2.get(i).getOwnerId().longValue(), Long.parseLong(list2.get(i).get("pid") + ""));
+//            Assert.assertEquals("请求众筹表下页time断言",crowdFunding2.get(i).getTime().getTime(),list2.get(i).get("time"));
+            Assert.assertEquals("请求众筹表下页name断言", crowdFunding2.get(i).getName(), list2.get(i).get("title"));
+        }
+
+        //进行众筹列表不存在页的请求
+        long maxId=0;
+        for(CrowdFunding funding:crowdFundings){
+            if(funding.getId()>maxId){
+                maxId=funding.getId();
+            }
+        }
+        String result3=mockMvc.perform(get("/app/getCrowdFundingList").param("lastId",-1 + ""))
+                .andReturn().getResponse().getContentAsString();
+        List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
+        Assert.assertEquals("请求众筹表下页条数断言", 0, list3.size());
     }
+
 
     @Test
     public void testGetCrowFindingInfo() throws Exception {

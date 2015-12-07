@@ -1,5 +1,6 @@
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.service.CrowdFundingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,29 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
         query.setParameter("lastId", lastId);
         query.setMaxResults(number);
         List<CrowdFundingPublic> crowdList = query.getResultList();
+        return crowdList;
+    }
+
+    @Override
+    public long getCrowdFundingMaxId() {
+        StringBuilder hql =new StringBuilder("select max(crowd.id) from CrowdFunding as crowd");
+        Query query=entityManager.createQuery(hql.toString());
+        List<Long> maxIds=query.getResultList();
+        long maxId=0L;
+        if(maxIds.size()>0&&maxIds.get(0)!=null){
+            maxId=maxIds.get(0);
+        }
+        return maxId;
+    }
+
+    @Override
+    public List<CrowdFunding> searchCrowdFundingList(Long lastId, int number) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFunding as crowd where  crowd.id<:lastId order by crowd.id desc");
+        Query query = entityManager.createQuery(hql.toString());
+        query.setParameter("lastId", lastId);
+        query.setMaxResults(number);
+        List<CrowdFunding> crowdList = query.getResultList();
         return crowdList;
     }
 }
