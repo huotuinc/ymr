@@ -79,7 +79,12 @@ public class ShareController implements ShareSystem {
 
     @RequestMapping("/getShareInfo")
     @Override
-    public ApiResult getShareInfo(Output<AppShareInfoModel> data, String key, Long lastId) throws Exception {
+    public ApiResult getShareInfo(Output<AppShareInfoModel> data,Long shareId) throws Exception {
+        if(shareId==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        Share share=shareService.findOneShare(shareId);
+        AppShareInfoModel shareInfoModel=new AppShareInfoModel();
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 

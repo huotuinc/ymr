@@ -12,5 +12,7 @@ public interface ShareService {
 
     List<Share> findShareList(String key,Long lastId,int pageSize) throws Exception;
 
+    Share findOneShare(Long shareId) throws Exception;
+
 
 }

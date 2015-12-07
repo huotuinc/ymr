@@ -29,6 +29,10 @@ public class AppShareInfoModel {
      */
     private Long praise;
 
+
+    /**
+     * 转发积分
+     */
     private Integer totalScore;
 
     private Integer leaveScore;

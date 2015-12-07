@@ -79,4 +79,9 @@ public class ShareServiceImpl implements ShareService {
         });
         return shares;
     }
+
+    @Override
+    public Share findOneShare(Long shareId) throws Exception {
+        return shareRepository.findOne(shareId);
+    }
 }

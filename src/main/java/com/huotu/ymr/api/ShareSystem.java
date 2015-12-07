@@ -27,7 +27,7 @@ public interface ShareSystem {
     ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId) throws Exception;
 
     /**
-     * 分享内容
+     * 添加爱分享内容
      *
      * @param title
      * @param content
@@ -37,16 +37,15 @@ public interface ShareSystem {
     ApiResult share(String title, String content) throws Exception;
 
     /**
-     * 分享详情
+     * 获取爱分享详情
      *
-     * @param data
-     * @param key
-     * @param lastId
+     * @param data      爱分享详情
+     * @param shareId   爱分享文章ID
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getShareInfo(Output<AppShareInfoModel> data, String key, Long lastId) throws Exception;
+    ApiResult getShareInfo(Output<AppShareInfoModel> data, Long shareId) throws Exception;
 
 
     /**

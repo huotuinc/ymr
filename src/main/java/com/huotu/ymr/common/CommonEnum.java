@@ -1,6 +1,5 @@
 package com.huotu.ymr.common;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.huotu.common.api.ICommonEnum;
 
 /**
@@ -11,7 +10,14 @@ public interface CommonEnum {
         /**
          * SUCCESS(1, "操作成功")
          */
-        SUCCESS(1, "操作成功");
+        SUCCESS(1, "操作成功"),
+        /**
+         * PARAMETER_ERROR(1001,"参数错误")
+         */
+        PARAMETER_ERROR(1001,"参数错误");
+
+
+
         private int value;
 
         private String name;
