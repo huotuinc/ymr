@@ -34,7 +34,7 @@ public interface ShareSystem {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult share(String title, String content,String imgUrl) throws Exception;
+    ApiResult addShare(String title, String content,String imgUrl,Long userId) throws Exception;
 
     /**
      * 获取爱分享详情

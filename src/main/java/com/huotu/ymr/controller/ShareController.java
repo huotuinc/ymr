@@ -4,12 +4,14 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.ymr.api.ShareSystem;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareComment;
 import com.huotu.ymr.model.AppShareCommentListModel;
 import com.huotu.ymr.model.AppShareInfoModel;
 import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.AppShareReplyModel;
+import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.ShareCommentService;
 import com.huotu.ymr.service.ShareService;
@@ -35,6 +37,8 @@ public class ShareController implements ShareSystem {
 
     @Autowired
     CommonConfigService commonConfigService;
+    @Autowired
+    ConfigRepository configRepository;
 
 
     @RequestMapping("/searchShareList")
@@ -69,9 +73,28 @@ public class ShareController implements ShareSystem {
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
-    @RequestMapping("/share")
+    @RequestMapping("/addShare")
     @Override
-    public ApiResult share(String title, String content,String imgUrl) throws Exception {
+    public ApiResult addShare(String title, String content,String imgUrl,Long userId) throws Exception {
+        Config config=configRepository.findOne("integral");//todo
+        if(config==null){
+            config=new Config();
+            config.setKey("integral");
+            config.setValue("0");
+        }
+
+        if(title==null||content==null||imgUrl==null||userId==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        Share share=new Share();
+        share.setOwnerId(userId);
+        share.setStatus(true);
+        share.setTitle(title);
+        share.setContent(content);
+        share.setImg(commonConfigService.getResoureServerUrl()+imgUrl);//todo
+        share.setIntro("");
+        share.setPostReward(Integer.parseInt(config.getValue()));
+
 
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }

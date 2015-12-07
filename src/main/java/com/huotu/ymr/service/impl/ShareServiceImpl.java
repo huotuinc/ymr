@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ·ÖÏíÎÄÕÂ¹ÜÀí
+ * åˆ†äº«æ–‡ç« ç®¡ç†
  * Created by slt on 2015/12/1.
  */
 @Service
@@ -21,19 +21,19 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public List<Share> findShareList(String key,Long lastId,int pageSize) throws Exception{
         StringBuilder hql = new StringBuilder();
-        //²éÕÒµÄ¼ÇÂ¼ÊÇ·ñ×ã¹»
+        //æŸ¥æ‰¾çš„è®°å½•æ˜¯å¦è¶³å¤Ÿ
         boolean isEnough=true;
-        //ÅĞ¶Ï²éÕÒÖÃ¶¥µÄ·ÖÏí»¹ÊÇÆÕÍ¨µÄ·ÖÏí£¬trueÎªÖÃ¶¥
+        //åˆ¤æ–­æŸ¥æ‰¾ç½®é¡¶çš„åˆ†äº«è¿˜æ˜¯æ™®é€šçš„åˆ†äº«ï¼Œtrueä¸ºç½®é¡¶
         Boolean findWho=true;
-        hql.append("select s from Share as s where s.status=true ");
+        hql.append("select s from Share as s where s.status=true and s.checkStatus=1 ");
         if(!StringUtils.isEmpty(key)){
             hql.append(" and s.title like :key ");
         }
 
-        if(lastId==0){//Ã»ÓĞlastId(´ÓµÚÒ»Ò³¿ªÊ¼²é)
+        if(lastId==0){//æ²¡æœ‰lastId(ä»ç¬¬ä¸€é¡µå¼€å§‹æŸ¥)
             hql.append("order by s.top desc,s.id desc");
 
-        }else {//´ÓlastId¿ªÊ¼²é
+        }else {//ä»lastIdå¼€å§‹æŸ¥
             hql.append(" and s.top=:isTop ");
             hql.append(" and s.id<:lastId ");
             hql.append("order by s.id desc");
@@ -56,7 +56,7 @@ public class ShareServiceImpl implements ShareService {
             query.setMaxResults(pageSize);
         });
 
-        //top¿ªÊ¼Ã»ÕÒÈ«µÄ
+        //topå¼€å§‹æ²¡æ‰¾å…¨çš„
         if(lastId!=0 && findWho && list.size()<pageSize){
             String otherHql=hql.toString().replaceAll("and s.id<:lastId"," ");
             Share data=(Share)list.get(list.size() - 1);
@@ -64,7 +64,7 @@ public class ShareServiceImpl implements ShareService {
                 if(!StringUtils.isEmpty(key)){
                     query.setParameter("key","%"+key+"%");
                 }
-                    query.setParameter("isTop",false);
+                query.setParameter("isTop",false);
                 query.setMaxResults(pageSize-list.size());
             });
             list.addAll(otherList);

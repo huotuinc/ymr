@@ -66,21 +66,21 @@ public class Share implements YmrComment {
     /**
      * 点赞量
      */
-    private Long praiseQuantity;
+    private Long praiseQuantity=0L;
 
     /**
      * 评论量
      */
-    private Long commentQuantity;
+    private Long commentQuantity=0L;
 
     /**
      * 转发量
      */
-    private Long relayQuantity;
+    private Long relayQuantity=0L;
     /**
      * 浏览量
      */
-    private Long view;
+    private Long view=0L;
 
     /**
      * 启用外链
@@ -95,7 +95,7 @@ public class Share implements YmrComment {
      * 状态
      * true开启 false 关闭
      */
-    private Boolean status;
+    private Boolean status=true;
 
     /**
      * 发帖奖励的积分
@@ -115,6 +115,16 @@ public class Share implements YmrComment {
      * 已使用积分
      */
     private Integer usedScore;
+
+    /**
+     * 审核状态     0：未通过，1：通过，2审核中
+     */
+    private Integer checkStatus;
+
+    /**
+     * 审核未通过的原因
+     */
+    private String reason;
 
 
 }
