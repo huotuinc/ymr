@@ -27,15 +27,19 @@ public class AppShareInfoModel {
     /**
      * 点赞数量
      */
-    private Long praise;
+    private Long praiseQuantity;
+
+
+    /**
+     * 转发量
+     */
+    private Long relayQuantity;
 
 
     /**
      * 转发积分
      */
-    private Integer totalScore;
-
-    private Integer leaveScore;
+    private Integer relayReward;
 
 
 }

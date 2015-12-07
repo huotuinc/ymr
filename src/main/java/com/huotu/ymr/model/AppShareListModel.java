@@ -54,17 +54,17 @@ public class AppShareListModel {
     /**
      * 点赞量
      */
-    private Long praise;
+    private Long praiseQuantity;
 
     /**
      * 评论量
      */
-    private Long comment;
+    private Long commentQuantity;
 
     /**
      * 转发量
      */
-    private Long relay;
+    private Long relayQuantity;
     /**
      * 转发可得积分
      */

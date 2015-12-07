@@ -76,7 +76,7 @@ public class Share implements YmrComment {
     /**
      * 转发量
      */
-    private Long relay;
+    private Long relayQuantity;
     /**
      * 浏览量
      */

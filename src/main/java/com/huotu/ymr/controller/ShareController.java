@@ -6,7 +6,6 @@ import com.huotu.ymr.api.ShareSystem;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareComment;
-import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.AppShareCommentListModel;
 import com.huotu.ymr.model.AppShareInfoModel;
 import com.huotu.ymr.model.AppShareListModel;
@@ -44,7 +43,7 @@ public class ShareController implements ShareSystem {
         if(lastId==null){
             lastId=0L;
         }
-        List<Share> shares=shareService.findShareList(key,lastId,10);//todo ÄÚ²¿Âß¼­
+        List<Share> shares=shareService.findShareList(key,lastId,10);//todo
         if(shares!=null) {
             AppShareListModel[] appShareListModels = new AppShareListModel[shares.size()];
             for (int i = 0; i < shares.size(); i++) {
@@ -52,17 +51,17 @@ public class ShareController implements ShareSystem {
                 AppShareListModel appShareListModel=new AppShareListModel();
                 appShareListModel.setPId(share.getId());
                 appShareListModel.setTitle(share.getTitle());
-                appShareListModel.setImg(commonConfigService.getResoureServerUrl()+share.getImg());//todo Í¼Æ¬
+                appShareListModel.setImg(commonConfigService.getResoureServerUrl()+share.getImg());//todo
                 appShareListModel.setIntro(share.getIntro());
-                appShareListModel.setComment(share.getCommentQuantity());
+                appShareListModel.setCommentQuantity(share.getCommentQuantity());
                 appShareListModel.setContent(share.getContent());
-                appShareListModel.setPraise(share.getPraiseQuantity());
-                appShareListModel.setRelay(share.getRelay());
+                appShareListModel.setPraiseQuantity(share.getPraiseQuantity());
+                appShareListModel.setRelayQuantity(share.getRelayQuantity());
                 appShareListModel.setRelayScore(share.getRelayReward());
                 appShareListModel.setStatus(share.getStatus());
                 appShareListModel.setTime(share.getTime());
                 appShareListModel.setTop(share.getTop());
-                appShareListModel.setUserHeadUrl(commonConfigService.getResoureServerUrl()+share.getLinkUrl());//todo Í¼Æ¬
+                appShareListModel.setUserHeadUrl(commonConfigService.getResoureServerUrl()+share.getLinkUrl());//todo
                 appShareListModels[i]=appShareListModel;
             }
             list.outputData(appShareListModels);
@@ -72,7 +71,7 @@ public class ShareController implements ShareSystem {
 
     @RequestMapping("/share")
     @Override
-    public ApiResult share(String title, String content) throws Exception {
+    public ApiResult share(String title, String content,String imgUrl) throws Exception {
 
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
@@ -85,6 +84,17 @@ public class ShareController implements ShareSystem {
         }
         Share share=shareService.findOneShare(shareId);
         AppShareInfoModel shareInfoModel=new AppShareInfoModel();
+        if(share!=null){
+            shareInfoModel.setTitle(share.getTitle());
+            shareInfoModel.setTime(share.getTime());
+            shareInfoModel.setContent(share.getContent());
+            shareInfoModel.setPraiseQuantity(share.getPraiseQuantity());
+            shareInfoModel.setRelayReward(share.getRelayReward());
+            shareInfoModel.setRelayQuantity(share.getRelayQuantity());
+            data.outputData(shareInfoModel);
+        }else {
+            data.outputData(null);
+        }
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
@@ -99,7 +109,7 @@ public class ShareController implements ShareSystem {
             AppShareCommentListModel[] appShareCommentListModels=new AppShareCommentListModel[shareComments.size()];
             int n=0;
 
-            //±éÀúmap
+
             for (Map.Entry<Long, List<ShareComment>> entry : shareComments.entrySet()) {
                 List<ShareComment> commentList=entry.getValue();
                 if(commentList==null||commentList.size()==0){
@@ -107,12 +117,11 @@ public class ShareController implements ShareSystem {
                 }
                 AppShareCommentListModel appShareCommentListModel=new AppShareCommentListModel();
                 ShareComment shareComment=commentList.get(0);
-                User user=shareComment.getUser();
                 appShareCommentListModel.setPid(shareComment.getId());
-                appShareCommentListModel.setLevel(user.getUserLevel());
-                appShareCommentListModel.setName("");//todo
+                appShareCommentListModel.setLevel(shareComment.getLevel());
+                appShareCommentListModel.setName(shareComment.getCommentName());//todo
                 appShareCommentListModel.setContent(shareComment.getContent());
-                appShareCommentListModel.setUserHeadUrl("");//todo
+                appShareCommentListModel.setUserHeadUrl(shareComment.getHeadUrl());//todo
                 appShareCommentListModel.setCommentQuantity(shareComment.getCommentQuantity());
                 appShareCommentListModel.setPraiseQuantity(shareComment.getPraiseQuantity());
                 appShareCommentListModel.setTime(shareComment.getTime());
@@ -122,7 +131,7 @@ public class ShareController implements ShareSystem {
                     AppShareReplyModel appShareReplyModel=new AppShareReplyModel();
                     ShareComment reply=commentList.get(i+1);
                     appShareReplyModel.setRid(reply.getId());
-                    appShareReplyModel.setReplyName("");//todo
+                    appShareReplyModel.setReplyName(reply.getCommentName());//todo
                     appShareReplyModel.setContent(reply.getContent());
                     appShareReplyModel.setToReplyName(reply.getParentName());
                     appShareReplyModels[i]=appShareReplyModel;

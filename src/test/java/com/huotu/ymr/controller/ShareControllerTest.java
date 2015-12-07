@@ -135,7 +135,7 @@ public class ShareControllerTest extends SpringBaseTest {
 //            if(i<topShares.size()){
 //                Assert.assertEquals("置顶是否相同",topShares.get(i).getId().toString(),id.toString());
 //            }else {
-//                Assert.assertEquals("不置顶是否相同",shares.get(i-topShares.size()).getId().toString(),id.toString());
+//                Assert.assertEquals("不置顶是否相�?",shares.get(i-topShares.size()).getId().toString(),id.toString());
 //            }
 //        }
 
@@ -147,7 +147,7 @@ public class ShareControllerTest extends SpringBaseTest {
         Calendar calendar=Calendar.getInstance();
         Share share=new Share();
         share.setOwnerId(123L);
-        share.setTitle("测试分享文章");
+        share.setTitle("分享测试文章");
         share.setStatus(true);
         share.setCommentQuantity(2265L);
         share.setPraiseQuantity(44L);
@@ -160,42 +160,52 @@ public class ShareControllerTest extends SpringBaseTest {
         user.setToken("123456789");
         user=userRepository.saveAndFlush(user);
 
+        Map<Long,List<ShareComment>> longListMap=new TreeMap<>();
         ShareComment shareComment=new ShareComment();
         shareComment.setShare(share);
-        shareComment.setContent("一楼~~");
+        shareComment.setContent("我的一楼");
         shareComment.setParentId(0L);
         calendar.add(Calendar.HOUR,1);
         shareComment.setTime(calendar.getTime());
-        shareComment.setUser(user);
+        shareComment.setCommentName("slt");
         shareComment.setParentName("文章");
         shareComment=shareCommentRepository.saveAndFlush(shareComment);
         shareComment.setCommentPath("|"+shareComment.getId()+"|");
-        shareCommentRepository.saveAndFlush(shareComment);
+        shareComment=shareCommentRepository.saveAndFlush(shareComment);
+        List<ShareComment> list1=new ArrayList<>();
+        list1.add(shareComment);
+        longListMap.put(shareComment.getId(),list1);
 
 
         ShareComment shareComment1=new ShareComment();
         shareComment1.setShare(share);
-        shareComment1.setContent("哇靠一楼被抢了");
+        shareComment1.setContent("哇靠，二楼被抢了");
         shareComment1.setParentId(shareComment.getId());
         calendar.add(Calendar.HOUR,1);
         shareComment1.setTime(calendar.getTime());
-        shareComment1.setUser(user);
+        shareComment.setCommentName("slt2");
         shareComment1.setParentName("第一名姓名");
         shareComment1=shareCommentRepository.saveAndFlush(shareComment1);
         shareComment1.setCommentPath("|"+shareComment.getId()+"|"+shareComment1.getId()+"|");
-        shareCommentRepository.saveAndFlush(shareComment1);
+        shareComment1=shareCommentRepository.saveAndFlush(shareComment1);
+        List<ShareComment> list2=longListMap.get(shareComment.getId());
+        list1.add(shareComment1);
+        longListMap.put(shareComment.getId(), list2);
 
         ShareComment shareComment3=new ShareComment();
         shareComment3.setShare(share);
-        shareComment3.setContent("你这么喜欢抢一楼啊");
+        shareComment3.setContent("你这么喜欢抢二楼啊");
         shareComment3.setParentId(shareComment1.getId());
         calendar.add(Calendar.HOUR,1);
         shareComment3.setTime(calendar.getTime());
-        shareComment3.setUser(user);
+        shareComment.setCommentName("slt3");
         shareComment3.setParentName("第二名姓名");
         shareComment3=shareCommentRepository.saveAndFlush(shareComment3);
         shareComment3.setCommentPath("|"+shareComment.getId()+"|"+shareComment1.getId()+"|"+shareComment3.getId()+"|");
-        shareCommentRepository.saveAndFlush(shareComment1);
+        shareComment3=shareCommentRepository.saveAndFlush(shareComment1);
+        List<ShareComment> list3=longListMap.get(shareComment.getId());
+        list3.add(shareComment3);
+        longListMap.put(shareComment.getId(), list3);
 
         ShareComment shareComment4=new ShareComment();
         shareComment4.setShare(share);
@@ -203,17 +213,35 @@ public class ShareControllerTest extends SpringBaseTest {
         shareComment4.setParentId(0L);
         calendar.add(Calendar.HOUR,1);
         shareComment4.setTime(calendar.getTime());
-        shareComment4.setUser(user);
+        shareComment.setCommentName("slt4");
         shareComment4.setParentName("文章");
         shareComment4=shareCommentRepository.saveAndFlush(shareComment4);
         shareComment4.setCommentPath("|"+shareComment4.getId()+"|");
-        shareCommentRepository.saveAndFlush(shareComment4);
+        shareComment4=shareCommentRepository.saveAndFlush(shareComment4);
+        List<ShareComment> list4=new ArrayList<>();
+        list4.add(shareComment4);
+        longListMap.put(shareComment4.getId(), list4);
 
         String result=mockMvc.perform(get("/app/searchShareCommentList")
                 .param("shareId",  share.getId()+"")
                 .param("lastId", "0"))
                 .andReturn().getResponse().getContentAsString();
         List<Object> resultList= JsonPath.read(result, "$.resultData.list");
+
+        for(int i=0;i<resultList.size();i++){
+            List<ShareComment> commentList;
+            Map map=(Map)resultList.get(i);
+            Integer id=(Integer)map.get("pid");
+            if(i==0){
+                 commentList=longListMap.get(shareComment.getId());
+            }else {
+                 commentList=longListMap.get(shareComment4.getId());
+            }
+            Assert.assertEquals("",commentList.get(0).getId().toString(),id.toString());
+
+        }
+
+
 
 
 

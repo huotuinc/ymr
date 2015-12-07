@@ -1,5 +1,6 @@
 package com.huotu.ymr.entity;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,17 +30,22 @@ public class ShareComment implements YmrReply {
     /**
      * 评论人
      */
-    private User user;
+    private Long userId;
 
-//    /**
-//     * 评论人姓名
-//     */
-//    private String commentName;
-//
-//    /**
-//     * 评论人等级
-//     */
-//    private Integer level;
+    /**
+     * 评论人姓名
+     */
+    private String commentName;
+
+    /**
+     * 评论人等级
+     */
+    private CommonEnum.UserLevel level;
+
+    /**
+     * 评论人头像
+     */
+    private String headUrl;
     /**
      * 评论内容
      */
