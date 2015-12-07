@@ -1,5 +1,6 @@
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.service.CrowdFundingService;
@@ -71,10 +72,14 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
     }
 
     @Override
-    public List<CrowdFunding> searchCrowdFundingList(Long lastId, int number) {
+    public List<CrowdFunding> searchCrowdFundingList(Long lastId, int number,CommonEnum.UserLevel userLevel) {
         StringBuilder hql = new StringBuilder();
-        hql.append("from CrowdFunding as crowd where  crowd.id<:lastId order by crowd.id desc");
+//        hql.append("from CrowdFunding as crowd left join crowd.visibleLevel as vlevel " +
+//                " where  crowd.id<:lastId and vlevel.visibleLevel=:level order by crowd.id desc");
+        hql.append("from CrowdFunding as crowd where crowd.id<:lastId " +
+                " and crowd.visibleLevel like :level order by crowd.id desc" );
         Query query = entityManager.createQuery(hql.toString());
+        query.setParameter("level","%"+userLevel.getValue()+"%");
         query.setParameter("lastId", lastId);
         query.setMaxResults(number);
         List<CrowdFunding> crowdList = query.getResultList();

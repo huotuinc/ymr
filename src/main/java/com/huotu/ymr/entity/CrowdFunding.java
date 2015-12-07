@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
 /**
  * 众筹项目
@@ -34,9 +33,9 @@ public class CrowdFunding {
 
     /**
      * 可见等级
+     * 由|分割 如|0|1|2|
      */
-    @ElementCollection
-    private List<CommonEnum.UserLevel> visibleLevel;
+    private String visibleLevel;
     /**
      * 封面图片
      */
@@ -72,6 +71,11 @@ public class CrowdFunding {
      */
     private Double toMoeny;
 
+
+    /**
+     * 目前金额
+     */
+    private Double currentMoeny;
     /**
      * 目标众筹人数 上限人数
      * 只限预约类
@@ -90,5 +94,10 @@ public class CrowdFunding {
      * 默认false
      */
     private boolean pushToShare = false;
+
+    /**
+     * 目前众筹人数
+     */
+    private Long currentBooking;
 
 }

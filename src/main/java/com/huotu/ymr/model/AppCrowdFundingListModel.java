@@ -3,6 +3,8 @@ package com.huotu.ymr.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
@@ -51,4 +53,16 @@ public class AppCrowdFundingListModel {
      * 目前众筹人数
      */
     private Long currentBooking;
+    /**
+     * 开始时间
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTime;
+
+
+    /**
+     * 结束时间
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTime;
 }

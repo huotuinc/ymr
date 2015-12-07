@@ -1,5 +1,6 @@
 package com.huotu.ymr.service;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 
@@ -35,9 +36,9 @@ public interface CrowdFundingService {
     long getCrowdFundingMaxId();
 
     /**
-     * 通过前一页最后一个id，每页显示的条数
+     * 通过前一页最后一个id，每页显示的条数,用户等级userLevel
      * 获取一页众筹表格
      * @return
      */
-    List<CrowdFunding> searchCrowdFundingList(Long lastId, int number);
+    List<CrowdFunding> searchCrowdFundingList(Long lastId, int number,CommonEnum.UserLevel userLevel);
 }

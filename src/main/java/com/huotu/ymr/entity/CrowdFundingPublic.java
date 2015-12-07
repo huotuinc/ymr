@@ -83,4 +83,8 @@ public class CrowdFundingPublic {
      * 默认0
      */
     private Integer status;
+    /**
+     * 合作人数
+     */
+    private Long amount;
 }

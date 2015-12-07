@@ -4,6 +4,8 @@ import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
@@ -28,6 +30,19 @@ public class AppCrowdFundingModel {
      * 时间
      */
     private Date time;
+
+    /**
+     * 开始时间
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTime;
+
+
+    /**
+     * 结束时间
+     */
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTime;
     /**
      * 介绍
      */

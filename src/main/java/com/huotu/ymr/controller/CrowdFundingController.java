@@ -5,6 +5,7 @@ import com.huotu.common.api.Output;
 import com.huotu.common.base.RegexHelper;
 import com.huotu.ymr.api.CrowdFundingSystem;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.PublicParameterHolder;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingBooking;
 import com.huotu.ymr.entity.CrowdFundingPublic;
@@ -47,26 +48,28 @@ public class CrowdFundingController implements CrowdFundingSystem {
     UserRepository userRepository;
 
     @RequestMapping("/getCrowdFundingList")
-    @Override    //todo 传入参数缺少一个用户id，或者用户级别
-    public ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {//todo 通过用户等级来显示可见的众筹项目
+    @Override
+    public ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {
+
+        AppUserInfoModel appUserInfoModel=PublicParameterHolder.get().getCurrentUser();
         int number=10; //todo 每页条数
         if(lastId==null){
             lastId=crowdFundingService.getCrowdFundingMaxId()+1;
         }//如果为null则默认第一页
-        List<CrowdFunding> crowdFundings=crowdFundingService.searchCrowdFundingList(lastId,number);
+        List<CrowdFunding> crowdFundings=crowdFundingService.searchCrowdFundingList(lastId,number,appUserInfoModel.getUserLevel());
         List<AppCrowdFundingListModel> appCrowdFundingListModels=new ArrayList<AppCrowdFundingListModel>();
         for(CrowdFunding crowdFunding:crowdFundings){
             AppCrowdFundingListModel appCrowdFundingListModel=new AppCrowdFundingListModel();
             appCrowdFundingListModel.setStartMoeny(crowdFunding.getStartMoeny());
             appCrowdFundingListModel.setToMoeny(crowdFunding.getToMoeny());
             appCrowdFundingListModel.setTitle(crowdFunding.getName());
-            //appCrowdFundingListModel.setCurrentBooking(); //todo 是否增加一个字段
-            //appCrowdFundingListModel.setCurrentMoeny(); //todo 是否增加一个字段
-            //appCrowdFundingListModel.setPId(crowdFunding.getId());//todo 什么id
+            appCrowdFundingListModel.setCurrentBooking(crowdFunding.getCurrentBooking());
+            appCrowdFundingListModel.setCurrentMoeny(crowdFunding.getCurrentMoeny());
+            appCrowdFundingListModel.setPId(crowdFunding.getId());
             appCrowdFundingListModel.setPuctureUrl(crowdFunding.getPuctureUrl());
             appCrowdFundingListModel.setSummary(crowdFunding.getContent());
-            //appCrowdFundingListModel.setTime();//todo 什么时间，应该有起始和终止时间
-
+            appCrowdFundingListModel.setStartTime(crowdFunding.getStartTime());
+            appCrowdFundingListModel.setEndTime(crowdFunding.getEndTime());
             appCrowdFundingListModels.add(appCrowdFundingListModel);
         }
         list.outputData(appCrowdFundingListModels.toArray(new AppCrowdFundingListModel[crowdFundings.size()]));
@@ -79,10 +82,11 @@ public class CrowdFundingController implements CrowdFundingSystem {
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(id);
         AppCrowdFundingModel appCrowdFundingModel=new AppCrowdFundingModel();
         appCrowdFundingModel.setContent(crowdFunding.getContent());
-        //appCrowdFundingModel.setCurrentBooking(); //TODO 是否增加一个字段记录当前预约人数
-        //appCrowdFundingModel.setCurrentMoeny();  //TODO 是否增加一个字段记录当前money
-        appCrowdFundingModel.setPId(crowdFunding.getId()); //TODO 什么id 这个名字不是personId么，怎么感觉是众筹id.认为是众筹id
-        appCrowdFundingModel.setTime(crowdFunding.getEndTime()); //todo 什么时间 认为是截止时间
+        appCrowdFundingModel.setCurrentBooking(crowdFunding.getCurrentBooking());
+        appCrowdFundingModel.setCurrentMoeny(crowdFunding.getCurrentMoeny());
+        appCrowdFundingModel.setPId(crowdFunding.getId());
+        appCrowdFundingModel.setEndTime(crowdFunding.getEndTime());
+        appCrowdFundingModel.setStartMoeny(crowdFunding.getStartMoeny());
         appCrowdFundingModel.setTitle(crowdFunding.getName());
         appCrowdFundingModel.setToBooking(crowdFunding.getToBooking());
         appCrowdFundingModel.setToMoeny(crowdFunding.getToMoeny());
@@ -96,7 +100,6 @@ public class CrowdFundingController implements CrowdFundingSystem {
     @Override
     public ApiResult raiseBooking(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception {
 
-        //todo 支付之后才能下面的操作，暂时缺少支付操作
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         double startMoeny=crowdFunding.getStartMoeny();
         User user=new User();
@@ -162,7 +165,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             AppBookingListModel appBookingListModel=new AppBookingListModel();
             appBookingListModel.setTime(crowdFundingPublic.getTime());
             appBookingListModel.setName(crowdFundingPublic.getName());
-            appBookingListModel.setPid(crowdFundingPublic.getOwnerId()); //todo pid是什么id
+            appBookingListModel.setPid(crowdFundingPublic.getId());
             appBookingListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
             appBookingListModels.add(appBookingListModel);
         }
@@ -221,9 +224,9 @@ public class CrowdFundingController implements CrowdFundingSystem {
             AppRaiseCooperationListModel appRaiseCooperationListModel=new AppRaiseCooperationListModel();
             appRaiseCooperationListModel.setName(crowdFundingPublic.getName());
             appRaiseCooperationListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
-            appRaiseCooperationListModel.setPid(crowdFundingPublic.getOwnerId());//todo pid是什么id
-            //appRaiseCooperationListModel.setAmount(crowdFundingPublic.getAmount);// todo 合作人数是否在实体类中加一个字段
-            String tip="我有"+crowdFundingPublic.getMoney()/10000+"万，找人合作筹募";//todo 以什么为单位
+            appRaiseCooperationListModel.setPid(crowdFundingPublic.getId());
+            appRaiseCooperationListModel.setAmount(crowdFundingPublic.getAmount());
+            String tip="我有"+crowdFundingPublic.getMoney()/10000+"万，找人合作筹募";//todo 以什么为单位 待定
             appRaiseCooperationListModel.setTip(tip);
             appRaiseCooperationListModels.add(appRaiseCooperationListModel);
         }
@@ -304,7 +307,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setAgencyFee(money-lastMoney);
             crowdFundingPublic.setName(name);
             crowdFundingPublic.setCrowdFunding(crowdFunding);
-            //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中
+//            /crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中
             crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
             return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
 
@@ -327,7 +330,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             appSubscriptionListModel.setMoney(crowdFundingPublic.getMoney());
             appSubscriptionListModel.setName(crowdFundingPublic.getName());
             appSubscriptionListModel.setStatus(crowdFundingPublic.getStatus());
-            appSubscriptionListModel.setPid(crowdFundingPublic.getOwnerId()); //todo pid是什么id
+            appSubscriptionListModel.setPid(crowdFundingPublic.getId());
             appSubscriptionListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
             appSubscriptionListModelList.add(appSubscriptionListModel);
         }
