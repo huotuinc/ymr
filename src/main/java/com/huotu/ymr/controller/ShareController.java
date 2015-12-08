@@ -47,7 +47,7 @@ public class ShareController implements ShareSystem {
         if(lastId==null){
             lastId=0L;
         }
-        List<Share> shares=shareService.findShareList(key,lastId,10);//todo
+        List<Share> shares=shareService.findAppShareList(key, lastId, 10);//todo
         if(shares!=null) {
             AppShareListModel[] appShareListModels = new AppShareListModel[shares.size()];
             for (int i = 0; i < shares.size(); i++) {

@@ -4,9 +4,16 @@ import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.repository.ShareRepository;
 import com.huotu.ymr.service.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +26,7 @@ public class ShareServiceImpl implements ShareService {
     @Autowired
     ShareRepository shareRepository;
     @Override
-    public List<Share> findShareList(String key,Long lastId,int pageSize) throws Exception{
+    public List<Share> findAppShareList(String key,Long lastId,int pageSize) throws Exception{
         StringBuilder hql = new StringBuilder();
         //查找的记录是否足够
         boolean isEnough=true;
@@ -83,5 +90,23 @@ public class ShareServiceImpl implements ShareService {
     @Override
     public Share findOneShare(Long shareId) throws Exception {
         return shareRepository.findOne(shareId);
+    }
+
+    @Override
+    public Share addShare(Share share) throws Exception {
+        return shareRepository.save(share);
+    }
+
+    @Override
+    public Page<Share> findPcShareList(String key, String keyType, Integer pageNo, Integer pageSize) throws Exception {
+        return  shareRepository.findAll(new Specification<Share>() {
+            @Override
+            public Predicate toPredicate(Root<Share> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+                if ("".equals(key)||key==null) {
+                    return null;
+                }
+                return cb.like(root.get("title").as(String.class),"%"+key+"%");
+            }
+        },new PageRequest(pageNo, pageSize));
     }
 }

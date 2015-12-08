@@ -27,6 +27,11 @@ public class Share implements YmrComment {
     private Long ownerId;
 
     /**
+     * 发帖人类型    0:普通会员，1：商家
+     */
+    private Integer ownerType;
+
+    /**
      * 标题
      */
     @Column(length = 200)
@@ -119,7 +124,7 @@ public class Share implements YmrComment {
     /**
      * 审核状态     0：未通过，1：通过，2审核中
      */
-    private Integer checkStatus;
+        private Integer checkStatus;
 
     /**
      * 审核未通过的原因
