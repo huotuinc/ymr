@@ -35,6 +35,8 @@ public class ArticleController implements ArticleSystem {
     @Autowired
     CategoryRepository categoryRepository;
 
+
+
     @Override
     @RequestMapping("/getCategoryList")
     public ApiResult getCategoryList(Output<AppCategoryModel[]> list) throws Exception {

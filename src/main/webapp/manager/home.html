@@ -91,16 +91,16 @@
         mallMenuManager.showShares = function () {
             $(".active").removeClass("active");
             $("#menu01").addClass("active");
-            var _url = /*[['getShareList']]*/ "shareList.html";
+            var _url = /*[['getShareList']]*/ "../manager/share/shareList.html";
             _loadMain(_url);
-            _loadLeftMenu('shareManager.html');
+            _loadLeftMenu('../manager/shareManager.html');
         };
         mallMenuManager.showArticles = function () {
             $(".active").removeClass("active");
             $("#menu02").addClass("active");
             var _url = /*[['getArticleList']]*/ "articleList.html";
             _loadMain(_url);
-            _loadLeftMenu('articleManager.html');
+            _loadLeftMenu('../manager/articleManager.html');
         };
 
         mallMenuManager.showCrowdFundings = function () {
@@ -108,14 +108,14 @@
             $("#menu03").addClass("active");
             var _url = /*[['getCrowdFundingList']]*/ "crowdFundingList.html";
             _loadMain(_url);
-            _loadLeftMenu('crowdFundingManager.html');
+            _loadLeftMenu('../manager/crowdFundingManager.html');
         }
         mallMenuManager.showUsers = function () {
             $(".active").removeClass("active");
             $("#menu03").addClass("active");
             var _url = /*[['getUserList']]*/ "userList.html";
             _loadMain(_url);
-            _loadLeftMenu('userManager.html');
+            _loadLeftMenu('../manager/userManager.html');
         }
         //#endregion
 

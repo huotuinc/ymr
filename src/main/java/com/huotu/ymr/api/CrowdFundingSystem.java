@@ -6,6 +6,8 @@ import com.huotu.ymr.model.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 合伙人系统接口
  * Created by lgh on 2015/11/27.
@@ -36,7 +38,7 @@ public interface CrowdFundingSystem {
 
     /**
      * 发起预约
-     *
+     * 记录一条支付中的订单
      * @param money  金额
      * @param name   姓名
      * @param phone  联系电话
@@ -47,20 +49,9 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseBooking(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
+    ApiResult raiseBooking(Output<String> orderNo,Output<Double> fee,Output<String> wxCallbackUrl,Output<String> alipayCallbackUrl,Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
 
-    /**
-     * 支付金额
-     * 支持支付宝和微信
-     * 记录一条支付订单
-     *
-     * @param type  类型 1支付宝2微信
-     * @param money 金额
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    ApiResult pay(Integer type, Double money) throws Exception;
+
 
     /**
      * 支付回调(微信) todo 待完善
@@ -70,7 +61,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult callBackWeiXin() throws Exception;
+    AppWeixinResultModel callBackWeiXin(HttpServletRequest request) throws Exception;
 
 
     /**
@@ -81,7 +72,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult callBackAlipay() throws Exception;
+    String callBackAlipay(HttpServletRequest request) throws Exception;
 
     /**
      * 获取预约人列表
