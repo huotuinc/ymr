@@ -9,7 +9,7 @@ public class YmrBoot extends AbstractAnnotationConfigDispatcherServletInitialize
     @Override
     protected Class<?>[] getRootConfigClasses() {
 
-        return new Class[]{MvcConfig.class};
+        return new Class[]{BootConfig.class, MallBootConfig.class, MvcConfig.class};
     }
 
     @Override
