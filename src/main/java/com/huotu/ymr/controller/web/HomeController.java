@@ -25,10 +25,9 @@ public class HomeController {
         return "manager/home";
     }
 
-    @RequestMapping("/ordersManage")
-    public String getOrdersManage() throws Exception{
-        int i=0;
-        i++;
-        return "manager/home";
+    @RequestMapping("/test")
+    public String getTest(Model model) throws Exception{
+        model.addAttribute("tt","123");
+        return "test";
     }
 }

@@ -50,7 +50,7 @@
             var width = $('#con_left').width();
             var scrolling = 'auto';
             var height = this._getLeftHeight();
-            var ifSrc = /*[["ordersManage"]]*/ "shareManager.html";
+            var ifSrc = /*[["123456"]]*/ "shareManager.html";
             document.write('<iframe id="content_left" width="' + width + '" height="' + height + 'px" class="hide" marginwidth="0" marginheight="0" frameborder="0" scrolling="' + scrolling + '" onload="$(\'#loading\').hide();$(this).show();" src="' + ifSrc + '" style="overflow-x:hidden;"></iframe>');
         };
 
@@ -82,7 +82,7 @@
             $('#menu03').click(function () {
                 mallMenuManager.showCrowdFundings();
             });
-            $('#menu03').click(function () {
+            $('#menu04').click(function () {
                 mallMenuManager.showUsers();
             });
         };
@@ -102,7 +102,6 @@
             _loadMain(_url);
             _loadLeftMenu('../manager/articleManager.html');
         };
-
         mallMenuManager.showCrowdFundings = function () {
             $(".active").removeClass("active");
             $("#menu03").addClass("active");
@@ -112,7 +111,7 @@
         }
         mallMenuManager.showUsers = function () {
             $(".active").removeClass("active");
-            $("#menu03").addClass("active");
+            $("#menu04").addClass("active");
             var _url = /*[['getUserList']]*/ "userList.html";
             _loadMain(_url);
             _loadLeftMenu('../manager/userManager.html');

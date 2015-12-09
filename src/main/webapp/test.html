@@ -6,9 +6,16 @@
 </head>
 <body>
 
-<span th:text="${a}"></span>
+<span th:text="${tt}"></span>
 
 asdfasdfeadfaeaefasd
 <img src="1.jpg" />
 </body>
+<script type="text/javascript" th:inline="javascript">
+    var k=/*[["tt"]]*/ "nottt"
+    alert(k);
+    var k2=/*[["ttt"]]*/ "nottt2"
+    alert(k2);
+
+</script>
 </html>
