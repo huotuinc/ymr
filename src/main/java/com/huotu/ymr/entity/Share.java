@@ -27,9 +27,9 @@ public class Share implements YmrComment {
     private Long ownerId;
 
     /**
-     * 发帖人类型    0:普通会员，1：商家
+     * 发帖人类型    0:用户，1：官方(上架)
      */
-    private Integer ownerType;
+    private CommonEnum.UserType ownerType;
 
     /**
      * 标题
@@ -126,7 +126,7 @@ public class Share implements YmrComment {
     /**
      * 审核状态     0：未通过，1：通过，2审核中
      */
-    private Integer checkStatus;
+    private CommonEnum.CheckType checkStatus;
 
     /**
      * 审核未通过的原因

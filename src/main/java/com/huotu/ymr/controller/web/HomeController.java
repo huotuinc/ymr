@@ -24,4 +24,11 @@ public class HomeController {
         map.put("a", "hao");
         return "manager/home";
     }
+
+    @RequestMapping("/ordersManage")
+    public String getOrdersManage() throws Exception{
+        int i=0;
+        i++;
+        return "manager/home";
+    }
 }

@@ -15,9 +15,6 @@ import java.util.List;
  */
 @Repository
 public interface ShareCommentRepository extends JpaRepository<ShareComment,Long> {
-//    @Query("select s from ShareComment as s where s.share.id=:shareId and s.parentId=:parentId order by s.time")
-//    Page<ShareComment> findByShareAndParent(Share share,Long parentId,Pageable pageable);
-
     @Query("select c from ShareComment as c where c.share.id=?1 and c.id>?2 order by c.id")
     List<ShareComment> findByShareOrderByTime(Long shareId,Long lastId,Pageable pageable);
 }

@@ -96,7 +96,7 @@ public class ShareManagerController {
                            Boolean top,Integer postReward,
                            Integer relayReward,Integer score) throws Exception{
         Share share=new Share();
-        share.setCheckStatus(2);
+        share.setCheckStatus(CommonEnum.CheckType.audit);
         share.setOwnerId(0L);//todo 当前登录的用户
         share.setScore(score);
         share.setTitle(title);
@@ -104,7 +104,7 @@ public class ShareManagerController {
         share.setContent(content);
         share.setImg(imgUrl);
         share.setIntro("");//todo
-        share.setOwnerType(1);
+        share.setOwnerType(CommonEnum.UserType.official);
         share.setReason("");
 //        share.setView(0L);
 //        share.setCommentQuantity(0L);

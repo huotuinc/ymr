@@ -76,7 +76,7 @@ public class ShareControllerTest extends SpringBaseTest {
             calendar.add(Calendar.HOUR,1);
             share.setTime(calendar.getTime());
             share.setEnabledRecommendProduct(true);
-            share.setCheckStatus(1);
+            share.setCheckStatus(CommonEnum.CheckType.pass);
             share.setTitle(ran==0?"置顶文章":"不是置顶文章"+i);
             Share sharetag=shareRepository.saveAndFlush(share);
             if(ran==0){

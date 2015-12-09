@@ -258,4 +258,86 @@ public interface CommonEnum {
             this.name = name;
         }
     }
+
+    /**
+     * 用户类型
+     */
+    enum UserType implements ICommonEnum{
+        /**
+         * user(0, "用户")
+         */
+        user(0, "用户"),
+        /**
+         * merchant(1, "官方")
+         */
+        official(1, "官方");
+        private int value;
+
+        private String name;
+
+        UserType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    /**
+     * 审核类型
+     */
+    enum CheckType implements ICommonEnum{
+        /**
+         * notPass(0, "未通过")
+         */
+        notPass(0, "未通过"),
+        /**
+         * pass(1, "通过")
+         */
+        pass(1, "通过"),
+        /**
+         * audit(2,"审核中")
+         */
+        audit(2,"审核中");
+        private int value;
+
+        private String name;
+
+        CheckType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
 }
