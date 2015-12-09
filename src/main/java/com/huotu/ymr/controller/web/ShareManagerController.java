@@ -110,7 +110,7 @@ public class ShareManagerController {
 //        share.setCommentQuantity(0L);
 //        share.setPraiseQuantity(0L);
         share.setPostReward(postReward);
-        share.setStatus(true);
+        share.setEnabledRecommendProduct(true);//todo
         share.setTop(top);
         share.setUsedScore(0);
         share.setTime(new Date());

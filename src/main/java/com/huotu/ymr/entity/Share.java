@@ -71,21 +71,21 @@ public class Share implements YmrComment {
     /**
      * 点赞量
      */
-    private Long praiseQuantity=0L;
+    private Long praiseQuantity = 0L;
 
     /**
      * 评论量
      */
-    private Long commentQuantity=0L;
+    private Long commentQuantity = 0L;
 
     /**
      * 转发量
      */
-    private Long relayQuantity=0L;
+    private Long relayQuantity = 0L;
     /**
      * 浏览量
      */
-    private Long view=0L;
+    private Long view = 0L;
 
     /**
      * 启用外链
@@ -97,10 +97,12 @@ public class Share implements YmrComment {
      */
     private String linkUrl;
     /**
-     * 状态
-     * true开启 false 关闭
+     * 开启推荐产品
+     * <p>
+     * true开启 false 关闭 (默认)
+     * 开启后将关联商城商品，在爱分享详情页的末尾显示相关联商品
      */
-    private Boolean status=true;
+    private Boolean enabledRecommendProduct = false;
 
     /**
      * 发帖奖励的积分
@@ -124,7 +126,7 @@ public class Share implements YmrComment {
     /**
      * 审核状态     0：未通过，1：通过，2审核中
      */
-        private Integer checkStatus;
+    private Integer checkStatus;
 
     /**
      * 审核未通过的原因

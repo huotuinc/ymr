@@ -1,6 +1,8 @@
 package com.huotu.ymr.controller;
 
 import com.huotu.ymr.base.SpringBaseTest;
+import com.huotu.ymr.boot.BootConfig;
+import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.Share;
@@ -31,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { MvcConfig.class })
+@ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class,MvcConfig.class })
 @Transactional
 public class ShareControllerTest extends SpringBaseTest {
 
@@ -73,7 +75,7 @@ public class ShareControllerTest extends SpringBaseTest {
             }
             calendar.add(Calendar.HOUR,1);
             share.setTime(calendar.getTime());
-            share.setStatus(true);
+            share.setEnabledRecommendProduct(true);
             share.setCheckStatus(1);
             share.setTitle(ran==0?"置顶文章":"不是置顶文章"+i);
             Share sharetag=shareRepository.saveAndFlush(share);
@@ -149,7 +151,7 @@ public class ShareControllerTest extends SpringBaseTest {
         Share share=new Share();
         share.setOwnerId(123L);
         share.setTitle("分享测试文章");
-        share.setStatus(true);
+        share.setEnabledRecommendProduct(true);
         share.setCommentQuantity(2265L);
         share.setPraiseQuantity(44L);
         share=shareRepository.saveAndFlush(share);

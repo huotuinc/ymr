@@ -33,6 +33,12 @@ public interface CommonConfigService {
      */
     String getWebUrl();
 
+    /**
+     * app加密的密钥
+     * @return
+     */
     String getAppKeySecret();
+
+    String getCustomerServicePhone();
 
 }

@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Created by lgh on 2015/12/8.
  */
-public interface MallMerchantRepository extends JpaRepository<MallMerchant,Integer>,ClassicsRepository<MallMerchant> {
+public interface MallMerchantRepository extends JpaRepository<MallMerchant,Long>,ClassicsRepository<MallMerchant> {
 }

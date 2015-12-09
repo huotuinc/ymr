@@ -1,13 +1,22 @@
 package com.huotu.ymr.controller;
 
+import com.huotu.common.base.StringHelper;
+import com.huotu.ymr.base.Device;
+import com.huotu.ymr.base.DeviceType;
 import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.entity.Article;
 import com.huotu.ymr.entity.Category;
+import com.huotu.ymr.entity.User;
+import com.huotu.ymr.mallentity.MallMerchant;
+import com.huotu.ymr.mallentity.MallUser;
+import com.huotu.ymr.mallrepository.MallMerchantRepository;
+import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.repository.ArticleRepository;
 import com.huotu.ymr.repository.CategoryRepository;
+import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.ArticleService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Assert;
@@ -23,6 +32,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 /**
  * Created by xhk on 2015/12/1.
@@ -32,6 +42,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class, MvcConfig.class})
 @Transactional
 public class ArticleControllerTest extends SpringBaseTest {
+
+    private Device device;
+    private String mockUserName;
+    private String mockUserPassword;
+    private User mockUser;
+    private MallUser mockMallUser;
+    private MallMerchant mockMerchant;
+
+    @Autowired
+    private UserRepository mockUserRepository;
+    @Autowired
+    private MallUserRepository mockMallUserRepository;
+    @Autowired
+    private MallMerchantRepository mockMallMerchantRepository;
 
 
     @Autowired
@@ -46,7 +70,17 @@ public class ArticleControllerTest extends SpringBaseTest {
 
     @Before
     public void init() {
+        device = Device.newDevice(DeviceType.Android);
+        Random random = new Random();
+        mockUserName = StringHelper.randomNo(random, 12);
+        mockUserPassword = UUID.randomUUID().toString().replace("-", "");
 
+        mockMerchant = generateMerchant(mockMallMerchantRepository);
+
+        mockMallUser = generateMallUser(mockUserName, mockUserPassword, mockMallUserRepository, mockMerchant);
+        mockUser = generateUserWithToken(mockMallUser, mockUserRepository);
+
+        device.setToken(mockUser.getToken());
     }
 
 
@@ -85,7 +119,8 @@ public class ArticleControllerTest extends SpringBaseTest {
             categories = categoryRepository.findAll();
         }
         //进行请求
-        String result = mockMvc.perform(get("/article/getCategoryList"))
+        String result = mockMvc.perform(device.getApi("getCategoryList").build())
+                .andDo(print())
                 .andReturn().getResponse().getContentAsString();
         List<HashMap> list1 = JsonPath.read(result, "$.resultData.list");
         for (int i = 0; i < list1.size(); i++) {

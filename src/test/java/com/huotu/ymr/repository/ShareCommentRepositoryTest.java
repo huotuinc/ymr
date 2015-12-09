@@ -17,7 +17,7 @@ public class ShareCommentRepositoryTest {
     public void testFindByParentId() throws Exception {
         Share share=new Share();
         share.setOwnerId(123L);
-        share.setStatus(true);
+        share.setEnabledRecommendProduct(true);
         share.setTitle("123456");
         share=shareRepository.saveAndFlush(share);
 

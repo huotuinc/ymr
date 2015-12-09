@@ -14,7 +14,16 @@ public interface CommonEnum {
         /**
          * PARAMETER_ERROR(1001,"参数错误")
          */
-        PARAMETER_ERROR(1001,"参数错误");
+        PARAMETER_ERROR(1001,"参数错误"),
+        SYSTEM_BAD_REQUEST_50601(50601, "系统请求失败,code 50601"),//sign校验失败
+        /**
+         * ERROR_USER_LOGIN_FAIL(56000, "用户登录失败")
+         */
+        ERROR_USER_LOGIN_FAIL(56000, "用户登录失败"),
+        /**
+         * ERROR_USER_TOKEN_FAIL(56001, "用户登录失效，需要重新登录")
+         */
+        ERROR_USER_TOKEN_FAIL(56001, "你已经在其他设备登录，需要重新登录");
 
 
 
@@ -205,6 +214,47 @@ public interface CommonEnum {
         }
 
         public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    /**
+     * 0 无更新 1增量更新 2 整包更新 3 强制增量更新 4 强制整包更新
+     */
+    enum VersionUpdateType implements ICommonEnum {
+        NO(0, "无更新"),
+
+        INCREMENT(1, "增量更新"),
+
+        WHOLE(2, "整包更新"),
+
+        FORCE_INCREMENT(3, "强制增量更新"),
+
+        FORCE_WHOLE(4, "强制整包更新");
+
+
+        private int value;
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        VersionUpdateType(int value, String name) {
+            this.value = value;
             this.name = name;
         }
     }

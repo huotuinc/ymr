@@ -22,7 +22,7 @@ public class MallUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UB_UserID")
-    private Integer id;
+    private Long id;
 
     /**
      * 用户名

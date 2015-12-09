@@ -62,7 +62,6 @@ public class ShareController implements ShareSystem {
                 appShareListModel.setPraiseQuantity(share.getPraiseQuantity());
                 appShareListModel.setRelayQuantity(share.getRelayQuantity());
                 appShareListModel.setRelayScore(share.getRelayReward());
-                appShareListModel.setStatus(share.getStatus());
                 appShareListModel.setTime(share.getTime());
                 appShareListModel.setTop(share.getTop());
                 appShareListModel.setUserHeadUrl(commonConfigService.getResoureServerUrl()+share.getLinkUrl());//todo
@@ -88,7 +87,6 @@ public class ShareController implements ShareSystem {
         }
         Share share=new Share();
         share.setOwnerId(userId);
-        share.setStatus(true);
         share.setTitle(title);
         share.setContent(content);
         share.setImg(commonConfigService.getResoureServerUrl()+imgUrl);//todo

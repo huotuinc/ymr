@@ -18,11 +18,7 @@ public class AppShareListModel {
      * 用户头像
      */
     private String userHeadUrl;
-    /**
-     * 状态
-     */
-    private Boolean status;
-    /**
+       /**
      * 标题
      */
     private String title;

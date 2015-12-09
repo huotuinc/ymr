@@ -1,6 +1,8 @@
 package com.huotu.ymr.controller;
 
 import com.huotu.ymr.base.SpringBaseTest;
+import com.huotu.ymr.boot.BootConfig;
+import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +22,7 @@ import javax.transaction.Transactional;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { MvcConfig.class })
+@ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class, MvcConfig.class })
 @Transactional
 public class UserControllerTest extends SpringBaseTest {
     @Autowired

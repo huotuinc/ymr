@@ -46,5 +46,10 @@ public class CommonConfigServiceImpl implements CommonConfigService {
         return env.getProperty("ymr.appsecrect", "1165a8d240b29af3f418b8d10599d0da");
     }
 
+    @Override
+    public String getCustomerServicePhone() {
+        return env.getProperty("ymr.customerServicePhone","4001818357");
+    }
+
 
 }

@@ -16,7 +16,7 @@ public class AppUserInfoModel {
     /**
      * 用户Id
      */
-    private Integer userId;
+    private Long userId;
     /**
      * 用户名
      */
@@ -29,6 +29,10 @@ public class AppUserInfoModel {
      * 用户等级
      */
     private CommonEnum.UserLevel userLevel;
+    /**
+     * 所属商家Id
+     */
+    private Long merchantId;
     /**
      * 姓名
      */
@@ -51,4 +55,5 @@ public class AppUserInfoModel {
      * 32位的UUID
      */
     private String token;
+
 }

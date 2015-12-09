@@ -23,7 +23,7 @@ import java.util.List;
  * Created by xhk on 2015/12/1.
  */
 @Controller
-@RequestMapping("/article")
+@RequestMapping("/app")
 public class ArticleController implements ArticleSystem {
 
     @Autowired

@@ -12,8 +12,13 @@ package com.huotu.ymr.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.PublicParameterHolder;
+import com.huotu.ymr.entity.User;
+import com.huotu.ymr.mallentity.MallUser;
+import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppPublicModel;
 
+import com.huotu.ymr.model.AppUserInfoModel;
+import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,15 +45,20 @@ public class CommonInterceptor implements HandlerInterceptor {
     @Autowired
     private CommonConfigService commonConfigService;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private MallUserRepository mallUserRepository;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
 
 //        logger.debug("==============执行顺序: 0、preHandle================");
 
-        if(true){
-            return true;
-        }
+//        if(true){
+//            return true;
+//        }
         String sign = request.getParameter("sign");
 
         //logger.info("sign:" + getSign(request));
@@ -88,7 +98,25 @@ public class CommonInterceptor implements HandlerInterceptor {
         String imei = StringUtils.isEmpty(request.getParameter("imei")) ? "" : request.getParameter("imei");
         String token = StringUtils.isEmpty(request.getParameter("token")) ? "" : request.getParameter("token");
         if (!StringUtils.isEmpty(token)) {
-            model.setCurrentUser(null);//todo 设置当前用户
+            User user = userRepository.findByToken(token);
+            if (user != null) {
+                AppUserInfoModel appUserInfoModel = new AppUserInfoModel();
+                appUserInfoModel.setUserId(user.getId());
+                appUserInfoModel.setUserLevel(user.getUserLevel());
+                appUserInfoModel.setScore(user.getScore());
+                appUserInfoModel.setToken(token);
+
+                MallUser mallUser = mallUserRepository.findOne(user.getId());
+                if (mallUser != null) {
+                    appUserInfoModel.setName(mallUser.getRealName());
+                    appUserInfoModel.setUserName(mallUser.getUsername());
+//                    appUserInfoModel.setBindMobile(mallUser); //todo 需要获取
+                    appUserInfoModel.setMobile(mallUser.getMobile());
+//                    appUserInfoModel.setSex(mallUser);//todo 需要获取
+                    appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
+                    model.setCurrentUser(appUserInfoModel);
+                }
+            }
         }
 
         model.setSign(sign);
@@ -119,7 +147,7 @@ public class CommonInterceptor implements HandlerInterceptor {
         StringBuilder strB = new StringBuilder();
 
         resultMap.keySet().stream().filter(key -> !"sign".equals(key)).forEach(key -> strB.append(resultMap.get(key)));
-
+//        System.out.println(strB.toString());
         return DigestUtils.md5DigestAsHex(strB.toString().getBytes("UTF-8")).toLowerCase();
     }
 

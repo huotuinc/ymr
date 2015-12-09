@@ -40,4 +40,8 @@ public class User {
      */
     @Column(length = 32)
     private String token;
+    /**
+     * 累计充值
+     */
+    private Double continuedMoney;
 }

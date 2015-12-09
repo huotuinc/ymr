@@ -21,7 +21,7 @@ public class MallMerchant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SC_UserID")
-    private Integer id;
+    private Long id;
 
 
     /**

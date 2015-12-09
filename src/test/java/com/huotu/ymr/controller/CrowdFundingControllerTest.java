@@ -1,6 +1,8 @@
 package com.huotu.ymr.controller;
 
 import com.huotu.ymr.base.SpringBaseTest;
+import com.huotu.ymr.boot.BootConfig;
+import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.PublicParameterHolder;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { MvcConfig.class })
+@ContextConfiguration(classes = { BootConfig.class, MallBootConfig.class,MvcConfig.class })
 @Transactional
 public class CrowdFundingControllerTest extends SpringBaseTest {
 
