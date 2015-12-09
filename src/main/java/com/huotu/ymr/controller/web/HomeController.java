@@ -22,8 +22,6 @@ public class HomeController {
 
         Map<String, Object> map = new HashMap<>();
         map.put("a", "hao");
-//        return new  ModelAndView("test", map);
         return "manager/home";
-//        return viewResolver.resolveViewName("test",null);
     }
 }

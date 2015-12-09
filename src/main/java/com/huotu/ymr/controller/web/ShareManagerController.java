@@ -22,8 +22,42 @@ public class ShareManagerController {
     @Autowired
     ShareService shareService;
 
+    @RequestMapping(value = "/showBottomGeneralize",method = RequestMethod.GET)
+    public String showBottomGeneralize() throws Exception{
+        return "manager/share/bottomGeneralize";
+
+    }
+
+    @RequestMapping(value = "/showIntegralConfig",method = RequestMethod.GET)
+    public String showIntegralConfig() throws Exception{
+        return "manager/share/integralConfig";
+    }
+
+    @RequestMapping(value = "/saveUserIntegralConfig",method = RequestMethod.POST)
+    public String saveUserIntegralConfig(Integer score,Integer relayReward) throws Exception{
+        return "manager/share/integralConfig";
+    }
+
+    @RequestMapping(value = "/saveMerchantIntegralConfig",method = RequestMethod.POST)
+    public String saveMerchantIntegralConfig(Integer score,Integer relayReward) throws Exception{
+        return "manager/share/integralConfig";
+    }
 
 
+    @RequestMapping(value = "/showDraftsList",method = RequestMethod.GET)
+    public String showDraftsList() throws Exception{
+        return "manager/share/draftsList";
+    }
+
+    /**
+     * 获取爱分享文章列表
+     * @param keywords
+     * @param pageNo
+     * @param keyType
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/getShareList",method = RequestMethod.GET)
     public String getShareList(String keywords,Integer pageNo,String keyType,Model model) throws Exception {
         if(pageNo==null||pageNo<0){
