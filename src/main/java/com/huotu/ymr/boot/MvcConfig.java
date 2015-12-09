@@ -2,6 +2,7 @@ package com.huotu.ymr.boot;
 
 import com.huotu.common.api.ApiResultHandler;
 import com.huotu.common.api.OutputHandler;
+import com.huotu.ymr.interceptor.AppHandlerExceptionResolver;
 import com.huotu.ymr.interceptor.CommonInterceptor;
 import org.luffy.lib.libspring.data.ClassicsRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
@@ -68,6 +70,12 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         returnValueHandlers.add(new ApiResultHandler());
     }
 
+
+    @Override
+    public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
+        exceptionResolvers.add(new AppHandlerExceptionResolver());
+
+    }
 
     public void configureViewResolvers(ViewResolverRegistry registry) {
         super.configureViewResolvers(registry);
