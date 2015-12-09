@@ -5,20 +5,32 @@
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
     <title>
 
-        订单列表
+        爱分享文章列表
     </title>
-    <link href="../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"/>
-    <link href="../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="../resource/3rdParty/js/jquery-1.8.3.min.js"></script>
-    <script type="text/javascript" src="../resource/3rdParty/js/jquery.utils.js"></script>
-    <link href="../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"></script>
-    <script type="text/javascript" src="../resource/3rdParty/js/admin.js"></script>
-    <link href="../resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css" rel="stylesheet" type="text/css"/>
-    <script src="../resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js"></script>
-    <link href="../resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"/>
-    <script src="../resource/3rdParty/Knockout/knockout-2.3.0.js"></script>
-    <script type="text/javascript" src="../resource/3rdParty/My97DatePicker/WdatePicker.js"></script>
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.content.css}" />
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.8.3.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.8.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
+            th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
+    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
+            th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
+            th:src="@{/resource/3rdParty/js/admin.js}"></script>
+    <link href="../../resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css}"/>
+    <script src="../../resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js"
+            th:src="@{/resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js}"></script>
+    <link href="../../resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"
+          th:href="@{/resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css}"/>
+    <script src="../../resource/3rdParty/Knockout/knockout-2.3.0.js"
+            th:src="@{/resource/3rdParty/Knockout/knockout-2.3.0.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
+            th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
     <script type="text/javascript" th:inline="javascript">
         /*<![CDATA[*/
         var _oldCass = ''
@@ -39,7 +51,7 @@
 
         function showList(statu) {
             if (statu == 0) {
-                $("#ddlShipStatus").attr("value", -1);
+                $("#ddlShipStatusddlShipStatus").attr("value", -1);
                 $('#form1').submit();
             } else if (statu == 2) {
                 $("#ddlShipStatus").attr("value", 0);
@@ -400,8 +412,8 @@
 <body marginwidth="0" marginheight="0">
 <div id="buddy_list_dialog" style="display: none;">
     <input type="hidden" id="aid"/>
-    <input type="hidden" id="customerId" />
-    <input type="hidden" id="supplierId" />
+    <input type="hidden" id="customerId" th:value="*{customerId}"/>
+    <input type="hidden" id="supplierId" th:value="*{supplierId}"/>
 
     <div class="search block" style="width: 550px; min-width: 550px;">
         <div class="h">
@@ -464,8 +476,9 @@
         </div>
     </div>
 </div>
-<form method="get" action="getOrdersPage" id="form1" >
-    <input hidden="hidden" id="pageNoStr" name="pageNoStr" />
+<form method="get" action="getOrdersPage" id="form1" th:object="${searchCondition}">
+    <!--<input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>-->
+    <input hidden="hidden" id="pageNoStr" name="pageNoStr"/>
 
     <div class="aspNetHidden">
         <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE"
@@ -498,18 +511,73 @@
                 <div class="cnt">
 
                     <div class="search-bar">
-                        <label class="first ">订单号：</label>
-                        <input name="txtOrderId" type="text"  id="txtOrderId" class="input-small" style="width: 120px;"/>
+                        <label class="first ">文章标题：</label>
+                        <input name="txtOrderId" type="text" id="txtOrderId" class="input-small" style="width: 120px;"/>
+                        <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
+
+                        <br/>
+                        <br/>
+
+                        <label class="first ">类型：</label>
+                        <select name="ddlPayStatus" id="ddlPayStatus">
+                            <option selected="selected" value="-1">==所有==</option>
+                            <option value="1">公司介绍</option>
+                            <option value="2">自传故事</option>
+                            <option value="3">学院介绍</option>
+                            <option value="4">美容知识</option>
+                        </select>
+
+
+                        &nbsp;
+
+
+                        <style type="text/css">
+                            #raSortType label {
+                                padding-left: 0px;
+                            }
+                        </style>
+                        <span id="raSortType">
+                            <input id="raSortType_0" type="radio" name="raSortType" value="0" checked="checked"/>
+                            <label for="raSortType_0">倒序</label>
+                            <input id="raSortType_1" type="radio" name="raSortType" value="1"/>
+                            <label for="raSortType_1">顺序</label>
+                        </span>
+
+                        <br/>
+                        <br/>
+
+                        <label class="first ">发布时间：</label>
+
+                        <input name="txtBeginTime" type="text" id="txtBeginTime" placeholder=" [开始日期]"
+                               class="input-normal Wdate"
+                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>
+                        <input name="txtEndTime" type="text" id="txtEndTime" placeholder=" [结束日期]"
+                               class="input-normal Wdate"
+                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'txtBeginTime\')}'})"/>
+
+                        <br/>
+                        <br/>
+
+                        <!--<label class="first ">支付时间：</label>-->
+
+                        <!--<input name="txtBeginPaytime" type="text" id="txtBeginPaytime" th:value="*{txtBeginPaytime}" placeholder=" [开始日期]"-->
+                        <!--class="input-normal Wdate"-->
+                        <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>-->
+                        <!--<input name="txtEndPaytime" type="text" id="txtEndPaytime" th:value="*{txtEndPaytime}" placeholder=" [结束日期]"-->
+                        <!--class="input-normal Wdate"-->
+                        <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'txtEndPaytime\')}'})"/>-->
+
+                        <div style="display: none;">
+                            <input type="submit" name="btnSearch" value="" id="btnSearch"/>
+                            <input type="submit" name="btnSearchAll" value="" id="btnSearchAll"/>
+                        </div>
                         <label><a class="btn-lit btn-middle" id="search" href="javascript:searchOrder();"
                                   style="margin-bottom: 3px;"><span>搜索</span></a></label>
+                        <label><a class="btn-lit btn-middle" id="searchAll" href="javascript:searchOrderAll();"
+                                  style="margin-bottom: 3px;"><span>显示全部</span></a></label>
+
                         <br/>
                         <br/>
-
-
-                        <!--<label><a class="btn-lit btn-middle" id="A1" href="#"-->
-                        <!--th:href="@{/exportExcel?orderId=2015101013240980351792}"-->
-                        <!--style="margin-bottom: 3px;"><span>导出主订单</span></a></label>-->
-
                     </div>
                 </div>
             </div>
@@ -520,7 +588,7 @@
             <div class="h">
                 <span class="icon-sprite icon-list"></span>
 
-                <h3 style="float: left; width: 144px;">文章列表管理</h3>
+                <h3 style="float: left; width: 144px;">文章管理 </h3>
 
                 <div class="bar">
                     <!--
@@ -533,6 +601,7 @@
                     <a class="btn-lit aucontrol" href="javascript:showBatchDelivery();">
                         <span>批量发货</span></a>
                         -->
+
                     <a class="btn-lit aucontrol" href="javascript:showBatchDelivery();">
                         <span>添加文章</span></a>
                 </div>
@@ -549,6 +618,34 @@
             <div class="cnt-wp">
 
                 <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
+                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border"
+                         style="height: 28px;">
+                        <ul style="height: 28px; line-height: 28px;">
+                            <span class="left-placeholder"></span>
+                            <li class="om-state-default om-corner-top  " id="ddgl1">
+                                <span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner" style="width: auto; height: 27px;">全部</a><span class="liright"></span>
+                            </li>
+                            <li class="om-state-default om-corner-top " id="ddgl2"><span class="lileft"></span><a
+                                    href="javascript:showList(2);" class="om-tabs-inner"
+                                    style="width: auto; height: 27px;">公司介绍</a><span class="liright"></span></li>
+
+                            <li class="om-state-default om-corner-top" id="ddgl3"><span class="lileft">
+                            </span><a
+                                    href="javascript:showList(3);" class="om-tabs-inner"
+                                    style="width: auto; height: 27px;">自传故事</a><span class="liright"></span></li>
+
+                            <li class="om-state-default om-corner-top" id="ddgl4"><span class="lileft"></span><a
+                                    href="javascript:showList(4);" class="om-tabs-inner"
+                                    style="width: auto; height: 27px;">学院介绍</a><span class="liright"></span></li>
+
+                            <li class="om-state-default om-corner-top" id="ddgl5"><span class="lileft"></span><a
+                                    href="javascript:showList(5);" class="om-tabs-inner"
+                                    style="width: auto; height: 27px;">美容知识</a><span class="liright"></span></li>
+
+
+                            <span class="right-placeholder"></span>
+                        </ul>
+                    </div>
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
 
                         <div class="om-widget om-panel ">
@@ -560,15 +657,12 @@
                                            cellpadding="0">
                                         <tr>
                                             <th scope="col"></th>
-                                            <th scope="col">序号
+                                            <th scope="col">文章标题
                                             </th>
                                             <th scope="col">发布人
                                             </th>
 
                                             <th scope="col">发布时间
-                                            </th>
-
-                                            <th scope="col">操作
                                             </th>
 
                                             <th scope="col">浏览量
@@ -577,7 +671,8 @@
                                             <th scope="col">转发次数
                                             </th>
 
-
+                                            <th scope="col">操作
+                                            </th>
                                         </tr>
                                         <tr style="background: #FFC; text-align: center; display: none;"
                                             id="trSelectNote">
@@ -594,7 +689,7 @@
                                             <td class="txt20 c" style="width: 15px;" th:text="${ordersStat.count}">
                                                 1
                                             </td>
-                                            <td class="txt40" >
+                                            <td class="txt40" th:text="${orders.orderId}">
                                                 2015092173663935&nbsp;
                                             </td>
                                             <td class="txt80" hot:date="${orders.createTime}">
@@ -604,18 +699,18 @@
                                                 <span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>
                                             </td>
                                             <td class="txt20">￥
-                                                <span >100</span>
+                                                <span th:text="${orders.finalAmount}">100</span>
                                             </td>
-                                            <td class="txt20" >
+                                            <td class="txt20" th:text="${orders.shipName}">
                                                 asdf
                                             </td>
-                                            <td class="txt40" >
+                                            <td class="txt40" th:text="${orders.payStatus.value}">
                                                 未支付
                                             </td>
-                                            <td class="txt40" >
+                                            <td class="txt40" th:text="${orders.shipStatus.value}">
                                                 未发货
                                             </td>
-                                            <td class="txt40" >
+                                            <td class="txt40" th:text="${orders.payment.value}">
                                                 银联在线支付
                                             </td>
                                             <td class="txt40 c tail">
@@ -688,15 +783,15 @@
                                     </table>
                                 </div>
                                 <div class="pager-bar">
-                                    <div class="msg">共<input
+                                    <div class="msg">共<input th:value="0"
                                                              style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px;width:20px; '
                                                              type="text"/>条记录，
                                         当前第
-                                        <input
+                                        <input th:value="1"
                                                style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px;width:20px; '
                                                type="text" id="noNumber"/>
                                         /
-                                        <input
+                                        <input th:value="0"
                                                style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px;width:20px; '
                                                type="text" id="numberBug"/>，
                                         每页20条记录
@@ -716,7 +811,7 @@
                                                                               onkeydown="J.EnterSubmit(event, Pager.Jump);"
                                                                               class="input-small"
                                                                               style="text-align:center;" type="text"
-                                                                              value="1" />页&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                              value="1" th:value="4"/>页&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a></div>
                             </div>
                         </div>

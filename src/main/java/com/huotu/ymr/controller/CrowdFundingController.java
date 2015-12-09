@@ -65,7 +65,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
         if(lastId==null){
             lastId=crowdFundingService.getCrowdFundingMaxId()+1;
         }//如果为null则默认第一页
-        List<CrowdFunding> crowdFundings=crowdFundingService.searchCrowdFundingList(lastId,number,appUserInfoModel.getUserLevel());
+        List<CrowdFunding> crowdFundings=crowdFundingService.searchCrowdFundingList(lastId,number);
         List<AppCrowdFundingListModel> appCrowdFundingListModels=new ArrayList<AppCrowdFundingListModel>();
         for(CrowdFunding crowdFunding:crowdFundings){
             AppCrowdFundingListModel appCrowdFundingListModel=new AppCrowdFundingListModel();
@@ -107,8 +107,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/raiseBooking")
     @Override
-    public ApiResult raiseBooking(Output<String> orderNo,Output<Double> fee,Output<String> wxCallbackUrl,Output<String> alipayCallbackUrl,Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception {
+    public ApiResult raiseBooking(Output<String> orderNo,Output<Double> fee,Output<String> wxCallbackUrl,Output<String> alipayCallbackUrl,Double money, String name, String phone, String remark,Long crowdId) throws Exception {
 
+        AppUserInfoModel appUserInfoModel=PublicParameterHolder.get().getCurrentUser();
+        Long userId=appUserInfoModel.getUserId();
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         double startMoeny=crowdFunding.getStartMoeny();
         User user=new User();
@@ -124,8 +126,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
             throw new CrowdException("手机号码格式不正确");
             //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE);
         }else if(startMoeny>money){
-            throw new CrowdException("认购金额小于起购金额");
+            throw new CrowdException("预约金额小于起购金额");
             //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MONEY);
+        }else if(!crowdFunding.getVisibleLevel().contains(appUserInfoModel.getUserLevel())){
+            throw new CrowdException("由于用户等级原因不能预约");
         }else {
             double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
             CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
@@ -137,7 +141,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setAgencyFee(money-lastMoney);
             crowdFundingPublic.setName(name);
             crowdFundingPublic.setCrowdFunding(crowdFunding);
-            //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人人信息，存入合作发起表中
+            //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人信息，存入合作发起表中
             crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
             return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
 
@@ -358,7 +362,9 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/raiseCooperation")
     @Override
-    public ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception {
+    public ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId) throws Exception {
+        AppUserInfoModel appUserInfoModel=PublicParameterHolder.get().getCurrentUser();
+        Long userId=appUserInfoModel.getUserId();
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         double startMoeny=crowdFunding.getStartMoeny();
         User user=new User();
@@ -376,6 +382,8 @@ public class CrowdFundingController implements CrowdFundingSystem {
         }else if(startMoeny>money){
             throw new CrowdException("认购金额小于起购金额");
             //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MONEY);
+        }else if(!crowdFunding.getVisibleLevel().contains(appUserInfoModel.getUserLevel())){
+            throw new CrowdException("由于用户等级原因不能发起合作");
         }else {
             double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
             CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
@@ -409,7 +417,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             appRaiseCooperationListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
             appRaiseCooperationListModel.setPid(crowdFundingPublic.getId());
             appRaiseCooperationListModel.setAmount(crowdFundingPublic.getAmount());
-            String tip="我有"+crowdFundingPublic.getMoney()/10000+"万，找人合作筹募";//todo 以什么为单位 待定
+            String tip="我有"+crowdFundingPublic.getMoney()/10000+"万，找人合作筹募";//todo 全局变量 待定
             appRaiseCooperationListModel.setTip(tip);
             appRaiseCooperationListModels.add(appRaiseCooperationListModel);
         }
@@ -419,7 +427,9 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/goCooperation")
     @Override
-    public ApiResult goCooperation(Double money, String name, String phone, String remark,Long crowdId,Long crowdPublicId,Long userId) throws Exception {
+    public ApiResult goCooperation(Double money, String name, String phone, String remark,Long crowdId,Long crowdPublicId) throws Exception {
+        AppUserInfoModel appUserInfoModel=PublicParameterHolder.get().getCurrentUser();
+        Long userId=appUserInfoModel.getUserId();
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         CrowdFundingPublic crowdFundingPublic=new CrowdFundingPublic();
         User user=new User();
@@ -439,6 +449,8 @@ public class CrowdFundingController implements CrowdFundingSystem {
             throw new CrowdException("众筹项目不存在");
         }else if (RegexHelper.IsValidMobileNo(phone)) {
             throw new CrowdException("手机号码格式不正确");
+        }else if(!crowdFunding.getVisibleLevel().contains(appUserInfoModel.getUserLevel())){
+            throw new CrowdException("由于用户等级原因不能合作");
         }
         else {
             double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
@@ -461,7 +473,9 @@ public class CrowdFundingController implements CrowdFundingSystem {
 
     @RequestMapping("/raiseSubscription")
     @Override
-    public ApiResult raiseSubscription(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception {
+    public ApiResult raiseSubscription(Double money, String name, String phone, String remark,Long crowdId) throws Exception {
+        AppUserInfoModel appUserInfoModel=PublicParameterHolder.get().getCurrentUser();
+        Long userId=appUserInfoModel.getUserId();
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         double startMoeny=crowdFunding.getStartMoeny();
         User user=new User();
@@ -479,7 +493,9 @@ public class CrowdFundingController implements CrowdFundingSystem {
         }else if(startMoeny>money){
             throw new CrowdException("认购金额小于起购金额");
             //return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MONEY);
-        }else {
+        }else if(!crowdFunding.getVisibleLevel().contains(appUserInfoModel.getUserLevel())){
+            throw new CrowdException("由于用户等级原因不能认购");
+        }else{
             double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
             CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
             crowdFundingPublic.setOwnerId(userId);

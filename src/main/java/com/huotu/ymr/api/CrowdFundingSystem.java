@@ -44,12 +44,11 @@ public interface CrowdFundingSystem {
      * @param phone  联系电话
      * @param remark 备注
      * @param crowdId 众筹项目id
-     * @param userId 预约用户id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseBooking(Output<String> orderNo,Output<Double> fee,Output<String> wxCallbackUrl,Output<String> alipayCallbackUrl,Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
+    ApiResult raiseBooking(Output<String> orderNo,Output<Double> fee,Output<String> wxCallbackUrl,Output<String> alipayCallbackUrl,Double money, String name, String phone, String remark,Long crowdId) throws Exception;
 
 
 
@@ -94,12 +93,11 @@ public interface CrowdFundingSystem {
      * @param phone  联系电话
      * @param remark 备注
      * @param crowdId 众筹项目id
-     * @param userId 认购人id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
+    ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId) throws Exception;
 
 
     /**
@@ -124,12 +122,11 @@ public interface CrowdFundingSystem {
      * @param remark 备注
      * @param crowdId 众筹id
      * @param crowdPublicId 合作发起人id
-     * @param userId 合作者的id
      * @returnid
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult goCooperation(Double money, String name, String phone, String remark,Long crowdId,Long crowdPublicId,Long userId) throws Exception;
+    ApiResult goCooperation(Double money, String name, String phone, String remark,Long crowdId,Long crowdPublicId) throws Exception;
 
 
     /**
@@ -145,7 +142,7 @@ public interface CrowdFundingSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult raiseSubscription(Double money, String name, String phone, String remark,Long crowdId,Long userId) throws Exception;
+    ApiResult raiseSubscription(Double money, String name, String phone, String remark,Long crowdId) throws Exception;
 
     /**
      * 获取认购列表

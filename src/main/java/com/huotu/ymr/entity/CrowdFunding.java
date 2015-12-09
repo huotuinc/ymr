@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 众筹项目
@@ -33,9 +34,8 @@ public class CrowdFunding {
 
     /**
      * 可见等级
-     * 由|分割 如|0|1|2|
      */
-    private String visibleLevel;
+    private List<CommonEnum.UserLevel> visibleLevel;
     /**
      * 封面图片
      */

@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class,MvcConfig.class })
+@ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class, MvcConfig.class})
 @Transactional
 public class ShareControllerTest extends SpringBaseTest {
 

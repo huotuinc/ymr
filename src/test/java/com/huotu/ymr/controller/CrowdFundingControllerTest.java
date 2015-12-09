@@ -1,21 +1,26 @@
 package com.huotu.ymr.controller;
 
+import com.huotu.common.base.StringHelper;
+import com.huotu.ymr.base.Device;
+import com.huotu.ymr.base.DeviceType;
 import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.common.CommonEnum;
-import com.huotu.ymr.common.PublicParameterHolder;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingBooking;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.entity.User;
-import com.huotu.ymr.model.AppPublicModel;
-import com.huotu.ymr.model.AppUserInfoModel;
+import com.huotu.ymr.mallentity.MallMerchant;
+import com.huotu.ymr.mallentity.MallUser;
+import com.huotu.ymr.mallrepository.MallMerchantRepository;
+import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.repository.*;
 import com.huotu.ymr.service.CrowdFundingService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +31,32 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import javax.transaction.Transactional;
 import java.util.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 /**
  * Created by xhk on 2015/12/3.
  */
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { BootConfig.class, MallBootConfig.class,MvcConfig.class })
+@ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class, MvcConfig.class})
 @Transactional
 public class CrowdFundingControllerTest extends SpringBaseTest {
+
+
+    private Device device;
+    private String mockUserName;
+    private String mockUserPassword;
+    private User mockUser;
+    private MallUser mockMallUser;
+    private MallMerchant mockMerchant;
+
+
+    @Autowired
+    private UserRepository mockUserRepository;
+    @Autowired
+    private MallUserRepository mockMallUserRepository;
+    @Autowired
+    private MallMerchantRepository mockMallMerchantRepository;
+
 
     @Autowired
     CrowdFundingService crowdFundingService;
@@ -56,6 +76,24 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Autowired
     UserRepository userRepository;
 
+    @Before
+    public void init() {
+        device = Device.newDevice(DeviceType.Android);
+        Random random = new Random();
+        mockUserName = StringHelper.randomNo(random, 12);
+        mockUserPassword = UUID.randomUUID().toString().replace("-", "");
+
+        mockMerchant = generateMerchant(mockMallMerchantRepository);
+
+        mockMallUser = generateMallUser(mockUserName, mockUserPassword, mockMallUserRepository, mockMerchant);
+        mockUser = generateUserWithToken(mockMallUser, mockUserRepository);
+
+        device.setToken(mockUser.getToken());
+    }
+
+    //用户的等级
+    CommonEnum.UserLevel [] userLevels={CommonEnum.UserLevel.one,CommonEnum.UserLevel.two,CommonEnum.UserLevel.three};
+
     //众筹项目的存储
     public List<CrowdFunding> saveCrowdFunding(){
         List<CrowdFunding> crowdFundings=new ArrayList<CrowdFunding>();
@@ -63,6 +101,10 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFunding.setName("crowd");
         crowdFunding.setStartTime(new Date());
         crowdFunding.setContent("这个是众筹项目0");
+        List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+        userLevelList.add(userLevels[0]);
+        userLevelList.add(userLevels[1]);
+        crowdFunding.setVisibleLevel(userLevelList);
         crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
         crowdFundings.add(crowdFunding);
 
@@ -70,6 +112,10 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFunding1.setName("crowd1");
         crowdFunding1.setStartTime(new Date());
         crowdFunding1.setContent("这个是众筹项目1");
+        List<CommonEnum.UserLevel> userLevelList1=new ArrayList<CommonEnum.UserLevel>();
+        userLevelList1.add(userLevels[0]);
+        userLevelList1.add(userLevels[1]);
+        crowdFunding.setVisibleLevel(userLevelList1);
         crowdFunding1=crowdFundingRepository.saveAndFlush(crowdFunding1);
         crowdFundings.add(crowdFunding1);
 
@@ -130,13 +176,15 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     //通过传入的参数来构建相应数量的众筹项目
     public List<CrowdFunding> saveSeveralCrowdFunding(int number) {
         List<CrowdFunding> crowdFundings=new ArrayList<CrowdFunding>();
-        String[] level={"|0|","|0|1|2|","|1|","|2|","|1|2|"};
         for(int i=0;i<number;i++){
             CrowdFunding crowdFunding=new CrowdFunding();
             String name=UUID.randomUUID().toString();
             crowdFunding.setName(name);
             crowdFunding.setStartTime(new Date());
-            crowdFunding.setVisibleLevel(level[i%5]);
+            List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+            userLevelList.add(userLevels[0]);
+            userLevelList.add(userLevels[1]);
+            crowdFunding.setVisibleLevel(userLevelList);
             crowdFunding.setContent("这个是众筹项目" + name);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundings.add(crowdFunding);
@@ -144,16 +192,23 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         return crowdFundings;
     }
 
+    /*
+    * 1.判断众筹项目是否多余60，否则存入60
+    * 2.然后请求lastId为null时的list，即第一页的数据,并判断是否是想要的结果
+    * 3.进行第一页后的请求（正常请求），并判断是否是想要的结果
+    * 4.请求最后一页的下一页，并判断是否是想要的结果
+    * 5.请求不存在的众筹项目，并判断是否是想要的结果
+     */
     @Test
     public void testGetCrowdFundingList() throws Exception {
 
         //创建一个用户用户
-        AppPublicModel appPublicModel=new AppPublicModel();
-        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
-        appUserInfoModel.setUserLevel(CommonEnum.UserLevel.one);
-        appPublicModel.setCurrentUser(appUserInfoModel);
-        PublicParameterHolder.put(appPublicModel);
-        appUserInfoModel= PublicParameterHolder.get().getCurrentUser();
+//        AppPublicModel appPublicModel=new AppPublicModel();
+//        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
+//        appUserInfoModel.setUserLevel(CommonEnum.UserLevel.three);
+//        appPublicModel.setCurrentUser(appUserInfoModel);
+//        PublicParameterHolder.put(appPublicModel);
+//        appUserInfoModel= PublicParameterHolder.get().getCurrentUser();
         //进行众筹的存贮
         List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
         if(crowdFundings.size()<60){
@@ -162,9 +217,9 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         }
 
         //进行众筹列表第一页的请求
-        String result=mockMvc.perform(get("/app/getCrowdFundingList"))
+        String result=mockMvc.perform(device.getApi("getCrowdFundingList").build())
                 .andReturn().getResponse().getContentAsString();
-        List<CrowdFunding> crowdFunding=crowdFundingService.searchCrowdFundingList(crowdFundingService.getMaxId() + 1, 10,appUserInfoModel.getUserLevel());
+        List<CrowdFunding> crowdFunding=crowdFundingService.searchCrowdFundingList(crowdFundingService.getMaxId() + 1, 10);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
         for(int i=0;i<crowdFunding.size();i++) {
 //            Assert.assertEquals("请求众筹表第一页pid断言", crowdFunding.get(i).getOwnerId().longValue(), Long.parseLong(list.get(i).get("pid") + ""));
@@ -172,9 +227,9 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             Assert.assertEquals("请求众筹表第一页name断言",crowdFunding.get(i).getName(),list.get(i).get("title"));
         }
         //进行众筹列表下页页的请求
-        String result1=mockMvc.perform(get("/app/getCrowdFundingList").param("lastId",crowdFundings.get(20).getId()+""))
+        String result1=mockMvc.perform(device.getApi("getCrowdFundingList").param("lastId",crowdFundings.get(20).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
-        List<CrowdFunding> crowdFunding1=crowdFundingService.searchCrowdFundingList(crowdFundings.get(20).getId(), 10,appUserInfoModel.getUserLevel());
+        List<CrowdFunding> crowdFunding1=crowdFundingService.searchCrowdFundingList(crowdFundings.get(20).getId(), 10);
         List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
         for(int i=0;i<crowdFunding1.size();i++) {
 //            Assert.assertEquals("请求众筹表下页pid断言", crowdFunding1.get(i).getOwnerId().longValue(), Long.parseLong(list1.get(i).get("pid") + ""));
@@ -183,9 +238,9 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         }
 
         //进行众筹列表最后一页的请求
-        String result2=mockMvc.perform(get("/app/getCrowdFundingList").param("lastId",0+""))
+        String result2=mockMvc.perform(device.getApi("getCrowdFundingList").param("lastId",0+"").build())
                 .andReturn().getResponse().getContentAsString();
-        List<CrowdFunding> crowdFunding2=crowdFundingService.searchCrowdFundingList(0L, 10,appUserInfoModel.getUserLevel());
+        List<CrowdFunding> crowdFunding2=crowdFundingService.searchCrowdFundingList(0L, 10);
         List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
         for(int i=0;i<crowdFunding2.size();i++) {
 //            Assert.assertEquals("请求众筹列表下页pid断言", crowdFunding2.get(i).getOwnerId().longValue(), Long.parseLong(list2.get(i).get("pid") + ""));
@@ -200,13 +255,17 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
                 maxId=funding.getId();
             }
         }
-        String result3=mockMvc.perform(get("/app/getCrowdFundingList").param("lastId",-1 + ""))
+        String result3=mockMvc.perform(device.getApi("getCrowdFundingList").param("lastId",-1 + "").build())
                 .andReturn().getResponse().getContentAsString();
         List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
         Assert.assertEquals("请求众筹表下页条数断言", 0, list3.size());
     }
 
 
+    /*
+    * 1.进行众筹项目的条数判断，是否大于2，否则进行存入
+    * 2.进行众筹项目信息的请求，并断言是否正确
+     */
     @Test
     public void testGetCrowFindingInfo() throws Exception {
 
@@ -218,7 +277,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         }
 
         //进行众筹项目信息请求
-        String result=mockMvc.perform(get("/app/getCrowFindingInfo").param("id",crowdFundings.get(0).getId()+""))
+        String result=mockMvc.perform(device.getApi("getCrowFindingInfo").param("id",crowdFundings.get(0).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         System.out.println(result);
         HashMap map = JsonPath.read(result, "$.resultData.data");
@@ -247,6 +306,14 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 
     }
 
+    /*
+    * 1.判断数据库中是否有2条众筹项目的数据，没有则存入2条
+    * 2.判断数据库是否有80条众筹合作者数据，没有则存入80条
+    * 3.然后请求lastId为null时的list，即第一页的数据,并判断是否是想要的结果
+    * 4.进行第一页后的请求（正常请求），并判断是否是想要的结果
+    * 5.请求最后一页的下一页，并判断是否是想要的结果
+    * 6.请求不存在的预约列表，并判断是否是想要的结果
+     */
     @Test
     public void testGetBookingList() throws Exception {
 
@@ -262,7 +329,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             crowdFundingPublicList=crowdFundingPublicRepository.findAll();
         }
         //进行预约者列表第一页的请求
-        String result=mockMvc.perform(get("/app/getBookingList").param("crowdId",crowdFundings.get(0).getId()+""))
+        String result=mockMvc.perform(device.getApi("getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
@@ -272,7 +339,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             Assert.assertEquals("请求预约者列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
         }
         //进行预约者列表下页页的请求
-        String result1=mockMvc.perform(get("/app/getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+""))
+        String result1=mockMvc.perform(device.getApi("getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);
         List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
@@ -283,7 +350,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         }
 
         //进行认购者列表最后一页的请求
-        String result2=mockMvc.perform(get("/app/getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+""))
+        String result2=mockMvc.perform(device.getApi("getBookingList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics2=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(),0L, 10);
         List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
@@ -300,15 +367,21 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
                 maxId=funding.getId();
             }
         }
-        String result3=mockMvc.perform(get("/app/getBookingList").param("crowdId",(maxId+1)+""))
+        String result3=mockMvc.perform(device.getApi("getBookingList").param("crowdId",(maxId+1)+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
         Assert.assertEquals("请求预约者列表下页条数断言", 0, list3.size());
 
     }
 
+    /*
+    * 1.进行用户存在的判断，不存在则存入一个用户
+    * 2.存储一个合作项目
+    * 3.提交发起合作请求
+     */
     @Test
     public void testRaiseCooperation() throws Exception {
+
 
         //进行用户存在判断
         List<User> users=userRepository.findAll();
@@ -322,6 +395,10 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFunding.setStartMoeny(50000.00);
         crowdFunding.setName("合作项目0");
         crowdFunding.setStartTime(new Date());
+        List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+        userLevelList.add(userLevels[0]);
+        userLevelList.add(userLevels[1]);
+        crowdFunding.setVisibleLevel(userLevelList);
         crowdFunding.setAgencyFeeRate(10);
         crowdFunding.setContent("这是合作项目0");
         crowdFunding.setCrowdFundingType(CommonEnum.CrowdFundingType.booking);
@@ -332,16 +409,17 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFundingPublic.setMoney(lastMoney);
         crowdFundingPublic.setPhone(13852108585.0+"");
         crowdFundingPublic.setRemark("我要发起合作hahaha!");
+        Long userId=mockUser.getId();
         crowdFundingPublic.setAgencyFee(50000.00 - lastMoney);
         crowdFundingPublic.setName("发起合作者");
         //正常请求
-        mockMvc.perform(get("/app/raiseSubscription")
+        mockMvc.perform(device.getApi("raiseCooperation")
                 .param("money", 50000 + "")
                 .param("name", crowdFundingPublic.getName())
                 .param("phone", crowdFundingPublic.getPhone())
                 .param("remark", crowdFundingPublic.getRemark())
                 .param("crowdId", crowdFunding.getId() + "")
-                .param("userId", users.get(0).getId() + ""))
+                .build())
                 .andReturn();
 
         //获取请求后的合作数据表信息进行断言
@@ -349,7 +427,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingPublicRepository.findAll();
         for(CrowdFundingPublic crowF:crowdFundingPublicList){
             if(crowF.getCrowdFunding()!=null) {
-                if (crowF.getCrowdFunding().getId() == crowdFunding.getId()&&crowF.getOwnerId()==users.get(0).getId()) {
+                if (crowF.getCrowdFunding().getId() == crowdFunding.getId()&&crowF.getOwnerId()==userId) {
                     crowdFCheck = crowF;
                 }
             }
@@ -380,6 +458,13 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 //        Assert.assertEquals("认购手机格式错误报错","手机号码格式不正确",result1);
     }
 
+    /*
+* 1.判断众筹项目是否多于2，否则存入2
+* 2.然后请求lastId为null时的list，即第一页的数据,并判断是否是想要的结果
+* 3.进行第一页后的请求（正常请求），并判断是否是想要的结果
+* 4.请求最后一页的下一页，并判断是否是想要的结果
+* 5.请求不存在的发起合作者，并判断是否是想要的结果
+ */
     @Test
     public void testGetRaiseCooperationList() throws Exception {
         //进行众筹和中文认购者的存贮
@@ -395,7 +480,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 
         String key="和";
         //进行认购者列表第一页的请求
-        String result=mockMvc.perform(get("/app/getRaiseCooperationList").param("crowdId", crowdFundings.get(0).getId() + "").param("key",key))
+        String result=mockMvc.perform(device.getApi("getRaiseCooperationList").param("crowdId", crowdFundings.get(0).getId() + "").param("key",key).build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.searchCooperationgList(key, crowdFundings.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
@@ -406,7 +491,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             Assert.assertEquals("请求搜索的认购者列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
         }
         //进行认购者列表下页页的请求
-        String result1=mockMvc.perform(get("/app/getRaiseCooperationList").param("key", key).param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+""))
+        String result1=mockMvc.perform(device.getApi("getRaiseCooperationList").param("key", key).param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.searchCooperationgList(key, crowdFundings.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);
         List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
@@ -418,7 +503,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         }
 
         //进行认购者列表最后一页的请求
-        String result2=mockMvc.perform(get("/app/getRaiseCooperationList").param("key", key).param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+""))
+        String result2=mockMvc.perform(device.getApi("getRaiseCooperationList").param("key", key).param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics2=crowdFundingService.searchCooperationgList(key, crowdFundings.get(0).getId(), 0L, 10);
         List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
@@ -437,18 +522,26 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             }
         }
         key="罗";
-        String result3=mockMvc.perform(get("/app/getRaiseCooperationList")
+        String result3=mockMvc.perform(device.getApi("getRaiseCooperationList")
                 .param("key", key)
                 .param("crowdId", crowdFundings.get(0).getId() + "")
-                .param("lastId",crowdFundingPublicList.get(40).getId()+""))
+                .param("lastId",crowdFundingPublicList.get(40).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
         Assert.assertEquals("请求搜索的认购者列表下页条数断言", 0, list3.size());
     }
 
+    /*
+    * 1.进行用户存在判断，少于2个用户就新建5个
+    * 2.进行众筹项目的存入
+    * 3.进行众筹发起合作人的存入
+    * 4.进行正常的用户合作请求，并断言
+     */
     @Test
     public void testGoCooperation() throws Exception {
-
+//
+//        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
+//        appUserInfoModel.setUserLevel(CommonEnum.UserLevel.one);
         //进行用户存在判断,不存在则创建5个用户
         List<User> users=userRepository.findAll();
         if(users.size()<=2){
@@ -460,6 +553,10 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFunding.setToMoeny(200000.00);
         crowdFunding.setStartMoeny(50000.00);
         crowdFunding.setName("合作项目0");
+        List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+        userLevelList.add(userLevels[0]);
+        userLevelList.add(userLevels[1]);
+        crowdFunding.setVisibleLevel(userLevelList);
         crowdFunding.setStartTime(new Date());
         crowdFunding.setAgencyFeeRate(10);
         crowdFunding.setContent("这是合作项目0");
@@ -482,24 +579,25 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFundingBooking.setPhone(13852666666.0 + "");
         crowdFundingBooking.setRemark("我要与合作者hahaha!");
         crowdFundingBooking.setAgencyFee(10000.00 - bookMoney);
-        crowdFundingBooking.setOwnerId(users.get(1).getId());
+        //crowdFundingBooking.setOwnerId(users.get(1).getId());
+        Long userId=mockUser.getId();
         crowdFundingBooking.setName( "合作者");
         //正常请求
-        mockMvc.perform(get("/app/goCooperation")
+        mockMvc.perform(device.getApi("goCooperation")
                 .param("money", 10000.00 + "")
                 .param("name",crowdFundingBooking.getName())
                 .param("phone", crowdFundingBooking.getPhone())
                 .param("remark", crowdFundingBooking.getRemark())
                 .param("crowdId", crowdFunding.getId() + "")
                 .param("crowdPublicId", crowdFundingPublic.getId() + "")
-                .param("userId",  crowdFundingBooking.getOwnerId()+ ""))
+                .build())
                 .andReturn();
         //获取请求后的认购数据表信息进行断言
         CrowdFundingBooking crowdFBCheck=new CrowdFundingBooking();
         List<CrowdFundingBooking> crowdFundingBookings=crowdFundingBookingRepository.findAll();
         //查找存入的合作者信息
         for(CrowdFundingBooking crowF:crowdFundingBookings){
-            if(crowF.getCrowdFunding().getId()==crowdFunding.getId()&&crowF.getOwnerId()==users.get(1).getId()){
+            if(crowF.getCrowdFunding().getId()==crowdFunding.getId()&&crowF.getOwnerId()==userId){
                 crowdFBCheck=crowF;
             }
         }
@@ -507,15 +605,22 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         Assert.assertEquals("提交合作请求，断言name",crowdFundingBooking.getName(), crowdFBCheck.getName());
         Assert.assertEquals("提交合作请求，断言phone",crowdFundingBooking.getPhone(), crowdFBCheck.getPhone());
         Assert.assertEquals("提交合作请求，断言remark",crowdFundingBooking.getRemark(), crowdFBCheck.getRemark());
-        Assert.assertEquals("提交合作请求，断言userId",crowdFundingBooking.getOwnerId(), crowdFBCheck.getOwnerId());
+        Assert.assertEquals("提交合作请求，断言userId",userId, crowdFBCheck.getOwnerId());
         Assert.assertEquals("提交合作请求，断言crowdId",crowdFunding.getId(), crowdFBCheck.getCrowdFunding().getId());
         Assert.assertEquals("提交合作请求，断言crowdPublicId",crowdFundingPublic.getId(), crowdFBCheck.getCrowdFundingPublic().getId());
 
     }
 
+    /*
+    * 1.进行用户判定，如果不存在用户则创建5个
+    * 2.存入一个认购项目
+    * 3.进行正常认购请求，并断言
+     */
     @Test
     public void testRaiseSubscription() throws Exception {
 
+//        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
+//        appUserInfoModel.setUserLevel(CommonEnum.UserLevel.one);
         //进行用户存在判断
         List<User> users=userRepository.findAll();
         if(users.size()<=0){
@@ -527,6 +632,10 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFunding.setToMoeny(200000.00);
         crowdFunding.setStartMoeny(50000.00);
         crowdFunding.setName("认购项目0");
+        List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+        userLevelList.add(userLevels[0]);
+        userLevelList.add(userLevels[1]);
+        crowdFunding.setVisibleLevel(userLevelList);
         crowdFunding.setStartTime(new Date());
         crowdFunding.setAgencyFeeRate(10);
         crowdFunding.setContent("这是认购项目0");
@@ -540,14 +649,15 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFundingPublic.setRemark("我要认购hahaha!");
         crowdFundingPublic.setAgencyFee(50000.00 - lastMoney);
         crowdFundingPublic.setName("认购者");
+        Long userId=mockUser.getId();
         //正常请求
-        mockMvc.perform(get("/app/raiseSubscription")
+        mockMvc.perform(device.getApi("raiseSubscription")
                 .param("money", 50000 + "")
                 .param("name", crowdFundingPublic.getName())
                 .param("phone", crowdFundingPublic.getPhone())
                 .param("remark", crowdFundingPublic.getRemark())
                 .param("crowdId", crowdFunding.getId() + "")
-                .param("userId", users.get(0).getId() + ""))
+                .build())
                 .andReturn();
 
         //获取请求后的认购数据表信息进行断言
@@ -555,7 +665,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingPublicRepository.findAll();
         for(CrowdFundingPublic crowF:crowdFundingPublicList){
             if(crowF.getCrowdFunding()!=null) {
-                if (crowF.getCrowdFunding().getId() == crowdFunding.getId()&&crowF.getOwnerId()==users.get(0).getId()) {
+                if (crowF.getCrowdFunding().getId() == crowdFunding.getId()&&crowF.getOwnerId()==userId) {
                     crowdFCheck = crowF;
                 }
             }
@@ -587,6 +697,14 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     }
 
 
+    /*
+* 1.判断数据库中是否有2条众筹项目的数据，没有则存入2条
+* 2.判断数据库是否有80条众筹合作者数据，没有则存入80条
+* 3.然后请求lastId为null时的list，即第一页的数据,并判断是否是想要的结果
+* 4.进行第一页后的请求（正常请求），并判断是否是想要的结果
+* 5.请求最后一页的下一页，并判断是否是想要的结果
+* 6.请求不存在的认购列表，并判断是否是想要的结果
+ */
     @Test
     public void testGetSubscriptionList() throws Exception {
         //进行众筹和认购者的存贮
@@ -601,7 +719,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             crowdFundingPublicList=crowdFundingPublicRepository.findAll();
         }
         //进行认购者列表第一页的请求
-        String result=mockMvc.perform(get("/app/getSubscriptionList").param("crowdId",crowdFundings.get(0).getId()+""))
+        String result=mockMvc.perform(device.getApi("getSubscriptionList").param("crowdId",crowdFundings.get(0).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
@@ -611,7 +729,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             Assert.assertEquals("请求认购者列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
         }
         //进行认购者列表下页页的请求
-        String result1=mockMvc.perform(get("/app/getSubscriptionList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+""))
+        String result1=mockMvc.perform(device.getApi("getSubscriptionList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);
         List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
@@ -622,7 +740,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         }
 
         //进行认购者列表最后一页的请求
-        String result2=mockMvc.perform(get("/app/getSubscriptionList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+""))
+        String result2=mockMvc.perform(device.getApi("getSubscriptionList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<CrowdFundingPublic> crowdFundingPublics2=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(),0L, 10);
         List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
@@ -639,7 +757,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
                 maxId=funding.getId();
             }
         }
-        String result3=mockMvc.perform(get("/app/getSubscriptionList").param("crowdId",(maxId+1)+""))
+        String result3=mockMvc.perform(device.getApi("getSubscriptionList").param("crowdId",(maxId+1)+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
             Assert.assertEquals("请求认购者列表下页条数断言", 0, list3.size());

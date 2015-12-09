@@ -6,8 +6,6 @@ import com.huotu.ymr.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.List;
 
 /**
@@ -16,8 +14,6 @@ import java.util.List;
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
-//    @Autowired
-//    private EntityManager entityManager;
 
     @Autowired
     private ArticleRepository articleRepository;
@@ -27,27 +23,24 @@ public class ArticleServiceImpl implements ArticleService {
 
         StringBuilder hql = new StringBuilder();
         hql.append("from Article as art where art.category.id=:catId and art.id<:lastId order by art.id desc");
-        List list = articleRepository.queryHql(hql.toString(), query -> {
+        List<Article> list = articleRepository.queryHql(hql.toString(), query -> {
             query.setParameter("catId", categoryId);
             query.setParameter("lastId", lastId);
             query.setMaxResults(number);
         });
 
-//        List<Article> articleList = query.getResultList();
-//        return articleList;
-        return null;
+        return list;
     }
 
     @Override
     public long getMaxId() {
-//        StringBuilder hql = new StringBuilder("select max(art.id) from Article as art");
-//        Query query = entityManager.createQuery(hql.toString());
-//        List<Long> maxIds = query.getResultList();
-//        long maxId = 0L;
-//        if (maxIds.size() != 0) {
-//            maxId = maxIds.get(0);
-//        }
-//        return maxId;
-        return 0;
+
+        StringBuilder hql = new StringBuilder("select max(art.id) from Article as art");
+        List<Long> maxIds = articleRepository.queryHql(hql.toString(), null);
+        long maxId = 0L;
+        if (maxIds.size()>0&&maxIds.get(0)!=null) {
+            maxId = maxIds.get(0);
+        }
+        return maxId;
     }
 }

@@ -60,7 +60,7 @@ public class ArticleController implements ArticleSystem {
     @RequestMapping("/getArticleList")
     public ApiResult getArticleList(Output<AppArticleListModel[]> list, Integer categoryId, Long lastId) throws Exception {
 
-        int number=10;//todo 每页的文章条数暂定测试条数：3
+        int number=10;//todo 每页的文章条数暂定测试条数：10
         if(lastId==null){
             lastId=articleService.getMaxId()+1;
         }//如果为空则默认第一页

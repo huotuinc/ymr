@@ -31,7 +31,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import javax.transaction.Transactional;
 import java.util.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 /**
@@ -111,6 +110,11 @@ public class ArticleControllerTest extends SpringBaseTest {
         return categories;
     }
 
+    /*
+    * 先判断类别表中是否存在数据
+    * 然后进行列表数据请求
+    * 最后比较取出来的数据与数据库中的数据是否一样
+     */
     @Test
     public void testGetCategoryList() throws Exception {
         List<Category> categories = categoryRepository.findAll();
@@ -145,6 +149,14 @@ public class ArticleControllerTest extends SpringBaseTest {
         return articles;
     }
 
+    /*
+    * 1.判断数据库中是否有3条分类的数据，没有则存入3条
+    * 2.判断数据库是否有100条数据，没有则存入100条
+    * 3.然后请求lastId为null时的list，即第一页的数据,并判断是否是想要的结果
+    * 4.进行第一页后的请求（正常请求），并判断是否是想要的结果
+    * 5.请求最后一页的下一页，并判断是否是想要的结果
+    * 6.请求不存在的分类下的文章，并判断是否是想要的结果
+     */
     @Test
     public void testGetArticleList() throws Exception {
 
@@ -162,7 +174,7 @@ public class ArticleControllerTest extends SpringBaseTest {
             articles = articleRepository.findAll();
         }
         //请求存在文章第一页
-        String result = mockMvc.perform(get("/article/getArticleList").param("categoryId", categories.get(0).getId() + ""))
+        String result = mockMvc.perform(device.getApi("getArticleList").param("categoryId", categories.get(0).getId() + "").build())
                 .andReturn().getResponse().getContentAsString();
         //System.out.println(result);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
@@ -174,7 +186,7 @@ public class ArticleControllerTest extends SpringBaseTest {
         }
 
         //请求存在文章下页
-        String result1 = mockMvc.perform(get("/article/getArticleList").param("categoryId", categories.get(0).getId() + "").param("lastId", articles.get(50).getId() + ""))
+        String result1 = mockMvc.perform(device.getApi("getArticleList").param("categoryId", categories.get(0).getId() + "").param("lastId", articles.get(50).getId() + "").build())
                 .andReturn().getResponse().getContentAsString();
         //System.out.println(result1);
         List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
@@ -186,7 +198,7 @@ public class ArticleControllerTest extends SpringBaseTest {
         }
 
         //请求存在文章最后一篇之后的
-        String result2 = mockMvc.perform(get("/article/getArticleList").param("categoryId", categories.get(0).getId() + "").param("lastId", "0"))
+        String result2 = mockMvc.perform(device.getApi("getArticleList").param("categoryId", categories.get(0).getId() + "").param("lastId", "0").build())
                 .andReturn().getResponse().getContentAsString();
         //System.out.println(result1);
         List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
@@ -204,13 +216,18 @@ public class ArticleControllerTest extends SpringBaseTest {
                 maxId = cate.getId();
             }
         }
-        String result3 = mockMvc.perform(get("/article/getArticleList").param("categoryId", (maxId + 1) + ""))
+        String result3 = mockMvc.perform(device.getApi("getArticleList").param("categoryId", (maxId + 1) + "").build())
                 .andReturn().getResponse().getContentAsString();
         //System.out.println(result2);
         List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
         Assert.assertEquals("断言请求不存在的分类文章", 0, list3.size());
     }
 
+    /*
+    * 1.如果文章分类小于3则存入三条分类数据
+    * 2.如果文章数量少于100条则存入100条数据
+    * 3.进行一篇文章的请求,并判断是否是想要的结果
+     */
     @Test
     public void testGetArticleInfo() throws Exception {
         //如果文章分类或文章数为0，则进行存储
@@ -224,9 +241,9 @@ public class ArticleControllerTest extends SpringBaseTest {
             saveArticles(categories);
             articleList = articleRepository.findAll();
         }
-        String result = mockMvc.perform(get("/article/getArticleInfo").param("id", articleList.get(0).getId().toString()))
+        String result = mockMvc.perform(device.getApi("getArticleInfo").param("id", articleList.get(0).getId().toString()).build())
                 .andReturn().getResponse().getContentAsString();
-        // System.out.println(result);
+        System.out.println(result);
         HashMap map = JsonPath.read(result, "$.resultData.data");
         Assert.assertEquals("断言请求文章id", articleList.get(0).getTitle(), map.get("title"));
     }

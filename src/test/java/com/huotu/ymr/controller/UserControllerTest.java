@@ -22,7 +22,7 @@ import javax.transaction.Transactional;
 
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class, MvcConfig.class })
+@ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class, MvcConfig.class})
 @Transactional
 public class UserControllerTest extends SpringBaseTest {
     @Autowired
