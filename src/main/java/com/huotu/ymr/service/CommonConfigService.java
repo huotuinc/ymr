@@ -39,6 +39,10 @@ public interface CommonConfigService {
      */
     String getAppKeySecret();
 
+    /**
+     * 客服电话
+     * @return
+     */
     String getCustomerServicePhone();
 
 }

@@ -1,5 +1,6 @@
 package com.huotu.ymr.entity;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -62,6 +63,12 @@ public class Article {
      */
     @Temporal(value = TemporalType.TIMESTAMP)
     private Date time;
+
+    /**
+     * 审核类型
+     * 通过(默认)，删除
+     */
+    private CommonEnum.CheckType checkType;
 
     /**
      * 浏览量

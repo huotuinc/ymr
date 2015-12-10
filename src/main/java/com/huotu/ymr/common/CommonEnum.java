@@ -288,7 +288,7 @@ public interface CommonEnum {
         post(2, "发布爱分享"),
         turn(3, "转发爱分享"),
         extracted(4, "提取积分"),
-        admin_put(5,"管理员充值");
+        admin_put(5, "管理员充值");
 
 
         private int value;
@@ -360,17 +360,19 @@ public interface CommonEnum {
      */
     enum CheckType implements ICommonEnum {
         /**
-         * notPass(0, "未通过")
+         * audit(0,"审核中")
          */
-        notPass(0, "未通过"),
+        audit(0, "审核中"),
         /**
          * pass(1, "通过")
          */
         pass(1, "通过"),
         /**
-         * audit(2,"审核中")
+         * notPass(2, "未通过")
          */
-        audit(2, "审核中");
+        notPass(2, "未通过"),
+        close(3, "关闭"),
+        delete(4, "删除");
         private int value;
 
         private String name;

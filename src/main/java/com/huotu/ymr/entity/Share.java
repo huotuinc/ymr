@@ -124,9 +124,11 @@ public class Share implements YmrComment {
     private Integer usedScore;
 
     /**
-     * 审核状态     0：未通过，1：通过，2审核中
+     * 审核状态
      */
     private CommonEnum.CheckType checkStatus;
+
+
 
     /**
      * 审核未通过的原因
