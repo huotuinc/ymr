@@ -6,8 +6,6 @@ import com.huotu.ymr.model.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * 合伙人系统接口
  * Created by lgh on 2015/11/27.
@@ -18,12 +16,13 @@ public interface CrowdFundingSystem {
      * 获取众筹列表
      *
      * @param list
+     * @param  key 搜索关键字
      * @param lastId 上一页最后一个Id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception;
+    ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list, String key,  Long lastId) throws Exception;
 
     /**
      * 众筹详情
@@ -52,26 +51,26 @@ public interface CrowdFundingSystem {
 
 
 
-    /**
-     * 支付回调(微信) todo 待完善
-     * 确认支付订单 记录支付流水
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    AppWeixinResultModel callBackWeiXin(HttpServletRequest request) throws Exception;
-
-
-    /**
-     * 支付回调(支付宝)  todo 待完善
-     * 确认支付订单 记录支付流水
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(method = RequestMethod.GET)
-    String callBackAlipay(HttpServletRequest request) throws Exception;
+//    /**
+//     * 支付回调(微信) todo 待完善
+//     * 确认支付订单 记录支付流水
+//     *
+//     * @return
+//     * @throws Exception
+//     */
+//    @RequestMapping(method = RequestMethod.GET)
+//    AppWeixinResultModel callBackWeiXin(HttpServletRequest request) throws Exception;
+//
+//
+//    /**
+//     * 支付回调(支付宝)  todo 待完善
+//     * 确认支付订单 记录支付流水
+//     *
+//     * @return
+//     * @throws Exception
+//     */
+//    @RequestMapping(method = RequestMethod.GET)
+//    String callBackAlipay(HttpServletRequest request) throws Exception;
 
     /**
      * 获取预约人列表
@@ -104,14 +103,13 @@ public interface CrowdFundingSystem {
      * 搜索合作发起人列表
      *
      * @param list
-     * @param key    搜索关键字
      * @param lastId 上一页最后一个Id
      * @param crowdId  众筹id
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getRaiseCooperationList(Output<AppRaiseCooperationListModel[]> list, String key, Long lastId,Long crowdId) throws Exception;
+    ApiResult getRaiseCooperationList(Output<AppRaiseCooperationListModel[]> list,Long lastId,Long crowdId) throws Exception;
 
     /**
      * 合作
@@ -137,7 +135,6 @@ public interface CrowdFundingSystem {
      * @param phone  联系电话
      * @param remark 备注
      * @param crowdId 众筹项目id
-     * @param userId 认购人id
      * @return
      * @throws Exception
      */

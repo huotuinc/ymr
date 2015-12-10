@@ -1,5 +1,7 @@
 package com.huotu.ymr.interceptor;
 
+import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.exception.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
@@ -24,12 +26,27 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             result.setSystemResultDescription(ex.getLocalizedMessage());
             try {
                 throw ex;
-//            } catch (ShopCloseException e) {
-//                result.setSystemResultCode(CommonEnum.AppCode.ERROR_USER_SHOPCLOSE.getValue());
-//                result.setSystemResultDescription("商城已经关闭");
-//            }catch (ShopExpiredException e){
-//                result.setSystemResultCode(CommonEnum.AppCode.ERROR_USER_SHOPEXPIRED.getValue());
-//                result.setSystemResultDescription("商城已经过期");
+            } catch (AmountErrorException e) {
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("认购金额小于起购金额");
+            }catch (CrowdFundingNotExitsException e){
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("众筹项目不存在");
+            }catch (CrowdFundingPublicIllegalException e){
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("众筹项目合作发起人信息非法");
+            }catch (PhoneFormatErrorException e){
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("手机格式错误");
+            }catch (UserLevelErrorException e){
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("该用户级别不被允许此操作");
+            }catch (UserNotExitsException e){
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("用户不存在");
+            }catch (UserRequestIllegalException e){
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("用户请求非法");
             } catch (Exception e) {
                 log.error("unExcepted error ",e);
                 result.setSystemResultCode(HttpStatus.INTERNAL_SERVER_ERROR.value());

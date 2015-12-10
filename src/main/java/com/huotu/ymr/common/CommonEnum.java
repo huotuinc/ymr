@@ -502,4 +502,39 @@ public interface CommonEnum {
             this.name = name;
         }
     }
+
+    enum PurchaseSource implements ICommonEnum{
+        /**
+         * 用户支付类型
+         */
+        WEIXIN(0, "微信支付"),
+
+        ALIPAY(1, "支付宝支付");
+
+        private int value;
+
+        private String name;
+
+        PurchaseSource(int value,String name){
+            this.value=value;
+            this.name=name;
+
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }
