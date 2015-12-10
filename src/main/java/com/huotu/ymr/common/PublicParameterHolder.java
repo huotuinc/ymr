@@ -11,6 +11,7 @@ public class PublicParameterHolder {
     private static final ThreadLocal<AppPublicModel> models = new ThreadLocal<>();
 
     public static AppPublicModel get() {
+
         return models.get();
     }
 

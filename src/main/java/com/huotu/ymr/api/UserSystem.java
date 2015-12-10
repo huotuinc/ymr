@@ -7,7 +7,6 @@ import com.huotu.ymr.model.AppUpdateModel;
 import com.huotu.ymr.model.AppUserInfoModel;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户系统接口
@@ -41,19 +40,29 @@ public interface UserSystem {
 
 
     /**
+     * 微信授权失败调用的手机号登录
+     * @param data  返回的用户数据
+     * @param photo 手机号
+     * @param code  验证码
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    ApiResult login(Output<AppUserInfoModel> data, String photo,String code) throws Exception;
+
+
+    /**
      * 获取验证码
      * <p>
      * <b>负责人： </b>
      *
      * @param phone String(11)
-     * @param type  类型 1：绑定手机
+     * @param type  类型 0：注册，1：绑定手机
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult sendSMS(String phone,
-                      int type, @RequestParam(required = false) Integer codeType
-    ) throws Exception;
+    ApiResult sendSMS(String phone, int type) throws Exception;
 
     /**
      * 绑定手机

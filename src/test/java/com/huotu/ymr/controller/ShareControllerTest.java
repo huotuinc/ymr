@@ -1,5 +1,8 @@
 package com.huotu.ymr.controller;
 
+import com.huotu.common.base.StringHelper;
+import com.huotu.ymr.base.Device;
+import com.huotu.ymr.base.DeviceType;
 import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
@@ -8,6 +11,10 @@ import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareComment;
 import com.huotu.ymr.entity.User;
+import com.huotu.ymr.mallentity.MallMerchant;
+import com.huotu.ymr.mallentity.MallUser;
+import com.huotu.ymr.mallrepository.MallMerchantRepository;
+import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.repository.ShareCommentRepository;
 import com.huotu.ymr.repository.ShareRepository;
 import com.huotu.ymr.repository.UserRepository;
@@ -49,9 +56,31 @@ public class ShareControllerTest extends SpringBaseTest {
     @Autowired
     UserRepository userRepository;
 
+    private Device device;
+    private String mockUserName;
+    private String mockUserPassword;
+    private User mockUser;
+    private MallUser mockMallUser;
+    private MallMerchant mockMerchant;
+    @Autowired
+    private UserRepository mockUserRepository;
+    @Autowired
+    private MallUserRepository mockMallUserRepository;
+    @Autowired
+    private MallMerchantRepository mockMallMerchantRepository;
     @Before
-    public void init() throws Exception {
+    public void init() {
+        device = Device.newDevice(DeviceType.Android);
+        Random random = new Random();
+        mockUserName = StringHelper.randomNo(random, 12);
+        mockUserPassword = UUID.randomUUID().toString().replace("-", "");
 
+        mockMerchant = generateMerchant(mockMallMerchantRepository);
+
+        mockMallUser = generateMallUser(mockUserName, mockUserPassword, mockMallUserRepository, mockMerchant);
+        mockUser = generateUserWithToken(mockMallUser, mockUserRepository);
+
+        device.setToken(mockUser.getToken());
     }
 
     @Test
@@ -103,9 +132,9 @@ public class ShareControllerTest extends SpringBaseTest {
             }
         });
 
-        String result=mockMvc.perform(get("/app/searchShareList")
+        String result=mockMvc.perform(device.getApi("/app/searchShareList")
                 .param("key",  "")
-                .param("lastId", ""))
+                .param("lastId", "").build())
                 .andReturn().getResponse().getContentAsString();
 
 
@@ -125,9 +154,9 @@ public class ShareControllerTest extends SpringBaseTest {
         }
 
         //关键字和分页测试
-        String result2 = mockMvc.perform(get("/app/searchShareList")
+        String result2 = mockMvc.perform(device.getApi("/app/searchShareList")
                 .param("key", "置顶")
-                .param("lastId", lastId))
+                .param("lastId", lastId).build())
                 .andReturn().getResponse().getContentAsString();
         List<Object> resultList2= JsonPath.read(result2, "$.resultData.list");
 

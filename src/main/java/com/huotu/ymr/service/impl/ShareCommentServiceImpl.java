@@ -8,13 +8,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
- * ·ÖÏíÎÄÕÂ¹ÜÀí
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¹ï¿½ï¿½ï¿½
  * Created by slt on 2015/12/1.
  */
 @Service
@@ -25,7 +22,12 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     @Override
     public Map<Long,List<ShareComment>> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception {
         List<ShareComment> list= shareCommentRepository.findByShareOrderByTime(shareId, lastId, new PageRequest(0,pageSize));
-        Map<Long,List<ShareComment>> map=new TreeMap<>();
+        Map<Long,List<ShareComment>> map=new TreeMap<Long,List<ShareComment>>(new Comparator<Long>() {
+            @Override
+            public int compare(Long o1, Long o2) {
+                return o2-o1>0?1:-1;
+            }
+        });
         for(ShareComment sc:list){
             if(sc.getParentId()==0L){
                 List<ShareComment> comments=new ArrayList<>();

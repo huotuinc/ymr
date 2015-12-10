@@ -23,7 +23,19 @@ public interface CommonEnum {
         /**
          * ERROR_USER_TOKEN_FAIL(56001, "用户登录失效，需要重新登录")
          */
-        ERROR_USER_TOKEN_FAIL(56001, "你已经在其他设备登录，需要重新登录");
+        ERROR_USER_TOKEN_FAIL(56001, "你已经在其他设备登录，需要重新登录"),
+        /**
+         * ERROR_WRONG_MOBILE(53003, "不合法的手机号")
+         */
+        ERROR_WRONG_MOBILE(53003, "不合法的手机号"),
+        /**
+         * ERROR_WRONG_VERIFICATION_INTERVAL(53014, "验证码发送间隔为90秒")
+         */
+        ERROR_WRONG_VERIFICATION_INTERVAL(53014, "验证码发送间隔为90秒"),
+        /**
+         * ERROR_SEND_MESSAGE_FAIL(55001, "短信发送通道不稳定，请重新尝试")
+         */
+        ERROR_SEND_MESSAGE_FAIL(55001, "短信发送通道不稳定，请重新尝试");
 
 
         private int value;
@@ -107,7 +119,15 @@ public interface CommonEnum {
         /**
          * group(1, "团购")
          */
-        group(1, "团购");
+        group(1, "团购"),
+        /**
+         * crowdFunding(2,"众筹项目")
+         */
+        crowdFunding(2,"众筹项目"),
+        /**
+         *  userShare(3,"用户分享")
+         */
+        userShare(3,"用户分享");
         private int value;
 
         private String name;
@@ -376,6 +396,75 @@ public interface CommonEnum {
             this.name = name;
         }
     }
+
+
+    enum CodeType implements ICommonEnum{
+        /**
+         * text(0, "文本")
+         */
+        text(0, "文本"),
+        /**
+         * voice(1, "语音")
+         */
+        voice(1, "语音");
+
+        private int value;
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        CodeType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+    }
+
+    enum VerificationType implements ICommonEnum {
+
+
+        reg(0, "注册");
+
+        private int value;
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        VerificationType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+    }
+
 
 
     enum LevelFlowType implements ICommonEnum {
