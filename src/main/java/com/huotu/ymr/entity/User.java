@@ -34,14 +34,18 @@ public class User {
      * 发帖或转发，或充值获得，可转为商城积分
      */
     private Integer score;
+
+    /**
+     * 累计获得积分
+     */
+    private Integer continuedScore;
+
     /**
      * 用户token身份标示
      * 32位的UUID
      */
     @Column(length = 32)
     private String token;
-    /**
-     * 累计充值
-     */
-    private Double continuedMoney;
+
+
 }

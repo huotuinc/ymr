@@ -14,7 +14,7 @@ public interface CommonEnum {
         /**
          * PARAMETER_ERROR(1001,"参数错误")
          */
-        PARAMETER_ERROR(1001,"参数错误"),
+        PARAMETER_ERROR(1001, "参数错误"),
         SYSTEM_BAD_REQUEST_50601(50601, "系统请求失败,code 50601"),//sign校验失败
         /**
          * ERROR_USER_LOGIN_FAIL(56000, "用户登录失败")
@@ -24,7 +24,6 @@ public interface CommonEnum {
          * ERROR_USER_TOKEN_FAIL(56001, "用户登录失效，需要重新登录")
          */
         ERROR_USER_TOKEN_FAIL(56001, "你已经在其他设备登录，需要重新登录");
-
 
 
         private int value;
@@ -254,6 +253,44 @@ public interface CommonEnum {
         private String name;
 
         VersionUpdateType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+    }
+
+    /**
+     * 积分流水类型
+     */
+    enum ScoreFlowType implements ICommonEnum {
+
+        pay(0, "支付"),
+        put(1, "充值"),
+        post(2, "发布爱分享"),
+        turn(3, "转发爱分享"),
+        extracted(4, "提取积分");
+
+
+        private int value;
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        ScoreFlowType(int value, String name) {
             this.value = value;
             this.name = name;
         }
