@@ -263,11 +263,12 @@ public interface CommonEnum {
      */
     enum ScoreFlowType implements ICommonEnum {
 
-        pay(0, "支付"),
-        put(1, "充值"),
+        user_pay(0, "用户支付"),
+        user_put(1, "用户充值"),
         post(2, "发布爱分享"),
         turn(3, "转发爱分享"),
-        extracted(4, "提取积分");
+        extracted(4, "提取积分"),
+        admin_put(5,"管理员充值");
 
 
         private int value;
@@ -299,7 +300,7 @@ public interface CommonEnum {
     /**
      * 用户类型
      */
-    enum UserType implements ICommonEnum{
+    enum UserType implements ICommonEnum {
         /**
          * user(0, "用户")
          */
@@ -337,7 +338,7 @@ public interface CommonEnum {
     /**
      * 审核类型
      */
-    enum CheckType implements ICommonEnum{
+    enum CheckType implements ICommonEnum {
         /**
          * notPass(0, "未通过")
          */
@@ -349,7 +350,7 @@ public interface CommonEnum {
         /**
          * audit(2,"审核中")
          */
-        audit(2,"审核中");
+        audit(2, "审核中");
         private int value;
 
         private String name;
@@ -377,4 +378,37 @@ public interface CommonEnum {
     }
 
 
+    enum LevelFlowType implements ICommonEnum {
+        /**
+         * 用户积分达到一定分数后升级
+         */
+        auto(0, "自动升级"),
+
+        put(1, "充值升级"),
+        admin_change(2, "管理员改变升级");
+        private int value;
+
+        private String name;
+
+        LevelFlowType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 }

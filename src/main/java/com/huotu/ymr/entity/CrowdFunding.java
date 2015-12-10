@@ -35,6 +35,7 @@ public class CrowdFunding {
     /**
      * 可见等级
      */
+    @ElementCollection
     private List<CommonEnum.UserLevel> visibleLevel;
     /**
      * 封面图片

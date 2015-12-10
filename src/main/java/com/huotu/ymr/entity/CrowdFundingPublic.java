@@ -68,18 +68,13 @@ public class CrowdFundingPublic {
     private Double agencyFee;
 
     /**
-     * 支付状态
-     */
-    private CommonEnum.PayType payType;
-
-    /**
      * 支付流水号
      */
     @Column(length = 100)
-    private String payFlowNo;
+    private String orderNo;
 
     /**
-     * 状态 1成功2失败
+     * 审核状态 1成功2失败
      * 默认0
      */
     private Integer status;
