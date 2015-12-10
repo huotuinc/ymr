@@ -42,6 +42,8 @@ public class Report {
     /**
      * 时间
      */
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
 
