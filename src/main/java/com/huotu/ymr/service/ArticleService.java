@@ -1,7 +1,7 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.Article;
-import com.huotu.ymr.model.SearchCondition.ArticleSearchModel;
+import com.huotu.ymr.model.searchCondition.ArticleSearchModel;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
