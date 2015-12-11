@@ -1,8 +1,10 @@
 package com.huotu.ymr.controller.web;
 
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.model.SearchCondition.ShareSearchModel;
+import com.huotu.ymr.model.backend.BackendShareModel;
 import com.huotu.ymr.service.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -89,43 +91,42 @@ public class ShareManagerController {
         return "manager/share/userShareList";
 
     }
+
+    @RequestMapping(value = "addShare")
+    public String addShare(BackendShareModel backendShareModel,Model model) throws Exception{
+        return "manager/share/addYmrShareList";
+    }
     /**
      * 后台添加爱分享内容
      *
-     * @param title
-     * @param content
      * @return
      */
-    @RequestMapping(value = "addShare",method = RequestMethod.POST)
-    public String addShare(String title, String content,
-                           String imgUrl, Long userId,
-                           CommonEnum.ShareType shareType,
-                           Boolean top,Integer postReward,
-                           Integer relayReward,Integer score) throws Exception{
+    @RequestMapping(value = "saveShare",method = RequestMethod.POST)
+    public String saveShare(BackendShareModel backendShareModel) throws Exception{
         Share share=new Share();
         share.setCheckStatus(CommonEnum.CheckType.audit);
         share.setOwnerId(0L);//todo 当前登录的用户
-        share.setScore(score);
-        share.setTitle(title);
+        share.setScore(0);
+        share.setTitle(backendShareModel.getTitle());
         share.setLinkUrl("");//todo
-        share.setContent(content);
-        share.setImg(imgUrl);
+        share.setContent(backendShareModel.getContent());
+        share.setImg("");
         share.setIntro("");//todo
         share.setOwnerType(CommonEnum.UserType.official);
         share.setReason("");
 //        share.setView(0L);
 //        share.setCommentQuantity(0L);
 //        share.setPraiseQuantity(0L);
-        share.setPostReward(postReward);
-        share.setEnabledRecommendProduct(true);//todo
-        share.setTop(top);
+        share.setPostReward(0);
+//        share.setEnabledRecommendProduct(false);//todo
+        share.setTop(backendShareModel.getTop());
         share.setUsedScore(0);
         share.setTime(new Date());
 //        share.setRelayQuantity(0L);
-        share.setShareType(shareType);
+        share.setShareType(EnumHelper.getEnumType(CommonEnum.ShareType.class,backendShareModel.getShareType()));
         share.setUseLink(false);
-        share.setRelayReward(relayReward);
+        share.setRelayReward(0);
         shareService.addShare(share);
-        return "manager";
+        return "redirect:getYmrShareList";
     }
 }

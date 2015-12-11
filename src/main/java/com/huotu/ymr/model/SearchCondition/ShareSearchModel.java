@@ -23,7 +23,7 @@ public class ShareSearchModel {
     /**
      * 发布人 0：用户，1：商家
      */
-    private Integer ownerType=0;
+    private Integer ownerType=1;
 
     /**
      * 排序字段 0：发帖时间，1：浏览量，2：转发量，3：点赞量，4：评论量
