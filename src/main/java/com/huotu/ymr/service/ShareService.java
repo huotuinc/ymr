@@ -1,7 +1,7 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.Share;
-import com.huotu.ymr.model.SearchCondition.ShareSearchModel;
+import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

@@ -63,4 +63,10 @@ public class BackendShareModel {
      * 转发可得积分
      */
     private Integer relayScore;
+
+    /**
+     * 爱分享类型 info(0, "资讯")，group(1, "团购")。。。
+     */
+    private Integer shareType;
+
 }
