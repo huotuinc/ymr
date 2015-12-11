@@ -28,7 +28,7 @@ public interface ArticleSystem {
      * 获取文章列表
      *
      * @param list
-     * @param categoryId
+     * @param categoryId 分类Id 大于0
      * @param lastId     上一页最后一个文章Id
      * @return
      * @throws Exception
@@ -41,7 +41,7 @@ public interface ArticleSystem {
      * 获取文章内容
      *
      * @param data
-     * @param id
+     * @param id 文章Id
      * @return
      * @throws Exception
      */

@@ -9,10 +9,7 @@ import com.huotu.ymr.common.*;
 import com.huotu.ymr.entity.ConfigAppVersion;
 import com.huotu.ymr.exception.InterrelatedException;
 import com.huotu.ymr.mallrepository.MallUserRepository;
-import com.huotu.ymr.model.AppGlobalModel;
-import com.huotu.ymr.model.AppPublicModel;
-import com.huotu.ymr.model.AppUpdateModel;
-import com.huotu.ymr.model.AppUserInfoModel;
+import com.huotu.ymr.model.*;
 import com.huotu.ymr.repository.ConfigAppVersionRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.VerificationService;
@@ -21,6 +18,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
 import java.util.Random;
@@ -98,16 +96,20 @@ public class UserController implements UserSystem {
      *      不正确：返回信息
      *     正确：
      * @param data  返回的用户数据
-     * @param photo 手机号
+     * @param phone 手机号
      * @param code  验证码
      * @return
      * @throws Exception
      */
     @RequestMapping("/phoneLogin")
     @Override
-    public ApiResult login(Output<AppUserInfoModel> data, String photo, String code) throws Exception {
+    public ApiResult login(Output<AppUserInfoModel> data, String phone, String code) throws Exception {
         return null;
     }
+
+
+
+
 
 
     @RequestMapping("/sendSMS")
@@ -154,6 +156,36 @@ public class UserController implements UserSystem {
     @RequestMapping("/modifyMobile")
     @Override
     public ApiResult modifyMobile(String code, String phone) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult putToCoffers() throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult getScorePutInfo(Output<Double> upgradeMoney, Output<Double> rate) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult put(Output<String> orderNo, Double money) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult updateUserProfile(Output<AppUserInfoModel> data, @RequestParam(required = true) Integer profileType, Object profileData) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult messages(Output<AppMessageModel[]> messages, Long lastId) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ApiResult getMyCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {
         return null;
     }
 

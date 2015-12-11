@@ -69,7 +69,7 @@ public class ArticleController implements ArticleSystem {
         for(Article article:articleList){
             AppArticleListModel appArticleListModel=new AppArticleListModel();
             appArticleListModel.setPId(article.getId());
-            appArticleListModel.setPicture(article.getPicture());
+            appArticleListModel.setPicture(article.getPicture());//todo
             appArticleListModel.setTitle(article.getTitle());
             appArticleListModel.setSummary(article.getSummary());
             appArticleListModel.setView(article.getView());
@@ -88,7 +88,7 @@ public class ArticleController implements ArticleSystem {
         articleModel.setView(article.getView());
         articleModel.setContent(article.getContent());
         articleModel.setTitle(article.getTitle());
-        articleModel.setPicture(article.getPicture());
+        articleModel.setPicture(article.getPicture()); //todo
         articleModel.setTime(article.getTime());
         data.outputData(articleModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
