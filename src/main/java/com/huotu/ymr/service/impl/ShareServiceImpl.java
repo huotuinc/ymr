@@ -1,11 +1,15 @@
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.model.SearchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ShareRepository;
 import com.huotu.ymr.service.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -14,7 +18,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -98,15 +105,62 @@ public class ShareServiceImpl implements ShareService {
     }
 
     @Override
-    public Page<Share> findPcShareList(String key, String keyType, Integer pageNo, Integer pageSize) throws Exception {
+    public Page<Share> findPcShareList(ShareSearchModel shareSearchModel) throws Exception {
+        Sort sort;
+        Sort.Direction direction = shareSearchModel.getRaSortType() == 0 ? Sort.Direction.DESC : Sort.Direction.ASC;
+        switch (shareSearchModel.getSort()) {
+            case 1:
+                //浏览量
+                sort = new Sort(direction, "view");
+                break;
+            case 2:
+                //转发量
+                sort = new Sort(direction, "relayQuantity");
+                break;
+            case 3:
+                //点赞量
+                sort=new Sort(direction,"praiseQuantity");
+                break;
+            case 4:
+                //评论量
+                sort=new Sort(direction,"commentQuantity");
+                break;
+            default:
+                sort = new Sort(direction, "time");
+                break;
+        }
         return  shareRepository.findAll(new Specification<Share>() {
             @Override
-            public Predicate toPredicate(Root<Share> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                if ("".equals(key)||key==null) {
-                    return null;
+            public Predicate toPredicate(Root<Share> root, CriteriaQuery<?> query, CriteriaBuilder cb){
+                Predicate predicate = cb.equal(root.get("ownerType").as(CommonEnum.UserType.class), EnumHelper.getEnumType(CommonEnum.UserType.class,shareSearchModel.getOwnerType()));
+                if (!StringUtils.isEmpty(shareSearchModel.getShareTitle())){
+                    predicate = cb.and(predicate,cb.like(root.get("title").as(String.class),"%"+shareSearchModel.getShareTitle()+"%"));
                 }
-                return cb.like(root.get("title").as(String.class),"%"+key+"%");
+                if(shareSearchModel.getShareType()!=-1){
+                    predicate = cb.and(predicate,cb.equal(root.get("shareType").as(CommonEnum.ShareType.class), EnumHelper.getEnumType(CommonEnum.ShareType.class,shareSearchModel.getShareType())));
+                }
+                if(!StringUtils.isEmpty(shareSearchModel.getStartTime())){
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = null;
+                    try {
+                        date = sdf.parse(shareSearchModel.getStartTime());
+                    } catch (ParseException e) {
+                        throw  new RuntimeException("字符串转日期失败");
+                    }
+                    predicate=cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date);
+                }
+                if(!StringUtils.isEmpty(shareSearchModel.getEndTime())){
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date date = null;
+                    try {
+                        date = sdf.parse(shareSearchModel.getEndTime());
+                    } catch (ParseException e) {
+                        throw  new RuntimeException("字符串转日期失败");
+                    }
+                    predicate=cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date);
+                }
+                return predicate;
             }
-        },new PageRequest(pageNo, pageSize));
+        },new PageRequest(shareSearchModel.getPageNoStr(), 20,sort));
     }
 }

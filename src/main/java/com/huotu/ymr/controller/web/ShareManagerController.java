@@ -2,6 +2,7 @@ package com.huotu.ymr.controller.web;
 
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.model.SearchCondition.ShareSearchModel;
 import com.huotu.ymr.service.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,36 +51,42 @@ public class ShareManagerController {
     }
 
     /**
-     * 获取爱分享文章列表
-     * @param keywords
-     * @param pageNo
-     * @param keyType
-     * @param model
+     * 获取爱分享文章列表(官方)
+     * @param shareSearchModel  查询条件
+     * @param model             返回的参数
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/getShareList",method = RequestMethod.GET)
-    public String getShareList(String keywords,Integer pageNo,String keyType,Model model) throws Exception {
-        if(pageNo==null||pageNo<0){
-            pageNo=0;
+    @RequestMapping(value = "/getYmrShareList",method = RequestMethod.GET)
+    public String getYmrShareList(ShareSearchModel shareSearchModel,Model model) throws Exception {
+        //todo 用户权限方面的操作
+        Page<Share> shares=shareService.findPcShareList(shareSearchModel);
+        model.addAttribute("allShareList", shares);//文章列表
+        model.addAttribute("totalPages",shares.getTotalPages());//总页数
+        model.addAttribute("totalRecords", shares.getTotalElements());//总记录数
+        return "manager/share/ymrShareList";
+
+    }
+    /**
+     * 获取爱分享文章列表（用户）
+     * @param shareSearchModel  查询条件
+     * @param model             返回的参数
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getUserShareList",method = RequestMethod.GET)
+    public String getUserShareList(ShareSearchModel shareSearchModel,Model model) throws Exception {
+        //todo 用户权限方面的操作
+        if (shareSearchModel.getPageNoStr() < 0) {
+            shareSearchModel.setPageNoStr(0);
         }
-        Page<Share> shares=shareService.findPcShareList(keywords,keyType,pageNo,PAGE_SIZE);
-        long totalRecords = shares.getTotalElements();
-        int numEl =  shares.getNumberOfElements();
-        if(numEl==0) {
-            pageNo=shares.getTotalPages()-1;
-            if(pageNo<0) {
-                pageNo = 0;
-            }
-            shares=shareService.findPcShareList(keywords, keyType, pageNo, PAGE_SIZE);
-            totalRecords = shares.getTotalElements();
-        }
-        model.addAttribute("allLinkList", shares);
-        model.addAttribute("totalPages",shares.getTotalPages());
-        model.addAttribute("pageNo", pageNo);
-        model.addAttribute("keywords", keywords);
-        model.addAttribute("totalRecords", totalRecords);
-        return "manager/share/shareList";
+
+        Page<Share> shares=shareService.findPcShareList(shareSearchModel);
+        model.addAttribute("allShareList", shares);//文章列表
+        model.addAttribute("totalPages",shares.getTotalPages());//总页数
+        model.addAttribute("pageNoStr",shareSearchModel.getPageNoStr());//当前页数
+        model.addAttribute("totalRecords", shares.getTotalElements());//总记录数
+        return "manager/share/userShareList";
 
     }
     /**

@@ -13,17 +13,22 @@ public class ShareSearchModel {
     /**
      * 爱分享文章标题
      */
-    private String shareTitle;
+    private String shareTitle="";
 
     /**
      * 爱分享类型 info(0, "资讯")，group(1, "团购")。。。
      */
-    private Integer shareType;
+    private Integer shareType=-1;
+
+    /**
+     * 发布人 0：用户，1：商家
+     */
+    private Integer ownerType=0;
 
     /**
      * 排序字段 0：发帖时间，1：浏览量，2：转发量，3：点赞量，4：评论量
      */
-    private Integer sort;
+    private Integer sort=0;
 
     /**
      * 排序方式 0：降序|1：升序
@@ -32,11 +37,11 @@ public class ShareSearchModel {
     /**
      * 发布时间
      */
-    private String txtBeginPaytime;
+    private String startTime="";
     /**
      * 结束时间
      */
-    private String txtEndPaytime;
+    private String endTime="";
     /**
      * 指定查询页码
      */

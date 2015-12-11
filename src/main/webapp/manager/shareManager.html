@@ -1,4 +1,5 @@
-    <html lang="zh-CN"><head>
+<html lang="zh-CN">
+<head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
     <meta name="description" content=""/>
@@ -17,25 +18,25 @@
         var customerid = 5;
         var menuPage = true;
 
-        function setWarning(menuId,msg){
-            $("#warning"+menuId).show();
-            $("#msg"+menuId).html(msg);
+        function setWarning(menuId, msg) {
+            $("#warning" + menuId).show();
+            $("#msg" + menuId).html(msg);
         }
 
-        function closeWarning(menuId){
-            $("#warning"+menuId).hide();
+        function closeWarning(menuId) {
+            $("#warning" + menuId).hide();
         }
 
-        function showMsg(menuId){
-            $("#msg"+menuId).show();
-            $("#warning"+menuId).css("background-color","#04B299");
+        function showMsg(menuId) {
+            $("#msg" + menuId).show();
+            $("#warning" + menuId).css("background-color", "#04B299");
         }
-        function hideMsg(menuId){
-            $("#msg"+menuId).hide();
-            $("#warning"+menuId).css("background-color","red");
+        function hideMsg(menuId) {
+            $("#msg" + menuId).hide();
+            $("#warning" + menuId).css("background-color", "red");
         }
 
-        function reload(){
+        function reload() {
             window.location.reload();
         }
 
@@ -62,20 +63,20 @@
             }, function (json) {
                 menuListProvider.menuList = json.list;
                 outputFirst(menuid);
-                if(typeof(menuIdSelected)=='undefined'||menuIdSelected==''||menuIdSelected=='none'){
-                    if(menuid=='08')//应用中心 打开应用中心列表
+                if (typeof(menuIdSelected) == 'undefined' || menuIdSelected == '' || menuIdSelected == 'none') {
+                    if (menuid == '08')//应用中心 打开应用中心列表
                     {
                         top.quickMenu.openAppAuthList();
                     }
-                    else
-                    {
+                    else {
                         setFirstUrl();
                     }
-                }else{
+                } else {
                     setUrlByMenuId(menuIdSelected);
                 }
 
-            }, function () { }, "get");
+            }, function () {
+            }, "get");
         }
 
         var firstList;
@@ -99,7 +100,7 @@
 
             $("#menuList").html(appendHtml);
 
-            $('.aparent').click(function(){
+            $('.aparent').click(function () {
                 $(this).parent().toggleClass('nav-active');
                 $(this).next().toggle();
             });
@@ -144,9 +145,9 @@
             })
         }
 
-        function setUrlByMenuId(menuId){
+        function setUrlByMenuId(menuId) {
             $.each(menuListProvider.menuList, function (o, item) {
-                if (item.LinkUrl != "none"&&menuId==item.Id) {
+                if (item.LinkUrl != "none" && menuId == item.Id) {
                     openUrl(item.LinkUrl, item.Id);
                     return false;
                 }
@@ -163,7 +164,7 @@
             parent.document.getElementById("content").src = "/CustomerManage/MicroSet/EditWechatConfigList.aspx?configid=58&userid=" + customerid + "&cid=" + customerid + "&appid=&appsecret="
         }
         function keyword() {
-            parent.document.getElementById("content").src = "/CustomerManage/MicroSet/EditWechatConfigList.aspx?configid=57&userid="+customerid+"&cid="+customerid+"&appid=&appsecret="
+            parent.document.getElementById("content").src = "/CustomerManage/MicroSet/EditWechatConfigList.aspx?configid=57&userid=" + customerid + "&cid=" + customerid + "&appid=&appsecret="
         }
         function clickWord() {
             parent.document.getElementById("content").src = "/CustomerManage/AddCustomMenu.aspx?userid=" + customerid + "&customerid=" + customerid + "&appid=&appsecret=&temp=V2"
@@ -179,21 +180,21 @@
                     + (secure ? '; secure' : '');
         }
 
-        function checkDd(size){
+        function checkDd(size) {
 
-            if(size==1){
+            if (size == 1) {
                 $('.aparent1').parent().toggleClass('nav-active');
                 $('.aparent1').next().toggle();
 
-            }else if(size==2){
+            } else if (size == 2) {
                 $('.aparent2').parent().toggleClass('nav-active');
                 $('.aparent2').next().toggle();
             }
         }
-        function createOrders(){
+        function createOrders() {
             window.parent.createRight();
         }
-    /*]]>*/
+        /*]]>*/
     </script>
 </head>
 <body style="padding: 0px; margin: 0px;" marginwidth="0" marginheight="0">
@@ -201,11 +202,16 @@
 <div class="leftpanelinner" id="menuContainer" style="height: 776px; overflow-y: auto;">
     <ul class="nav nav-pills nav-stacked nav-bracket" id="menuList">
         <li class="nav-parent nav-active active" style="cursor: pointer;">
-            <a class="aparent1"    href="javascript:checkDd(1)"><i class="fa fa-chevron-circle-right"></i><span>配置项管理</span></a>
+            <a class="aparent1" href="javascript:checkDd(1)"><i
+                    class="fa fa-chevron-circle-right"></i><span>配置项管理</span></a>
             <ul class="children" style="display: block">
                 <li class="childMenus active" style="cursor: pointer;" id="id020101">
-                    <div id="msg020101" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('showIntegralConfig','020101')"><i class="fa fa-caret-right"></i>积分<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
+                    <div id="msg020101"
+                         style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a onclick="openUrl('showIntegralConfig','020101')"><i class="fa fa-caret-right"></i>积分<span
+                            onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')"
+                            class="fa pull-right badge badge-success" id="warning020101"
+                            style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -214,8 +220,12 @@
                 </li>
 
                 <li class="childMenus active" style="cursor: pointer;" id="id020102">
-                    <div id="msg020102" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('showBottomGeneralize','020102')"><i class="fa fa-caret-right"></i>底部广告<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
+                    <div id="msg020102"
+                         style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a onclick="openUrl('showBottomGeneralize','020102')"><i class="fa fa-caret-right"></i>底部广告<span
+                            onmouseover="showMsg('020102')" onmouseout="hideMsg('020102')"
+                            class="fa pull-right badge badge-success" id="warning020102"
+                            style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -227,9 +237,13 @@
         <li class="nav-parent nav-active active" style="cursor: pointer;">
             <a class="aparent2" href="javascript:checkDd(2)"><i class="fa fa-chevron-circle-right"></i><span>帖子管理</span></a>
             <ul class="children" style="display: block">
-                <li class="childMenus" style="cursor: pointer;" id="id020203">
-                    <div id="msg020203" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a onclick="openUrl('getShareList','020203')"><i class="fa fa-caret-right"></i>文章<span onmouseover="showMsg('020203')" onmouseout="hideMsg('020203')" class="fa pull-right badge badge-success" id="warning020203" style="display: none;background-color:red;">!
+                <li class="childMenus" style="cursor: pointer;" id="id020201">
+                    <div id="msg020202"
+                         style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a onclick="openUrl('getYmrShareList','020201')"><i class="fa fa-caret-right"></i>官方发布<span
+                            onmouseover="showMsg('020201')" onmouseout="hideMsg('020201')"
+                            class="fa pull-right badge badge-success" id="warning020203"
+                            style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -237,9 +251,27 @@
                     </ul>
                 </li>
 
-                <li class="childMenus" style="cursor: pointer;" id="id020204">
-                    <div id="msg020204" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a onclick="openUrl('showDraftsList','020204')"><i class="fa fa-caret-right"></i>草稿箱<span onmouseover="showMsg('020204')" onmouseout="hideMsg('020204')" class="fa pull-right badge badge-success" id="warning020204" style="display: none;background-color:red;">!
+                <li class="childMenus" style="cursor: pointer;" id="id020202">
+                    <div id="msg020203"
+                         style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a onclick="openUrl('getUserShareList','020202')"><i class="fa fa-caret-right"></i>用户发布<span
+                            onmouseover="showMsg('020202')" onmouseout="hideMsg('020202')"
+                            class="fa pull-right badge badge-success" id="warning020204"
+                            style="display: none;background-color:red;">!
+        </span>
+                    </a>
+                    <ul class="children" style="display: none; margin-left: 20px;">
+                        {childMenus}
+                    </ul>
+                </li>
+
+                <li class="childMenus" style="cursor: pointer;" id="id020203">
+                    <div id="msg020204"
+                         style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a onclick="openUrl('showDraftsList','020203')"><i class="fa fa-caret-right"></i>草稿箱<span
+                            onmouseover="showMsg('020203')" onmouseout="hideMsg('020203')"
+                            class="fa pull-right badge badge-success" id="warning020205"
+                            style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -262,8 +294,12 @@
 </script>
 <script type="text/html" id="childMenu_template">
     <li class="childMenus" style="cursor: pointer;" id="id{menuid}">
-        <div id="msg{menuid}" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-        <a onclick="openUrl('{linkUrl}','{menuid}')"><i class="fa fa-caret-right"></i>{menuName}<span onmouseover="showMsg('{menuid}')" onmouseout="hideMsg('{menuid}')" class="fa pull-right badge badge-success" id="warning{menuid}" style="display: none;background-color:red;">!
+        <div id="msg{menuid}"
+             style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+        <a onclick="openUrl('{linkUrl}','{menuid}')"><i class="fa fa-caret-right"></i>{menuName}<span
+                onmouseover="showMsg('{menuid}')" onmouseout="hideMsg('{menuid}')"
+                class="fa pull-right badge badge-success" id="warning{menuid}"
+                style="display: none;background-color:red;">!
         </span>
         </a>
         <ul class="children" style="display: $visible$; margin-left: 20px;">
@@ -271,4 +307,5 @@
         </ul>
     </li>
 </script>
-</body></html>
+</body>
+</html>

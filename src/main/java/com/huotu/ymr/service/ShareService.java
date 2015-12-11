@@ -1,6 +1,7 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.model.SearchCondition.ShareSearchModel;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface ShareService {
 
     Share addShare(Share share) throws Exception;
 
-    Page<Share> findPcShareList(String key,String keyType,Integer pageNo,Integer pageSize) throws Exception;
+    Page<Share> findPcShareList(ShareSearchModel shareSearchModel) throws Exception;
 
 
 }
