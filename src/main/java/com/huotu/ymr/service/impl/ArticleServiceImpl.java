@@ -2,7 +2,7 @@ package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.entity.Article;
 import com.huotu.ymr.entity.Manager;
-import com.huotu.ymr.model.searchCondition.ArticleSearchModel;
+import com.huotu.ymr.model.SearchCondition.ArticleSearchModel;
 import com.huotu.ymr.repository.ArticleRepository;
 import com.huotu.ymr.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
