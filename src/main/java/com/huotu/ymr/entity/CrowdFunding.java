@@ -21,6 +21,11 @@ public class CrowdFunding {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * 发布者
+     */
+    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.MERGE})
+    private Manager manager;
 
     /**
      * 类型
@@ -101,4 +106,8 @@ public class CrowdFunding {
      */
     private Long currentBooking;
 
+    /**
+     * 浏览量
+     */
+    private Long view;
 }

@@ -63,6 +63,9 @@
             } else if (statu == 4) {
                 $("#ddlShipStatus").attr("value", 4);
                 $('#form1').submit();
+            }else if (statu == 5) {
+                $("#ddlShipStatus").attr("value", 5);
+                $('#form1').submit();
             }
         }
         function searchOrder() {
@@ -477,8 +480,8 @@
     </div>
 </div>
 <form method="get" action="getOrdersPage" id="form1" th:object="${searchCondition}">
-    <!--<input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>-->
-    <input hidden="hidden" id="pageNoStr" name="pageNoStr"/>
+    <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
+
 
     <div class="aspNetHidden">
         <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE"
@@ -530,7 +533,14 @@
 
                         &nbsp;
 
+                        <select name="ddlOrderByField" id="ddlOrderByField">
+                            <option selected="selected" value="0">按发布时间</option>
+                            <option value="1">按浏览量</option>
+                            <option value="2">按转发量</option>
 
+
+
+                        </select>
                         <style type="text/css">
                             #raSortType label {
                                 padding-left: 0px;
@@ -656,7 +666,8 @@
                                            cellspacing="0"
                                            cellpadding="0">
                                         <tr>
-                                            <th scope="col"></th>
+                                            <th scope="col">序号 </th>
+
                                             <th scope="col">文章标题
                                             </th>
                                             <th scope="col">发布人
@@ -682,104 +693,6 @@
                                                     id="spAllSelectedNum">25</span>条记录
                                             </td>
                                         </tr>
-                                        <tbody th:remove="all-but-first" id="o1">
-
-                                        <!--@thymesVar id="ordersList" type="java.util.List<com.huotu.hotsupplier.sup.service.entity.order.Orders>"-->
-                                        <tr th:each="orders:${ordersList}" class="even">
-                                            <td class="txt20 c" style="width: 15px;" th:text="${ordersStat.count}">
-                                                1
-                                            </td>
-                                            <td class="txt40" th:text="${orders.orderId}">
-                                                2015092173663935&nbsp;
-                                            </td>
-                                            <td class="txt80" hot:date="${orders.createTime}">
-                                                2015/9/21 20:18:01
-                                            </td>
-                                            <td class="txt80">
-                                                <span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>
-                                            </td>
-                                            <td class="txt20">￥
-                                                <span th:text="${orders.finalAmount}">100</span>
-                                            </td>
-                                            <td class="txt20" th:text="${orders.shipName}">
-                                                asdf
-                                            </td>
-                                            <td class="txt40" th:text="${orders.payStatus.value}">
-                                                未支付
-                                            </td>
-                                            <td class="txt40" th:text="${orders.shipStatus.value}">
-                                                未发货
-                                            </td>
-                                            <td class="txt40" th:text="${orders.payment.value}">
-                                                银联在线支付
-                                            </td>
-                                            <td class="txt40 c tail">
-                                                <div th:inline="text">
-                                                    <!--@thymesVar id="orders" type="com.huotu.hotsupplier.sup.service.entity.order.Orders"-->
-                                                    <a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this)" id="btnConsignFlow" title="发货" th:if="${orders.deliveryable()}">发货</a>
-                                                    <a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this,1)" title="退货" th:if="${orders.returnable()}">退货</a>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <!-- <td class="txt20 c" style="width: 15px;">
-                                                 <input type="checkbox" name="chkOrder" value="2015092161656366" />
-                                             </td>-->
-                                            <td class="txt20 c" style="width: 15px;">
-                                                2
-                                            </td>
-                                            <td class="txt40">
-                                                2015092161656366&nbsp;
-                                                <span style='color:red;'>（已关闭）</span>
-                                            </td>
-                                            <td class="txt80">
-                                                2015/9/21 20:16:06
-                                                <br/>
-                                                <span style="color: #ccc; padding-left: 5px;">(3天16小时前)</span>
-                                            </td>
-                                            <td class="txt80">
-                                                <span style='text-align:center;color:#ccc;padding-left:20px;'>——无——</span>
-                                                                <span style="display: none">
-                                                                    <br/>
-                                                                    <span style="color: #ccc; padding-left: 5px;">(下单支付)</span>
-                                                                </span>
-                                            </td>
-
-                                            <td class="txt20">￥
-                                                100
-                                            </td>
-
-                                            <td class="txt20">
-                                                asdf
-                                            </td>
-
-                                            <td class="txt40">
-                                                未支付
-                                            </td>
-                                            <td class="txt40">
-                                                未发货
-                                            </td>
-
-                                            <td class="txt40">
-                                                银联在线支付
-                                            </td>
-
-                                            <td class="txt40 c tail">
-                                                <a href="javascript:handleOrder('2015092161656366')">操作订单</a>
-
-                                                <div>
-
-                                                    <a class="p_prted" target="_blank"
-                                                       href="../Print/ShopOrder.aspx?orderid=2015092161656366"
-                                                       title="购买清单打印">购</a>
-                                                    <a class="p_prted" target="_blank"
-                                                       href="../Print/DeliveryOrder.aspx?orderid=2015092161656366"
-                                                       title="配货清单打印">配</a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        </tbody>
                                     </table>
                                 </div>
                                 <div class="pager-bar">

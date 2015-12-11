@@ -1,6 +1,8 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.Article;
+import com.huotu.ymr.model.searchCondition.ArticleSearchModel;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -21,4 +23,11 @@ public interface ArticleService {
      * @return
      */
     long getMaxId();
+
+    /**
+     * 获取文章分页
+     * @param articleSearchModel
+     * @return
+     */
+    Page<Article> findArticlePage(ArticleSearchModel articleSearchModel);
 }

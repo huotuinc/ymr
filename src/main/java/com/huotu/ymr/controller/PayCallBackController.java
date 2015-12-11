@@ -86,7 +86,7 @@ public class PayCallBackController {
                 String transaction_id = map.get("transaction_id").toString();
                 String out_trade_no = map.get("out_trade_no").toString();
 
-                float money = Float.parseFloat(total_fee) / 100;  //todo 这个钱为什么要除以100 float
+                float money = Float.parseFloat(total_fee) / 100;
 
                if(doPay(out_trade_no, money, transaction_id, CommonEnum.PurchaseSource.WEIXIN)){
                    result.setReturn_code("SUCCESS");

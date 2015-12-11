@@ -9,7 +9,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class bbackendShareModel {
+public class BackendShareModel {
     /**
      * 用户头像
      */

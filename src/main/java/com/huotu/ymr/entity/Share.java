@@ -22,7 +22,7 @@ public class Share implements YmrComment {
     private Long id;
 
     /**
-     * 发帖人
+     * 发帖人（管理员或用户）
      */
     private Long ownerId;
 

@@ -8,10 +8,7 @@ import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.common.CommonEnum;
-import com.huotu.ymr.entity.CrowdFunding;
-import com.huotu.ymr.entity.CrowdFundingBooking;
-import com.huotu.ymr.entity.CrowdFundingPublic;
-import com.huotu.ymr.entity.User;
+import com.huotu.ymr.entity.*;
 import com.huotu.ymr.mallentity.MallMerchant;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallMerchantRepository;
@@ -76,6 +73,9 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    ConfigRepository configRepository;
+
     @Before
     public void init() {
         device = Device.newDevice(DeviceType.Android);
@@ -89,6 +89,17 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         mockUser = generateUserWithToken(mockMallUser, mockUserRepository);
 
         device.setToken(mockUser.getToken());
+
+        Config config=new Config();
+        config.setKey("CrowdFundingTip");
+        config.setValue("我有A万，找人合作筹募");
+        config=configRepository.saveAndFlush(config);
+
+        Config config1=new Config();
+        config1.setKey("MoneyToScore");
+        config1.setValue("10");
+        config1=configRepository.saveAndFlush(config1);
+
     }
 
     //用户的等级

@@ -98,6 +98,13 @@ public class CrowdFundingController implements CrowdFundingSystem {
         appCrowdFundingModel.setToMoeny(crowdFunding.getToMoeny());
         appCrowdFundingModel.setStartMoeny(crowdFunding.getStartMoeny());
         appCrowdFundingModel.setType(crowdFunding.getCrowdFundingType());
+        if(crowdFunding.getView()==null) {
+            crowdFunding.setView(0L);
+        }else{
+            Long view=crowdFunding.getView();
+            crowdFunding.setView(view+1);
+            crowdFunding= crowdFundingRepository.saveAndFlush(crowdFunding);
+        }
         data.outputData(appCrowdFundingModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }

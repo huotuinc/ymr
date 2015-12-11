@@ -3,7 +3,7 @@ package com.huotu.ymr.service.impl;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.Share;
-import com.huotu.ymr.model.SearchCondition.ShareSearchModel;
+import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ShareRepository;
 import com.huotu.ymr.service.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;

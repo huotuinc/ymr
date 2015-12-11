@@ -27,6 +27,12 @@ public class Article {
     private Category category;
 
     /**
+     * 发布者
+     */
+    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.MERGE})
+    private Manager manager;
+
+    /**
      * 标题
      */
     @Column(length = 200)
@@ -58,6 +64,8 @@ public class Article {
      */
     @Column(length = 200)
     private String summary;
+
+
     /**
      * 时间
      */
@@ -74,4 +82,9 @@ public class Article {
      * 浏览量
      */
     private Long view;
+
+    /**
+     * 转发量
+     */
+    private Long relayQuantity = 0L;
 }

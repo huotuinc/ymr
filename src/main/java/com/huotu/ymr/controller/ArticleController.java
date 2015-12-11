@@ -90,6 +90,12 @@ public class ArticleController implements ArticleSystem {
         articleModel.setTitle(article.getTitle());
         articleModel.setPicture(article.getPicture()); //todo
         articleModel.setTime(article.getTime());
+        if(article.getView()==null){
+            article.setView(0L);
+        }else{
+            Long view=article.getView();
+            article.setView(view+1);
+        }
         data.outputData(articleModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }

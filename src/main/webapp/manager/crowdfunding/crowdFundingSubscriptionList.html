@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
     <title>
 
-        合伙人项目
+        合伙人预约项目
     </title>
     <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
           th:href="@{/resource/3rdParty/css/admin.global.css}"/>
@@ -499,7 +499,7 @@
             <div class="h">
                 <span class="icon-sprite icon-magnifier"></span>
 
-                <h3>众筹搜索</h3>
+                <h3>认购搜索</h3>
 
             </div>
             <div class="tl corner">
@@ -514,19 +514,18 @@
                 <div class="cnt">
 
                     <div class="search-bar">
-                        <label class="first ">众筹标题：</label>
+                        <label class="first ">搜索：</label>
                         <input name="txtOrderId" type="text" id="txtOrderId" class="input-small" style="width: 120px;"/>
                         <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
 
                         <br/>
                         <br/>
 
-                        <label class="first ">类型：</label>
+                        <label class="first ">搜索类型：</label>
                         <select name="ddlPayStatus" id="ddlPayStatus">
                             <option selected="selected" value="-1">==所有==</option>
-                            <option value="1">预约类</option>
-                            <option value="2">合作类</option>
-                            <option value="3">认购类</option>
+                            <option value="1">标题</option>
+                            <option value="2">姓名</option>
                         </select>
 
 
@@ -548,7 +547,7 @@
                         <br/>
                         <br/>
 
-                        <label class="first ">发布时间：</label>
+                        <label class="first ">认购时间：</label>
 
                         <input name="txtBeginTime" type="text" id="txtBeginTime" placeholder=" [开始日期]"
                                class="input-normal Wdate"
@@ -590,7 +589,7 @@
             <div class="h">
                 <span class="icon-sprite icon-list"></span>
 
-                <h3 style="float: left; width: 144px;">众筹列表 </h3>
+                <h3 style="float: left; width: 144px;">认购信息 </h3>
 
                 <div class="bar">
                     <!--
@@ -604,8 +603,7 @@
                         <span>批量发货</span></a>
                         -->
 
-                    <a class="btn-lit aucontrol" href="javascript:showBatchDelivery();">
-                        <span>添加众筹</span></a>
+
                 </div>
 
             </div>
@@ -620,32 +618,7 @@
             <div class="cnt-wp">
 
                 <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
-                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border"
-                         style="height: 28px;">
-                        <ul style="height: 28px; line-height: 28px;">
-                            <span class="left-placeholder"></span>
-                            <li class="om-state-default om-corner-top  " id="ddgl1">
-                                <span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner" style="width: auto; height: 27px;">全部</a><span class="liright"></span>
-                            </li>
-                            <li class="om-state-default om-corner-top " id="ddgl2"><span class="lileft"></span><a
-                                    href="javascript:showList(2);" class="om-tabs-inner"
-                                    style="width: auto; height: 27px;">预约类</a><span class="liright"></span></li>
 
-                            <li class="om-state-default om-corner-top" id="ddgl3"><span class="lileft">
-                            </span><a
-                                    href="javascript:showList(3);" class="om-tabs-inner"
-                                    style="width: auto; height: 27px;">合作类</a><span class="liright"></span></li>
-
-                            <li class="om-state-default om-corner-top" id="ddgl4"><span class="lileft"></span><a
-                                    href="javascript:showList(4);" class="om-tabs-inner"
-                                    style="width: auto; height: 27px;">认购类</a><span class="liright"></span></li>
-
-
-
-
-                            <span class="right-placeholder"></span>
-                        </ul>
-                    </div>
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
 
                         <div class="om-widget om-panel ">
@@ -658,23 +631,22 @@
                                         <tr>
                                             <th scope="col">序号 </th>
 
-                                            <th scope="col">发布人 </th>
-
                                             <th scope="col">众筹标题
                                             </th>
 
-                                            <th scope="col">发布时间
+                                            <th scope="col">电话
                                             </th>
 
-                                            <th scope="col">类型
+                                            <th scope="col">时间
                                             </th>
 
-                                            <th scope="col">中介费
+                                            <th scope="col">意向金额
                                             </th>
 
-                                            <th scope="col">参与人数
+                                            <th scope="col">回访结果
                                             </th>
-                                            <th scope="col">浏览量
+
+                                            <th scope="col">备注
                                             </th>
                                         </tr>
                                         <tr style="background: #FFC; text-align: center; display: none;"
