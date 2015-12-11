@@ -159,31 +159,36 @@ public class UserController implements UserSystem {
         return null;
     }
 
+    @RequestMapping("/putToCoffers")
     @Override
     public ApiResult putToCoffers() throws Exception {
         return null;
     }
 
+    @RequestMapping("/getScorePutInfo")
     @Override
     public ApiResult getScorePutInfo(Output<Double> upgradeMoney, Output<Double> rate) throws Exception {
         return null;
     }
-
+    @RequestMapping("/put")
     @Override
     public ApiResult put(Output<String> orderNo, Double money) throws Exception {
         return null;
     }
 
+    @RequestMapping("/updateUserProfile")
     @Override
     public ApiResult updateUserProfile(Output<AppUserInfoModel> data, @RequestParam(required = true) Integer profileType, Object profileData) throws Exception {
         return null;
     }
 
+    @RequestMapping("/messages")
     @Override
     public ApiResult messages(Output<AppMessageModel[]> messages, Long lastId) throws Exception {
         return null;
     }
 
+    @RequestMapping("/getMyCrowdFundingList")
     @Override
     public ApiResult getMyCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {
         return null;
