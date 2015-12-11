@@ -120,7 +120,7 @@ public interface CrowdFundingSystem {
      * @param remark 备注
      * @param crowdId 众筹id
      * @param crowdPublicId 合作发起人id
-     * @returnid
+     * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)

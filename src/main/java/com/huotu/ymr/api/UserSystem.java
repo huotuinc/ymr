@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public interface UserSystem {
 
+    /**
+     * 系统初始化
+     * @param global 全局数据
+     * @param user 用户数据
+     * @param update 升级数据
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(method = RequestMethod.GET)
     ApiResult init(
             Output<AppGlobalModel> global,
@@ -93,7 +101,7 @@ public interface UserSystem {
 
     /**
      * 积分充值到小金库
-     * 前置条件：用户当前剩余积分>0
+     * 前置条件：用户当前剩余积分大于0
      * 处理过程: 1.充钱到小金库 2.扣除用户积分 3.记录用户积分流水
      * 要求：3个过程需要同步处理
      *
@@ -117,7 +125,7 @@ public interface UserSystem {
 
 
     /**
-     * 进行充值
+     * 进行充值积分
      * 在选择支付方式跳转到支付宝之前，app先请求服务器并获得订单号。
      *
      * @param money 升级所需金额
@@ -132,8 +140,8 @@ public interface UserSystem {
      * 更新用户个人信息
      *
      * @param data
-     * @param profileType 1 姓名 2 性别 (值根据商城来定)
-     * @param profileData 1 String 2 Integer
+     * @param profileType 1 姓名 2 性别 (值根据商城来定) 3 定位
+     * @param profileData 1 String 2 Integer 3 Integer
      * @return
      * @throws Exception
      */
