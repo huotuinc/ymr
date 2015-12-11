@@ -3,10 +3,7 @@ package com.huotu.ymr.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.*;
 
 /**
  * 美投设置项
@@ -17,12 +14,18 @@ import javax.persistence.Lob;
 @Getter
 @Setter
 @Cacheable(value = false)
+
+/**
+ * CrowdFundingTip = 我有A万，找人合作筹募
+ * MoneyToScore = 10 (1元10积分)
+ */
 public class Config {
 
     /**
      * 关键字
      */
     @Id
+    @Column(length = 100)
     private String key;
     /**
      * 值

@@ -64,5 +64,8 @@ public class Order {
     @Temporal(TemporalType.TIMESTAMP)
     private Date payTime;
 
-
+    /**
+     * 支付方式
+     */
+    private CommonEnum.PurchaseSource purchaseSource;
 }

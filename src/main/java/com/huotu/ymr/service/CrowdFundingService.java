@@ -11,7 +11,7 @@ import java.util.List;
 public interface CrowdFundingService {
     /**
      * 通过文章类型，前一页最后一个id，每页显示的条数
-     * 获取一页认购表格
+     * 获取一页认购,预约，合作发起人表格
      * @return
      */
     List<CrowdFundingPublic> findCrowdListFromLastIdWithNumber(Long crowdId, Long lastId,int number);
@@ -22,11 +22,11 @@ public interface CrowdFundingService {
      */
     long getMaxId();
 
-    /**
-     * 通过关键字和每页条数查找合作发起人的下一页
-     * @return
-     */
-    List<CrowdFundingPublic> searchCooperationgList(String key, Long lastId, Long crowdId, int number);
+//    /**
+//     * 通过关键字和每页条数查找合作发起人的下一页
+//     * @return
+//     */
+//    List<CrowdFundingPublic> searchCooperationgList(String key, Long lastId, Long crowdId, int number);
 
     /**
      * 获取众筹表中最大的id值
@@ -35,9 +35,9 @@ public interface CrowdFundingService {
     long getCrowdFundingMaxId();
 
     /**
-     * 通过前一页最后一个id，每页显示的条数
+     * 通过前一页最后一个id，每页显示的条数,关键字key
      * 获取一页众筹表格
      * @return
      */
-    List<CrowdFunding> searchCrowdFundingList(Long lastId, int number);
+    List<CrowdFunding> searchCrowdFundingList(String key,Long lastId, int number);
 }
