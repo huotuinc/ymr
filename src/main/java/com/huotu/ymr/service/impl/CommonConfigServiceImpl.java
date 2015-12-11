@@ -51,5 +51,10 @@ public class CommonConfigServiceImpl implements CommonConfigService {
         return env.getProperty("ymr.customerServicePhone","4001818357");
     }
 
+    @Override
+    public String getYmrMerchantId() {
+        return env.getProperty("ymr.merchantId","3447");
+    }
+
 
 }

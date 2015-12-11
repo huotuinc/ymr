@@ -12,6 +12,7 @@ package com.huotu.ymr.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.PublicParameterHolder;
+import com.huotu.ymr.common.SysRegex;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallUserRepository;
@@ -105,14 +106,16 @@ public class CommonInterceptor implements HandlerInterceptor {
                 appUserInfoModel.setUserLevel(user.getUserLevel());
                 appUserInfoModel.setScore(user.getScore());
                 appUserInfoModel.setToken(token);
-
                 MallUser mallUser = mallUserRepository.findOne(user.getId());
                 if (mallUser != null) {
                     appUserInfoModel.setName(mallUser.getRealName());
-                    appUserInfoModel.setUserName(mallUser.getUsername());
-//                    appUserInfoModel.setBindMobile(mallUser); //todo 需要获取
-//                    appUserInfoModel.setSex(mallUser);//todo 需要获取
+                    appUserInfoModel.setNickName(mallUser.getWxNickName());
+                    appUserInfoModel.setHeadUrl(mallUser.getWxHeadUrl());
+                    appUserInfoModel.setSex(mallUser.getGender());
                     appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
+                    appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
+                    appUserInfoModel.setUserName(mallUser.getUsername());
+                    appUserInfoModel.setMobile(mallUser.getMobile());
                     model.setCurrentUser(appUserInfoModel);
                 }
             }

@@ -35,6 +35,11 @@ public class MallUser {
      */
     @Column(name = "UB_UserLoginPassword")
     private String password;
+    /**
+     * 用户性别 F:女，M：男，未知
+     */
+    @Column(name = "UB_UserGender")
+    private String gender;
 
     /**
      * 手机号

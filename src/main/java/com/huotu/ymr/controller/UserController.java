@@ -7,21 +7,28 @@ import com.huotu.common.base.RegexHelper;
 import com.huotu.ymr.api.UserSystem;
 import com.huotu.ymr.common.*;
 import com.huotu.ymr.entity.ConfigAppVersion;
+import com.huotu.ymr.entity.User;
+import com.huotu.ymr.entity.VerificationCode;
 import com.huotu.ymr.exception.InterrelatedException;
+import com.huotu.ymr.mallentity.MallUser;
+import com.huotu.ymr.mallentity.MallUserBinding;
+import com.huotu.ymr.mallrepository.MallUserBindingRepository;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.*;
 import com.huotu.ymr.repository.ConfigAppVersionRepository;
 import com.huotu.ymr.repository.UserRepository;
+import com.huotu.ymr.repository.VerificationCodeRepository;
+import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.VerificationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Date;
-import java.util.Random;
+import java.util.*;
 
 /**
  * 用户系统
@@ -47,6 +54,15 @@ public class UserController implements UserSystem {
     @Autowired
     private VerificationService verificationService;
 
+    @Autowired
+    private MallUserBindingRepository mallUserBindingRepository;
+
+    @Autowired
+    private CommonConfigService commonConfigService;
+
+    @Autowired
+    private VerificationCodeRepository verificationCodeRepository;
+
     @RequestMapping("/init")
     @Override
     public ApiResult init(Output<AppGlobalModel> global, Output<AppUserInfoModel> user, Output<AppUpdateModel> update) throws Exception {
@@ -56,10 +72,11 @@ public class UserController implements UserSystem {
 
         update.outputData(versionChecking(pms.getOperation(), pms.getVersion(), pms.getImei()));
 
-        AppUserInfoModel appUserInfoModel = pms.getCurrentUser();
-        if (appUserInfoModel == null)
-            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_LOGIN_FAIL);
 
+        AppUserInfoModel appUserInfoModel = pms.getCurrentUser();
+        if (appUserInfoModel == null) {
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_LOGIN_FAIL);
+        }
 
         user.outputData(appUserInfoModel);
 
@@ -68,15 +85,8 @@ public class UserController implements UserSystem {
 
 
     /**
-     * 根据unionId判断商城中是否有该用户
-     *      没有：1.添加一个该用户
-     *           2.在美投用户表中查看是否有该用户
-     *                 2.1.有：不插入
-     *                     没有：插入该用户
-     *      有： 1.在美投用户表中查看是否有该用户
-     *                 1.1.有：不插入
-     *                 1.2.没有：插入该用户
-     *  获取该用户数据
+     * 获取该用户数据
+     *
      * @param data    用户数据
      * @param unionId 微信唯一号
      * @return
@@ -84,32 +94,90 @@ public class UserController implements UserSystem {
      */
     @RequestMapping("/login")
     @Override
-    public ApiResult login(Output<AppUserInfoModel> data, Integer unionId) throws Exception {
+    public ApiResult login(Output<AppUserInfoModel> data, Output<AppSimpleUserModel[]> list, String unionId) throws Exception {
+        MallUser mallUser = null;
+        Long merchantId = Long.parseLong(commonConfigService.getYmrMerchantId());
+        if (unionId == null) {
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        List<MallUserBinding> mallUserBinding = mallUserBindingRepository.findByUnionIdAndMerchantId(unionId, merchantId);//todo 数据中心去取
+        if (mallUserBinding.isEmpty()) {
+            mallUser = new MallUser();//todo 调用注册接口注册商城的用户
+        } else if (mallUserBinding.size() == 1) {
+            mallUser = mallUserBinding.get(0).getUserInfo();
+            User user = userRepository.findOne(mallUser.getId());
+            data.outputData(getAppUserInfoModel(mallUser, user));
+        }
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
 
-
-
-        return null;
+    @RequestMapping("/selectOneUser")
+    @Override
+    public ApiResult selectOneUser(Output<AppUserInfoModel> data, Long userId) throws Exception {
+        if (userId == null) {
+            ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        MallUser mallUser = mallUserRepository.findOne(userId);
+        if (Objects.isNull(mallUser)) {
+            ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        User user = userRepository.findOne(mallUser.getId());
+        data.outputData(getAppUserInfoModel(mallUser, user));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     /**
      * 判断验证码是否正确
-     *      不正确：返回信息
-     *     正确：
+     * 不正确：返回信息
+     * 正确：
+     *
      * @param data  返回的用户数据
      * @param phone 手机号
      * @param code  验证码
      * @return
      * @throws Exception
      */
-    @RequestMapping("/phoneLogin")
+    @RequestMapping("/loginByMobile")
     @Override
-    public ApiResult login(Output<AppUserInfoModel> data, String phone, String code) throws Exception {
-        return null;
+    public ApiResult loginByMobile(Output<AppUserInfoModel> data, String phone, String code) throws Exception {
+        if (StringUtils.isEmpty(phone) || StringUtils.isEmpty(code)) {
+            ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndType(phone, CommonEnum.VerificationType.reg);
+        if (Objects.isNull(verificationCode)) {
+            ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
+        }
+        MallUser mallUser = new MallUser();//todo 新建商城用户
+        User user = new User();
+        data.outputData(getAppUserInfoModel(mallUser, user));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
 
+    private AppUserInfoModel getAppUserInfoModel(MallUser mallUser, User user) {
+        AppUserInfoModel appUserInfoModel = new AppUserInfoModel();
+        if (Objects.isNull(user)) {
+            user = new User();
+            user.setId(mallUser.getId());
+            user.setToken(UUID.randomUUID().toString().replace("-", ""));
+            user.setUserLevel(CommonEnum.UserLevel.one);
+            user = userRepository.save(user);
+        }
+        appUserInfoModel.setUserId(mallUser.getId());
+        appUserInfoModel.setUserName(mallUser.getUsername());
+        appUserInfoModel.setHeadUrl(commonConfigService.getResoureServerUrl() + mallUser.getWxHeadUrl());//todo 图片
+        appUserInfoModel.setNickName(mallUser.getWxNickName());
+        appUserInfoModel.setScore(user.getScore());
+        appUserInfoModel.setUserLevel(user.getUserLevel());
+        appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
+        appUserInfoModel.setName(mallUser.getRealName());
+        appUserInfoModel.setSex(mallUser.getGender());
+        appUserInfoModel.setMobile(mallUser.getMobile());
+        appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
+        appUserInfoModel.setToken(user.getToken());
+        return appUserInfoModel;
 
-
+    }
 
 
     @RequestMapping("/sendSMS")
@@ -170,6 +238,7 @@ public class UserController implements UserSystem {
     public ApiResult getScorePutInfo(Output<Double> upgradeMoney, Output<Double> rate) throws Exception {
         return null;
     }
+
     @RequestMapping("/put")
     @Override
     public ApiResult put(Output<String> orderNo, Double money) throws Exception {

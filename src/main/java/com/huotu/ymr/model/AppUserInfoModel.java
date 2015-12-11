@@ -21,6 +21,17 @@ public class AppUserInfoModel {
      * 用户名 (手机号或随机码)
      */
     private String userName;
+
+    /**
+     * 用户头像
+     */
+    private String headUrl;
+
+    /**
+     * 用户昵称
+     */
+    private String nickName;
+
     /**
      * 用户积分
      */
@@ -39,13 +50,19 @@ public class AppUserInfoModel {
     private String name;
 
     /**
-     * 用户昵称
-     */
-    private String nickName;
-    /**
      * 性别
      */
     private String sex;
+    /**
+     * 手机号
+     */
+    private String mobile;
+    /**
+     * 是否绑定手机号
+     */
+    private Boolean isBindMobile;
+
+
 
     /**
      * 用户token身份标示

@@ -15,6 +15,11 @@ public interface CommonEnum {
          * PARAMETER_ERROR(1001,"参数错误")
          */
         PARAMETER_ERROR(1001, "参数错误"),
+        /**
+         * ERROR_USER_NOT_FOUND(2001,"用户不存在")
+         */
+        ERROR_USER_NOT_FOUND(2001,"用户不存在"),
+
         SYSTEM_BAD_REQUEST_50601(50601, "系统请求失败,code 50601"),//sign校验失败
         /**
          * ERROR_USER_LOGIN_FAIL(56000, "用户登录失败")
@@ -35,7 +40,12 @@ public interface CommonEnum {
         /**
          * ERROR_SEND_MESSAGE_FAIL(55001, "短信发送通道不稳定，请重新尝试")
          */
-        ERROR_SEND_MESSAGE_FAIL(55001, "短信发送通道不稳定，请重新尝试");
+        ERROR_SEND_MESSAGE_FAIL(55001, "短信发送通道不稳定，请重新尝试"),
+
+        /**
+         * ERROR_WRONG_CODE(55002,"验证码错误")
+         */
+        ERROR_WRONG_CODE(55002,"验证码错误");
 
 
         private int value;
@@ -400,46 +410,14 @@ public interface CommonEnum {
     }
 
 
-    enum CodeType implements ICommonEnum{
-        /**
-         * text(0, "文本")
-         */
-        text(0, "文本"),
-        /**
-         * voice(1, "语音")
-         */
-        voice(1, "语音");
 
-        private int value;
-
-        public int getValue() {
-            return value;
-        }
-
-        public void setValue(int value) {
-            this.value = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        private String name;
-
-        CodeType(int value, String name) {
-            this.value = value;
-            this.name = name;
-        }
-    }
 
     enum VerificationType implements ICommonEnum {
 
 
-        reg(0, "注册");
+        reg(0, "注册"),
+
+        bind(1,"绑定手机");
 
         private int value;
 

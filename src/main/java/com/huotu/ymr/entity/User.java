@@ -33,12 +33,12 @@ public class User {
      * 用户积分
      * 发帖或转发，或充值获得，可转为商城积分
      */
-    private Integer score;
+    private Integer score=0;
 
     /**
      * 累计获得积分
      */
-    private Integer continuedScore;
+    private Integer continuedScore=0;
 
     /**
      * 用户token身份标示

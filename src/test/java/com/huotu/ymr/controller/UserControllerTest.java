@@ -77,7 +77,7 @@ public class UserControllerTest extends SpringBaseTest {
     @Test
     public void testSendSMS() throws Exception {
         String result=mockMvc.perform(device.getApi("sendSMS")
-                .param("phone",  "18368893860")
+                .param("phone",  "18067253205")
                 .param("type", "0").build())
                 .andReturn().getResponse().getContentAsString();
 

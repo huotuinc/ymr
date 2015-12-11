@@ -45,4 +45,10 @@ public interface CommonConfigService {
      */
     String getCustomerServicePhone();
 
+    /**
+     * 获取虞美人的商家ID
+     * @return
+     */
+    String getYmrMerchantId();
+
 }
