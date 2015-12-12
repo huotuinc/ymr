@@ -33,11 +33,9 @@ import java.net.URISyntaxException;
  */
 public interface StaticResourceService {
     /**
-     * 商品图片
+     * 爱分享图片
      */
-    String GOODS_IMG="image/goods/";
-
-    String INVOICE_IMG = "image/invoice/";
+    String SHSRES_IMG="_resource/image/shares/";
 
     /**
      * 上传资源

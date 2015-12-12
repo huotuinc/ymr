@@ -8,8 +8,9 @@
  *
  */
 
-package com.huotu.ymr.service;
+package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.service.FileObjectConsumer;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSystemException;
 import org.apache.commons.vfs2.FileSystemManager;

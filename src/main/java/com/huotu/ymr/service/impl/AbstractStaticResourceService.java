@@ -11,7 +11,6 @@
 package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.service.StaticResourceService;
-import com.huotu.ymr.service.VFSHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.vfs2.FileObject;
