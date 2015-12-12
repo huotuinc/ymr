@@ -7,11 +7,15 @@ import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareComment;
+import com.huotu.ymr.entity.User;
+import com.huotu.ymr.mallentity.MallUser;
+import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppShareCommentListModel;
 import com.huotu.ymr.model.AppShareInfoModel;
 import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.AppShareReplyModel;
 import com.huotu.ymr.repository.ConfigRepository;
+import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.ShareCommentService;
 import com.huotu.ymr.service.ShareService;
@@ -19,8 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by lgh on 2015/12/1.
@@ -39,6 +45,13 @@ public class ShareController implements ShareSystem {
     CommonConfigService commonConfigService;
     @Autowired
     ConfigRepository configRepository;
+
+    @Autowired
+    MallUserRepository mallUserRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
 
 
     @RequestMapping("/searchShareList")
@@ -165,6 +178,77 @@ public class ShareController implements ShareSystem {
         }else {
             list.outputData(null);
         }
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+
+    @Override
+    @RequestMapping(value = "/addReply")
+    public ApiResult addReply(Long userId, Long parentId, String content) throws Exception {
+        if(userId==null||parentId==null||content==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        MallUser mallUser=mallUserRepository.findOne(userId);
+        if(Objects.isNull(mallUser)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        User user=userRepository.findOne(mallUser.getId());
+        if(Objects.isNull(user)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        ShareComment shareComment=shareCommentService.findOneShareComment(parentId);
+        if(Objects.isNull(shareComment)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_COMMENT_NOT_FOUND);
+        }
+        ShareComment reply=new ShareComment();
+        reply.setShare(shareComment.getShare());
+        reply.setUserId(mallUser.getId());
+        reply.setCommentName(mallUser.getWxNickName());
+//        reply.setLevel(user.getUserLevel());
+//        reply.setHeadUrl(commonConfigService.getResoureServerUrl()+mallUser.getWxHeadUrl());//todo
+        reply.setContent(content);
+        reply.setTime(new Date());
+        reply.setParentId(shareComment.getId());
+        reply.setParentName(shareComment.getCommentName());
+        reply=shareCommentService.saveShareComment(reply);
+        reply.setCommentPath(shareComment.getCommentPath()+reply.getId()+"|");
+        shareCommentService.saveShareComment(reply);
+        //todo 返回值需要讨论
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+
+    @Override
+    @RequestMapping(value = "/addComment")
+    public ApiResult addComment(Long userId, Long shareId, String content) throws Exception {
+        if(userId==null||shareId==null||content==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        MallUser mallUser=mallUserRepository.findOne(userId);
+        if(Objects.isNull(mallUser)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        User user=userRepository.findOne(mallUser.getId());
+        if(Objects.isNull(user)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        Share share=shareService.findOneShare(shareId);
+        if(Objects.isNull(share)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_SHARE_NOT_FOUND);
+
+        }
+        ShareComment shareComment=new ShareComment();
+        shareComment.setShare(share);
+        shareComment.setUserId(mallUser.getId());
+        shareComment.setCommentName(mallUser.getWxNickName());
+        shareComment.setLevel(user.getUserLevel());
+        shareComment.setHeadUrl(commonConfigService.getResoureServerUrl()+mallUser.getWxHeadUrl());//todo
+        shareComment.setContent(content);
+        shareComment.setTime(new Date());
+        shareComment.setParentId(0L);
+        shareComment.setParentName("");
+        shareComment=shareCommentService.saveShareComment(shareComment);
+        shareComment.setCommentPath("|"+shareComment.getId()+"|");
+        shareCommentService.saveShareComment(shareComment);
+        //todo 返回值需要讨论
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 }

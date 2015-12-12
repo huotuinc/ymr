@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 
 /**
- * �������¹���
+ * 评论服务
  * Created by slt on 2015/12/1.
  */
 @Service
@@ -44,5 +44,15 @@ public class ShareCommentServiceImpl implements ShareCommentService {
             }
         }
         return map;
+    }
+
+    @Override
+    public ShareComment saveShareComment(ShareComment shareComment) throws Exception {
+        return shareCommentRepository.save(shareComment);
+    }
+
+    @Override
+    public ShareComment findOneShareComment(Long shareCommentId) throws Exception {
+        return shareCommentRepository.findOne(shareCommentId);
     }
 }

@@ -132,7 +132,7 @@ public class ShareControllerTest extends SpringBaseTest {
             }
         });
 
-        String result=mockMvc.perform(device.getApi("/app/searchShareList")
+        String result=mockMvc.perform(device.getApi("searchShareList")
                 .param("key",  "")
                 .param("lastId", "").build())
                 .andReturn().getResponse().getContentAsString();
@@ -254,7 +254,7 @@ public class ShareControllerTest extends SpringBaseTest {
         list4.add(shareComment4);
         longListMap.put(shareComment4.getId(), list4);
 
-        String result=mockMvc.perform(get("/app/searchShareCommentList")
+        String result=mockMvc.perform(get("searchShareCommentList")
                 .param("shareId",  share.getId()+"")
                 .param("lastId", "0"))
                 .andReturn().getResponse().getContentAsString();

@@ -19,4 +19,12 @@ public interface ShareCommentService {
      * @throws Exception
      */
     Map<Long,List<ShareComment>> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception;
+
+    ShareComment saveShareComment(ShareComment shareComment) throws Exception;
+
+    ShareComment findOneShareComment(Long shareCommentId) throws Exception;
+
+
+
+
 }

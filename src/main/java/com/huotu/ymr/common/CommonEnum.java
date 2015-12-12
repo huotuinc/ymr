@@ -45,7 +45,17 @@ public interface CommonEnum {
         /**
          * ERROR_WRONG_CODE(55002,"验证码错误")
          */
-        ERROR_WRONG_CODE(55002,"验证码错误");
+        ERROR_WRONG_CODE(55002,"验证码错误"),
+
+        /**
+         * ERROR_SHARE_NOT_FOUND(60001,"文章不存在")
+         */
+        ERROR_SHARE_NOT_FOUND(60001,"文章不存在"),
+
+        /**
+         * ERROR_COMMENT_NOT_FOUND(60002,"评论不存在")
+         */
+        ERROR_COMMENT_NOT_FOUND(60002,"评论不存在");
 
 
         private int value;

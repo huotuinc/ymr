@@ -33,7 +33,7 @@ public class ShareComment implements YmrReply {
     private Long userId;
 
     /**
-     * 评论人姓名
+     * 评论人名称
      */
     private String commentName;
 
@@ -59,7 +59,7 @@ public class ShareComment implements YmrReply {
     private Date time;
 
     /**
-     * 被回复的评论ID,如果为空则是评论文章
+     * 被回复的评论ID,如果为0则是评论文章
      */
     private Long parentId;
 
@@ -71,12 +71,12 @@ public class ShareComment implements YmrReply {
     /**
      * 被点赞的数量
      */
-    private Integer praiseQuantity;
+    private Integer praiseQuantity=0;
 
     /**
      * 被回复的数量
      */
-    private Integer commentQuantity;
+    private Integer commentQuantity=0;
 
     /**
      * 评论路径

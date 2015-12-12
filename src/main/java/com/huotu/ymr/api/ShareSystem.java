@@ -59,4 +59,26 @@ public interface ShareSystem {
      */
     @RequestMapping(method = RequestMethod.GET)
     ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId) throws Exception;
+
+    /**
+     * 添加评论
+     * @param userId    用户ID
+     * @param shareId   文章ID
+     * @param content   评论内容
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    ApiResult addComment(Long userId,Long shareId,String content) throws Exception;
+
+    /**
+     * 添加回复
+     * @param userId    用户ID
+     * @param parentId  被评论的ID
+     * @param content   回复内容
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    ApiResult addReply(Long userId,Long parentId,String content) throws Exception;
 }
