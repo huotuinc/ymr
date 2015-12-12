@@ -19,6 +19,7 @@ import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.ShareCommentService;
 import com.huotu.ymr.service.ShareService;
+import com.huotu.ymr.service.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +53,8 @@ public class ShareController implements ShareSystem {
     @Autowired
     UserRepository userRepository;
 
-
+    @Autowired
+    StaticResourceService staticResourceService;
 
     @RequestMapping("/searchShareList")
     @Override
@@ -68,7 +70,7 @@ public class ShareController implements ShareSystem {
                 AppShareListModel appShareListModel=new AppShareListModel();
                 appShareListModel.setPId(share.getId());
                 appShareListModel.setTitle(share.getTitle());
-                appShareListModel.setImg(commonConfigService.getResoureServerUrl()+share.getImg());//todo
+                appShareListModel.setImg(staticResourceService.getResource(share.getImg()).toString());//todo
                 appShareListModel.setIntro(share.getIntro());
                 appShareListModel.setCommentQuantity(share.getCommentQuantity());
                 appShareListModel.setContent(share.getContent());
@@ -77,7 +79,7 @@ public class ShareController implements ShareSystem {
                 appShareListModel.setRelayScore(share.getRelayReward());
                 appShareListModel.setTime(share.getTime());
                 appShareListModel.setTop(share.getTop());
-                appShareListModel.setUserHeadUrl(commonConfigService.getResoureServerUrl()+share.getLinkUrl());//todo
+                appShareListModel.setUserHeadUrl(staticResourceService.getResource(share.getLinkUrl()).toString());//todo
                 appShareListModels[i]=appShareListModel;
             }
             list.outputData(appShareListModels);
@@ -102,7 +104,9 @@ public class ShareController implements ShareSystem {
         share.setOwnerId(userId);
         share.setTitle(title);
         share.setContent(content);
-        share.setImg(commonConfigService.getResoureServerUrl()+imgUrl);//todo
+//        share.setImg(commonConfigService.getResoureServerUrl()+imgUrl);//todo
+        share.setImg(staticResourceService.getResource(imgUrl).toString());//todo
+
         share.setIntro("");
         share.setPostReward(Integer.parseInt(config.getValue()));
 
@@ -240,7 +244,7 @@ public class ShareController implements ShareSystem {
         shareComment.setUserId(mallUser.getId());
         shareComment.setCommentName(mallUser.getWxNickName());
         shareComment.setLevel(user.getUserLevel());
-        shareComment.setHeadUrl(commonConfigService.getResoureServerUrl()+mallUser.getWxHeadUrl());//todo
+        shareComment.setHeadUrl(staticResourceService.getResource(mallUser.getWxHeadUrl()).toString());//todo
         shareComment.setContent(content);
         shareComment.setTime(new Date());
         shareComment.setParentId(0L);

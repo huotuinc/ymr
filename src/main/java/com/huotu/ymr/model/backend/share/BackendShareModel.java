@@ -1,4 +1,4 @@
-package com.huotu.ymr.model.backend;
+package com.huotu.ymr.model.backend.share;
 
 import lombok.Getter;
 import lombok.Setter;
