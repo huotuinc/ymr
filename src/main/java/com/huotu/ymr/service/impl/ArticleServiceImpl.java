@@ -78,7 +78,7 @@ public class ArticleServiceImpl implements ArticleService {
         return  articleRepository.findAll(new Specification<Article>() {
             @Override
             public Predicate toPredicate(Root<Article> root, CriteriaQuery<?> query, CriteriaBuilder cb){
-                Predicate predicate = cb.equal(root.get("manager").as(Manager.class), articleSearchModel.getManager());
+                Predicate predicate = cb.equal(root.get("manager").as(Manager.class), articleSearchModel.getManagerName());
                 if (!StringUtils.isEmpty(articleSearchModel.getArticleTitle())){
                     predicate = cb.and(predicate,cb.like(root.get("title").as(String.class),"%"+articleSearchModel.getArticleTitle()+"%"));
                 }

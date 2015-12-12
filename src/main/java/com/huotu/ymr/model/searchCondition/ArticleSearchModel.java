@@ -28,7 +28,8 @@ public class ArticleSearchModel {
     /**
      * 发布人
      */
-    private Manager manager=null;
+
+    private String managerName;
 
     /**
      * 排序字段 0：发帖时间，1：浏览量，2：转发量

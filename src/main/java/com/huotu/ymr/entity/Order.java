@@ -16,13 +16,14 @@ import java.util.Date;
 @Getter
 @Setter
 @Cacheable(value = false)
+@Table(name = "orders")
 public class Order {
 
     /**
      * 订单号
      */
     @Id
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String orderNo;
 
     /**
@@ -38,7 +39,7 @@ public class Order {
     /**
      * 付款的用户
      */
-    @ManyToOne(cascade = {CascadeType.REFRESH,CascadeType.MERGE})
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     private User user;
 
     /**
