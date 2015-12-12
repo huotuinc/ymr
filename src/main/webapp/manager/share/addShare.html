@@ -25,8 +25,8 @@
             th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
 </head>
 
-<body>
-<form method="post" action="settlements" id="form1">
+<body onload="firstLoad()">
+<form method="post" action="saveShare" id="form1">
     <div class="container">
         <div class="blank10">
         </div>
@@ -39,84 +39,76 @@
             <div class="cnt-wp" style="padding: 35px 10px 10px;">
                 <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
 
+
+
+
                     <!-- 以下是页卡-->
                     <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border" style="height: 28px;">
                         <ul style="height: 28px; line-height: 28px;">
-            <span class="left-placeholder">
-            </span>
-                            <li class="om-state-default om-corner-top">
-              <span class="lileft">
-              </span>
-              <span class="lileft">
-              </span>
-                                <a href="#tab1" onclick="changeClick('2')" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
+                            <span class="left-placeholder">
+
+                            </span>
+                            <li class="om-state-default om-corner-top om-tabs-activated om-state-active">
+                                <span class="lileft"></span>
+                                <span class="lileft"></span>
+                                <a href="#tab1" onclick="changePage(1)" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
                                     预约类
                                 </a>
-              <span class="liright">
-              </span>
+                                <span class="liright"></span>
                             </li>
-                            <li class="om-state-default om-corner-top om-tabs-activated om-state-active">
-              <span class="lileft">
-              </span>
-              <span class="lileft">
-              </span>
-                                <a href="#tab0" onclick="changeClick('1')" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
+                            <li class="om-state-default om-corner-top">
+                                <span class="lileft"></span>
+                                <span class="lileft"></span>
+                                <a href="#tab0" onclick="changePage(2)" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
                                     合伙众筹型
                                 </a>
-              <span class="liright">
-              </span>
+                                <span class="liright"></span>
                             </li>
-            <span class="right-placeholder">
-            </span>
-                            <li class="om-state-default om-corner-top ">
-              <span class="lileft">
-              </span>
-                                <a href="javascript:showList(2);" class="om-tabs-inner" style="width: auto; height: 27px;">
+                            <span class="right-placeholder"></span>
+                            <li class="om-state-default om-corner-top">
+                                <span class="lileft"></span>
+                                <a href="#tab1" onclick="changePage(3)" class="om-tabs-inner" style="width: auto; height: 27px;">
                                     认购类
                                 </a>
-              <span class="liright">
-              </span>
+                                <span class="liright"></span>
                             </li>
-            <span class="right-placeholder">
-            </span>
+                            <span class="right-placeholder"></span>
                         </ul>
                     </div>
                     <!-- 页卡结束-->
 
                     <!-- 以下是可见等级-->
-                    <div class="cnt">
-                        <div class="search-bar">
-                            <label style="padding-right:30px;">
-              <span class="first ">
-              可见等级
-              </span>
-                                &nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" checked="checked" />
-                                Lv1
-                                <input type="checkbox" checked="checked" />
-                                Lv2
-                                <input type="checkbox" />
-                                Lv3 </label>
-                        </div>
-                    </div>
+                    <!--<div class="cnt">-->
+                        <!--<div class="search-bar">-->
+                            <!--<label style="padding-right:30px;">-->
+              <!--<span class="first ">-->
+              <!--可见等级-->
+              <!--</span>-->
+                                <!--&nbsp;&nbsp;&nbsp;-->
+                                <!--<input type="checkbox" checked="checked" />-->
+                                <!--Lv1-->
+                                <!--<input type="checkbox" checked="checked" />-->
+                                <!--Lv2-->
+                                <!--<input type="checkbox" />-->
+                                <!--Lv3 </label>-->
+                        <!--</div>-->
+                    <!--</div>-->
 
                     <!-- 可见等级结束-->
 
                     <!-- 以下设置表单-->
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
                         <div class="om-widget om-panel">
-                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                            <div id="tab0101" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
                                 <div class="division">
-                                    <div>
-                                    </div>
-                                    <div>
-                                    </div>
+                                    <div></div>
+                                    <div></div>
                                     <table cellpadding="0" cellspacing="0" width="100%">
                                         <tbody>
-                                        <tr>
-                                            <th>设置项目名称:</th>
-                                            <td style="width:41.5%;     border-top: 1px solid #ddd;"><span id="lblOrderId">
-                        </span>
+                                            <tr>
+                                                <th>设置项目名称:</th>
+                                                    <td style="width:41.5%;     border-top: 1px solid #ddd;"><span id="lblOrderId">
+                                        </span>
                                                 <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
                                             <th>设置起始时间:</th>
                                             <td style="    border-top: 1px solid #ddd;"><div>
@@ -318,6 +310,654 @@
         </div>
     </div>
 </form>
+<form method="post" action="saveShare" id="form2">
+    <div class="container">
+        <div class="blank10">
+        </div>
+        <div class="search block" style="display: block;">
+            <div class="h">
+      <span class="icon-sprite icon-magnifier">
+      </span>
+                <h3>众筹新增后台</h3>
+            </div>
+            <div class="cnt-wp" style="padding: 35px 10px 10px;">
+                <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
+
+                    <!-- 以下是页卡-->
+                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border" style="height: 28px;">
+                        <ul style="height: 28px; line-height: 28px;">
+                            <span class="left-placeholder">
+
+                            </span>
+                            <li class="om-state-default om-corner-top">
+                                <span class="lileft"></span>
+                                <span class="lileft"></span>
+                                <a href="#tab1" onclick="changePage(1)" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
+                                    预约类
+                                </a>
+                                <span class="liright"></span>
+                            </li>
+                            <li class="om-state-default om-corner-top om-tabs-activated om-state-active">
+                                <span class="lileft"></span>
+                                <span class="lileft"></span>
+                                <a href="#tab0" onclick="changePage(2)" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
+                                    合伙众筹型
+                                </a>
+                                <span class="liright"></span>
+                            </li>
+                            <span class="right-placeholder"></span>
+                            <li class="om-state-default om-corner-top ">
+                                <span class="lileft"></span>
+                                <a href="#tab1" onclick="changePage(3)" class="om-tabs-inner" style="width: auto; height: 27px;">
+                                    认购类
+                                </a>
+                                <span class="liright"></span>
+                            </li>
+                            <span class="right-placeholder"></span>
+                        </ul>
+                    </div>
+                    <!-- 页卡结束-->
+
+                    <!-- 以下是可见等级-->
+                    <div class="cnt">
+                        <div class="search-bar">
+                            <label style="padding-right:30px;">
+              <span class="first ">
+              可见等级
+              </span>
+                                &nbsp;&nbsp;&nbsp;
+                                <input type="checkbox" checked="checked" />
+                                Lv1
+                                <input type="checkbox" checked="checked" />
+                                Lv2
+                                <input type="checkbox" />
+                                Lv3 </label>
+                        </div>
+                    </div>
+
+                    <!-- 可见等级结束-->
+
+                    <!-- 以下设置表单-->
+                    <div class="om-tabs-panels om-widget-content om-corner-bottom">
+                        <div class="om-widget om-panel">
+                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                                <div class="division">
+                                    <div>
+                                    </div>
+                                    <div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 设置表结束-->
+
+                    <!--以下是全局默认 -->
+                    <div class="cnt">
+                        <div class="search-bar">
+                            <label>
+                                <input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="vertical-align: text-top;" value="单选" checked="checked"/>
+                                全局默认：0%中介费</label>
+                        </div>
+                    </div>
+                    <!-- 全局默认结束-->
+
+                    <!--以下是单独设置 -->
+                    <div class="cntaa">
+                        <div class="search-bar">
+                            <label>
+                                <input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style="
+    vertical-align: text-top;
+"/>
+                                单独设置</label>
+                            <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>
+            <span style=" vertical-align: text-top;">
+            中介费
+            </span>
+                        </div>
+                    </div>
+                    <!-- 单独设置结束-->
+
+                </div>
+
+                <div>
+                    <div class="om-tabs-panels om-widget-content om-corner-bottom" style="    border: 1px solid #ddd; background-color:#fff;">
+                        <div class="om-widget om-panel">
+                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                                <div class="division">
+                                    <div>
+                                    </div>
+
+
+                                    <!--以下是设置“发起/合作人”可选金额范围-->
+                                    <div class="cnt">
+                                        <div class="search-bar">
+                                            设置“发起/合作人”可选金额范围
+                                        </div>
+                                    </div>
+                                    <table cellpadding="0" cellspacing="0" width="100%">
+                                        <tbody>
+
+                                        <tr>
+                                            <th style="    background-color: #fff;     border-left: 1px solid #ddd;">
+                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="默认0（合作人可选"/></th>
+                                            <td><span id="lblOrderId"></span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                                                    <span>
+                                                        新增
+                                                    </span>
+                                                </a>
+                                            </td>
+                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="100000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="200000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
+                                            <th style="    background-color: #fff;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="500000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="    background-color: #fff;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="600000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        删除
+                        </span>
+                                                </a></td>
+                                            <th style="    background-color: #fff;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="700000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        删除
+                        </span>
+                                                </a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <!-- 设置“发起/合作人”可选金额范围结束-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--以下是否在资讯栏目发一篇介绍-->
+                <div class="search-bar" style="border:1px solid #ddd; background-color:#FFFFFF;">
+                    <input type="radio" />
+                    <label style="padding-right:30px;">
+          <span class="first ">
+          是否在资讯栏目发一篇介绍（默认不勾）
+          </span>
+                        &nbsp;&nbsp;&nbsp;</label>
+                </div>
+                <!--是否在资讯栏目发一篇介绍范围结束-->
+
+                <!--以下是按钮-->
+                <div style="text-align: center; margin-top:12px" >
+                    <a class="btn-lit" href="javascript:submitForm();" style=" margin-right:10px;">
+        <span>
+        保存到草稿箱
+        </span>
+                    </a>
+                    <a class="btn-lit" href="javascript:submitForm();">
+        <span>
+        直接发布
+        </span>
+                    </a>
+                </div>
+                <!--按钮结束-->
+
+            </div>
+        </div>
+    </div>
+</form>
+<form method="post" action="saveShare" id="form3">
+    <div class="container">
+        <div class="blank10">
+        </div>
+        <div class="search block" style="display: block;">
+            <div class="h">
+      <span class="icon-sprite icon-magnifier">
+      </span>
+                <h3>众筹新增后台</h3>
+            </div>
+            <div class="cnt-wp" style="padding: 35px 10px 10px;">
+                <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
+
+                    <!-- 以下是页卡-->
+                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border" style="height: 28px;">
+                        <ul style="height: 28px; line-height: 28px;">
+                            <span class="left-placeholder">
+
+                            </span>
+                            <li class="om-state-default om-corner-top">
+                                <span class="lileft"></span>
+                                <span class="lileft"></span>
+                                <a href="#tab1" onclick="changePage(1)" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
+                                    预约类
+                                </a>
+                                <span class="liright"></span>
+                            </li>
+                            <li class="om-state-default om-corner-top">
+                                <span class="lileft"></span>
+                                <span class="lileft"></span>
+                                <a href="#tab0" onclick="changePage(2)" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
+                                    合伙众筹型
+                                </a>
+                                <span class="liright"></span>
+                            </li>
+                            <span class="right-placeholder"></span>
+                            <li class="om-state-default om-corner-top om-tabs-activated om-state-active">
+                                <span class="lileft"></span>
+                                <a href="#tab1" onclick="changePage(3)" class="om-tabs-inner" style="width: auto; height: 27px;">
+                                    认购类
+                                </a>
+                                <span class="liright"></span>
+                            </li>
+                            <span class="right-placeholder"></span>
+                        </ul>
+                    </div>
+                    <!-- 页卡结束-->
+
+                    <!-- 以下是可见等级-->
+                    <div class="cnt">
+                        <div class="search-bar">
+                            <label style="padding-right:30px;">
+              <span class="first ">
+              可见等级
+              </span>
+                                &nbsp;&nbsp;&nbsp;
+                                <input type="checkbox" checked="checked" />
+                                Lv1
+                                <input type="checkbox" checked="checked" />
+                                Lv2
+                                <input type="checkbox" />
+                                Lv3 </label>
+                        </div>
+                    </div>
+
+                    <!-- 可见等级结束-->
+
+                    <!-- 以下设置表单-->
+
+
+                    <!-- 设置表结束-->
+
+                    <!--以下是全局默认 -->
+                    <div class="cnt">
+                        <div class="search-bar">
+                            <label>
+                                <input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="vertical-align: text-top;" value="单选" checked="checked"/>
+                                全局默认：0%中介费</label>
+                        </div>
+                    </div>
+                    <!-- 全局默认结束-->
+
+                    <!--以下是单独设置 -->
+                    <div class="cntaa">
+                        <div class="search-bar">
+                            <label>
+                                <input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style="
+    vertical-align: text-top;
+"/>
+                                单独设置</label>
+                            <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>
+            <span style=" vertical-align: text-top;">
+            中介费
+            </span>
+                        </div>
+                    </div>
+                    <!-- 单独设置结束-->
+
+                </div>
+
+                <div>
+                    <div class="om-tabs-panels om-widget-content om-corner-bottom" style="    border: 1px solid #ddd; background-color:#fff;">
+                        <div class="om-widget om-panel">
+                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                                <div class="division">
+                                    <div>
+                                    </div>
+
+
+                                    <!--以下是设置“发起/合作人”可选金额范围-->
+                                    <div class="cnt">
+                                        <div class="search-bar">
+                                            设置“发起/合作人”可选金额范围
+                                        </div>
+                                    </div>
+                                    <table cellpadding="0" cellspacing="0" width="100%">
+                                        <tbody>
+
+                                        <tr>
+                                            <th style="    background-color: #fff;     border-left: 1px solid #ddd;">
+                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="默认0（合作人可选"/></th>
+                                            <td><span id="lblOrderId"></span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                                                    <span>
+                                                        新增
+                                                    </span>
+                                                </a>
+                                            </td>
+                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="100000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="200000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
+                                            <th style="    background-color: #fff;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="500000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
+                                        </tr>
+                                        <tr>
+                                            <th style="    background-color: #fff;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="600000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        删除
+                        </span>
+                                                </a></td>
+                                            <th style="    background-color: #fff;
+"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="700000"/></th>
+                                            <td><span id="lblOrderId">
+                        </span>
+                                                <a class="btn-lit" href="javascript:submitForm();">
+                        <span>
+                        删除
+                        </span>
+                                                </a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <!-- 设置“发起/合作人”可选金额范围结束-->
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--以下是否在资讯栏目发一篇介绍-->
+                <div class="search-bar" style="border:1px solid #ddd; background-color:#FFFFFF;">
+                    <input type="radio" />
+                    <label style="padding-right:30px;">
+          <span class="first ">
+          是否在资讯栏目发一篇介绍（默认不勾）
+          </span>
+                        &nbsp;&nbsp;&nbsp;</label>
+                </div>
+                <!--是否在资讯栏目发一篇介绍范围结束-->
+
+                <!--以下是按钮-->
+                <div style="text-align: center; margin-top:12px" >
+                    <a class="btn-lit" href="javascript:submitForm();" style=" margin-right:10px;">
+        <span>
+        保存到草稿箱
+        </span>
+                    </a>
+                    <a class="btn-lit" href="javascript:submitForm();">
+        <span>
+        直接发布
+        </span>
+                    </a>
+                </div>
+                <!--按钮结束-->
+
+            </div>
+        </div>
+    </div>
+</form>
 <div class="blank10"></div>
+<script>
+    //提交所填信息
+    function submitForm1(obj) {
+//        var companyAddr = $("#companyAddr").val();
+//        var companyName = $("#companyName").val();
+//        var companyTel = $("#companyTel").val();
+//        var taxpayerCode = $("#taxpayerCode ").val();
+//        var bankName = $("#bankName ").val();
+//        var accountNo = $("#accountNo").val();
+//        var generalCertificateUrl = document.getElementById("generalCertificateFile").value;
+//        var taxRegistCertificateUrl = document.getElementById("taxRegistCertificateFile").value;
+//        var uploadpicCover3 = document.getElementById("uploadpicCover3").value;
+//        var uploadpicCover4 = document.getElementById("uploadpicCover4").value;
+//        if (companyAddr == "" || companyAddr == null) {
+//            $.jBox.tip("请填写公司地址");
+//            return;
+//        }
+//        if (companyName == null || companyName == "") {
+//            $.jBox.tip("请填写公司名称");
+//            return;
+//        }
+//        if (companyTel == null || companyTel == "") {
+//            $.jBox.tip("请填写注册电话");
+//            return;
+//        }
+//        if (taxpayerCode == "" || taxpayerCode == null) {
+//            $.jBox.tip("请填写纳税人识别码");
+//            return;
+//        }
+//        if (bankName == "" || bankName == null) {
+//            $.jBox.tip("请填写开户银行名称");
+//            return;
+//        }
+//        if (accountNo == "" || accountNo == null) {
+//            $.jBox.tip("请填写开户银行账号");
+//            return;
+//        }
+//        if (taxRegistCertificateUrl == null || taxRegistCertificateUrl == "") {
+//            if (uploadpicCover3 == null || uploadpicCover3 == "") {
+//                $.jBox.tip("请提交税务登记证");
+//                return;
+//            }
+//        }
+//        if (generalCertificateUrl == null || generalCertificateUrl == "") {
+//            if (uploadpicCover4 == null || uploadpicCover4 == "") {
+//                $.jBox.tip("请提交纳税人资格证");
+//                return;
+//            }
+//        }
+        $.MsgBox.Confirm("友情提示", "即将保存内容，确定继续吗？", function () {
+            $("#form1").submit();
+        });
+
+    }
+    //提交普通发票
+    function submitForm2(obj) {
+//        var companyAddr1 = $("#companyAddr1").val();
+//        var companyName1 = $("#companyName1").val();
+//        var companyTel1 = $("#companyTel1").val();
+//        if (companyAddr1 == "" || companyAddr1 == null) {
+//            $.jBox.tip("请填写公司名称");
+//            return;
+//        }
+//        if (companyName1 == null || companyName1 == "") {
+//            $.jBox.tip("请填写注册电话");
+//            return;
+//        }
+//        if (companyTel1 == null || companyTel1 == "") {
+//            $.jBox.tip("请填写注册地址");
+//            return;
+//        }
+        $.MsgBox.Confirm("友情提示", "即将保存内容，确定继续吗？", function () {
+            $("#form2").submit();
+        });
+
+
+    }
+    //提交邮寄地址
+    function submitForm3(obj) {
+//        var shipName = $("#shipName").val();
+//        var shipMobile = $("#shipMobile").val();
+//        var shipAddr = $("#shipAddr").val();
+//        if (shipName == "" || shipName == null) {
+//            $.jBox.tip("请填写联系人");
+//            return;
+//        }
+//        if (shipMobile == null || shipMobile == "") {
+//            $.jBox.tip("请填写联系电话");
+//            return;
+//        }
+//        if (shipAddr == null || shipAddr == "") {
+//            $.jBox.tip("请填写详细地址");
+//            return;
+//        }
+        $.MsgBox.Confirm("友情提示", "即将保存内容，确定继续吗？", function () {
+            $("#form3").submit();
+        });
+    }
+
+    //初始化进页面
+    function firstLoad() {
+            document.getElementById('form1').style.display = '';
+            document.getElementById('form2').style.display = 'none';
+            document.getElementById('form3').style.display = 'none';
+    }
+
+    //切换标签
+    function changePage(type) {
+
+        //资讯
+        if (type == 1) {
+            document.getElementById('form1').style.display = '';
+            document.getElementById('form2').style.display = 'none';
+            document.getElementById('form3').style.display = 'none';
+//            document.getElementById('RadioGroup4').checked = true;
+
+        }
+        //团购
+        if (type == 2) {
+            document.getElementById('form1').style.display = 'none';
+            document.getElementById('form2').style.display = '';
+            document.getElementById('form3').style.display = 'none';
+
+        }
+        //众筹
+        if (type == 3) {
+            document.getElementById('form1').style.display = 'none';
+            document.getElementById('form2').style.display = 'none';
+            document.getElementById('form3').style.display = '';
+        }
+    }
+
+    //切换发票模式
+    function change(type) {
+        //普通发票
+        if (type == 2) {
+            document.getElementById('form1').style.display = 'none';
+            document.getElementById('form2').style.display = '';
+            document.getElementById('RadioGroup4').checked = true;
+            document.getElementById('RadioGroup3').checked = false;
+            document.getElementById('RadioGroup2').checked = false;
+            document.getElementById('RadioGroup1').checked = false;
+            if (document.getElementById('defaultType2').checked == false) {
+                $("#defaultType3").val("1");
+                $("#defaultType4").val("1");
+
+            }
+            else {
+                $("#defaultType3").val("0");
+                $("#defaultType4").val("0");
+            }
+
+        }
+        //增值税发票
+        if (type == 1) {
+            document.getElementById('form1').style.display = '';
+            document.getElementById('form2').style.display = 'none';
+            document.getElementById('RadioGroup1').checked = true;
+            document.getElementById('RadioGroup4').checked = false;
+            document.getElementById('RadioGroup2').checked = false;
+            document.getElementById('RadioGroup3').checked = false;
+            if (document.getElementById('defaultType1').checked == false) {
+                $("#defaultType3").val("0");
+                $("#defaultType4").val("0");
+
+            }
+            else {
+                $("#defaultType3").val("1");
+                $("#defaultType4").val("1");
+                ;
+            }
+        }
+
+    }
+
+    //是否默认发票
+    function check(type) {
+        if (type == 1) {
+            if (document.getElementById('defaultType1').checked == true) {
+                document.getElementById('defaultType2').checked = false;
+                $("#defaultType3").val("1");
+                $("#defaultType4").val("1");
+            }
+            else {
+                $("#defaultType3").val("0");
+                $("#defaultType4").val("0");
+            }
+
+
+        }
+        if (type == 2) {
+            document.getElementById('defaultType1').checked = false;
+            ;
+            $("#defaultType3").val("0");
+            $("#defaultType4").val("0");
+
+
+        }
+    }
+</script>
 </body>
 </html>
