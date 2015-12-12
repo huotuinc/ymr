@@ -37,7 +37,7 @@
                 <h3>众筹新增后台</h3>
             </div>
             <div class="cnt-wp" style="padding: 35px 10px 10px;">
-                <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
+                <div id="makeTab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
 
 
 
@@ -52,7 +52,7 @@
                                 <span class="lileft"></span>
                                 <span class="lileft"></span>
                                 <a href="#tab1" onclick="changePage(1)" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    预约类
+                                    咨询
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -60,7 +60,7 @@
                                 <span class="lileft"></span>
                                 <span class="lileft"></span>
                                 <a href="#tab0" onclick="changePage(2)" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    合伙众筹型
+                                    团购
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -68,7 +68,7 @@
                             <li class="om-state-default om-corner-top">
                                 <span class="lileft"></span>
                                 <a href="#tab1" onclick="changePage(3)" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    认购类
+                                    众筹项目
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -99,43 +99,42 @@
                     <!-- 以下设置表单-->
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
                         <div class="om-widget om-panel">
-                            <div id="tab0101" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                            <div id="tab0001" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
                                 <div class="division">
                                     <div></div>
                                     <div></div>
                                     <table cellpadding="0" cellspacing="0" width="100%">
                                         <tbody>
                                             <tr>
-                                                <th>设置项目名称:</th>
-                                                    <td style="width:41.5%;     border-top: 1px solid #ddd;"><span id="lblOrderId">
-                                        </span>
-                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
-                                            <th>设置起始时间:</th>
-                                            <td style="    border-top: 1px solid #ddd;"><div>
-                                                <input name="startDate" type="text" id="txtBeginTime" placeholder=" [开始时间]"
-                                                       class="input-normal Wdate"
-                                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false})"/>
-                                                <label class="first ">---</label>
-                                                <input name="endDate" type="text" id="txtEndTime" placeholder=" [结束时间]"
-                                                       class="input-normal Wdate"
-                                                       onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false,minDate:'#F{$dp.$D(\'txtBeginTime\')}'})"/>
-                                            </div></td>
-                                        </tr>
-                                        <p style="clean:both;">
-                                        </p>
-                                        <tr>
-                                            <th>设置预约金额:</th>
-                                            <td><script type="text/javascript">
-                                                function quickSetLogiName() {
-                                                    var _cur = $("#selLogiName  option:selected");
-                                                    var lname = _cur.val() == '0' ? '' : _cur.text();
-                                                    $('#logisticsName').val(lname);
-                                                }
-                                            </script>
-                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
-                                            <th>设置人上限数:</th>
-                                            <td><input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
-                                        </tr>
+                                                <th>标题:</th>
+                                                    <td style="border-top: 1px solid #ddd;">
+                                                        <span id="sharezx"></span>
+                                                <input name="txtCatName" type="text" id="txtzx" class="input-normal" placeholder=""/></td>
+                                            <!--<th>设置起始时间:</th>-->
+                                            <!--<td style="    border-top: 1px solid #ddd;"><div>-->
+                                                <!--<input name="startDate" type="text" id="txtBeginTime" placeholder=" [开始时间]"-->
+                                                       <!--class="input-normal Wdate"-->
+                                                       <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false})"/>-->
+                                                <!--<label class="first ">-&#45;&#45;</label>-->
+                                                <!--<input name="endDate" type="text" id="txtEndTime" placeholder=" [结束时间]"-->
+                                                       <!--class="input-normal Wdate"-->
+                                                       <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false,minDate:'#F{$dp.$D(\'txtBeginTime\')}'})"/>-->
+                                            <!--</div></td>-->
+                                            </tr>
+                                        <p style="clean:both;"></p>
+                                        <!--<tr>-->
+                                            <!--<th>设置预约金额:</th>-->
+                                            <!--<td><script type="text/javascript">-->
+                                                <!--function quickSetLogiName() {-->
+                                                    <!--var _cur = $("#selLogiName  option:selected");-->
+                                                    <!--var lname = _cur.val() == '0' ? '' : _cur.text();-->
+                                                    <!--$('#logisticsName').val(lname);-->
+                                                <!--}-->
+                                            <!--</script>-->
+                                                <!--<input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>-->
+                                            <!--<th>设置人上限数:</th>-->
+                                            <!--<td><input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>-->
+                                        <!--</tr>-->
                                         <tr>
                                             <th>封面:</th>
                                             <td>
@@ -150,10 +149,31 @@
                                                 </div>
                                                 <input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>
                                             </td>
+                                        </tr>
+                                        <tr>
                                             <th>内容:</th>
                                             <td><textarea maxlength="" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
                                             </td>
                                         </tr>
+
+                                            <tr>
+                                                <th>全局配置:</th>
+                                                <td>
+                                                    <input name="txtCatName" type="text" id="overallTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">中介费</span>
+                                                    <input name="txtCatName" type="text" id="overallTotal" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">中介费</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>单独配置:</th>
+                                                <td>
+                                                    <input name="txtCatName" type="text" id="overallTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">中介费</span>
+                                                    <input name="txtCatName" type="text" id="overallTotal" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">中介费</span>
+                                                </td>
+                                            </tr>
                                         </tbody>
 
                                     </table>
@@ -165,130 +185,37 @@
                     <!-- 设置表结束-->
 
                     <!--以下是全局默认 -->
-                    <div class="cnt">
-                        <div class="search-bar">
-                            <label>
-                                <input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="vertical-align: text-top;" value="单选" checked="checked"/>
-                                全局默认：0%中介费</label>
-                        </div>
-                    </div>
+                    <!--<div class="cnt">-->
+                        <!--<div class="search-bar">-->
+                            <!--<label>全局配置:</label>-->
+
+
+                        <!--</div>-->
+                    <!--</div>-->
                     <!-- 全局默认结束-->
 
                     <!--以下是单独设置 -->
-                    <div class="cntaa">
-                        <div class="search-bar">
-                            <label>
-                                <input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style="
-    vertical-align: text-top;
-"/>
-                                单独设置</label>
-                            <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>
-            <span style=" vertical-align: text-top;">
-            中介费
-            </span>
-                        </div>
-                    </div>
+                    <!--<div class="cntaa">-->
+                        <!--<div class="search-bar">-->
+                            <!--<label>单独设置:</label>-->
+                            <!--<input name="txtCatName" type="text" id="aloneTransmit" class="input-normal" placeholder="" style="text-align:center;"/>-->
+                                <!--<span style=" vertical-align: text-top;">中介费</span>-->
+                            <!--<input name="txtCatName" type="text" id="aloneTotal" class="input-normal" placeholder="" style="text-align:center;"/>-->
+                                <!--<span style=" vertical-align: text-top;">中介费</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
                     <!-- 单独设置结束-->
 
                 </div>
-
-                <div>
-                    <div class="om-tabs-panels om-widget-content om-corner-bottom" style="    border: 1px solid #ddd; background-color:#fff;">
-                        <div class="om-widget om-panel">
-                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
-                                <div class="division">
-                                    <div>
-                                    </div>
-
-
-                                    <!--以下是设置“发起/合作人”可选金额范围-->
-                                    <div class="cnt">
-                                        <div class="search-bar">
-                                            设置“发起/合作人”可选金额范围
-                                        </div>
-                                    </div>
-                                    <table cellpadding="0" cellspacing="0" width="100%">
-                                        <tbody>
-
-                                        <tr>
-                                            <th style="    background-color: #fff;     border-left: 1px solid #ddd;">
-                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="默认0（合作人可选"/></th>
-                                            <td><span id="lblOrderId"></span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                                                    <span>
-                                                        新增
-                                                    </span>
-                                                </a>
-                                            </td>
-                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="100000"/></th>
-                                            <td><span id="lblOrderId">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        新增
-                        </span>
-                                                </a></td>
-                                        </tr>
-                                        <tr>
-                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="200000"/></th>
-                                            <td><span id="lblOrderId">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        新增
-                        </span>
-                                                </a></td>
-                                            <th style="    background-color: #fff;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="500000"/></th>
-                                            <td><span id="lblOrderId">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        新增
-                        </span>
-                                                </a></td>
-                                        </tr>
-                                        <tr>
-                                            <th style="    background-color: #fff;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="600000"/></th>
-                                            <td><span id="lblOrderId">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        删除
-                        </span>
-                                                </a></td>
-                                            <th style="    background-color: #fff;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="700000"/></th>
-                                            <td><span id="lblOrderId">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        删除
-                        </span>
-                                                </a></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                    <!-- 设置“发起/合作人”可选金额范围结束-->
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
                 <!--以下是否在资讯栏目发一篇介绍-->
-                <div class="search-bar" style="border:1px solid #ddd; background-color:#FFFFFF;">
-                    <input type="radio" />
-                    <label style="padding-right:30px;">
-          <span class="first ">
-          是否在资讯栏目发一篇介绍（默认不勾）
-          </span>
-                        &nbsp;&nbsp;&nbsp;</label>
-                </div>
+                <!--<div class="search-bar" style="border:1px solid #ddd; background-color:#FFFFFF;">-->
+                    <!--<input type="radio" />-->
+                    <!--<label style="padding-right:30px;">-->
+          <!--<span class="first ">-->
+          <!--是否在资讯栏目发一篇介绍（默认不勾）-->
+          <!--</span>-->
+                        <!--&nbsp;&nbsp;&nbsp;</label>-->
+                <!--</div>-->
                 <!--是否在资讯栏目发一篇介绍范围结束-->
 
                 <!--以下是按钮-->
@@ -318,10 +245,10 @@
             <div class="h">
       <span class="icon-sprite icon-magnifier">
       </span>
-                <h3>众筹新增后台</h3>
+                <h3>帖子新增后台</h3>
             </div>
             <div class="cnt-wp" style="padding: 35px 10px 10px;">
-                <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
+                <div id="tab0101" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
 
                     <!-- 以下是页卡-->
                     <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border" style="height: 28px;">
@@ -333,7 +260,7 @@
                                 <span class="lileft"></span>
                                 <span class="lileft"></span>
                                 <a href="#tab1" onclick="changePage(1)" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    预约类
+                                    咨询
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -341,7 +268,7 @@
                                 <span class="lileft"></span>
                                 <span class="lileft"></span>
                                 <a href="#tab0" onclick="changePage(2)" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    合伙众筹型
+                                    团购
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -349,7 +276,7 @@
                             <li class="om-state-default om-corner-top ">
                                 <span class="lileft"></span>
                                 <a href="#tab1" onclick="changePage(3)" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    认购类
+                                    众筹项目
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -563,7 +490,7 @@
                                 <span class="lileft"></span>
                                 <span class="lileft"></span>
                                 <a href="#tab1" onclick="changePage(1)" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    预约类
+                                    咨询
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -571,7 +498,7 @@
                                 <span class="lileft"></span>
                                 <span class="lileft"></span>
                                 <a href="#tab0" onclick="changePage(2)" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    合伙众筹型
+                                    团购
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -579,7 +506,7 @@
                             <li class="om-state-default om-corner-top om-tabs-activated om-state-active">
                                 <span class="lileft"></span>
                                 <a href="#tab1" onclick="changePage(3)" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    认购类
+                                    众筹项目
                                 </a>
                                 <span class="liright"></span>
                             </li>
@@ -613,29 +540,28 @@
                     <!-- 设置表结束-->
 
                     <!--以下是全局默认 -->
-                    <div class="cnt">
-                        <div class="search-bar">
-                            <label>
-                                <input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="vertical-align: text-top;" value="单选" checked="checked"/>
-                                全局默认：0%中介费</label>
-                        </div>
-                    </div>
+                        <!--<div class="search-bar">-->
+                            <!--<label>全局配置</label>-->
+                            <!--<input name="txtCatName" type="text" id="overallTransmit" class="input-normal" placeholder="默认0%中介费"/>-->
+                            <!--<input name="txtCatName" type="text" id="overallTotal" class="input-normal" placeholder="默认0%中介费"/>-->
+
+                            <!--&lt;!&ndash;<input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="vertical-align: text-top;" value="单选" checked="checked"/>&ndash;&gt;-->
+
+                        <!--</div>-->
                     <!-- 全局默认结束-->
 
                     <!--以下是单独设置 -->
-                    <div class="cntaa">
-                        <div class="search-bar">
-                            <label>
-                                <input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style="
-    vertical-align: text-top;
-"/>
-                                单独设置</label>
-                            <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>
-            <span style=" vertical-align: text-top;">
-            中介费
-            </span>
-                        </div>
-                    </div>
+                    <!--<div class="cntaa">-->
+                        <!--<div class="search-bar">-->
+                            <!--<label>-->
+                                <!--<input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style=" vertical-align: text-top;"/>-->
+                                <!--单独设置</label>-->
+                            <!--<input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>-->
+            <!--<span style=" vertical-align: text-top;">-->
+            <!--中介费-->
+            <!--</span>-->
+                        <!--</div>-->
+                    <!--</div>-->
                     <!-- 单独设置结束-->
 
                 </div>
