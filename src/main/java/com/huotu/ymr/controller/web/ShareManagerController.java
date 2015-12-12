@@ -4,7 +4,7 @@ import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
-import com.huotu.ymr.model.backend.BackendShareModel;
+import com.huotu.ymr.model.backend.share.BackendShareModel;
 import com.huotu.ymr.service.ShareService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -94,7 +94,7 @@ public class ShareManagerController {
 
     @RequestMapping(value = "addShare")
     public String addShare(BackendShareModel backendShareModel,Model model) throws Exception{
-        return "manager/share/addYmrShareList";
+        return "manager/share/addShare";
     }
     /**
      * 后台添加爱分享内容

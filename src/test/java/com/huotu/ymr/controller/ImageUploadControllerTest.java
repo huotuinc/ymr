@@ -20,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import sun.misc.BASE64Encoder;
 
 import javax.transaction.Transactional;
+import java.io.*;
 import java.util.Random;
 import java.util.UUID;
 
@@ -62,30 +64,29 @@ public class ImageUploadControllerTest extends SpringBaseTest {
 
     @Test
     public void testUploadShareImg() throws Exception {
-//        File file=new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\testUpload.jpg");
-//        Image image = ImageIO.read(file);
-//        byte[] buffer = null;
-//        try {
-//            FileInputStream fis = new FileInputStream(file);
-//            ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
-//            byte[] b = new byte[1000];
-//            int n;
-//            while ((n = fis.read(b)) != -1) {
-//                bos.write(b, 0, n);
-//            }
-//            fis.close();
-//            bos.close();
-//            buffer = bos.toByteArray();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        BASE64Encoder base64Encoder=new BASE64Encoder();
-//        String base64Img=base64Encoder.encode(buffer);
-//        String result=mockMvc.perform(device.postApi("uploadShareImg")
-//                .param("profileData", base64Img).build())
-//                .andReturn().getResponse().getContentAsString();
+        File file=new File("C:\\Users\\Public\\Pictures\\Sample Pictures\\testUpload.jpg");
+        byte[] buffer = null;
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
+            byte[] b = new byte[1000];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            fis.close();
+            bos.close();
+            buffer = bos.toByteArray();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        BASE64Encoder base64Encoder=new BASE64Encoder();
+        String base64Img=base64Encoder.encode(buffer);
+        String result=mockMvc.perform(device.postApi("uploadShareImg")
+                .param("profileData", base64Img).build())
+                .andReturn().getResponse().getContentAsString();
 
 
     }

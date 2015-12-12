@@ -19,6 +19,7 @@ import com.huotu.ymr.repository.ConfigAppVersionRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.repository.VerificationCodeRepository;
 import com.huotu.ymr.service.CommonConfigService;
+import com.huotu.ymr.service.StaticResourceService;
 import com.huotu.ymr.service.VerificationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +29,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.net.URISyntaxException;
 import java.util.*;
 
 /**
@@ -62,6 +64,9 @@ public class UserController implements UserSystem {
 
     @Autowired
     private VerificationCodeRepository verificationCodeRepository;
+
+    @Autowired
+    private StaticResourceService staticResourceService;
 
     @RequestMapping("/init")
     @Override
@@ -154,7 +159,7 @@ public class UserController implements UserSystem {
     }
 
 
-    private AppUserInfoModel getAppUserInfoModel(MallUser mallUser, User user) {
+    private AppUserInfoModel getAppUserInfoModel(MallUser mallUser, User user) throws URISyntaxException {
         AppUserInfoModel appUserInfoModel = new AppUserInfoModel();
         if (Objects.isNull(user)) {
             user = new User();
@@ -165,7 +170,8 @@ public class UserController implements UserSystem {
         }
         appUserInfoModel.setUserId(mallUser.getId());
         appUserInfoModel.setUserName(mallUser.getUsername());
-        appUserInfoModel.setHeadUrl(commonConfigService.getResoureServerUrl() + mallUser.getWxHeadUrl());//todo 图片
+//        appUserInfoModel.setHeadUrl(staticResourceService.getResource("").toString());//todo 图片
+        appUserInfoModel.setHeadUrl(staticResourceService.getResource(mallUser.getWxHeadUrl()).toString());
         appUserInfoModel.setNickName(mallUser.getWxNickName());
         appUserInfoModel.setScore(user.getScore());
         appUserInfoModel.setUserLevel(user.getUserLevel());

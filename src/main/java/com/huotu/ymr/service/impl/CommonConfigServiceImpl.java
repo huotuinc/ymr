@@ -26,11 +26,6 @@ public class CommonConfigServiceImpl implements CommonConfigService {
     Environment env;
 
     @Override
-    public String getResoureServerUrl() {
-        return env.getProperty("ymr.resources.url", "http://res.51flashmall.com");
-    }
-
-    @Override
     public String getMallApiServerUrl() {
         return env.getProperty("com.huotu.huobanplus.mall.api.root", "http://mallapi.huobanj.cn");
     }
@@ -54,6 +49,16 @@ public class CommonConfigServiceImpl implements CommonConfigService {
     @Override
     public String getYmrMerchantId() {
         return env.getProperty("ymr.merchantId","3447");
+    }
+
+    @Override
+    public String getResourcesUri() {
+        return env.getProperty("huotu.resourcesUri", (String) null);
+    }
+
+    @Override
+    public String getResourcesHome() {
+        return env.getProperty("huotu.resourcesHome", (String) null);
     }
 
 

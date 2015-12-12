@@ -237,6 +237,20 @@
         <li class="nav-parent nav-active active" style="cursor: pointer;">
             <a class="aparent2" href="javascript:checkDd(2)"><i class="fa fa-chevron-circle-right"></i><span>帖子管理</span></a>
             <ul class="children" style="display: block">
+                <li class="childMenus" style="cursor: pointer;" id="id020204">
+                    <div id="msg020205"
+                         style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a onclick="openUrl('addShare','020204')"><i class="fa fa-caret-right"></i>添加帖子<span
+                            onmouseover="showMsg('020204')" onmouseout="hideMsg('020204')"
+                            class="fa pull-right badge badge-success" id="warning020206"
+                            style="display: none;background-color:red;">!
+        </span>
+                    </a>
+                    <ul class="children" style="display: none; margin-left: 20px;">
+                        {childMenus}
+                    </ul>
+                </li>
+
                 <li class="childMenus" style="cursor: pointer;" id="id020201">
                     <div id="msg020202"
                          style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>

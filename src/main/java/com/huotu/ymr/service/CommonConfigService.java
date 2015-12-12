@@ -16,12 +16,6 @@ package com.huotu.ymr.service;
 public interface CommonConfigService {
 
     /**
-     * 资源地址
-     * @return
-     */
-    String getResoureServerUrl();
-
-    /**
      * 商城服务api地址
      * @return
      */
@@ -50,5 +44,17 @@ public interface CommonConfigService {
      * @return
      */
     String getYmrMerchantId();
+
+    /**
+     * 静态资源域名地址
+     * @return
+     */
+    String getResourcesUri();
+
+    /**
+     * 上传资源的服务地址
+     * @return
+     */
+    String getResourcesHome();
 
 }

@@ -10,6 +10,7 @@
 
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.service.CommonConfigService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +34,18 @@ import java.net.URISyntaxException;
 @Service
 @Profile("container")
 public class DynamicStaticResourceService extends AbstractStaticResourceService {
+    @Autowired
+    CommonConfigService commonConfigService;
 
     private static final Log log = LogFactory.getLog(DynamicStaticResourceService.class);
 
     @Autowired
     private void setEnv(Environment env) {
-        String uri = env.getProperty("huotu.resourcesUri", (String) null);
+        String uri =  commonConfigService.getResourcesUri();
         if (uri == null) {
             throw new IllegalStateException("请设置huotu.resourcesUri和huotu.resourcesHome属性");
         }
-        String home = env.getProperty("huotu.resourcesHome", (String) null);
+        String home = commonConfigService.getResourcesHome();
         if (home == null) {
             throw new IllegalStateException("请设置huotu.resourcesUri和huotu.resourcesHome属性");
         }
