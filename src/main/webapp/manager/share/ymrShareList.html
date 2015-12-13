@@ -595,16 +595,16 @@
                                         <tbody th:remove="all-but-first" id="o1">
 
                                         <tr th:each="shares:${allShareList}" class="even">
-                                            <td class="txt20 c" style="width: 15px;" th:text="${shares.id}">
+                                            <td class="txt20 c" style="width: 15px;" th:text="${sharesStat.count}">
                                                 1
                                             </td>
-                                            <td class="txt40" th:text="${shares.title}">
+                                            <td class="txt40" th:text="${shares.shareTitle}">
                                                 2015092173663935&nbsp;
                                             </td>
-                                            <td class="txt80" th:text="${shares.name}">
+                                            <td class="txt80" th:text="${shares.userType}">
                                                 2015/9/21 20:18:01
                                             </td>
-                                            <td class="txt80" th:text="${shares.time}">
+                                            <td class="txt80" th:text="${#calendars.format(shares.time,'yyyy-MM-dd HH:mm:ss')}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
                                             <td class="txt20">
@@ -616,11 +616,19 @@
                                             <td class="txt40" th:text="${shares.relayQuantity}">
                                                 745
                                             </td>
-                                            <td class="txt40" th:text="${shares.checkStatus}">
-                                                314
+
+                                            <td class="txt40" th:switch="${shares.checkType}">
+                                                <span th:case="'审核中'">
+                                                    <a th:href="'#'" onclick="passShare(this,1)" th:attr="shareId=''+${shares.id}">通过</a>
+                                                    <a th:href="'#'" onclick="passShare(this,0)" th:attr="shareId=''+${shares.id}">不通过</a>
+                                                </span>
+                                                <span th:case="*" th:text="${shares.checkType}"></span>
+                                                <!--<span th:case="'未通过'">未通过</span>-->
+                                                <!--<span th:case="'关闭'">关闭</span>-->
+                                                <!--<span th:case="'删除'">删除</span>-->
                                             </td>
                                             <td class="txt40 c tail">
-                                                <div th:inline="text">
+                                                <div>
                                                     <!--@thymesVar id="orders" type="com.huotu.hotsupplier.sup.service.entity.order.Orders"-->
                                                     <!--<a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this)" id="btnConsignFlow" title="发货" th:if="${orders.deliveryable()}">发货</a>-->
                                                     <!--<a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this,1)" title="退货" th:if="${orders.returnable()}">退货</a>-->
@@ -633,9 +641,9 @@
                                 </div>
                                 <div class="pager-bar">
                                     <div class="msg" style="margin-left: 10px;">共
-                                        <span th:text="${allShareList.totalElements}">2</span>条记录，当前第
-                                        <span th:text="${allShareList.number+1}" id="noNumber">1</span>/共
-                                        <span  id="numberBug" th:text="${allShareList.totalPages==0?1:allShareList.totalPages}">1</span>页，每页
+                                        <span th:text="${totalRecords}">2</span>条记录，当前第
+                                        <span th:text="${pageNo}" id="noNumber">1</span>/共
+                                        <span  id="numberBug" th:text="${totalPages}">1</span>页，每页
                                         <span>20</span>条记录
                                     </div>
                                     <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
@@ -648,7 +656,7 @@
                                     <a class="button-white" href="javascript:queryLast()">
                                         <span>未页</span>
                                     </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第
-                                    <input id="current-index" onkeydown="J.EnterSubmit(event, Pager.Jump);" class="input-small" style="text-align:center;" type="text" value="1" th:value="${allShareList.number+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input id="current-index" onkeydown="J.EnterSubmit(event, Pager.Jump);" class="input-small" style="text-align:center;" type="text" value="1" th:value="${pageNo}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
                                 </div>
                             </div>
@@ -659,7 +667,7 @@
         </div>
     </div>
 </form>
-<script th:inline="javascript">
+<script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
 //    function showBatchDelivery() {
 //        var customerId = $("#customerId").val();
@@ -679,13 +687,37 @@
 //        var url = 'showConsignFlow?orderId=' + orderId;
 //        J.PopupIFrame(url, title, 900, 480, "ifrm", "", "auto", "");
 //    }
+
+    function passShare(obj,type){
+        var shareId = $(obj).attr("shareId");
+        $.ajax({
+            type:'POST',
+            url: 'passOrNot',
+            dataType: 'json',
+            data: {shareId:shareId,type:type},
+            success:function(result){
+                if(result.code==1){
+                    $.jBox.tip("修改成功");
+                    $(obj).html(result.message);
+                    window.location.reload();
+
+                }else {
+                    $.jBox.tip(result.message);
+                }
+            },
+            error:function(e){
+                $.jBox.tip("审核出错，请检查网络");
+            }
+
+        });
+    }
     function searchShares() {
         $('#form1').submit();
     }
     function queryVoid(no) {//下页
         var size = 0;
-        size = Number($("#noNumber").val()) + Number(no);//前往的页数
         var numberBug = Number($("#numberBug").val());//最大页数
+        size = Number($("#noNumber").val()) + Number(no);//前往的页数
         if (size > numberBug) {
             size = numberBug;
         }
@@ -694,8 +726,8 @@
     }
     function queryUp(no) {//上页
         var size = 0;
-        size = Number($("#noNumber").val()) + Number(no);//前往的页数
         var numberBug = Number($("#numberBug").val());//最大页数
+        size = Number($("#noNumber").val()) + Number(no);//前往的页数
         if (size > numberBug) {
             size = numberBug;
         }
@@ -706,7 +738,6 @@
         $('#form1').submit();
     }
     function queryForst() {//首页
-        var size = 1;
         $("#pageNoStr").attr("value", 0);
         $('#form1').submit();
     }

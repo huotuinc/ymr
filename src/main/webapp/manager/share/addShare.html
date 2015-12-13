@@ -23,10 +23,15 @@
             th:src="@{/resource/3rdParty/js/admin.js}"></script>
     <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
             th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" src="../../resource/js/confirm.js"
+            th:src="@{/resource/js/confirm.js}"></script>
+    <script type="text/javascript" src="../../resource/js/ajaxfileupload.js"
+            th:src="@{/resource/js/ajaxfileupload.js}"></script>
 </head>
 
 <body onload="firstLoad()">
-<form method="post" action="saveShare" id="form1">
+<form method="post" action="saveShare" id="form1" th:object="${backendShareModel}">
+    <input type="hidden" id="shareType" name="shareType" th:value="*{shareType}"/>
     <div class="container">
         <div class="blank10">
         </div>
@@ -109,7 +114,7 @@
                                                 <th>标题:</th>
                                                     <td style="border-top: 1px solid #ddd;">
                                                         <span id="sharezx"></span>
-                                                <input name="txtCatName" type="text" id="txtzx" class="input-normal" placeholder=""/></td>
+                                                <input name="shareTitle" type="text" id="shareTitle" th:text="*{shareTitle}" class="input-normal" placeholder=""/></td>
                                             <!--<th>设置起始时间:</th>-->
                                             <!--<td style="    border-top: 1px solid #ddd;"><div>-->
                                                 <!--<input name="startDate" type="text" id="txtBeginTime" placeholder=" [开始时间]"-->
@@ -138,13 +143,14 @@
                                         <tr>
                                             <th>封面:</th>
                                             <td>
-                                                <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;"> 未上传 </div>
+                                                <div th:text="*{shareImg==null?'未上传':shareImg}" id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
+                                                    未上传 </div>
                                                 <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
                                                     <a id="uploadpic" class="btn-lit jUploader-button" href="#" style="cursor: pointer; position: relative; overflow: hidden; direction: ltr;">
                                                         <span style="color: #c1b3a9">
                                                                 上传
                                                         </span>
-                                                        <input type="file" onchange="this.blur();" id="jUploader-file1" name="jUploaderFile" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
+                                                        <input type="file"  id="shareImg" name="shareImg" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
                                                     </a>
                                                 </div>
                                                 <input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>
@@ -152,26 +158,26 @@
                                         </tr>
                                         <tr>
                                             <th>内容:</th>
-                                            <td><textarea maxlength="" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
+                                            <td><textarea id="shareContent" th:text="*{shareContent}" name="shareContent" maxlength="" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
                                             </td>
                                         </tr>
 
                                             <tr>
                                                 <th>全局配置:</th>
                                                 <td>
-                                                    <input name="txtCatName" type="text" id="overallTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">中介费</span>
-                                                    <input name="txtCatName" type="text" id="overallTotal" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">中介费</span>
+                                                    <input th:text="*{overallTransmit}" name="overallTransmit" type="text" id="overallTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">转发积分</span>
+                                                    <input th:text="*{overallTotal}" name="overallTotal" type="text" id="overallTotal" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">总积分</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th>单独配置:</th>
                                                 <td>
-                                                    <input name="txtCatName" type="text" id="overallTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">中介费</span>
-                                                    <input name="txtCatName" type="text" id="overallTotal" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">中介费</span>
+                                                    <input th:text="*{aloneTransmit}" name="aloneTransmit" type="text" id="aloneTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">转发积分</span>
+                                                    <input th:text="*{aloneTotal}" name="aloneTotal" type="text" id="aloneTotal" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">总积分</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -225,7 +231,7 @@
         保存到草稿箱
         </span>
                     </a>
-                    <a class="btn-lit" href="javascript:submitForm();">
+                    <a class="btn-lit" href="javascript:submitForm1();">
         <span>
         直接发布
         </span>
@@ -237,6 +243,12 @@
         </div>
     </div>
 </form>
+
+
+
+
+
+
 <form method="post" action="saveShare" id="form2">
     <div class="container">
         <div class="blank10">
@@ -685,61 +697,78 @@
     </div>
 </form>
 <div class="blank10"></div>
-<script>
-    //提交所填信息
+<script th:inline="javascript">
+    //封面图片上传
+    function uploadImage() {
+        //判断是否有选择上传文件
+        var imgPath = $("#shareImg").val();
+        if (imgPath == "") {
+            $.jBox.tip("请选择要上传的图片!");
+            return;
+        }
+        //判断上传文件的后缀名
+//        var strExtension = imgPath.substr(imgPath.lastIndexOf('.') + 1);
+//        $.jBox.tip(strExtension);
+
+        $.ajaxFileUpload({
+//            type: "POST",
+            url: "UploadImg",
+            secureuri: false,
+            fileElementId: 'shareImg',
+            dataType: 'json',
+            data: "",
+            success: function(resultModel) {
+                if(resultModel.code==1){
+                    $.jBox(resultModel.message);
+                }
+                $.jBox(resultModel.message);
+            },
+            error: function(e) {
+                $.jBox("上传失败，请检查网络后重试");
+            }
+        });
+    }
+
+
+    //提交资讯
     function submitForm1(obj) {
-//        var companyAddr = $("#companyAddr").val();
-//        var companyName = $("#companyName").val();
-//        var companyTel = $("#companyTel").val();
-//        var taxpayerCode = $("#taxpayerCode ").val();
-//        var bankName = $("#bankName ").val();
-//        var accountNo = $("#accountNo").val();
-//        var generalCertificateUrl = document.getElementById("generalCertificateFile").value;
-//        var taxRegistCertificateUrl = document.getElementById("taxRegistCertificateFile").value;
-//        var uploadpicCover3 = document.getElementById("uploadpicCover3").value;
-//        var uploadpicCover4 = document.getElementById("uploadpicCover4").value;
-//        if (companyAddr == "" || companyAddr == null) {
-//            $.jBox.tip("请填写公司地址");
-//            return;
-//        }
-//        if (companyName == null || companyName == "") {
-//            $.jBox.tip("请填写公司名称");
-//            return;
-//        }
-//        if (companyTel == null || companyTel == "") {
-//            $.jBox.tip("请填写注册电话");
-//            return;
-//        }
-//        if (taxpayerCode == "" || taxpayerCode == null) {
-//            $.jBox.tip("请填写纳税人识别码");
-//            return;
-//        }
-//        if (bankName == "" || bankName == null) {
-//            $.jBox.tip("请填写开户银行名称");
-//            return;
-//        }
-//        if (accountNo == "" || accountNo == null) {
-//            $.jBox.tip("请填写开户银行账号");
-//            return;
-//        }
-//        if (taxRegistCertificateUrl == null || taxRegistCertificateUrl == "") {
-//            if (uploadpicCover3 == null || uploadpicCover3 == "") {
-//                $.jBox.tip("请提交税务登记证");
-//                return;
-//            }
-//        }
-//        if (generalCertificateUrl == null || generalCertificateUrl == "") {
-//            if (uploadpicCover4 == null || uploadpicCover4 == "") {
-//                $.jBox.tip("请提交纳税人资格证");
-//                return;
-//            }
-//        }
+        var shareTitle = $("#shareTitle").val();
+        var shareContent = $("#shareContent").val();
+        var overallTransmit = $("#overallTransmit").val();
+        var overallTotal = $("#overallTotal").val();
+        var aloneTransmit = $("#aloneTransmit").val();
+        var aloneTotal = $("#aloneTotal").val();
+
+        if (shareTitle.length == 0) {
+            $.jBox.tip("请输入文章标题");
+            return;
+        }
+        if (shareContent.length == 0) {
+            $.jBox.tip("请输入文章内容");
+            return;
+        }
+        if (overallTransmit.length == 0) {
+            $.jBox.tip("请输入全局配置的转发积分");
+            return;
+        }
+        if (overallTotal.length==0) {
+            $.jBox.tip("请输入全局配置的总积分");
+            return;
+        }
+        if (aloneTransmit.length == 0) {
+            $.jBox.tip("请输入单独配置的转发积分");
+            return;
+        }
+        if (aloneTotal.length==0) {
+            $.jBox.tip("请输入单独配置的总积分");
+            return;
+        }
         $.MsgBox.Confirm("友情提示", "即将保存内容，确定继续吗？", function () {
             $("#form1").submit();
         });
 
     }
-    //提交普通发票
+    //提交团购
     function submitForm2(obj) {
 //        var companyAddr1 = $("#companyAddr1").val();
 //        var companyName1 = $("#companyName1").val();
@@ -762,7 +791,7 @@
 
 
     }
-    //提交邮寄地址
+    //提交众筹
     function submitForm3(obj) {
 //        var shipName = $("#shipName").val();
 //        var shipMobile = $("#shipMobile").val();
@@ -817,73 +846,73 @@
         }
     }
 
-    //切换发票模式
-    function change(type) {
-        //普通发票
-        if (type == 2) {
-            document.getElementById('form1').style.display = 'none';
-            document.getElementById('form2').style.display = '';
-            document.getElementById('RadioGroup4').checked = true;
-            document.getElementById('RadioGroup3').checked = false;
-            document.getElementById('RadioGroup2').checked = false;
-            document.getElementById('RadioGroup1').checked = false;
-            if (document.getElementById('defaultType2').checked == false) {
-                $("#defaultType3").val("1");
-                $("#defaultType4").val("1");
+//    //切换发票模式
+//    function change(type) {
+//        //普通发票
+//        if (type == 2) {
+//            document.getElementById('form1').style.display = 'none';
+//            document.getElementById('form2').style.display = '';
+//            document.getElementById('RadioGroup4').checked = true;
+//            document.getElementById('RadioGroup3').checked = false;
+//            document.getElementById('RadioGroup2').checked = false;
+//            document.getElementById('RadioGroup1').checked = false;
+//            if (document.getElementById('defaultType2').checked == false) {
+//                $("#defaultType3").val("1");
+//                $("#defaultType4").val("1");
+//
+//            }
+//            else {
+//                $("#defaultType3").val("0");
+//                $("#defaultType4").val("0");
+//            }
+//
+//        }
+//        //增值税发票
+//        if (type == 1) {
+//            document.getElementById('form1').style.display = '';
+//            document.getElementById('form2').style.display = 'none';
+//            document.getElementById('RadioGroup1').checked = true;
+//            document.getElementById('RadioGroup4').checked = false;
+//            document.getElementById('RadioGroup2').checked = false;
+//            document.getElementById('RadioGroup3').checked = false;
+//            if (document.getElementById('defaultType1').checked == false) {
+//                $("#defaultType3").val("0");
+//                $("#defaultType4").val("0");
+//
+//            }
+//            else {
+//                $("#defaultType3").val("1");
+//                $("#defaultType4").val("1");
+//                ;
+//            }
+//        }
+//
+//    }
 
-            }
-            else {
-                $("#defaultType3").val("0");
-                $("#defaultType4").val("0");
-            }
-
-        }
-        //增值税发票
-        if (type == 1) {
-            document.getElementById('form1').style.display = '';
-            document.getElementById('form2').style.display = 'none';
-            document.getElementById('RadioGroup1').checked = true;
-            document.getElementById('RadioGroup4').checked = false;
-            document.getElementById('RadioGroup2').checked = false;
-            document.getElementById('RadioGroup3').checked = false;
-            if (document.getElementById('defaultType1').checked == false) {
-                $("#defaultType3").val("0");
-                $("#defaultType4").val("0");
-
-            }
-            else {
-                $("#defaultType3").val("1");
-                $("#defaultType4").val("1");
-                ;
-            }
-        }
-
-    }
-
-    //是否默认发票
-    function check(type) {
-        if (type == 1) {
-            if (document.getElementById('defaultType1').checked == true) {
-                document.getElementById('defaultType2').checked = false;
-                $("#defaultType3").val("1");
-                $("#defaultType4").val("1");
-            }
-            else {
-                $("#defaultType3").val("0");
-                $("#defaultType4").val("0");
-            }
-
-
-        }
-        if (type == 2) {
-            document.getElementById('defaultType1').checked = false;
-            ;
-            $("#defaultType3").val("0");
-            $("#defaultType4").val("0");
-
-
-        }
-    }
+//    //是否默认发票
+//    function check(type) {
+//        if (type == 1) {
+//            if (document.getElementById('defaultType1').checked == true) {
+//                document.getElementById('defaultType2').checked = false;
+//                $("#defaultType3").val("1");
+//                $("#defaultType4").val("1");
+//            }
+//            else {
+//                $("#defaultType3").val("0");
+//                $("#defaultType4").val("0");
+//            }
+//
+//
+//        }
+//        if (type == 2) {
+//            document.getElementById('defaultType1').checked = false;
+//            ;
+//            $("#defaultType3").val("0");
+//            $("#defaultType4").val("0");
+//
+//
+//        }
+//    }
 </script>
 </body>
 </html>
