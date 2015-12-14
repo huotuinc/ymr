@@ -40,5 +40,9 @@ public class CrowdFundingManagerController {
     public String agencyFee(HttpServletRequest request,HttpServletResponse response) {
         return "manager/crowdfunding/agencyFee";
     }
+    @RequestMapping("/addCrowd")
+    public String addCrowd(HttpServletRequest request,HttpServletResponse response) {
+        return "manager/crowdfunding/addCrowd";
+    }
 
 }

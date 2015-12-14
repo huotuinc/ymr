@@ -58,42 +58,50 @@
                     <div class="om-tabs-panels om-widget-content om-corner-bottom" id="config2">
                         <div class="om-widget om-panel">
                             <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
-                                <div class="division">
-                                    <div>
+                                <!--以下是全局默认 -->
+                                <div class="cnt">
+                                    <div class="search-bar">
+                                        <label>
+                                            <input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="
+    vertical-align: text-top;
+" value="单选" checked="checked"/>
+                                            全局默认：0%中介费</label>
                                     </div>
-                                    <div>
-                                    </div>
-                                    <table cellpadding="0" cellspacing="0" width="100%">
-                                        <tbody>
-
-                                        <tr>
-                                            <th>中介费设置:</th>
-                                            <td><span id="lblOrderId"></span>
-
-                                            收取百分比
-                                                <input name="companyName" type="text"
-                                                       th:value="${invoiceConfig} == null ? '': ${invoiceConfig.companyName}"
-                                                       id="companyName1" class="input-normal" placeholder=""/>
-                                            中介费</td>
-                                            <td>
-                                            <div style="text-align: center;">
-                                                <div style="display: none;">
-                                                    <input type="submit" name="btnSave" value="" id="btnSave"/>
-                                                </div>
-                                                <a class="btn-lit" href="javascript:submitForm2();">
-                                                    <span>保存修改</span>
-                                                </a>
-                                            </div>
-                                            </td>
-
-                                        </tr>
-                                        </tbody>
-                                    </table>
                                 </div>
+                                <!-- 全局默认结束-->
+
+                                <!--以下是单独设置 -->
+                                <div class="cntaa">
+                                    <div class="search-bar">
+                                        <label>
+                                            <input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style="
+    vertical-align: text-top;
+"/>
+                                            单独设置</label>
+                                        <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>
+            <span style=" vertical-align: text-top;">
+            中介费
+            </span>
+                                    </div>
+                                </div>
+                                <!-- 单独设置结束-->
+                                <!-- 单独设置结束-->
                             </div>
+
                         </div>
                     </div>
+
                 </div>
+                <!--以下是按钮-->
+                <div style="text-align: center; margin-top:12px" >
+                    <a class="btn-lit" href="javascript:submitForm();" style=" margin-right:10px;">
+        <span>
+        确认修改
+        </span>
+                    </a>
+
+                </div>
+                <!--按钮结束-->
             </div>
 
 

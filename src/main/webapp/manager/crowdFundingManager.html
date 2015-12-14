@@ -216,7 +216,16 @@
                 </li>
                 <li class="childMenus" style="cursor: pointer;" id="id020202">
                     <div id="msg020202" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a onclick="openUrl('addgetCrowdFunding','020204')"><i class="fa fa-caret-right"></i>新增众筹<span onmouseover="showMsg('020204')" onmouseout="hideMsg('020204')" class="fa pull-right badge badge-success" id="warning020204" style="display: none;background-color:red;">!
+                    <a onclick="openUrl('addCrowd','020202')"><i class="fa fa-caret-right"></i>新增众筹<span onmouseover="showMsg('020202')" onmouseout="hideMsg('020202')" class="fa pull-right badge badge-success" id="warning020202" style="display: none;background-color:red;">!
+        </span>
+                    </a>
+                    <ul class="children" style="display: none; margin-left: 20px;">
+                        {childMenus}
+                    </ul>
+                </li>
+                <li class="childMenus" style="cursor: pointer;" id="id0201013">
+                    <div id="msg0201013" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a  onclick="openUrl('getDraftsList','020103')"><i class="fa fa-caret-right"></i>草稿箱<span onmouseover="showMsg('020103')" onmouseout="hideMsg('020103')" class="fa pull-right badge badge-success" id="warning020103" style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -225,7 +234,7 @@
                 </li>
                 <li class="childMenus active" style="cursor: pointer;" id="id020106">
                     <div id="msg020106" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('getCrowdFundingBookingList','020101')"><i class="fa fa-caret-right"></i>预约类详情<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
+                    <a  onclick="openUrl('getCrowdFundingBookingList','020101')"><i class="fa fa-caret-right"></i>预约类详情<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020104" style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -234,7 +243,7 @@
                 </li>
                 <li class="childMenus active" style="cursor: pointer;" id="id020107">
                     <div id="msg020107" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('getCrowdFundingCooperationList','020101')"><i class="fa fa-caret-right"></i>合作类详情<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
+                    <a  onclick="openUrl('getCrowdFundingCooperationList','020101')"><i class="fa fa-caret-right"></i>合作类详情<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020105" style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -244,7 +253,7 @@
 
                 <li class="childMenus active" style="cursor: pointer;" id="id020108">
                     <div id="msg020108" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('getCrowdFundingSubscriptionList','020101')"><i class="fa fa-caret-right"></i>认购类详情<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
+                    <a  onclick="openUrl('getCrowdFundingSubscriptionList','020101')"><i class="fa fa-caret-right"></i>认购类详情<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020106" style="display: none;background-color:red;">!
         </span>
                     </a>
                     <ul class="children" style="display: none; margin-left: 20px;">
@@ -257,27 +266,7 @@
 
             </ul>
         </li>
-        <li class="nav-parent nav-active active" style="cursor: pointer;">
-            <a class="aparent2" href="javascript:checkDd(2)"><i class="fa fa-chevron-circle-right"></i><span>项目设置</span></a>
-            <ul class="children" style="display: block">
-                <li class="childMenus active" style="cursor: pointer;" id="id020103">
-                    <div id="msg020105" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('agencyFee','020101')"><i class="fa fa-caret-right"></i>中间收取费用设置<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
-        </span>
-                    </a>
-                    <ul class="children" style="display: none; margin-left: 20px;">
-                        {childMenus}
-                    </ul>
-                </li>
-                <li class="childMenus active" style="cursor: pointer;" id="id0201014">
-                    <div id="msg0201012" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
-                    <a  onclick="openUrl('getDraftsList','020101')"><i class="fa fa-caret-right"></i>草稿箱<span onmouseover="showMsg('020101')" onmouseout="hideMsg('020101')" class="fa pull-right badge badge-success" id="warning020101" style="display: none;background-color:red;">!
-        </span>
-                    </a>
-                    <ul class="children" style="display: none; margin-left: 20px;">
-                        {childMenus}
-                    </ul>
-                </li>
+
 
     </ul>
 </div>

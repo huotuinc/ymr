@@ -1,7 +1,6 @@
 package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.entity.Article;
-import com.huotu.ymr.entity.Manager;
 import com.huotu.ymr.model.searchCondition.ArticleSearchModel;
 import com.huotu.ymr.repository.ArticleRepository;
 import com.huotu.ymr.service.ArticleService;
@@ -78,12 +77,15 @@ public class ArticleServiceImpl implements ArticleService {
         return  articleRepository.findAll(new Specification<Article>() {
             @Override
             public Predicate toPredicate(Root<Article> root, CriteriaQuery<?> query, CriteriaBuilder cb){
-                Predicate predicate = cb.equal(root.get("manager").as(Manager.class), articleSearchModel.getManager());
-                if (!StringUtils.isEmpty(articleSearchModel.getArticleTitle())){
-                    predicate = cb.and(predicate,cb.like(root.get("title").as(String.class),"%"+articleSearchModel.getArticleTitle()+"%"));
-                }
+                //Predicate predicate = cb.all();//cb.equal(root.get("manager").as(Manager.class), articleSearchModel.getManager());
+               // if (!StringUtils.isEmpty(articleSearchModel.getArticleTitle())){
+                Predicate  predicate = cb.and(cb.like(root.get("title").as(String.class),"%"+articleSearchModel.getArticleTitle()+"%"));
+                //}
+                String[] category={"公司介绍","自传故事","学院介绍","美容知识"};
                 if(articleSearchModel.getArticleType()!=-1){
-                    predicate = cb.and(predicate,cb.equal(root.get("shareType").as(Integer.class), articleSearchModel.getArticleType()));
+                    //@ManyToOne
+                    //SetJoin<Category,Article> depJoin = root.join(root.getModel().get, JoinType.LEFT);
+                    predicate = cb.and(predicate,cb.equal(root.get("category").get("name").as(String.class), category[articleSearchModel.getArticleType() - 1]));
                 }
                 if(!StringUtils.isEmpty(articleSearchModel.getStartTime())){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -93,7 +95,7 @@ public class ArticleServiceImpl implements ArticleService {
                     } catch (ParseException e) {
                         throw  new RuntimeException("字符串转日期失败");
                     }
-                    predicate=cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date);
+                    predicate= cb.and(predicate,cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date));
                 }
                 if(!StringUtils.isEmpty(articleSearchModel.getEndTime())){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -103,7 +105,7 @@ public class ArticleServiceImpl implements ArticleService {
                     } catch (ParseException e) {
                         throw  new RuntimeException("字符串转日期失败");
                     }
-                    predicate=cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date);
+                    predicate= cb.and(predicate,cb.lessThanOrEqualTo(root.get("time").as(Date.class),date));
                 }
                 return predicate;
             }
