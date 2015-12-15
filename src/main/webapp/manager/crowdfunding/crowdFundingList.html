@@ -51,20 +51,20 @@
 
         function showList(statu) {
             if (statu == 0) {
-                $("#ddlShipStatusddlShipStatus").attr("value", -1);
+                $("#crowdFundingType").attr("value", -1);
                 $('#form1').submit();
-            } else if (statu == 2) {
-                $("#ddlShipStatus").attr("value", 0);
+            } else if (statu == 1) {
+                $("#crowdFundingType").attr("value", 0);
                 $('#form1').submit();
                 //$('.aparent3').parent().toggleClass('om-state-default om-corner-top  om-tabs-activated om-state-active');
+            } else if (statu == 2) {
+                $("#crowdFundingType").attr("value", 1);
+                $('#form1').submit();
             } else if (statu == 3) {
-                $("#ddlShipStatus").attr("value", 1);
+                $("#crowdFundingType").attr("value", 2);
                 $('#form1').submit();
-            } else if (statu == 4) {
-                $("#ddlShipStatus").attr("value", 4);
-                $('#form1').submit();
-            }else if (statu == 5) {
-                $("#ddlShipStatus").attr("value", 5);
+            }else if (statu == 4) {
+                $("#crowdFundingType").attr("value", 3);
                 $('#form1').submit();
             }
         }
@@ -264,141 +264,6 @@
             $('.OnlyNum').OnlyNum();
         };
 
-
-        exportHelper.checkPage = function (txtBeginPage, txtEndPage) {
-            var numberBug = parseInt($("#numberBug").val());//总页数
-            if (txtBeginPage == '' || txtEndPage == '') {
-                return {flag: false, msg: '请输入正确的起止页码'};
-            }
-            var beginPage = parseInt(txtBeginPage);
-            var endPage = parseInt(txtEndPage);
-            if (endPage < beginPage) {
-                return {flag: false, msg: '结束页不能小于起始页'};
-            }
-            if (endPage > numberBug) {
-                return {flag: false, msg: '结束页不能大于总页数'};
-            }
-            var _maxPage = 500;
-            if (endPage - beginPage >= _maxPage) {
-                $('#txtEndPage').focus().select();
-                return {flag: false, msg: '最多导出' + _maxPage + '页'};
-            }
-//            return {flag: true, msg: ''};
-            return {flag: true};
-        };
-
-        exportHelper.showDialogV2 = function () {
-            var txtBeginPage = $("#txtBeginPage").val();
-            var txtEndPage = $("#txtEndPage").val();
-
-            var chkResult = this.checkPage(txtBeginPage, txtEndPage);
-            if (!chkResult.flag) {
-                jBox.tip(chkResult.msg, 'info');
-                return;
-            }
-
-
-//
-//            var numberBug = Number($("#numberBug").val());//最大页数
-//
-//            if(Number(txtBeginPage) < 1 ){
-//                jBox.tip('起始页从1开始！', 'info');
-//                return
-//            }
-//            if( Number(txtEndPage) < Number(txtBeginPage)){
-//                jBox.tip('起始页不能大于末页！', 'info');
-//                return
-//            }
-//            if(Number(txtEndPage) > numberBug){
-//                jBox.tip('末页不能大于最大页数！', 'info');
-//                return
-//            }
-
-            var txtOrderId = $("#txtOrderId").val();
-//            var txtShipName = $("#txtShipName").val();
-//            var txtShipMobile = $("#txtShipMobile").val();
-
-            var ddlShipStatus = $("#ddlShipStatus").val();
-            var ddlPayStatus = $("#ddlPayStatus").val();
-            var ddlOrderByField = $("#ddlOrderByField").val();
-            var raSortType_0 = $("#raSortType_0").val();
-            var txtBeginTime = $("#txtBeginTime").val();
-            var txtEndTime = $("#txtEndTime").val();
-
-            var txtEndPaytime = $("#txtEndPaytime").val();
-            var txtBeginPaytime = $("#txtBeginPaytime").val();
-
-            var customerId = $("#customerId").val();
-            if (customerId == "" || customerId == undefined) {
-                jBox.tip('customerId 无法获取， 请检查！', 'info');
-                return
-            }
-
-            var url = 'OrderExportV2?rnd=' + Math.random()
-                            + '&customerId=' + customerId
-                            + '&txtOrderId=' + txtOrderId
-//                    +'&txtShipName=' + txtShipName
-//                    +'&txtShipMobile=' + txtShipMobile
-                            + '&ddlShipStatus=' + ddlShipStatus
-                            + '&ddlPayStatus=' + ddlPayStatus
-                            + '&ddlOrderByField=' + ddlOrderByField
-                            + '&raSortType_0=' + raSortType_0
-                            + '&txtBeginTime=' + txtBeginTime
-                            + '&txtEndTime=' + txtEndTime
-                            + '&txtEndPaytime=' + txtEndPaytime
-                            + '&txtBeginPaytime=' + txtBeginPaytime
-                            + '&txtBeginPage=' + txtBeginPage
-                            + '&txtEndPage=' + txtEndPage
-                    ;
-
-            J.PopupIFrame(url, "选择导出模版", 330, 230, "ifrm", "", "auto", "");
-        };
-
-        exportHelper.showSupplierDialogV2 = function () {
-            var chkResult = this.checkPage();
-            if (!chkResult.flag) {
-                jBox.tip(chkResult.msg, 'info');
-                return;
-            }
-            var url = 'OrderExportSupplierV2.aspx?customerid=5&rnd=' + Math.random();
-
-            J.PopupIFrame(url, "导出供货商子订单", 280, 230, "export", {"导出": true}, "auto", "", function (result) {
-                //alert(result);
-            });
-        };
-
-        exportHelper.showDialog = function () {
-            if (checkBoxHelper._getItems() == '') {
-                jBox.tip('没有选择要导出的项', 'info');
-                return false;
-            }
-            var url = 'OrderExport.aspx?customerid=5&rnd=' + Math.random();
-
-            J.PopupIFrame(url, "导出", 280, 240, "export", {"导出": true}, "auto", "", function (result) {
-                //alert(result);
-            });
-        };
-
-        exportHelper.showSupplierDialog = function () {
-            if (checkBoxHelper._getItems() == '') {
-                jBox.tip('没有选择要导出的项', 'info');
-                return false;
-            }
-            var url = 'OrderExportSupplier.aspx?customerid=5&rnd=' + Math.random();
-
-            J.PopupIFrame(url, "导出供货商子订单", 280, 200, "export", {"导出": true}, "auto", "", function (result) {
-                //alert(result);
-            });
-        };
-        //#endregion
-
-        function showBatchDeliverySupplier() {
-            var url = 'OrderBatchDeliverySupplier.aspx?customerid=5&rnd=' + Math.random();
-            J.PopupIFrame(url, "供货商订单批量发货", 370, 180, "batchdelivery", null, "auto", "", function (result) {
-                //alert(result);
-            });
-        }
-
         $(function () {
             checkBoxHelper.init();
             exportHelper.init();
@@ -409,79 +274,59 @@
         });
 
         var viewModel;
+
+
+        function jumpToCF(obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            var url="jumpToCFDetail?crowdFundingsId="+settlementNo;
+            window.location.href=url;
+        }
+        function auditCF(obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            var url="auditCrowdFunding?crowdFundingsId="+settlementNo;
+            J.PopupIFrame(url,"审核",1300,700,"ifrm","","auto","");
+
+        }
+        function closeCF(obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            var url="closeCrowdFunding?crowdFundingsId="+settlementNo;
+            var submit = function (v, h, f) {
+                if (v == '关闭') {
+                    jBox.tip(v, 'info');
+                    $.get(url);
+
+                    window.location.reload();
+                }
+                else if (v == '返回')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定关闭此众筹项目吗？", "提示",submit);
+
+        }
+        function openCF(obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            var url="openCrowdFunding?crowdFundingsId="+settlementNo;
+            var submit = function (v, h, f) {
+                if (v == '开启') {
+                    jBox.tip(v, 'info');
+                    $.get(url);
+
+                    window.location.reload();
+                }
+                else if (v == '返回')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定开启此众筹项目吗？", "提示",submit);
+
+        }
         /*]]>*/
     </script>
 </head>
 <body marginwidth="0" marginheight="0">
-<div id="buddy_list_dialog" style="display: none;">
-    <input type="hidden" id="aid"/>
-    <input type="hidden" id="customerId" th:value="*{customerId}"/>
-    <input type="hidden" id="supplierId" th:value="*{supplierId}"/>
-
-    <div class="search block" style="width: 550px; min-width: 550px;">
-        <div class="h">
-            <span class="icon-sprite icon-magnifier"></span>
-
-            <h3>快速搜索</h3>
-        </div>
-        <div class="tl corner">
-        </div>
-        <div class="tr corner">
-        </div>
-        <div class="bl corner">
-        </div>
-        <div class="br corner">
-        </div>
-        <div class="cnt-wp">
-            <div class="cnt">
-                <div class="search-bar">
-                    <div style="border: 1px solid #ccc; height: 30px; line-height: 30px; padding: 5px;">
-                        <label class="first txt-green">
-                            搜索类型：
-                            <select id="upderline_SearchType">
-                                <option value="0">用户名</option>
-                                <option value="1">姓名</option>
-                            </select>
-                            ：</label>
-                        <input type="text" name="txtSearchKey" id="underline_searchKey" class="input-small"
-                               style="width: 120px;" placeholder="关键词"/>
-                        <label>
-                            <a class="btn-lit btn-middle" style="color: rgb(255, 255, 255); margin-bottom: 3px;"
-                               href="#" data-bind="click: buddySearch"><span>搜索</span></a></label>
-                        <label>
-                            <a class="btn-lit btn-middle" style="color: rgb(255, 255, 255); margin-bottom: 3px;"
-                               href="#" data-bind="click: buddyShowAll"><span>显示所有</span></a></label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="cnt" style="width: 550px;">
-        <table class="data-table even1" width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tbody>
-            <tr class="even">
-                <th scope="col" style="width: 25%">用户名
-                </th>
-                <th scope="col" style="width: 25%">姓名
-                </th>
-                <th scope="col" style="width: 30%">注册时间
-                </th>
-                <th scope="col" style="width: 20%">
-
-                </th>
-            </tr>
-            </tbody>
-            <tbody data-bind="foreach: buddyList"></tbody>
-        </table>
-        <div style="width: 538px; border: 1px solid #ccc; padding: 5px; text-align: center;">
-            <span data-bind="click: nextPage,text: pageIndex()==pageCount()?'已全部加载':'点击加载更多', style:{color: pageIndex()==pageCount()?'#ccc':'black'}"
-                  style="color: rgb(204, 204, 204);">已全部加载</span>
-        </div>
-    </div>
-</div>
-<form method="get" action="getOrdersPage" id="form1" th:object="${searchCondition}">
-    <!--<input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>-->
-    <input hidden="hidden" id="pageNoStr" name="pageNoStr"/>
+<form method="get" action="getCrowdFundingList" id="form1" th:object="${crowdFundingSearchModel}">
+    <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
 
     <div class="aspNetHidden">
         <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE"
@@ -514,34 +359,40 @@
                 <div class="cnt">
 
                     <div class="search-bar">
-                        <label class="first ">众筹标题：</label>
-                        <input name="txtOrderId" type="text" id="txtOrderId" class="input-small" style="width: 120px;"/>
+                        <label class="first ">众筹标题：：</label>
+                        <input name="crowdFundingTitle" type="text" th:value="*{crowdFundingTitle}" id="crowdFundingTitle" class="input-small" style="width: 120px;"/>
                         <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
-
                         <br/>
                         <br/>
 
                         <label class="first ">类型：</label>
-                        <select name="ddlPayStatus" id="ddlPayStatus">
+                        <select name="crowdFundingType" id="crowdFundingType">
                             <option selected="selected" value="-1">==所有==</option>
-                            <option value="1">预约类</option>
-                            <option value="2">合作类</option>
-                            <option value="3">认购类</option>
+                            <option value="1" th:selected="*{crowdFundingType==0}">预约类</option>
+                            <option value="2" th:selected="*{crowdFundingType==1}">合作类</option>
+                            <option value="3" th:selected="*{crowdFundingType==2}">认购类</option>
                         </select>
 
 
                         &nbsp;
+                        <label class="first ">排序：</label>
+
+                        <select name="sort" id="sort">
+                            <option selected="selected" value="0">按发布时间</option>
+                            <option value="1" th:selected="*{sort==1}">按浏览量</option>
 
 
+
+                        </select>
                         <style type="text/css">
                             #raSortType label {
                                 padding-left: 0px;
                             }
                         </style>
                         <span id="raSortType">
-                            <input id="raSortType_0" type="radio" name="raSortType" value="0" checked="checked"/>
+                            <input id="raSortType_0" type="radio" name="raSortType" value="0" checked="checked" th:checked="*{raSortType==0}"/>
                             <label for="raSortType_0">倒序</label>
-                            <input id="raSortType_1" type="radio" name="raSortType" value="1"/>
+                            <input id="raSortType_1" type="radio" name="raSortType" value="1" th:checked="*{raSortType==1}"/>
                             <label for="raSortType_1">顺序</label>
                         </span>
 
@@ -550,24 +401,17 @@
 
                         <label class="first ">发布时间：</label>
 
-                        <input name="txtBeginTime" type="text" id="txtBeginTime" placeholder=" [开始日期]"
+                        <input name="startTime" type="text" id="startTime" placeholder=" [开始日期]"
+                               th:value="*{startTime}"
                                class="input-normal Wdate"
                                onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>
-                        <input name="txtEndTime" type="text" id="txtEndTime" placeholder=" [结束日期]"
+                        <input name="endTime" type="text" id="endTime" placeholder=" [结束日期]"
+                               th:value="*{endTime}"
                                class="input-normal Wdate"
                                onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'txtBeginTime\')}'})"/>
 
                         <br/>
                         <br/>
-
-                        <!--<label class="first ">支付时间：</label>-->
-
-                        <!--<input name="txtBeginPaytime" type="text" id="txtBeginPaytime" th:value="*{txtBeginPaytime}" placeholder=" [开始日期]"-->
-                        <!--class="input-normal Wdate"-->
-                        <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>-->
-                        <!--<input name="txtEndPaytime" type="text" id="txtEndPaytime" th:value="*{txtEndPaytime}" placeholder=" [结束日期]"-->
-                        <!--class="input-normal Wdate"-->
-                        <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'txtEndPaytime\')}'})"/>-->
 
                         <div style="display: none;">
                             <input type="submit" name="btnSearch" value="" id="btnSearch"/>
@@ -590,21 +434,11 @@
             <div class="h">
                 <span class="icon-sprite icon-list"></span>
 
-                <h3 style="float: left; width: 144px;">众筹列表 </h3>
+                <h3 style="float: left; width: 144px;">文章管理 </h3>
 
                 <div class="bar">
-                    <!--
-                    <a class="btn-lit aucontrol" href='javascript:exportHelper.showDialog();'>
-                        <span>导出主订单</span></a>
 
-                    <a class="btn-lit aucontrol" href='javascript:exportHelper.showSupplierDialog();' style='display:none;'>
-                        <span>导出供货商子订单</span></a>
-                    |
-                    <a class="btn-lit aucontrol" href="javascript:showBatchDelivery();">
-                        <span>批量发货</span></a>
-                        -->
-
-                    <a class="btn-lit aucontrol" href="javascript:showBatchDelivery();">
+                    <a class="btn-lit aucontrol" th:href="@{/manager/jumpToAddCrowdFunding}">
                         <span>添加众筹</span></a>
                 </div>
 
@@ -628,18 +462,17 @@
                                 <span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner" style="width: auto; height: 27px;">全部</a><span class="liright"></span>
                             </li>
                             <li class="om-state-default om-corner-top " id="ddgl2"><span class="lileft"></span><a
-                                    href="javascript:showList(2);" class="om-tabs-inner"
+                                    href="javascript:showList(1);" class="om-tabs-inner"
                                     style="width: auto; height: 27px;">预约类</a><span class="liright"></span></li>
 
                             <li class="om-state-default om-corner-top" id="ddgl3"><span class="lileft">
                             </span><a
-                                    href="javascript:showList(3);" class="om-tabs-inner"
+                                    href="javascript:showList(2);" class="om-tabs-inner"
                                     style="width: auto; height: 27px;">合作类</a><span class="liright"></span></li>
 
                             <li class="om-state-default om-corner-top" id="ddgl4"><span class="lileft"></span><a
-                                    href="javascript:showList(4);" class="om-tabs-inner"
+                                    href="javascript:showList(3);" class="om-tabs-inner"
                                     style="width: auto; height: 27px;">认购类</a><span class="liright"></span></li>
-
 
 
 
@@ -658,10 +491,10 @@
                                         <tr>
                                             <th scope="col">序号 </th>
 
-                                            <th scope="col">发布人 </th>
-
-                                            <th scope="col">众筹标题
+                                            <th scope="col" >众筹标题
                                             </th>
+
+                                            <th scope="col">发布人 </th>
 
                                             <th scope="col">发布时间
                                             </th>
@@ -676,6 +509,10 @@
                                             </th>
                                             <th scope="col">浏览量
                                             </th>
+
+                                            <th scope="col">操作
+                                            </th>
+
                                         </tr>
                                         <tr style="background: #FFC; text-align: center; display: none;"
                                             id="trSelectNote">
@@ -687,117 +524,58 @@
                                         </tr>
                                         <tbody th:remove="all-but-first" id="o1">
 
-                                        <!--@thymesVar id="ordersList" type="java.util.List<com.huotu.hotsupplier.sup.service.entity.order.Orders>"-->
-                                        <tr th:each="orders:${ordersList}" class="even">
-                                            <td class="txt20 c" style="width: 15px;" th:text="${ordersStat.count}">
+                                        <tr th:each="crowdFundings:${allcrowdFundingList}" class="even">
+                                            <td class="txt20 c" style="width: 15px;" th:text="${crowdFundings.id}">
                                                 1
                                             </td>
-                                            <td class="txt40" th:text="${orders.orderId}">
-                                                2015092173663935&nbsp;
+                                            <td class="txt40" th:text="${crowdFundings.name}" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="jumpToCF(this)">
+                                                &nbsp;
                                             </td>
-                                            <td class="txt80" hot:date="${orders.createTime}">
-                                                2015/9/21 20:18:01
-                                            </td>
-                                            <td class="txt80">
-                                                <span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>
-                                            </td>
-                                            <td class="txt20">￥
-                                                <span th:text="${orders.finalAmount}">100</span>
-                                            </td>
-                                            <td class="txt20" th:text="${orders.shipName}">
-                                                asdf
-                                            </td>
-                                            <td class="txt40" th:text="${orders.payStatus.value}">
-                                                未支付
-                                            </td>
-                                            <td class="txt40" th:text="${orders.shipStatus.value}">
-                                                未发货
-                                            </td>
-                                            <td class="txt40" th:text="${orders.payment.value}">
-                                                银联在线支付
-                                            </td>
-                                            <td class="txt40 c tail">
-                                                <div th:inline="text">
-                                                    <!--@thymesVar id="orders" type="com.huotu.hotsupplier.sup.service.entity.order.Orders"-->
-                                                    <a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this)" id="btnConsignFlow" title="发货" th:if="${orders.deliveryable()}">发货</a>
-                                                    <a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this,1)" title="退货" th:if="${orders.returnable()}">退货</a>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                            <td class="txt80" th:text="${crowdFundings.manager==null ? null : crowdFundings.manager.name}">
 
-                                        <tr>
-                                            <!-- <td class="txt20 c" style="width: 15px;">
-                                                 <input type="checkbox" name="chkOrder" value="2015092161656366" />
-                                             </td>-->
-                                            <td class="txt20 c" style="width: 15px;">
-                                                2
-                                            </td>
-                                            <td class="txt40">
-                                                2015092161656366&nbsp;
-                                                <span style='color:red;'>（已关闭）</span>
-                                            </td>
-                                            <td class="txt80">
-                                                2015/9/21 20:16:06
-                                                <br/>
-                                                <span style="color: #ccc; padding-left: 5px;">(3天16小时前)</span>
-                                            </td>
-                                            <td class="txt80">
-                                                <span style='text-align:center;color:#ccc;padding-left:20px;'>——无——</span>
-                                                                <span style="display: none">
-                                                                    <br/>
-                                                                    <span style="color: #ccc; padding-left: 5px;">(下单支付)</span>
-                                                                </span>
                                             </td>
 
-                                            <td class="txt20">￥
-                                                100
+                                            <td class="txt80" th:text="${crowdFundings.time}">
+                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
+                                            </td>
+
+                                            <td class="txt80" th:text="${crowdFundings.crowdFundingType.name}">
+                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
 
                                             <td class="txt20">
-                                                asdf
+                                                <span th:text="${crowdFundings.agencyFeeRate}">0</span>
+                                            </td>
+                                            <td class="txt20">
+                                                <span th:text="${crowdFundings.view}">0</span>
                                             </td>
 
                                             <td class="txt40">
-                                                未支付
-                                            </td>
-                                            <td class="txt40">
-                                                未发货
-                                            </td>
 
-                                            <td class="txt40">
-                                                银联在线支付
+                                                <!--<a th:if="${settlement.customerCheckable() and settlement.checkAble()}" th:attr="settlementNo=${settlement.settlementNo}" href="#" onclick="showUpdateStatus(this)">审核</a>-->
+                                                <a th:if="${crowdFundings.checkStatus.value==0 }" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="auditCF(this)">点此审核</a>
+                                                <a th:if="${crowdFundings.checkStatus.value==1 or crowdFundings.checkStatus.value==3 or crowdFundings.checkStatus.value==5  }" th:attr="crowdFundingsId=${crowdFundings.id}" >通过</a>
+                                                <a th:if="${crowdFundings.checkStatus.value==3 or crowdFundings.checkStatus.value==1}" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="openCF(this)">点此开启</a>
+                                                <a th:if="${crowdFundings.checkStatus.value==5 }" th:attr="crowdFundingsId=${crowdFundings.id}" onclick="closeCF(this)">点此关闭</a>
+                                                <a th:if="${crowdFundings.checkStatus.value==2 }" th:attr="crowdFundingsId=${crowdFundings.id}" >不通过</a>
+
                                             </td>
 
                                             <td class="txt40 c tail">
-                                                <a href="javascript:handleOrder('2015092161656366')">操作订单</a>
-
-                                                <div>
-
-                                                    <a class="p_prted" target="_blank"
-                                                       href="../Print/ShopOrder.aspx?orderid=2015092161656366"
-                                                       title="购买清单打印">购</a>
-                                                    <a class="p_prted" target="_blank"
-                                                       href="../Print/DeliveryOrder.aspx?orderid=2015092161656366"
-                                                       title="配货清单打印">配</a>
+                                                <div th:inline="text">
                                                 </div>
                                             </td>
                                         </tr>
+
                                         </tbody>
                                     </table>
                                 </div>
                                 <div class="pager-bar">
-                                    <div class="msg">共<input th:value="0"
-                                                             style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px;width:20px; '
-                                                             type="text"/>条记录，
-                                        当前第
-                                        <input th:value="1"
-                                               style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px;width:20px; '
-                                               type="text" id="noNumber"/>
-                                        /
-                                        <input th:value="0"
-                                               style='border-left:0px;border-top:0px;border-right:0px;border-bottom:1px;width:20px; '
-                                               type="text" id="numberBug"/>，
-                                        每页20条记录
+                                    <div class="msg" style="margin-left: 10px;">共
+                                        <span th:text="${allcrowdFundingList.totalElements}">0</span>条记录，当前第
+                                        <span name="noNumber" th:text="${allcrowdFundingList.number+1}" id="noNumber">1</span>页/共
+                                        <span  name="numberBug" id="numberBug"  th:text="${allcrowdFundingList.totalPages==0?1:allcrowdFundingList.totalPages}">1</span>页，每页
+                                        <span>20</span>条记录
                                     </div>
                                     <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
                                     <a class="button-white"
@@ -810,12 +588,14 @@
                                         <span>下一页</span></a>
                                     <a class="button-white" href="javascript:queryLast()">
                                         <span>未页</span>
-                                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第<input id="current-index"
-                                                                              onkeydown="J.EnterSubmit(event, Pager.Jump);"
-                                                                              class="input-small"
-                                                                              style="text-align:center;" type="text"
-                                                                              value="1" th:value="4"/>页&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a></div>
+                                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第
+                                    <input id="current-index"
+                                           onkeydown="J.EnterSubmit(event, Pager.Jump);"
+                                           class="input-small"
+                                           style="text-align:center;" type="text"
+                                           value="1" th:value="${allcrowdFundingList.number+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -826,33 +606,15 @@
 </form>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    function showBatchDelivery() {
-        var customerId = $("#customerId").val();
-        if (customerId == "" || customerId == undefined) {
-            jBox.tip('customerId 无法获取， 请检查！', 'info');
-            return
-        }
-        var url = 'showBatchDelivery?customerId=' + customerId;
-        J.PopupIFrame(url, "发货操作", 370, 220, "ifrm", "", "auto", "");
-    }
 
-    function showConsignFlow(obj, type) {//发货
-        var orderId = $(obj).attr("orderId");
-        var title = "发货操作";
-        if (type == 1) {
-            title = "退货操作";
-        }
-        var url = 'showConsignFlow?orderId=' + orderId;
-        J.PopupIFrame(url, title, 900, 480, "ifrm", "", "auto", "");
-    }
-    ;
+
     function searchOrder() {
         $('#form1').submit();
     }
     function queryVoid(no) {//下页
         var size = 0;
-        size = Number($("#noNumber").val()) + Number(no);//前往的页数
-        var numberBug = Number($("#numberBug").val());//最大页数
+        size = Number($("#noNumber").text()) + Number(no)-1;//前往的页数
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
         if (size > numberBug) {
             size = numberBug;
         }
@@ -861,8 +623,8 @@
     }
     function queryUp(no) {//上页
         var size = 0;
-        size = Number($("#noNumber").val()) + Number(no);//前往的页数
-        var numberBug = Number($("#numberBug").val());//最大页数
+        size = Number($("#noNumber").text()) + Number(no)-1;//前往的页数
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
         if (size > numberBug) {
             size = numberBug;
         }
@@ -878,13 +640,13 @@
         $('#form1').submit();
     }
     function queryLast() {//尾页
-        var numberBug = Number($("#numberBug").val());//最大页数
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
         $("#pageNoStr").attr("value", numberBug);
         $('#form1').submit();
     }
     function goToNo() {
-        var size = Number($("#current-index").val());
-        var numberBug = Number($("#numberBug").val());//最大页数
+        var size = Number($("#current-index").val())-1;
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
         if (size > numberBug) {
             size = numberBug;
         }
@@ -892,21 +654,13 @@
         $('#form1').submit();
     }
     function searchOrderAll() {
-        $("#txtOrderId").attr("value", "");
-        $("#txtShipName").attr("value", "");
-        $("#txtShipMobile").attr("value", "");
-
-        $("#ddlShipStatus").attr("value", -1);
-        $("#ddlPayStatus").attr("value", -1);
-        $("#ddlOrderByField").attr("value", 0);
-        $("#raSortType_0").attr("value", 0);
-
-
-        $("#txtBeginTime").attr("value", "");
-        $("#txtEndTime").attr("value", "");
-
-        $("#txtEndPaytime").attr("value", "");
-        $("#txtBeginPaytime").attr("value", "");
+        $("#crowdFundingTitle").attr("value", "");
+        $("#crowdFundingType").attr("value", -1);
+        $("#sort").attr("value", 0);
+        $("#raSortType").attr("value", 0);
+        $("#startTime").attr("value", "");
+        $("#endTime").attr("value","");
+        $("#pageNoStr").attr("value", 0);
         $('#form1').submit();
     }
     function createRight() {//左页面点击事件
