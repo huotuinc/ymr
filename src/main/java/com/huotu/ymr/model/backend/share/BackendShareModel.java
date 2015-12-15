@@ -29,7 +29,7 @@ public class BackendShareModel {
     /**
      * 内容
      */
-    private String shareContent;
+    private String content;
 
     /**
      * 置顶

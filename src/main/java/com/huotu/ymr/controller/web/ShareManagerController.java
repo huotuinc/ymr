@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
@@ -136,7 +135,7 @@ public class ShareManagerController {
         share.setScore(0);
         share.setTitle(backendShareModel.getShareTitle());
         share.setLinkUrl("");//todo
-        share.setContent(backendShareModel.getShareContent());
+        share.setContent(backendShareModel.getContent());
         share.setImg("");
         share.setIntro("");//todo
         share.setOwnerType(CommonEnum.UserType.official);
@@ -196,30 +195,30 @@ public class ShareManagerController {
 
     /**
      * 图片上传
-     * @param file
-     * @param response
+//     * @param response
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/UploadImg",method = RequestMethod.POST)
+    @RequestMapping(value = "/UploadImg")
     @ResponseBody
-    public ResultModel UploadImg(@RequestParam("shareImg") MultipartFile file,HttpServletResponse response) throws Exception{
+    public ResultModel UploadImg(@RequestParam(value = "shareImage")MultipartFile shareImage) throws Exception{
         ResultModel resultModel=new ResultModel();
+//        MultipartFile file=request.getFile("shareImage");
         //文件格式判断
-        if (ImageIO.read(file.getInputStream()) == null) {
+        if (ImageIO.read(shareImage.getInputStream()) == null) {
             resultModel.setCode(0);
             resultModel.setMessage("请上传图片文件！");
             return resultModel;
         }
-        if (file.getSize() == 0) {
+        if (shareImage.getSize() == 0) {
             resultModel.setCode(0);
             resultModel.setMessage("请上传图片！");
             return resultModel;
         }
         //保存图片
         String fileName = StaticResourceService.SHSRES_IMG + UUID.randomUUID().toString() + ".png";
-        staticResourceService.uploadResource(fileName, file.getInputStream());
-        response.setHeader("X-frame-Options", "SAMEORIGIN");
+        staticResourceService.uploadResource(fileName, shareImage.getInputStream());
+//        response.setHeader("X-frame-Options", "SAMEORIGIN");
         resultModel.setCode(1);
         resultModel.setMessage("图片上传成功！");
         return resultModel;

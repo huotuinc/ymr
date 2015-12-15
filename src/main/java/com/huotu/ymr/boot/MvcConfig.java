@@ -4,15 +4,13 @@ import com.huotu.common.api.ApiResultHandler;
 import com.huotu.common.api.OutputHandler;
 import com.huotu.ymr.interceptor.AppHandlerExceptionResolver;
 import com.huotu.ymr.interceptor.CommonInterceptor;
-import org.luffy.lib.libspring.data.ClassicsRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -84,6 +82,13 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.jsp();
     }
 
+    /**
+     * for upload
+     */
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        return new CommonsMultipartResolver();
+    }
 
     @Bean
     public ThymeleafViewResolver viewResolver() {
