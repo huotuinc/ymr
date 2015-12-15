@@ -82,7 +82,7 @@ public class ArticleServiceImpl implements ArticleService {
                 Predicate  predicate = cb.and(cb.like(root.get("title").as(String.class),"%"+articleSearchModel.getArticleTitle()+"%"));
                 //}
                 String[] category={"公司介绍","自传故事","学院介绍","美容知识"};
-                Predicate predicate = cb.equal(root.get("manager").as(Manager.class), articleSearchModel.getManagerName());
+
                 if (!StringUtils.isEmpty(articleSearchModel.getArticleTitle())){
                     predicate = cb.and(predicate,cb.like(root.get("title").as(String.class),"%"+articleSearchModel.getArticleTitle()+"%"));
                 }
