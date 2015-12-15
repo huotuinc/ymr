@@ -392,7 +392,8 @@ public interface CommonEnum {
          */
         notPass(2, "未通过"),
         close(3, "关闭"),
-        delete(4, "删除");
+        delete(4, "删除"),
+        open(5,"开启");
         private int value;
 
         private String name;

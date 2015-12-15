@@ -3,6 +3,8 @@ package com.huotu.ymr.service;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingBooking;
 import com.huotu.ymr.entity.CrowdFundingPublic;
+import com.huotu.ymr.model.searchCondition.CrowdFundingSearchModel;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -55,5 +57,12 @@ public interface CrowdFundingService {
      * @return
      */
     List<CrowdFundingBooking> getBookingByPublicId(Long crowdId,Long id);
+
+    /**
+     * 后台获取众筹分页
+     * 获取一页众筹表格
+     * @return
+     */
+    Page<CrowdFunding> findCrowdFundingPage(CrowdFundingSearchModel searchModel);
 
 }

@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -193,6 +194,8 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     public List<CrowdFunding> saveSeveralCrowdFunding(int number) {
         List<CrowdFunding> crowdFundings=new ArrayList<CrowdFunding>();
         String[] chinese={"徐和","和康","徐康"};
+        CommonEnum.CrowdFundingType[]  cFType={CommonEnum.CrowdFundingType.booking,CommonEnum.CrowdFundingType.cooperation,CommonEnum.CrowdFundingType.subscription};
+        CommonEnum.CheckType[] checkTypes={CommonEnum.CheckType.audit,CommonEnum.CheckType.close,CommonEnum.CheckType.pass,CommonEnum.CheckType.open,CommonEnum.CheckType.notPass};
         for(int i=0;i<number;i++){
             CrowdFunding crowdFunding=new CrowdFunding();
             String name=UUID.randomUUID().toString();
@@ -202,7 +205,10 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             userLevelList.add(userLevels[0]);
             userLevelList.add(userLevels[1]);
             crowdFunding.setVisibleLevel(userLevelList);
+            crowdFunding.setTime(new Date());
+            crowdFunding.setCheckStatus(checkTypes[i%5]);
             crowdFunding.setContent("这个是众筹项目" + name);
+            crowdFunding.setCrowdFundingType(cFType[i%3]);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundings.add(crowdFunding);
         }
@@ -217,6 +223,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     * 5.请求不存在的众筹项目，并判断是否是想要的结果
      */
     @Test
+    @Rollback(false)
     public void testGetCrowdFundingList() throws Exception {
 
         //创建一个用户用户
@@ -237,13 +244,19 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         //进行众筹列表第一页的请求
         String result=mockMvc.perform(device.getApi("getCrowdFundingList").param("key", key).build())
                 .andReturn().getResponse().getContentAsString();
+        key="和";
         List<CrowdFunding> crowdFunding=crowdFundingService.searchCrowdFundingList(key, crowdFundingService.getMaxId() + 1, 10);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
+        System.out.println(result);
+
+        System.out.println(crowdFunding);
+
         for(int i=0;i<crowdFunding.size();i++) {
 //            Assert.assertEquals("请求众筹表第一页pid断言", crowdFunding.get(i).getOwnerId().longValue(), Long.parseLong(list.get(i).get("pid") + ""));
 //            Assert.assertEquals("请求众筹表第一页time断言",crowdFunding.get(i).getTime().getTime(),list.get(i).get("time"));
             Assert.assertEquals("请求众筹表第一页name断言",crowdFunding.get(i).getName(),list.get(i).get("title"));
         }
+
         //进行众筹列表下页页的请求
         String result1=mockMvc.perform(device.getApi("getCrowdFundingList").param("key", key).param("lastId",crowdFundings.get(20).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
@@ -254,6 +267,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 //            Assert.assertEquals("请求众筹表下页time断言",crowdFunding1.get(i).getTime().getTime(),list1.get(i).get("time"));
             Assert.assertEquals("请求众筹表下页name断言", crowdFunding1.get(i).getName(), list1.get(i).get("title"));
         }
+        System.out.println(result1);
 
         //进行众筹列表最后一页的请求
         String result2=mockMvc.perform(device.getApi("getCrowdFundingList").param("key", key).param("lastId",0+"").build())
@@ -266,7 +280,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             Assert.assertEquals("请求众筹表下页name断言", crowdFunding2.get(i).getName(), list2.get(i).get("title"));
         }
 
-
+        System.out.println(result2);
         key="罗";
         //进行众筹列表不存在页的请求
         long maxId=0;

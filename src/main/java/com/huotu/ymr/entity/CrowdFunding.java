@@ -55,6 +55,13 @@ public class CrowdFunding {
     private String content;
 
     /**
+     * 时间
+     */
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date time;
+
+
+    /**
      * 开始时间
      */
     @Temporal(TemporalType.TIMESTAMP)
@@ -110,4 +117,9 @@ public class CrowdFunding {
      * 浏览量
      */
     private Long view;
+
+    /**
+     * 审核状态
+     */
+    private CommonEnum.CheckType checkStatus;
 }
