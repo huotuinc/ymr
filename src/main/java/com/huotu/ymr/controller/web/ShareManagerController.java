@@ -14,12 +14,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by lgh on 2015/12/3.
@@ -136,7 +136,7 @@ public class ShareManagerController {
         share.setTitle(backendShareModel.getShareTitle());
         share.setLinkUrl("");//todo
         share.setContent(backendShareModel.getContent());
-        share.setImg("");
+        share.setImg(backendShareModel.getShareImg());
         share.setIntro("");//todo
         share.setOwnerType(CommonEnum.UserType.official);
         share.setReason("");
@@ -166,7 +166,7 @@ public class ShareManagerController {
      */
     @RequestMapping(value = "/passOrNot",method = RequestMethod.POST)
     @ResponseBody
-    public ResultModel pass(Long shareId,Long type) throws Exception{
+    public ResultModel passOrNot(Long shareId,Long type) throws Exception{
         ResultModel resultModel=new ResultModel();
         if(shareId==null){
             resultModel.setCode(0);
@@ -178,7 +178,7 @@ public class ShareManagerController {
             resultModel.setCode(0);
             resultModel.setMessage("没找到该帖子，或许已被删除!");
         }
-        if(type==0){
+            if(type==0){
             share.setCheckStatus(CommonEnum.CheckType.notPass);
         }else if(type==1){
             share.setCheckStatus(CommonEnum.CheckType.pass);
@@ -189,39 +189,22 @@ public class ShareManagerController {
         return resultModel;
     }
 
+//    /**
+//     * 置顶与取消
+//     * @param shareId   帖子ID
+//     * @param type
+//     * @return
+//     * @throws Exception
+//     */
+//    @RequestMapping(value = "/setTopOrNot")
+//    @ResponseBody
+//    public ResultModel setTopOrNot(Long shareId,Long type) throws Exception{
+//
+//    }
 
 
 
 
-    /**
-     * 图片上传
-//     * @param response
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value = "/UploadImg")
-    @ResponseBody
-    public ResultModel UploadImg(@RequestParam(value = "shareImage")MultipartFile shareImage) throws Exception{
-        ResultModel resultModel=new ResultModel();
-//        MultipartFile file=request.getFile("shareImage");
-        //文件格式判断
-        if (ImageIO.read(shareImage.getInputStream()) == null) {
-            resultModel.setCode(0);
-            resultModel.setMessage("请上传图片文件！");
-            return resultModel;
-        }
-        if (shareImage.getSize() == 0) {
-            resultModel.setCode(0);
-            resultModel.setMessage("请上传图片！");
-            return resultModel;
-        }
-        //保存图片
-        String fileName = StaticResourceService.SHSRES_IMG + UUID.randomUUID().toString() + ".png";
-        staticResourceService.uploadResource(fileName, shareImage.getInputStream());
-//        response.setHeader("X-frame-Options", "SAMEORIGIN");
-        resultModel.setCode(1);
-        resultModel.setMessage("图片上传成功！");
-        return resultModel;
 
-    }
+
 }

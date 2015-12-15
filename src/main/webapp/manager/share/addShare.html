@@ -103,9 +103,12 @@
                                         <tr>
                                             <th>封面:</th>
                                             <td>
-                                                <div th:text="*{shareImg==null?'未上传':shareImg}" id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
 
-                                                    未上传 </div>
+                                                <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
+                                                    <span>未上传</span>
+                                                    <img style="display:none" id="share_img" th:src="*{shareImg}" width="80px" height="80px"/>
+                                                </div>
+
                                                 <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
                                                     <a id="uploadpic" class="btn-lit jUploader-button" href="#" style="cursor: pointer; position: relative; overflow: hidden; direction: ltr;">
                                                         <span style="color: #c1b3a9">
@@ -176,7 +179,7 @@
 
 
 <div class="blank10"></div>
-<script>
+<script type="text/javascript" th:inline="javascript">
     //封面图片上传
     function uploadImage() {
         $.ajaxFileUpload({
@@ -187,11 +190,11 @@
             data: null,
             success: function(resultModel) {
                 if(resultModel.code==1){
-
-                    $.jBox(resultModel.message);
-
+                    $.jBox("上传成功");
+                    $("#share_img").attr("src",resultModel.message);
+                    $("#share_img").show();
+                    $("#uploadpicCover").children("span").hide();
                 }
-                $.jBox(resultModel.message);
             },
             error: function(data, status, e) {
 
@@ -299,7 +302,15 @@
 
     //初始化进页面
     function firstLoad() {
-            document.getElementById('form1').style.display = '';
+        document.getElementById('form1').style.display = '';
+        /*<![CDATA[*/
+        var img=/*[[*{shareType}]]*/'';
+        if(img.length>0){
+            $("#share_img").show();
+            $("#uploadpicCover").children("span").hide();
+        }
+        /*]]>*/
+
 //            document.getElementById('form2').style.display = 'none';
 //            document.getElementById('form3').style.display = 'none';
     }
