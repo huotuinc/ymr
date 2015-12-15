@@ -8,7 +8,10 @@ import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.common.CommonEnum;
-import com.huotu.ymr.entity.*;
+import com.huotu.ymr.entity.CrowdFunding;
+import com.huotu.ymr.entity.CrowdFundingBooking;
+import com.huotu.ymr.entity.CrowdFundingPublic;
+import com.huotu.ymr.entity.User;
 import com.huotu.ymr.mallentity.MallMerchant;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallMerchantRepository;
@@ -90,15 +93,15 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 
         device.setToken(mockUser.getToken());
 
-        Config config=new Config();
-        config.setKey("CrowdFundingTip");
-        config.setValue("我有A万，找人合作筹募");
-        config=configRepository.saveAndFlush(config);
-
-        Config config1=new Config();
-        config1.setKey("MoneyToScore");
-        config1.setValue("10");
-        config1=configRepository.saveAndFlush(config1);
+//        Config config=new Config(); //todo 注释
+//        config.setKey("CrowdFundingTip");
+//        config.setValue("我有A万，找人合作筹募");
+//        config=configRepository.saveAndFlush(config);
+//
+//        Config config1=new Config();
+//        config1.setKey("MoneyToScore");
+//        config1.setValue("10");
+//        config1=configRepository.saveAndFlush(config1);
 
     }
 
@@ -630,6 +633,103 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
         Assert.assertEquals("请求搜索的认购者列表下页条数断言", 0, list3.size());
     }
+
+    /*
+   * 1.进行用户存在判断，少于2个用户就新建5个
+   * 2.进行众筹项目的存入
+   * 3.进行众筹发起合作人的存入
+   * 4.进行众筹合作人的存入
+   * 5.进行正常的用户合作请求，并断言
+    */
+    @Test
+    public void testGetCooperationResult() throws Exception {
+        List<User> users=userRepository.findAll();
+        if(users.size()<=2){
+            saveUsers();
+            users=userRepository.findAll();
+        }
+        //进行合作项目存储
+        CrowdFunding crowdFunding=new CrowdFunding();
+        crowdFunding.setToMoeny(200000.00);
+        crowdFunding.setStartMoeny(50000.00);
+        crowdFunding.setName("合作项目0");
+        List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+        userLevelList.add(userLevels[0]);
+        userLevelList.add(userLevels[1]);
+        crowdFunding.setVisibleLevel(userLevelList);
+        crowdFunding.setStartTime(new Date());
+        crowdFunding.setAgencyFeeRate(10);
+        crowdFunding.setContent("这是合作项目0");
+        crowdFunding.setCrowdFundingType(CommonEnum.CrowdFundingType.subscription);
+        crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+
+        //进行合作项目发起人存储
+        List<CrowdFundingPublic> crowdFundingPublicList=new ArrayList<CrowdFundingPublic>();
+        double money=50000.0;
+        double lastMoney=money*(100-crowdFunding.getAgencyFeeRate())/100;
+        CrowdFundingPublic crowdFundingPublic=new CrowdFundingPublic();
+        crowdFundingPublic.setAgencyFee(money-lastMoney);
+        crowdFundingPublic.setMoney(lastMoney);
+        crowdFundingPublic.setStatus(1);//都设置为审核通过
+        crowdFundingPublic.setOwnerId(users.get(0).getId());
+        crowdFundingPublic.setCrowdFunding(crowdFunding);
+        crowdFundingPublic.setStatus(1);
+        crowdFundingPublic.setName("我是合作发起者0");
+        crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
+        crowdFundingPublicList.add(crowdFundingPublic);
+
+        CrowdFundingPublic crowdFundingPublic1=new CrowdFundingPublic();
+        crowdFundingPublic1.setAgencyFee(money-lastMoney);
+        crowdFundingPublic1.setMoney(lastMoney);
+        crowdFundingPublic1.setStatus(1);//都设置为审核通过
+        crowdFundingPublic1.setOwnerId(users.get(0).getId());
+        crowdFundingPublic1.setCrowdFunding(crowdFunding);
+        crowdFundingPublic1.setStatus(1);
+        crowdFundingPublic1.setName("我是合作发起者1");
+        crowdFundingPublic1=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic1);
+        crowdFundingPublicList.add(crowdFundingPublic);
+
+        //进行合作人的存储
+        double bookMoney=10000.00*(100-crowdFunding.getAgencyFeeRate())/100;
+        CrowdFundingBooking crowdFundingBooking = new CrowdFundingBooking();
+        crowdFundingBooking.setMoney(bookMoney);
+        crowdFundingBooking.setPhone(13852+""+666666 + "");
+        crowdFundingBooking.setRemark("我要与合作者hahaha!");
+        crowdFundingBooking.setAgencyFee(10000.00 - bookMoney);
+        crowdFundingBooking.setOwnerId(users.get(1).getId());
+        crowdFundingBooking.setName( "合作者0");
+        crowdFundingBooking.setCrowdFunding(crowdFunding);
+        crowdFundingBooking.setCrowdFundingPublic(crowdFundingPublic);
+        crowdFundingBooking.setStatus(1);
+        crowdFundingBooking =crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking);
+
+        CrowdFundingBooking crowdFundingBooking1 = new CrowdFundingBooking();
+        crowdFundingBooking1.setMoney(bookMoney);
+        crowdFundingBooking1.setPhone(13852+""+666666 + "");
+        crowdFundingBooking1.setRemark("我要与合作者hahaha!");
+        crowdFundingBooking1.setAgencyFee(10000.00 - bookMoney);
+        crowdFundingBooking1.setOwnerId(users.get(1).getId());
+        crowdFundingBooking1.setName( "合作者1");
+        crowdFundingBooking1.setCrowdFunding(crowdFunding);
+        crowdFundingBooking1.setCrowdFundingPublic(crowdFundingPublic1);
+        crowdFundingBooking1.setStatus(1);
+        crowdFundingBooking =crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking1);
+
+        String result=mockMvc.perform(device.getApi("getCooperationResult")
+                .param("crowdId", crowdFunding.getId() + "")
+                .build())
+                .andReturn().getResponse().getContentAsString();
+
+        System.out.println(result);
+        //List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
+        List<HashMap> list = JsonPath.read(result, "$.resultData.list");
+        Assert.assertEquals("请求发起合作者的数量",crowdFundingPublicList.size(), list.size());
+        List<HashMap> list1 =JsonPath.read(list.get(0),"$.bookingListModels");
+        Assert.assertEquals("请求合作者的数量", 1,list1.size());
+
+
+    }
+
 
     /*
     * 1.进行用户存在判断，少于2个用户就新建5个

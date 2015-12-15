@@ -1,6 +1,5 @@
 package com.huotu.ymr.model.searchCondition;
 
-import com.huotu.ymr.entity.Manager;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,7 +27,6 @@ public class ArticleSearchModel {
     /**
      * 发布人
      */
-
     private String managerName;
 
     /**

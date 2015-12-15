@@ -53,6 +53,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
     @Autowired
     ConfigRepository configRepository;
 
+
     @RequestMapping("/getCrowdFundingList")
     @Override
     public ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list,String key, Long lastId) throws Exception {
@@ -236,6 +237,30 @@ public class CrowdFundingController implements CrowdFundingSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
 
         }
+    }
+
+    @RequestMapping("/getCooperationResult")
+    @Override
+    public ApiResult getCooperationResult(Output<AppCooperationResultListModel[]> list, Long crowdId) throws Exception {
+        //CrowdFunding crowdFunding=crowdFundingRepository.findOne(crowdId);
+        List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.getPublicByCrowdId(crowdId);
+        List<AppCooperationResultListModel> appCooperationResultListModels=new ArrayList<AppCooperationResultListModel>();
+        for(CrowdFundingPublic fundingPublic:crowdFundingPublics){
+            List<CrowdFundingBooking> crowdFundingBookings=crowdFundingService.getBookingByPublicId(crowdId,fundingPublic.getId());
+            AppCooperationResultListModel appCooperationResultListModel=new AppCooperationResultListModel();
+            appCooperationResultListModel.setName(fundingPublic.getName());
+            appCooperationResultListModel.setUserHeadUrl(fundingPublic.getUserHeadUrl());
+            appCooperationResultListModel.setAmount(fundingPublic.getAmount());
+            for(CrowdFundingBooking crowdFundingBooking:crowdFundingBookings){
+                AppBookingListModel appBookingListModel=new AppBookingListModel();
+                appBookingListModel.setName(crowdFundingBooking.getName());
+                appBookingListModel.setUserHeadUrl(crowdFundingBooking.getUserHeadUrl());
+                appCooperationResultListModel.getBookingListModels().add(appBookingListModel);
+            }
+            appCooperationResultListModels.add(appCooperationResultListModel);
+        }
+        list.outputData(appCooperationResultListModels.toArray(new AppCooperationResultListModel[crowdFundingPublics.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/getRaiseCooperationList")  //TODO 是用户的请求还是管理员的请求

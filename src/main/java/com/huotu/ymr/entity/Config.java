@@ -15,7 +15,12 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Cacheable(value = false)
-@Table(name = "config")
+
+/**
+ * CrowdFundingTip = 我有A万，找人合作筹募
+ * MoneyToScore = 10 (1元10积分)
+ * GlobalAgencyFee 全局中介费
+ */
 public class Config {
 
     /**

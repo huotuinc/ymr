@@ -98,6 +98,17 @@ public interface CrowdFundingSystem {
     @RequestMapping(method = RequestMethod.POST)
     ApiResult raiseCooperation(Double money, String name, String phone, String remark,Long crowdId) throws Exception;
 
+    /**
+     * 获取合作众筹结果
+     *
+     * @param list  合作众筹名单
+     * @param crowdId 众筹项目id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult getCooperationResult(Output<AppCooperationResultListModel[]> list,Long crowdId) throws Exception;
+
 
     /**
      * 搜索合作发起人列表

@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -158,6 +159,7 @@ public class ArticleControllerTest extends SpringBaseTest {
     * 6.请求不存在的分类下的文章，并判断是否是想要的结果
      */
     @Test
+    @Rollback(false)
     public void testGetArticleList() throws Exception {
 
         //进行文章分类的处理

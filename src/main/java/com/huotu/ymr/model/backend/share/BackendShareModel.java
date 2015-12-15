@@ -13,23 +13,18 @@ import java.util.Date;
 @Setter
 public class BackendShareModel {
     /**
-     * 用户头像
+     * ID
      */
-    private String userHeadUrl;
+    private Long id;
     /**
      * 标题
      */
-    private String title;
+    private String shareTitle;
 
     /**
      * 图片
      */
-    private String img;
-
-    /**
-     * 简介
-     */
-    private String intro;
+    private String shareImg;
 
     /**
      * 内容
@@ -40,10 +35,16 @@ public class BackendShareModel {
      * 置顶
      */
     private Boolean top;
+
     /**
      * 发帖时间
      */
     private Date time;
+
+    /**
+     * 浏览量
+     */
+    private Long view;
 
     /**
      * 点赞量
@@ -59,14 +60,40 @@ public class BackendShareModel {
      * 转发量
      */
     private Long relayQuantity;
+
     /**
-     * 转发可得积分
+     * 全局配置转发积分
      */
-    private Integer relayScore;
+    private Integer overallTransmit;
+
+    /**
+     * 全局配置总积分
+     */
+    private Integer overallTotal;
+
+    /**
+     * 单独配置转发积分
+     */
+    private Integer aloneTransmit;
+
+    /**
+     * 单独配置总积分
+     */
+    private Integer aloneTotal;
 
     /**
      * 爱分享类型 info(0, "资讯")，group(1, "团购")。。。
      */
-    private Integer shareType;
+    private Integer shareType=0;
+
+    /**
+     * 审核类型
+     */
+    private String  checkType="审核中";
+
+    /**
+     * 发布人类型
+     */
+    private String  userType="官方";
 
 }

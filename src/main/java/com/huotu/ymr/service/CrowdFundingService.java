@@ -1,6 +1,7 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.CrowdFunding;
+import com.huotu.ymr.entity.CrowdFundingBooking;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 
 import java.util.List;
@@ -40,4 +41,19 @@ public interface CrowdFundingService {
      * @return
      */
     List<CrowdFunding> searchCrowdFundingList(String key,Long lastId, int number);
+
+    /**
+     * 通过众筹项目crowdId，获得成功的合作项目合作发起者
+     * 获取一页众筹表格
+     * @return
+     */
+    List<CrowdFundingPublic> getPublicByCrowdId(Long crowdId);
+
+    /**
+     * 通过合作发起者Id，与该合作发起者成功合作的合作者
+     * 获取一页众筹表格
+     * @return
+     */
+    List<CrowdFundingBooking> getBookingByPublicId(Long crowdId,Long id);
+
 }

@@ -1,6 +1,7 @@
 package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.entity.CrowdFunding;
+import com.huotu.ymr.entity.CrowdFundingBooking;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.repository.CrowdFundingPublicRepository;
 import com.huotu.ymr.repository.CrowdFundingRepository;
@@ -26,12 +27,12 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
     public List<CrowdFundingPublic> findCrowdListFromLastIdWithNumber(Long crowdId, Long lastId, int number) {
         StringBuilder hql = new StringBuilder();
         hql.append("from CrowdFundingPublic as crowd where crowd.crowdFunding.id=:crowdId " +
-                " and crowd.status=:status " +
+               // " and crowd.status=:status " +
                 " and crowd.id<:lastId " +
                 " order by crowd.id desc");
         List<CrowdFundingPublic> crowdList = crowdFundingPublicRepository.queryHql(hql.toString(), query -> {
             query.setParameter("crowdId", crowdId);
-            query.setParameter("status", 1);
+            //query.setParameter("status", 1);
         query.setParameter("lastId", lastId);
         query.setMaxResults(number);
         });
@@ -94,5 +95,37 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
         });
         return crowdList;
 
+    }
+
+    @Override
+    public List<CrowdFundingPublic> getPublicByCrowdId(Long crowdId) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFundingPublic as public where public.crowdFunding.id=:crowdId " +
+                " and public.status=:status " );
+                //" order by crowd.id desc" );
+        List<CrowdFundingPublic> crowdList = crowdFundingRepository.queryHql(hql.toString(), query -> {
+            //query.setParameter("key","%"+key+"%");
+            query.setParameter("crowdId", crowdId);
+            query.setParameter("status", 1);
+           // query.setMaxResults(number);
+        });
+        return crowdList;
+    }
+
+    @Override
+    public List<CrowdFundingBooking> getBookingByPublicId(Long crowdId,Long id) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFundingBooking as booking where booking.crowdFunding.id=:crowdId " +
+                " and booking.status=:status " +
+                " and booking.crowdFundingPublic.id=:id " );
+        //" order by crowd.id desc" );
+        List<CrowdFundingBooking> crowdList = crowdFundingRepository.queryHql(hql.toString(), query -> {
+            //query.setParameter("key","%"+key+"%");
+            query.setParameter("crowdId", crowdId);
+            query.setParameter("status", 1);
+            query.setParameter("id",id);
+            // query.setMaxResults(number);
+        });
+        return crowdList;
     }
 }
