@@ -17,6 +17,14 @@ public class BackendShareModel {
      */
     private Long id;
     /**
+     * 发帖人（管理员或用户）
+     */
+    private Long ownerId;
+    /**
+     * 发帖人名称
+     */
+    private String name;
+    /**
      * 标题
      */
     private String shareTitle;
@@ -30,6 +38,24 @@ public class BackendShareModel {
      * 内容
      */
     private String content;
+
+    /**
+     * 是否启用外链
+     */
+    private Boolean useLink;
+
+    /**
+     * 外链地址
+     */
+    private String linkUrl;
+
+    /**
+     * 开启推荐产品
+     * <p>
+     * true开启 false 关闭 (默认)
+     * 开启后将关联商城商品，在爱分享详情页的末尾显示相关联商品
+     */
+    private Boolean enabledRecommendProduct = false;
 
     /**
      * 置顶
@@ -84,12 +110,12 @@ public class BackendShareModel {
     /**
      * 爱分享类型 info(0, "资讯")，group(1, "团购")。。。
      */
-    private Integer shareType=0;
+    private Integer shareType;
 
     /**
      * 审核类型
      */
-    private String  checkType="审核中";
+    private String  checkType;
 
     /**
      * 发布人类型

@@ -24,7 +24,7 @@ public interface ShareService {
 
     Share findOneShare(Long shareId) throws Exception;
 
-    Share addShare(Share share) throws Exception;
+    Share saveShare(Share share) throws Exception;
 
     Page<Share> findPcShareList(ShareSearchModel shareSearchModel) throws Exception;
 

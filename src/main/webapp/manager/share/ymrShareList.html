@@ -619,8 +619,8 @@
 
                                             <td class="txt40" th:switch="${shares.checkType}">
                                                 <span th:case="'审核中'">
-                                                    <a th:href="'#'" onclick="passShare(this,1)" th:attr="shareId=''+${shares.id}">通过</a>
-                                                    <a th:href="'#'" onclick="passShare(this,0)" th:attr="shareId=''+${shares.id}">不通过</a>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">通过</a>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">不通过</a>
                                                 </span>
                                                 <span th:case="*" th:text="${shares.checkType}"></span>
                                                 <!--<span th:case="'未通过'">未通过</span>-->
@@ -629,7 +629,9 @@
                                             </td>
                                             <td class="txt40 c tail">
                                                 <div>
-                                                    <!--<a th:href=""-->
+                                                    <a th:href="'#'" onclick="setShare(this)" th:text="${shares.top}?'取消':'置顶'"  th:attr="shareId=''+${shares.id}">置顶</a>
+                                                    <a th:href="@{modifyShare(shareId=${shares.id})}" th:text="'修改'">修改</a>
+
                                                     <!--@thymesVar id="orders" type="com.huotu.hotsupplier.sup.service.entity.order.Orders"-->
                                                     <!--<a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this)" id="btnConsignFlow" title="发货" th:if="${orders.deliveryable()}">发货</a>-->
                                                     <!--<a th:attr="orderId=''+${orders.orderId}" onclick="showConsignFlow(this,1)" title="退货" th:if="${orders.returnable()}">退货</a>-->
@@ -670,48 +672,56 @@
 </form>
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
-//    function showBatchDelivery() {
-//        var customerId = $("#customerId").val();
-//        if (customerId == "" || customerId == undefined) {
-//            jBox.tip('customerId 无法获取， 请检查！', 'info');
-//            return
-//        }
-//        var url = 'showBatchDelivery?customerId=' + customerId;
-//        J.PopupIFrame(url, "发货操作", 370, 220, "ifrm", "", "auto", "");
-//    }
-//    function showConsignFlow(obj, type) {//发货
-//        var orderId = $(obj).attr("orderId");
-//        var title = "发货操作";
-//        if (type == 1) {
-//            title = "退货操作";
-//        }
-//        var url = 'showConsignFlow?orderId=' + orderId;
-//        J.PopupIFrame(url, title, 900, 480, "ifrm", "", "auto", "");
-//    }
+    function modifyShare(obj){
 
-    function passShare(obj,type){
+
+    }
+
+    function setShare(obj){
         var shareId = $(obj).attr("shareId");
+        var text=$(obj).html();
+        var type;
+        switch (text){
+            case '置顶':
+                type=0;
+                break;
+            case '通过':
+                type=1;
+                break;
+            case '取消':
+                type=2;
+                break;
+            case '不通过':
+                type=3;
+                break;
+            case '删除':
+                type=4;
+                break;
+        }
         $.ajax({
             type:'POST',
-            url: 'passOrNot',
+            url: 'setShare',
             dataType: 'json',
             data: {shareId:shareId,type:type},
             success:function(result){
                 if(result.code==1){
-                    $.jBox.tip("修改成功");
+
                     $(obj).html(result.message);
+                    $.jBox.tip("修改成功");
                     window.location.reload();
+
 
                 }else {
                     $.jBox.tip(result.message);
                 }
             },
             error:function(e){
-                $.jBox.tip("审核出错，请检查网络");
+                $.jBox.tip("修改出错，请检查网络");
             }
-
         });
     }
+
+
     function searchShares() {
         $('#form1').submit();
     }

@@ -1,11 +1,12 @@
 package com.huotu.ymr.controller.web;
 
 import com.huotu.ymr.common.CommonEnum;
-import com.huotu.ymr.common.EnumHelper;
+import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.share.BackendShareModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
+import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,6 +33,10 @@ public class ShareManagerController {
 
     @Autowired
     StaticResourceService staticResourceService;
+
+    @Autowired
+    ConfigRepository configRepository;
+
 
     @RequestMapping(value = "/showBottomGeneralize",method = RequestMethod.GET)
     public String showBottomGeneralize() throws Exception{
@@ -106,7 +110,6 @@ public class ShareManagerController {
         if (shareSearchModel.getPageNoStr() < 0) {
             shareSearchModel.setPageNoStr(0);
         }
-
         Page<Share> shares=shareService.findPcShareList(shareSearchModel);
         model.addAttribute("allShareList", shares);//文章列表
         model.addAttribute("totalPages",shares.getTotalPages());//总页数
@@ -116,8 +119,69 @@ public class ShareManagerController {
 
     }
 
-    @RequestMapping(value = "addShare")
-    public String addShare(BackendShareModel backendShareModel,Model model) throws Exception{
+    /**
+     * 进入新增帖子页面
+     * @param share
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/addShare")
+    public String addShare(Share share,Model model) throws Exception{
+        Config configGT =configRepository.findOne("GlobalTransmit");
+        Config configTT =configRepository.findOne("GlobalTotal");
+        if(configGT==null){
+            configGT=new Config();
+            configGT.setKey("GlobalTransmit");
+            configGT.setValue("0");
+            configRepository.save(configGT);
+        }
+        if(configTT==null){
+            configTT=new Config();
+            configTT.setKey("GlobalTotal");
+            configTT.setValue("0");
+            configRepository.save(configTT);
+        }
+        model.addAttribute("GlobalTransmit",configGT.getValue());
+        model.addAttribute("GlobalTotal",configTT.getValue());
+        model.addAttribute("shareTypes",CommonEnum.ShareType.values());
+        return "manager/share/addShare";
+    }
+
+    /**
+     * 进入修改帖子页面
+     * @param shareId   帖子ID
+     * @param model     返回的model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/modifyShare",method = RequestMethod.GET)
+    public String modifyShare(Long shareId,Model model) throws Exception{
+        if(shareId==null){
+            throw new Exception("参数错误！,参数为空！");
+        }
+        Share share=shareService.findOneShare(shareId);
+        if(share==null){
+            throw new Exception("找不到帖子了~或许已被删除~");
+        }
+        Config configGT =configRepository.findOne("GlobalTransmit");
+        Config configTT =configRepository.findOne("GlobalTotal");
+        if(configGT==null){
+            configGT=new Config();
+            configGT.setKey("GlobalTransmit");
+            configGT.setValue("0");
+            configRepository.save(configGT);
+        }
+        if(configTT==null){
+            configTT=new Config();
+            configTT.setKey("GlobalTotal");
+            configTT.setValue("0");
+            configRepository.save(configTT);
+        }
+        model.addAttribute("GlobalTransmit",configGT.getValue());
+        model.addAttribute("GlobalTotal",configTT.getValue());
+        model.addAttribute("shareTypes",CommonEnum.ShareType.values());
+        model.addAttribute("share",share);
         return "manager/share/addShare";
     }
     /**
@@ -126,47 +190,59 @@ public class ShareManagerController {
      * @return
      */
     @RequestMapping(value = "/saveShare",method = RequestMethod.POST)
-    public String saveShare(BackendShareModel backendShareModel) throws Exception{
-
-        Share share=new Share();
-        share.setName("官方");
-        share.setCheckStatus(CommonEnum.CheckType.audit);
-        share.setOwnerId(0L);//todo 当前登录的用户
-        share.setScore(0);
-        share.setTitle(backendShareModel.getShareTitle());
-        share.setLinkUrl("");//todo
-        share.setContent(backendShareModel.getContent());
-        share.setImg(backendShareModel.getShareImg());
-        share.setIntro("");//todo
+    public String saveShare(Share share) throws Exception{
+        share.setImg(share.getImg());
+//        share.setName("官方");
+//        share.setCheckStatus(CommonEnum.CheckType.audit);
+//        share.setOwnerId(0L);//todo 当前登录的用户(官方UserId)
+//        share.setScore(backendShareModel.getAloneTotal()==null?backendShareModel.getOverallTotal():backendShareModel.getAloneTotal());
+//        share.setTitle(backendShareModel.getShareTitle());
+//        share.setUseLink(backendShareModel.getUseLink());
+//        share.setLinkUrl(backendShareModel.getLinkUrl());//todo
+//        share.setContent(backendShareModel.getContent());
+//        share.setImg(backendShareModel.getShareImg());
+//        share.setIntro(backendShareModel.);//todo
         share.setOwnerType(CommonEnum.UserType.official);
-        share.setReason("");
+//        share.setReason("");
 //        share.setView(0L);
 //        share.setCommentQuantity(0L);
 //        share.setPraiseQuantity(0L);
-        share.setPostReward(0);
+//        share.setPostReward(0);//todo
 //        share.setEnabledRecommendProduct(false);//todo
-        share.setTop(backendShareModel.getTop());
-        share.setUsedScore(0);
-        share.setTime(new Date());
+//        share.setTop(false);
+//        share.setUsedScore(0);
+//        share.setTime(new Date());
 //        share.setRelayQuantity(0L);
-        share.setShareType(EnumHelper.getEnumType(CommonEnum.ShareType.class,backendShareModel.getShareType()));
-        share.setUseLink(false);
-        share.setRelayReward(0);
-        shareService.addShare(share);
+//        share.setShareType(EnumHelper.getEnumType(CommonEnum.ShareType.class,backendShareModel.getShareType()));
+//        share.setRelayReward(backendShareModel.getAloneTransmit() == null ? backendShareModel.getOverallTransmit() : backendShareModel.getAloneTransmit());
+//        shareService.saveShare(share);
         return "redirect:getYmrShareList";
     }
 
+//    /**
+//     * 后台添加爱分享内容
+//     *
+//     * @return
+//     */
+//    @RequestMapping(value = "/modifyShare",method = RequestMethod.GET)
+//    public String modifyShare(Long shareId,Model model) throws Exception{
+//
+//        return "redirect:getYmrShareList";
+//    }
+
+
+
 
     /**
-     * 帖子的通过与不通过
+     * 帖子的操作，0：置顶，1：审核通过，2：取消置顶，3：审核不通过， 4：删除
      * @param shareId   帖子ID
-     * @param type      0：不通过，1：通过
+     * @param type      操作类型
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/passOrNot",method = RequestMethod.POST)
+    @RequestMapping(value = "/setShare",method = RequestMethod.POST)
     @ResponseBody
-    public ResultModel passOrNot(Long shareId,Long type) throws Exception{
+    public ResultModel setShare(Long shareId,Integer type) throws Exception{
         ResultModel resultModel=new ResultModel();
         if(shareId==null){
             resultModel.setCode(0);
@@ -178,12 +254,26 @@ public class ShareManagerController {
             resultModel.setCode(0);
             resultModel.setMessage("没找到该帖子，或许已被删除!");
         }
-            if(type==0){
-            share.setCheckStatus(CommonEnum.CheckType.notPass);
-        }else if(type==1){
-            share.setCheckStatus(CommonEnum.CheckType.pass);
+        switch (type){
+            case 0:
+                share.setTop(true);
+                break;
+            case 1:
+                share.setCheckStatus(CommonEnum.CheckType.pass);
+                break;
+            case 2:
+                share.setTop(false);
+                break;
+            case 3:
+                share.setCheckStatus(CommonEnum.CheckType.notPass);
+                break;
+            case 4:
+                share.setCheckStatus(CommonEnum.CheckType.delete);
+                break;
+            default:
+                break;
         }
-        share=shareService.addShare(share);
+        share=shareService.saveShare(share);
         resultModel.setCode(1);
         resultModel.setMessage(share.getCheckStatus().getName());
         return resultModel;
@@ -199,6 +289,20 @@ public class ShareManagerController {
 //    @RequestMapping(value = "/setTopOrNot")
 //    @ResponseBody
 //    public ResultModel setTopOrNot(Long shareId,Long type) throws Exception{
+//        ResultModel resultModel=new ResultModel();
+//        if(shareId==null){
+//            resultModel.setCode(0);
+//            resultModel.setMessage("参数异常");
+//            return resultModel;
+//        }
+//        Share share=shareService.findOneShare(shareId);
+//        if(Objects.isNull(share)){
+//            resultModel.setCode(0);
+//            resultModel.setMessage("没找到该帖子，或许已被删除!");
+//        }
+//
+//
+//
 //
 //    }
 

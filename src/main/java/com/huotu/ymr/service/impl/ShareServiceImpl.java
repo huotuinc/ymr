@@ -100,7 +100,7 @@ public class ShareServiceImpl implements ShareService {
     }
 
     @Override
-    public Share addShare(Share share) throws Exception {
+    public Share saveShare(Share share) throws Exception {
         return shareRepository.save(share);
     }
 

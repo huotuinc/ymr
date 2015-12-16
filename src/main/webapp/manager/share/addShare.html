@@ -29,8 +29,7 @@
 </head>
 
 <body onload="firstLoad()">
-<form method="post" action="saveShare" id="form1" th:object="${backendShareModel}">
-    <input type="hidden" id="shareType" name="shareType" th:value="*{shareType}"/>
+<form method="post" action="saveShare" id="form1" th:object="${share}">
     <div class="container">
         <div class="blank10">
         </div>
@@ -38,49 +37,10 @@
             <div class="h">
       <span class="icon-sprite icon-magnifier">
       </span>
-                <h3>众筹新增后台</h3>
+                <h3>帖子新增后台</h3>
             </div>
             <div class="cnt-wp" style="padding: 35px 10px 10px;">
                 <div id="makeTab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
-
-
-
-
-                    <!-- 以下是页卡-->
-                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border" style="height: 28px;">
-                        <ul style="height: 28px; line-height: 28px;">
-                            <span class="left-placeholder">
-
-                            </span>
-                            <li class="om-state-default om-corner-top om-tabs-activated om-state-active">
-                                <span class="lileft"></span>
-                                <span class="lileft"></span>
-                                <a href="#tab1" onclick="changePage(1)" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    咨询
-                                </a>
-                                <span class="liright"></span>
-                            </li>
-                            <li class="om-state-default om-corner-top">
-                                <span class="lileft"></span>
-                                <span class="lileft"></span>
-                                <a href="#tab0" onclick="changePage(2)" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    团购
-                                </a>
-                                <span class="liright"></span>
-                            </li>
-                            <span class="right-placeholder"></span>
-                            <li class="om-state-default om-corner-top">
-                                <span class="lileft"></span>
-                                <a href="#tab1" onclick="changePage(3)" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    众筹项目
-                                </a>
-                                <span class="liright"></span>
-                            </li>
-                            <span class="right-placeholder"></span>
-                        </ul>
-                    </div>
-                    <!-- 页卡结束-->
-                    <!-- 可见等级结束-->
 
                     <!-- 以下设置表单-->
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
@@ -91,11 +51,22 @@
                                     <div></div>
                                     <table cellpadding="0" cellspacing="0" width="100%">
                                         <tbody>
+                                        <tr>
+                                            <th>帖子类型:</th>
+                                            <td>
+                                                <!--<input th:each="type:${shareTypes}"-->
+                                                       <!--th:checked="*{shareType==null?false:(shareType.name==${type.name})}"-->
+                                                       <!--type="radio" name="shareType" th:id="${type.value}"/>-->
+                                                <input th:value="${shareTypes[0]}" type="radio" id="shareType0" name="shareType"/>资讯
+                                                <input th:value="${shareTypes[1]}" type="radio" id="shareType1" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='团购')}"/>团购
+                                                <input th:value="${shareTypes[2]}" type="radio" id="shareType2" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='众筹项目')}"/>众筹项目
+                                            </td>
+                                        </tr>
                                             <tr>
                                                 <th>标题:</th>
                                                     <td style="border-top: 1px solid #ddd;">
                                                         <span id="sharezx"></span>
-                                                <input name="shareTitle" type="text" id="shareTitle" th:text="*{shareTitle}" class="input-normal" placeholder=""/></td>
+                                                <input name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
 
                                             </tr>
                                         <p style="clean:both;"></p>
@@ -106,7 +77,8 @@
 
                                                 <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
                                                     <span>未上传</span>
-                                                    <img style="display:none" id="share_img" th:src="*{shareImg}" width="80px" height="80px"/>
+                                                    <img style="display:none" id="share_img" th:src="*{img}" width="80px" height="80px"/>
+                                                    <input type="hidden" name="img" th:value="*{img}"/>
                                                 </div>
 
                                                 <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
@@ -121,27 +93,52 @@
                                             </td>
                                         </tr>
                                         <tr>
+                                            <th>外链:</th>
+                                            <td>
+                                                <input type="radio" id="useLinkNo" name="useLink" th:checked="!*{useLink}"/>关闭
+                                                <input type="radio" id="useLinkYes" name="useLink" th:checked="*{useLink}"/>启用外链
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>外链地址</th>
+                                            <td><input type="text" id="linkUrl" name="linkUrl" th:text="*{linkUrl}"/></td>
+
+                                        </tr>
+                                        <tr>
                                             <th>内容:</th>
                                             <td><textarea id="content" th:text="*{content}" name="content" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
                                             </td>
                                         </tr>
 
                                             <tr>
+                                                <th>是否开启推荐产品:</th>
+                                                <td>
+                                                    <input type="radio" id="enabledRecommendProductNo" name="enabledRecommendProduct" th:checked="!*{enabledRecommendProduct}"/>关闭
+                                                    <input type="radio" id="enabledRecommendProductYes" name="enabledRecommendProduct" th:checked="*{enabledRecommendProduct}"/>开启
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>推荐产品</th>
+                                                <td><input type="text" id="" name=""/></td>
+
+                                            </tr>
+
+                                            <tr>
                                                 <th>全局配置:</th>
                                                 <td>
-                                                    <input th:text="*{overallTransmit}" name="overallTransmit" type="text" id="overallTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <input th:value="${GlobalTransmit}" name="GlobalTransmit" type="text" id="GlobalTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
                                                     <span style=" vertical-align: text-top;">转发积分</span>
-                                                    <input th:text="*{overallTotal}" name="overallTotal" type="text" id="overallTotal" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <input th:value="${GlobalTotal}" name="GlobalTotal" type="text" id="GlobalTotal" class="input-normal" placeholder="" style="text-align:center;"/>
                                                     <span style=" vertical-align: text-top;">总积分</span>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <th>单独配置:</th>
                                                 <td>
-                                                    <input th:text="*{aloneTransmit}" name="aloneTransmit" type="text" id="aloneTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">转发积分</span>
-                                                    <input th:text="*{aloneTotal}" name="aloneTotal" type="text" id="aloneTotal" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">总积分</span>
+                                                    <input th:value="*{relayReward}==null?${GlobalTransmit}:*{relayReward}" name="relayReward" type="text" id="relayReward" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">转发奖励积分</span>
+                                                    <input th:value="*{score}==null?${GlobalTotal}:*{score}" name="score" type="text" id="score" class="input-normal" placeholder="" style="text-align:center;"/>
+                                                    <span style=" vertical-align: text-top;">总奖励积分</span>
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -194,6 +191,7 @@
                     $("#share_img").attr("src",resultModel.message);
                     $("#share_img").show();
                     $("#uploadpicCover").children("span").hide();
+                    $("input[name='img']").value=resultModel.message;
                 }
             },
             error: function(data, status, e) {
@@ -204,14 +202,14 @@
     }
 
 
-    //提交资讯
+    //提交帖子
     function submitForm1(obj) {
-        var shareTitle = $("#shareTitle").val();
+        var shareTitle = $("#title").val();
         var content = $("#content").val();
-        var overallTransmit = $("#overallTransmit").val();
-        var overallTotal = $("#overallTotal").val();
-        var aloneTransmit = $("#aloneTransmit").val();
-        var aloneTotal = $("#aloneTotal").val();
+        var overallTransmit = $("#GlobalTransmit").val();
+        var overallTotal = $("#GlobalTotal").val();
+        var aloneTransmit = $("#relayReward").val();
+        var aloneTotal = $("#score").val();
 
         if (shareTitle.length == 0) {
             $.jBox.tip("请输入文章标题");
@@ -238,6 +236,7 @@
             return;
         }
 
+
         $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
             if (v == 'ok')
                 $("#form1").submit();
@@ -247,75 +246,22 @@
         });
 
     }
-    //提交团购
-    function submitForm2(obj) {
-//        var companyAddr1 = $("#companyAddr1").val();
-//        var companyName1 = $("#companyName1").val();
-//        var companyTel1 = $("#companyTel1").val();
-//        if (companyAddr1 == "" || companyAddr1 == null) {
-//            $.jBox.tip("请填写公司名称");
-//            return;
-//        }
-//        if (companyName1 == null || companyName1 == "") {
-//            $.jBox.tip("请填写注册电话");
-//            return;
-//        }
-//        if (companyTel1 == null || companyTel1 == "") {
-//            $.jBox.tip("请填写注册地址");
-//            return;
-//        }
-       /* $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
-            if (v == 'ok')
-                $("#form2").submit();
-            else if (v == 'cancel')
-                return;
-
-        });*/
-
-
-    }
-    //提交众筹
-    function submitForm3(obj) {
-//        var shipName = $("#shipName").val();
-//        var shipMobile = $("#shipMobile").val();
-//        var shipAddr = $("#shipAddr").val();
-//        if (shipName == "" || shipName == null) {
-//            $.jBox.tip("请填写联系人");
-//            return;
-//        }
-//        if (shipMobile == null || shipMobile == "") {
-//            $.jBox.tip("请填写联系电话");
-//            return;
-//        }
-//        if (shipAddr == null || shipAddr == "") {
-//            $.jBox.tip("请填写详细地址");
-//            return;
-//        }
-        $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
-            if (v == 'ok')
-                $("#form3").submit();
-            else if (v == 'cancel')
-                return;
-
-        });
-    }
-
     //初始化进页面
     function firstLoad() {
-        document.getElementById('form1').style.display = '';
         /*<![CDATA[*/
         var img=/*[[*{shareType}]]*/'';
-        if(img.length>0){
+        if(img!=null){
             $("#share_img").show();
             $("#uploadpicCover").children("span").hide();
+            $("input[name='shareType']").attr("disabled",true)
         }
+        $("input[name='shareType']").eq(0).attr("checked","checked");
+
         /*]]>*/
 
-//            document.getElementById('form2').style.display = 'none';
-//            document.getElementById('form3').style.display = 'none';
     }
 
-    //切换标签
+    //切换单选按钮
     function changePage(type) {
 
         //资讯
@@ -341,73 +287,7 @@
         }
     }
 
-//    //切换发票模式
-//    function change(type) {
-//        //普通发票
-//        if (type == 2) {
-//            document.getElementById('form1').style.display = 'none';
-//            document.getElementById('form2').style.display = '';
-//            document.getElementById('RadioGroup4').checked = true;
-//            document.getElementById('RadioGroup3').checked = false;
-//            document.getElementById('RadioGroup2').checked = false;
-//            document.getElementById('RadioGroup1').checked = false;
-//            if (document.getElementById('defaultType2').checked == false) {
-//                $("#defaultType3").val("1");
-//                $("#defaultType4").val("1");
-//
-//            }
-//            else {
-//                $("#defaultType3").val("0");
-//                $("#defaultType4").val("0");
-//            }
-//
-//        }
-//        //增值税发票
-//        if (type == 1) {
-//            document.getElementById('form1').style.display = '';
-//            document.getElementById('form2').style.display = 'none';
-//            document.getElementById('RadioGroup1').checked = true;
-//            document.getElementById('RadioGroup4').checked = false;
-//            document.getElementById('RadioGroup2').checked = false;
-//            document.getElementById('RadioGroup3').checked = false;
-//            if (document.getElementById('defaultType1').checked == false) {
-//                $("#defaultType3").val("0");
-//                $("#defaultType4").val("0");
-//
-//            }
-//            else {
-//                $("#defaultType3").val("1");
-//                $("#defaultType4").val("1");
-//                ;
-//            }
-//        }
-//
-//    }
 
-//    //是否默认发票
-//    function check(type) {
-//        if (type == 1) {
-//            if (document.getElementById('defaultType1').checked == true) {
-//                document.getElementById('defaultType2').checked = false;
-//                $("#defaultType3").val("1");
-//                $("#defaultType4").val("1");
-//            }
-//            else {
-//                $("#defaultType3").val("0");
-//                $("#defaultType4").val("0");
-//            }
-//
-//
-//        }
-//        if (type == 2) {
-//            document.getElementById('defaultType1').checked = false;
-//            ;
-//            $("#defaultType3").val("0");
-//            $("#defaultType4").val("0");
-//
-//
-//        }
-//    }
 </script>
 <script charset="utf-8" src="richText/kindeditor-min.js" th:src="@{/richText/kindeditor-min.js}"></script>
 <script charset="utf-8" src="richText/lang/zh_CN.js" th:src="@{/richText/lang/zh_CN.js}"></script>

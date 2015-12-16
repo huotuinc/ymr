@@ -5,21 +5,20 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+@Entity
+@Getter
+@Setter
+@Cacheable(value = false)
 /**
  * 美投设置项
  * 如全局奖励设置 中介费率 分享出去的web页底部推广
  * CrowdFundingTip = 我有A万，找人合作筹募
  * MoneyToScore = 10 (1元10积分)
- */
-@Entity
-@Getter
-@Setter
-@Cacheable(value = false)
-
-/**
- * CrowdFundingTip = 我有A万，找人合作筹募
- * MoneyToScore = 10 (1元10积分)
  * GlobalAgencyFee 全局中介费
+ *
+ *
+ * GlobalTransmit=0      全局转发积分，默认为0
+ * GlobalTotal=0        全局配置总积分，默认为0
  */
 public class Config {
 
