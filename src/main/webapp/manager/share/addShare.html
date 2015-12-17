@@ -49,7 +49,7 @@
                                 <div class="division">
                                     <div></div>
                                     <div></div>
-                                    <table cellpadding="0" cellspacing="0" width="100%">
+                                    <table id="submitTable" cellpadding="0" cellspacing="0" width="100%">
                                         <tbody>
                                         <tr>
                                             <th>帖子类型:</th>
@@ -57,16 +57,34 @@
                                                 <!--<input th:each="type:${shareTypes}"-->
                                                        <!--th:checked="*{shareType==null?false:(shareType.name==${type.name})}"-->
                                                        <!--type="radio" name="shareType" th:id="${type.value}"/>-->
-                                                <input th:value="${shareTypes[0]}" type="radio" id="shareType0" name="shareType"/>资讯
-                                                <input th:value="${shareTypes[1]}" type="radio" id="shareType1" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='团购')}"/>团购
-                                                <input th:value="${shareTypes[2]}" type="radio" id="shareType2" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='众筹项目')}"/>众筹项目
+                                                <input onchange="changeType()" th:value="${shareTypes[0]}" type="radio" name="shareType"/>资讯
+                                                <input onchange="changeType()" th:value="${shareTypes[1]}" type="radio" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='团购')}"/>团购
+                                                <input onchange="changeType()" th:value="${shareTypes[2]}" type="radio" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='众筹项目')}"/>众筹项目
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>全局配置:</th>
+                                            <td>
+                                                转发积分:<input th:value="${GlobalTransmit}" name="GlobalTransmit" type="text" id="GlobalTransmit" class="input-normal" placeholder="" style="text-align:center; width: 50px"/>
+                                                <span style=" vertical-align: text-top;">分</span>
+                                                总积分:<input th:value="${GlobalTotal}" name="GlobalTotal" type="text" id="GlobalTotal" class="input-normal" placeholder="" style="text-align:center;width: 50px"/>
+                                                <span style=" vertical-align: text-top;">分</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>单独配置:</th>
+                                            <td>
+                                                转发奖励积分:<input th:value="*{relayReward}==null?${GlobalTransmit}:*{relayReward}" name="relayReward" type="text" id="relayReward" class="input-normal" placeholder="" style="text-align:center;width: 50px"/>
+                                                <span style=" vertical-align: text-top;">分</span>
+                                                总奖励积分:<input th:value="*{score}==null?${GlobalTotal}:*{score}" name="score" type="text" id="score" class="input-normal" placeholder="" style="text-align:center;width: 50px"/>
+                                                <span style=" vertical-align: text-top;">分</span>
                                             </td>
                                         </tr>
                                             <tr>
                                                 <th>标题:</th>
                                                     <td style="border-top: 1px solid #ddd;">
                                                         <span id="sharezx"></span>
-                                                <input name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
+                                                <input maxlength="13" style="width:170px" name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
 
                                             </tr>
                                         <p style="clean:both;"></p>
@@ -76,9 +94,9 @@
                                             <td>
 
                                                 <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
-                                                    <span>未上传</span>
-                                                    <img style="display:none" id="share_img" th:src="*{img}" width="80px" height="80px"/>
-                                                    <input type="hidden" name="img" th:value="*{img}"/>
+                                                    <span th:style="*{img}!=null?'display:none':''">未上传</span>
+                                                    <img  th:style="*{img}==null?'display:none':''" id="share_img" th:src="*{img}" width="80px" height="80px"/>
+                                                    <input type="hidden" name="img" th:value="''"/>
                                                 </div>
 
                                                 <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
@@ -89,19 +107,19 @@
                                                         <input type="file" onchange="uploadImage()"  name="shareImage" id="shareImage" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
                                                     </a>
                                                 </div>
-                                                <input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>
+                                                <!--<input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>-->
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr id="useLink">
                                             <th>外链:</th>
                                             <td>
-                                                <input type="radio" id="useLinkNo" name="useLink" th:checked="!*{useLink}"/>关闭
-                                                <input type="radio" id="useLinkYes" name="useLink" th:checked="*{useLink}"/>启用外链
+                                                <input value="0" onchange="useLinkchange(this)" type="radio" name="useLink" th:checked="!*{useLink}"/>关闭
+                                                <input value="1" onchange="useLinkchange(this)" type="radio" name="useLink" th:checked="*{useLink}"/>启用外链
                                             </td>
                                         </tr>
-                                        <tr>
+                                        <tr id="linkUrlTr">
                                             <th>外链地址</th>
-                                            <td><input type="text" id="linkUrl" name="linkUrl" th:text="*{linkUrl}"/></td>
+                                            <td><input style="width: 49%" type="text" id="linkUrl" name="linkUrl" th:text="*{linkUrl}"/></td>
 
                                         </tr>
                                         <tr>
@@ -110,37 +128,22 @@
                                             </td>
                                         </tr>
 
-                                            <tr>
+                                            <tr id="enabledRecommendProduct">
                                                 <th>是否开启推荐产品:</th>
                                                 <td>
-                                                    <input type="radio" id="enabledRecommendProductNo" name="enabledRecommendProduct" th:checked="!*{enabledRecommendProduct}"/>关闭
-                                                    <input type="radio" id="enabledRecommendProductYes" name="enabledRecommendProduct" th:checked="*{enabledRecommendProduct}"/>开启
+                                                    <input value="0" type="radio" name="enabledRecommendProduct" th:checked="!*{enabledRecommendProduct}"/>关闭
+                                                    <input value="1" type="radio" name="enabledRecommendProduct" th:checked="*{enabledRecommendProduct}"/>开启
                                                 </td>
                                             </tr>
-                                            <tr>
+                                            <tr id="recommend">
                                                 <th>推荐产品</th>
-                                                <td><input type="text" id="" name=""/></td>
+                                                <td><a class="btn-lit" href="javascript:recommendGoods();">
+                                                    <span>添加产品</span>
+                                                    </a>
+                                                </td>
 
                                             </tr>
 
-                                            <tr>
-                                                <th>全局配置:</th>
-                                                <td>
-                                                    <input th:value="${GlobalTransmit}" name="GlobalTransmit" type="text" id="GlobalTransmit" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">转发积分</span>
-                                                    <input th:value="${GlobalTotal}" name="GlobalTotal" type="text" id="GlobalTotal" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">总积分</span>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <th>单独配置:</th>
-                                                <td>
-                                                    <input th:value="*{relayReward}==null?${GlobalTransmit}:*{relayReward}" name="relayReward" type="text" id="relayReward" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">转发奖励积分</span>
-                                                    <input th:value="*{score}==null?${GlobalTotal}:*{score}" name="score" type="text" id="score" class="input-normal" placeholder="" style="text-align:center;"/>
-                                                    <span style=" vertical-align: text-top;">总奖励积分</span>
-                                                </td>
-                                            </tr>
                                         </tbody>
 
                                     </table>
@@ -191,13 +194,23 @@
                     $("#share_img").attr("src",resultModel.message);
                     $("#share_img").show();
                     $("#uploadpicCover").children("span").hide();
-                    $("input[name='img']").value=resultModel.message;
+                    $("input[name='img']").val(resultModel.message);
                 }
             },
             error: function(data, status, e) {
 
                 $.jBox("上传失败，请检查网络后重试"+e);
             }
+        });
+    }
+
+
+    function recommendGoods(){
+        $.jBox("iframe:http://www.baidu.com", {
+            title: "百度一下",
+            width: 800,
+            height: 350,
+            buttons: { '关闭': true }
         });
     }
 
@@ -249,41 +262,66 @@
     //初始化进页面
     function firstLoad() {
         /*<![CDATA[*/
-        var img=/*[[*{shareType}]]*/'';
-        if(img!=null){
-            $("#share_img").show();
-            $("#uploadpicCover").children("span").hide();
-            $("input[name='shareType']").attr("disabled",true)
-        }
+//        var img=/*[[*{img}]]*/'';
+//        if(img!=null){
+//            $("#share_img").show();
+//            $("#uploadpicCover").children("span").hide();
+//            $("input[name='shareType']").attr("disabled",true)
+//        }
         $("input[name='shareType']").eq(0).attr("checked","checked");
-
+        $("#linkUrl").attr("disabled",true);
         /*]]>*/
 
     }
 
-    //切换单选按钮
-    function changePage(type) {
+    function useLinkchange(obj){
+        var link=$("input[name='useLink']:checked").val();
+        if(link==0){
+            window.editor.readonly(false);
+            //$("#content").removeAttr("readonly");
+            $("#linkUrl").attr("disabled",true);
+        }
+        if(link==1){
+            window.editor.readonly(true);
+            //$("#content").attr("readonly","readonly");
+            $("#linkUrl").attr("disabled",false);
+        }
+    }
+
+    //切换帖子类型
+    function changeType() {
+        var type=$("input[name='shareType']:checked").val();
 
         //资讯
-        if (type == 1) {
-            document.getElementById('form1').style.display = '';
-//            document.getElementById('form2').style.display = 'none';
-//            document.getElementById('form3').style.display = 'none';
-//            document.getElementById('RadioGroup4').checked = true;
-
+        if (type == "information") {
+            $("#useLink").fadeIn();
+            $("#linkUrlTr").fadeIn();
+            $("#enabledRecommendProduct").fadeIn();
+            $("#recommend").fadeIn();
+            var urlFlag=$("input[name='useLink']:checked").val();
+            if(urlFlag==0){
+                $("input[name='linkUrl']").attr("disabled",true);
+            }else{
+                window.editor.readonly(false);
+            }
         }
         //团购
-        if (type == 2) {
-            document.getElementById('form1').style.display = 'none';
-//            document.getElementById('form2').style.display = '';
-//            document.getElementById('form3').style.display = 'none';
+        if (type == "group") {
+            $("#linkUrlTr").fadeIn();
+            $("#linkUrl").attr("disabled",false);
+            $("#useLink").fadeOut();
+            $("#enabledRecommendProduct").fadeOut();
+            $("#recommend").fadeOut();
+            window.editor.readonly(true);
 
         }
         //众筹
-        if (type == 3) {
-            document.getElementById('form1').style.display = 'none';
-//            document.getElementById('form2').style.display = 'none';
-//            document.getElementById('form3').style.display = '';
+        if (type == "crowdFunding") {
+            $("#useLink").fadeOut();
+            $("#linkUrlTr").fadeOut();
+            $("#enabledRecommendProduct").fadeOut();
+            $("#recommend").fadeOut();
+            window.editor.readonly(true);
         }
     }
 

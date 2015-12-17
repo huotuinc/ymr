@@ -96,11 +96,11 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         ServletContextTemplateResolver rootTemplateResolver = new ServletContextTemplateResolver();
         rootTemplateResolver.setPrefix("/");
+        rootTemplateResolver.setCacheable(false);
         rootTemplateResolver.setSuffix(".html");
         rootTemplateResolver.setCharacterEncoding("UTF-8");
 
         engine.setTemplateResolver(rootTemplateResolver);
-
         resolver.setTemplateEngine(engine);
 //        resolver.setOrder(99);
         resolver.setOrder(2147483647 + 10);

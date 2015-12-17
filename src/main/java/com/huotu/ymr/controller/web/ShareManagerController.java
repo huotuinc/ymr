@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -164,6 +165,7 @@ public class ShareManagerController {
         if(share==null){
             throw new Exception("找不到帖子了~或许已被删除~");
         }
+        share.setImg(staticResourceService.getResource(share.getImg()).toString());
         Config configGT =configRepository.findOne("GlobalTransmit");
         Config configTT =configRepository.findOne("GlobalTotal");
         if(configGT==null){
@@ -191,7 +193,22 @@ public class ShareManagerController {
      */
     @RequestMapping(value = "/saveShare",method = RequestMethod.POST)
     public String saveShare(Share share) throws Exception{
-        share.setImg(share.getImg());
+        String shareImg=share.getImg();
+        share.setImg(shareImg.substring(shareImg.indexOf("/_resource")));
+        share.setOwnerId(0L);//todo 官方ID
+        share.setName("官方");
+        share.setOwnerType(CommonEnum.UserType.official);
+        share.setIntro("");//todo 简介从内容中获取
+        share.setTime(new Date());
+        share.setPostReward(0);
+        share.setReason("");
+        share.setTop(false);
+        share.setUsedScore(0);
+        share.setCheckStatus(CommonEnum.CheckType.audit);
+        shareService.saveShare(share);
+//        if(share.getShareType()!=CommonEnum.ShareType.information){
+//            share.setLinkUrl();
+//        }
 //        share.setName("官方");
 //        share.setCheckStatus(CommonEnum.CheckType.audit);
 //        share.setOwnerId(0L);//todo 当前登录的用户(官方UserId)
@@ -202,7 +219,7 @@ public class ShareManagerController {
 //        share.setContent(backendShareModel.getContent());
 //        share.setImg(backendShareModel.getShareImg());
 //        share.setIntro(backendShareModel.);//todo
-        share.setOwnerType(CommonEnum.UserType.official);
+//        share.setOwnerType(CommonEnum.UserType.official);
 //        share.setReason("");
 //        share.setView(0L);
 //        share.setCommentQuantity(0L);
@@ -215,7 +232,7 @@ public class ShareManagerController {
 //        share.setRelayQuantity(0L);
 //        share.setShareType(EnumHelper.getEnumType(CommonEnum.ShareType.class,backendShareModel.getShareType()));
 //        share.setRelayReward(backendShareModel.getAloneTransmit() == null ? backendShareModel.getOverallTransmit() : backendShareModel.getAloneTransmit());
-//        shareService.saveShare(share);
+
         return "redirect:getYmrShareList";
     }
 
