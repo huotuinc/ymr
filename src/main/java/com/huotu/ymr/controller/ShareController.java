@@ -106,7 +106,6 @@ public class ShareController implements ShareSystem {
         share.setContent(content);
 //        share.setImg(commonConfigService.getResoureServerUrl()+imgUrl);//todo
         share.setImg(staticResourceService.getResource(imgUrl).toString());//todo
-
         share.setIntro("");
         share.setPostReward(Integer.parseInt(config.getValue()));
 

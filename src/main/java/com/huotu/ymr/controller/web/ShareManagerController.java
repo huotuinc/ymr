@@ -201,7 +201,7 @@ public class ShareManagerController {
             Uri uri=new Uri(share.getImg());
             String imgPath=uri.getPath().substring(uri.getPath().indexOf(contextPath)+contextPath.length());
             share.setImg(imgPath);
-            share.setOwnerId(0L);//todo 官方ID
+            share.setOwnerId(123L);//todo 官方ID
             share.setName("官方");
             share.setOwnerType(CommonEnum.UserType.official);
             share.setIntro("");//todo 简介从内容中获取
