@@ -15,7 +15,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ResultModel {
+	private int error;
+
 	private int code;
 
 	private String message;
+
+	private String url;
 }
