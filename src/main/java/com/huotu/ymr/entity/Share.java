@@ -139,4 +139,10 @@ public class Share implements YmrComment {
     private String reason;
 
 
+    /**
+     * 是否进入了草稿箱
+     */
+    private Boolean drafts=false;
+
+
 }

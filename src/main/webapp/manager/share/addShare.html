@@ -30,6 +30,7 @@
 
 <body onload="firstLoad()">
 <form method="post" action="saveShare" id="form1" th:object="${share}">
+    <input type="hidden" name="id" th:value="*{id}"/>
     <div class="container">
         <div class="blank10">
         </div>
@@ -57,18 +58,18 @@
                                                 <!--<input th:each="type:${shareTypes}"-->
                                                        <!--th:checked="*{shareType==null?false:(shareType.name==${type.name})}"-->
                                                        <!--type="radio" name="shareType" th:id="${type.value}"/>-->
-                                                <input onchange="changeType()" th:value="${shareTypes[0]}" type="radio" name="shareType"/>资讯
-                                                <input onchange="changeType()" th:value="${shareTypes[1]}" type="radio" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='团购')}"/>团购
-                                                <input onchange="changeType()" th:value="${shareTypes[2]}" type="radio" name="shareType" th:checked="*{shareType==null?false:(shareType.name=='众筹项目')}"/>众筹项目
+                                                <input onchange="changeType()" th:value="${shareTypes[0]}" type="radio" name="shareType"/><label>资讯</label>
+                                                <input onchange="changeType()" th:value="${shareTypes[1]}" type="radio" name="shareType" /><label>团购</label>
+                                                <input onchange="changeType()" th:value="${shareTypes[2]}" type="radio" name="shareType" /><label>众筹项目</label>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th>全局配置:</th>
                                             <td>
-                                                转发积分:<input th:value="${GlobalTransmit}" name="GlobalTransmit" type="text" id="GlobalTransmit" class="input-normal" placeholder="" style="text-align:center; width: 50px"/>
+                                                转发奖励积分:<input th:value="${GlobalTransmit}" name="GlobalTransmit" type="text" id="GlobalTransmit" class="input-normal" placeholder="" style="text-align:center; width: 50px"/>
                                                 <span style=" vertical-align: text-top;">分</span>
-                                                总积分:<input th:value="${GlobalTotal}" name="GlobalTotal" type="text" id="GlobalTotal" class="input-normal" placeholder="" style="text-align:center;width: 50px"/>
-                                                <span style=" vertical-align: text-top;">分</span>
+                                                总奖励积分:<input th:value="${GlobalTotal}" name="GlobalTotal" type="text" id="GlobalTotal" class="input-normal" placeholder="" style="text-align:center;width: 50px"/>
+                                                <span style=" vertical-align: text-top;">分(奖励总积分默认为-1:表示积分无限制)</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -77,7 +78,7 @@
                                                 转发奖励积分:<input th:value="*{relayReward}==null?${GlobalTransmit}:*{relayReward}" name="relayReward" type="text" id="relayReward" class="input-normal" placeholder="" style="text-align:center;width: 50px"/>
                                                 <span style=" vertical-align: text-top;">分</span>
                                                 总奖励积分:<input th:value="*{score}==null?${GlobalTotal}:*{score}" name="score" type="text" id="score" class="input-normal" placeholder="" style="text-align:center;width: 50px"/>
-                                                <span style=" vertical-align: text-top;">分</span>
+                                                <span style=" vertical-align: text-top;">分(奖励总积分默认为-1:表示积分无限制)</span>
                                             </td>
                                         </tr>
                                             <tr>
@@ -96,7 +97,7 @@
                                                 <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
                                                     <span th:style="*{img}!=null?'display:none':''">未上传</span>
                                                     <img  th:style="*{img}==null?'display:none':''" id="share_img" th:src="*{img}" width="80px" height="80px"/>
-                                                    <input type="hidden" name="img" th:value="''"/>
+                                                    <input type="hidden" name="img" th:value="*{img}"/>
                                                 </div>
 
                                                 <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
@@ -110,6 +111,13 @@
                                                 <!--<input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>-->
                                             </td>
                                         </tr>
+
+                                        <tr>
+                                            <th>内容:</th>
+                                            <td><textarea id="content" th:text="*{content}" name="content" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
+                                            </td>
+                                        </tr>
+
                                         <tr id="useLink">
                                             <th>外链:</th>
                                             <td>
@@ -119,13 +127,8 @@
                                         </tr>
                                         <tr id="linkUrlTr">
                                             <th>外链地址</th>
-                                            <td><input style="width: 49%" type="text" id="linkUrl" name="linkUrl" th:text="*{linkUrl}"/></td>
+                                            <td><input style="width: 49%" type="text" id="linkUrl" name="linkUrl" th:value="*{linkUrl}"/></td>
 
-                                        </tr>
-                                        <tr>
-                                            <th>内容:</th>
-                                            <td><textarea id="content" th:text="*{content}" name="content" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
-                                            </td>
                                         </tr>
 
                                             <tr id="enabledRecommendProduct">
@@ -223,9 +226,14 @@
         var overallTotal = $("#GlobalTotal").val();
         var aloneTransmit = $("#relayReward").val();
         var aloneTotal = $("#score").val();
+        var imgUrl=$("input[name='img']").val();
 
         if (shareTitle.length == 0) {
             $.jBox.tip("请输入文章标题");
+            return;
+        }
+        if (imgUrl.length == 0) {
+            $.jBox.tip("请上传封面图片");
             return;
         }
         if (content.length==0) {
@@ -248,6 +256,17 @@
             $.jBox.tip("请输入单独配置的总积分");
             return;
         }
+        var rex=/^[0-9]*$/;
+        if(!rex.test(overallTransmit)||!rex.test(aloneTransmit)){
+            $.jBox.tip("积分请输入数字！");
+            return;
+        }
+        var rex=/^(-1)*|[0-9]*$/;
+        if(!rex.test(overallTotal)||!rex.test(aloneTotal)){
+            $.jBox.tip("积分请输入数字！");
+            return;
+        }
+
 
 
         $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
@@ -262,14 +281,26 @@
     //初始化进页面
     function firstLoad() {
         /*<![CDATA[*/
-//        var img=/*[[*{img}]]*/'';
-//        if(img!=null){
-//            $("#share_img").show();
-//            $("#uploadpicCover").children("span").hide();
-//            $("input[name='shareType']").attr("disabled",true)
-//        }
-        $("input[name='shareType']").eq(0).attr("checked","checked");
-        $("#linkUrl").attr("disabled",true);
+        var share=/*[[${share.shareType}]]*/'';
+        if(share!=null){
+            //将类型选择禁用(修改模式)
+            $("input[name='shareType']").attr("disabled",true);
+            switch (share.$name){
+                case 'information':
+                    $("input[name='shareType']").eq(0).attr("checked","checked");
+                    break;
+                case 'group':
+                    $("input[name='shareType']").eq(1).attr("checked","checked");
+                    break;
+                case 'crowdFunding':
+                    $("input[name='shareType']").eq(2).attr("checked","checked");
+                    break;
+            }
+        }else{
+            $("input[name='shareType']").eq(0).attr("checked","checked");
+        }
+        changeType();
+//        $("#linkUrl").attr("disabled",true);
         /*]]>*/
 
     }
@@ -301,8 +332,9 @@
             var urlFlag=$("input[name='useLink']:checked").val();
             if(urlFlag==0){
                 $("input[name='linkUrl']").attr("disabled",true);
-            }else{
                 window.editor.readonly(false);
+            }else{
+                window.editor.readonly(true);
             }
         }
         //团购
@@ -312,7 +344,7 @@
             $("#useLink").fadeOut();
             $("#enabledRecommendProduct").fadeOut();
             $("#recommend").fadeOut();
-            window.editor.readonly(true);
+            window.editor.readonly(false);
 
         }
         //众筹
@@ -321,11 +353,9 @@
             $("#linkUrlTr").fadeOut();
             $("#enabledRecommendProduct").fadeOut();
             $("#recommend").fadeOut();
-            window.editor.readonly(true);
+            window.editor.readonly(false);
         }
     }
-
-
 </script>
 <script charset="utf-8" src="richText/kindeditor-min.js" th:src="@{/richText/kindeditor-min.js}"></script>
 <script charset="utf-8" src="richText/lang/zh_CN.js" th:src="@{/richText/lang/zh_CN.js}"></script>

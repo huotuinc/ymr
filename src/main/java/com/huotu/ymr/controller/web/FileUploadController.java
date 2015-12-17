@@ -74,6 +74,7 @@ public class FileUploadController {
         //保存图片
         String fileName = StaticResourceService.SHSRES_IMG + UUID.randomUUID().toString() + ".png";
         URI uri=staticResourceService.uploadResource(fileName, shareImage.getInputStream());
+        String path=uri.getPath();
         response.setHeader("X-frame-Options", "SAMEORIGIN");
         resultModel.setCode(1);
         resultModel.setMessage(uri.toString());

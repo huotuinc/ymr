@@ -9,6 +9,7 @@ import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.StaticResourceService;
+import com.sun.jndi.toolkit.url.Uri;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -187,71 +189,48 @@ public class ShareManagerController {
         return "manager/share/addShare";
     }
     /**
-     * 后台添加爱分享内容
+     * 后台添加和修改爱分享内容
      *
      * @return
      */
     @RequestMapping(value = "/saveShare",method = RequestMethod.POST)
-    public String saveShare(Share share) throws Exception{
-        String shareImg=share.getImg();
-        share.setImg(shareImg.substring(shareImg.indexOf("/_resource")));
-        share.setOwnerId(0L);//todo 官方ID
-        share.setName("官方");
-        share.setOwnerType(CommonEnum.UserType.official);
-        share.setIntro("");//todo 简介从内容中获取
-        share.setTime(new Date());
-        share.setPostReward(0);
-        share.setReason("");
-        share.setTop(false);
-        share.setUsedScore(0);
-        share.setCheckStatus(CommonEnum.CheckType.audit);
-        shareService.saveShare(share);
-//        if(share.getShareType()!=CommonEnum.ShareType.information){
-//            share.setLinkUrl();
-//        }
-//        share.setName("官方");
-//        share.setCheckStatus(CommonEnum.CheckType.audit);
-//        share.setOwnerId(0L);//todo 当前登录的用户(官方UserId)
-//        share.setScore(backendShareModel.getAloneTotal()==null?backendShareModel.getOverallTotal():backendShareModel.getAloneTotal());
-//        share.setTitle(backendShareModel.getShareTitle());
-//        share.setUseLink(backendShareModel.getUseLink());
-//        share.setLinkUrl(backendShareModel.getLinkUrl());//todo
-//        share.setContent(backendShareModel.getContent());
-//        share.setImg(backendShareModel.getShareImg());
-//        share.setIntro(backendShareModel.);//todo
-//        share.setOwnerType(CommonEnum.UserType.official);
-//        share.setReason("");
-//        share.setView(0L);
-//        share.setCommentQuantity(0L);
-//        share.setPraiseQuantity(0L);
-//        share.setPostReward(0);//todo
-//        share.setEnabledRecommendProduct(false);//todo
-//        share.setTop(false);
-//        share.setUsedScore(0);
-//        share.setTime(new Date());
-//        share.setRelayQuantity(0L);
-//        share.setShareType(EnumHelper.getEnumType(CommonEnum.ShareType.class,backendShareModel.getShareType()));
-//        share.setRelayReward(backendShareModel.getAloneTransmit() == null ? backendShareModel.getOverallTransmit() : backendShareModel.getAloneTransmit());
-
+    public String saveShare(Share share,HttpServletRequest request) throws Exception{
+       String contextPath= request.getContextPath();
+        //新增
+        if(share.getId()==null){
+            Uri uri=new Uri(share.getImg());
+            String imgPath=uri.getPath().substring(uri.getPath().indexOf(contextPath)+contextPath.length());
+            share.setImg(imgPath);
+            share.setOwnerId(0L);//todo 官方ID
+            share.setName("官方");
+            share.setOwnerType(CommonEnum.UserType.official);
+            share.setIntro("");//todo 简介从内容中获取
+            share.setTime(new Date());
+            share.setPostReward(0);
+            share.setReason("");
+            share.setTop(false);
+            share.setUsedScore(0);
+            share.setCheckStatus(CommonEnum.CheckType.audit);
+            shareService.saveShare(share);
+        //修改
+        }else{
+            Share modifyShare=shareService.findOneShare(share.getId());
+            Uri uri=new Uri(share.getImg());
+            String imgPath=uri.getPath().substring(uri.getPath().indexOf(contextPath)+contextPath.length());
+            modifyShare.setImg(imgPath);
+            modifyShare.setTitle(share.getTitle());
+            modifyShare.setContent(share.getContent());
+            modifyShare.setUseLink(share.getUseLink());
+            modifyShare.setLinkUrl(share.getLinkUrl());
+            modifyShare.setEnabledRecommendProduct(share.getEnabledRecommendProduct());
+            shareService.saveShare(modifyShare);
+        }
         return "redirect:getYmrShareList";
     }
 
-//    /**
-//     * 后台添加爱分享内容
-//     *
-//     * @return
-//     */
-//    @RequestMapping(value = "/modifyShare",method = RequestMethod.GET)
-//    public String modifyShare(Long shareId,Model model) throws Exception{
-//
-//        return "redirect:getYmrShareList";
-//    }
-
-
-
 
     /**
-     * 帖子的操作，0：置顶，1：审核通过，2：取消置顶，3：审核不通过， 4：删除
+     * 帖子的操作，0：置顶，1：审核通过，2：取消置顶，3：审核不通过， 4：删除,5:移至草稿箱
      * @param shareId   帖子ID
      * @param type      操作类型
      * @return
@@ -286,6 +265,8 @@ public class ShareManagerController {
                 break;
             case 4:
                 share.setCheckStatus(CommonEnum.CheckType.delete);
+                break;
+            case 5:
                 break;
             default:
                 break;

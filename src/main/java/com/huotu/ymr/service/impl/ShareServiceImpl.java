@@ -39,7 +39,7 @@ public class ShareServiceImpl implements ShareService {
         boolean isEnough=true;
         //判断查找置顶的分享还是普通的分享，true为置顶
         Boolean findWho=true;
-        hql.append("select s from Share as s where s.status=true and s.checkStatus=1 ");
+        hql.append("select s from Share as s where s.status=true and s.checkStatus=1 and s.drafts=false ");
         if(!StringUtils.isEmpty(key)){
             hql.append(" and s.title like :key ");
         }
@@ -132,13 +132,26 @@ public class ShareServiceImpl implements ShareService {
         return  shareRepository.findAll(new Specification<Share>() {
             @Override
             public Predicate toPredicate(Root<Share> root, CriteriaQuery<?> query, CriteriaBuilder cb){
-                Predicate predicate = cb.equal(root.get("ownerType").as(CommonEnum.UserType.class), EnumHelper.getEnumType(CommonEnum.UserType.class,shareSearchModel.getOwnerType()));
+                /**
+                 * 前提条件:1.发布人为商家
+                 *      2.不是在草稿箱里的
+                  */
+                Predicate predicate = cb.and(
+                        cb.equal(
+                                root.get("ownerType").as(CommonEnum.UserType.class),
+                                EnumHelper.getEnumType(CommonEnum.UserType.class,
+                                shareSearchModel.getOwnerType())),
+                        cb.isFalse(root.get("drafts").as(Boolean.class))
+                );
+                //加入标题模糊搜索
                 if (!StringUtils.isEmpty(shareSearchModel.getShareTitle())){
                     predicate = cb.and(predicate,cb.like(root.get("title").as(String.class),"%"+shareSearchModel.getShareTitle()+"%"));
                 }
+                //加入类型搜索(资讯，团购等)
                 if(shareSearchModel.getShareType()!=-1){
                     predicate = cb.and(predicate,cb.equal(root.get("shareType").as(CommonEnum.ShareType.class), EnumHelper.getEnumType(CommonEnum.ShareType.class,shareSearchModel.getShareType())));
                 }
+                //加入时间搜索大于
                 if(!StringUtils.isEmpty(shareSearchModel.getStartTime())){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date date = null;
@@ -147,8 +160,9 @@ public class ShareServiceImpl implements ShareService {
                     } catch (ParseException e) {
                         throw  new RuntimeException("字符串转日期失败");
                     }
-                    predicate=cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date);
+                    predicate=cb.and(predicate,cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date));
                 }
+                //加入时间搜索小于
                 if(!StringUtils.isEmpty(shareSearchModel.getEndTime())){
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date date = null;
@@ -157,7 +171,7 @@ public class ShareServiceImpl implements ShareService {
                     } catch (ParseException e) {
                         throw  new RuntimeException("字符串转日期失败");
                     }
-                    predicate=cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date);
+                    predicate=cb.and(predicate,cb.lessThanOrEqualTo(root.get("time").as(Date.class),date));
                 }
                 return predicate;
             }
