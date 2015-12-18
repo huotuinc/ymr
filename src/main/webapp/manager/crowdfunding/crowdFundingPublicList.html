@@ -4,8 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
     <title>
-
-        合伙人草稿箱
+        合伙人项目详情
     </title>
     <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
           th:href="@{/resource/3rdParty/css/admin.global.css}"/>
@@ -51,21 +50,21 @@
 
         function showList(statu) {
             if (statu == 0) {
-                $("#draftType").attr("value", -1);
-                $('#form1').submit();
+                $("#crowdFundingType").attr("value", -1);
+
             } else if (statu == 1) {
-                $("#draftType").attr("value", 1);
-                $('#form1').submit();
+                $("#crowdFundingType").attr("value", 1);
+
                 //$('.aparent3').parent().toggleClass('om-state-default om-corner-top  om-tabs-activated om-state-active');
             } else if (statu == 2) {
-                $("#draftType").attr("value", 2);
-                $('#form1').submit();
+                $("#crowdFundingType").attr("value", 2);
+
             } else if (statu == 3) {
-                $("#draftType").attr("value", 3);
-                $('#form1').submit();
+                $("#crowdFundingType").attr("value", 3);
+
             }else if (statu == 4) {
-                $("#draftType").attr("value", 4);
-                $('#form1').submit();
+                $("#crowdFundingType").attr("value", 4);
+
             }
         }
         function searchOrder() {
@@ -276,21 +275,27 @@
         var viewModel;
 
 
-        function auditDraft(obj) {
-            var settlementNo = $(obj).attr("draftId");
-            var url="auditDraft?draftId="+settlementNo;
-            J.PopupIFrame(url,"修改",1300,700,"ifrm","","auto","");
+        function jumpToCF(obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            var url="jumpToCFDetail?crowdFundingsId="+settlementNo;
+            window.location.href=url;
+        }
+        function auditCF(obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            var url="auditCrowdFunding?crowdFundingsId="+settlementNo;
+            J.PopupIFrame(url,"审核",1300,700,"ifrm","","auto","");
 
         }
 
-        var submitDD=function (obj) {
-            var settlementNo = $(obj).attr("draftId");
-            $.jBox.tip("正在删除...", "loading");
+        var submitCCF=function (obj) {
+            var settlementNo = $(obj).attr("crowdFundingPublicsId");
+            $.jBox.tip("正在修改...", "loading");
             $.ajax({
                 type:"POST",
-                url:"delDraft",
+                url:"failCrowdFunding",
                 data:{
-                    draftId:settlementNo
+                    userId:settlementNo,
+                    booking:0
                 },
                 dataType:"json",
                 success: function (msg) {
@@ -304,14 +309,15 @@
                 }
             });
         }
-        var submitOD=function (obj) {
-            var settlementNo = $(obj).attr("draftId");
-            $.jBox.tip("正在上架...", "loading");
+        var submitOCF=function (obj) {
+            var settlementNo = $(obj).attr("crowdFundingPublicsId");
+            $.jBox.tip("正在修改...", "loading");
             $.ajax({
                 type:"POST",
-                url:"putawayDraft",
+                url:"successCrowdFunding",
                 data:{
-                    draftId:settlementNo
+                    userId:settlementNo,
+                    booking:0
                 },
                 dataType:"json",
                 success: function (msg) {
@@ -325,41 +331,114 @@
                 }
             });
         }
-        function delDraft(obj) {
+        function failPublic(obj) {
 
             var submit = function (v, h, f) {
                 if (v == 'ok') {
-                    jBox.tip(v, 'info');
-                    submitDD(obj)
+                    //jBox.tip(v, 'info');
+                    submitCCF(obj)
                 }
                 else if (v == 'cancel')
                     jBox.tip(v, 'info');
                 return true;
             };
-            $.jBox.confirm("确定删除此草稿吗？", "提示",submit);
+            $.jBox.confirm("确定回访失败么？", "提示",submit);
 
         }
-        function openDraft(obj) {
-            var settlementNo = $(obj).attr("draftId");
-            var url="putawayDraft?draftId="+settlementNo;
+        function successPublic(obj) {
             var submit = function (v, h, f) {
                 if (v == 'ok') {
-                    jBox.tip(v, 'info');
-                    submitOD(obj)
+                    //jBox.tip(v, 'info');
+                    submitOCF(obj)
                 }
                 else if (v == 'cancel')
                     jBox.tip(v, 'info');
                 return true;
             };
-            $.jBox.confirm("确定上架并启用此草稿吗？", "提示",submit);
+            $.jBox.confirm("确认回访成功么？", "提示",submit);
+
+        }
+
+        var submitCCFB=function (obj) {
+            var settlementNo = $(obj).attr("crowdFundingPublicsId");
+            $.jBox.tip("正在修改...", "loading");
+            $.ajax({
+                type:"POST",
+                url:"failCrowdFunding",
+                data:{
+                    userId:settlementNo,
+                    booking:1
+                },
+                dataType:"json",
+                success: function (msg) {
+                    if(msg.code == 200){
+                        $.jBox.tip(msg.msg, 'success',{closed:function(){
+                            window.location.reload();}});
+                    }else{
+                        $.jBox.tip(msg.msg, 'error',{closed:function(){
+                            window.location.reload();}});
+                    }
+                }
+            });
+        }
+        var submitOCFB=function (obj) {
+            var settlementNo = $(obj).attr("crowdFundingPublicsId");
+            $.jBox.tip("正在修改...", "loading");
+            $.ajax({
+                type:"POST",
+                url:"successCrowdFunding",
+                data:{
+                    userId:settlementNo,
+                    booking:1
+
+                },
+                dataType:"json",
+                success: function (msg) {
+                    if(msg.code == 200){
+                        $.jBox.tip(msg.msg, 'success',{closed:function(){
+                            window.location.reload();}});
+                    }else{
+                        $.jBox.tip(msg.msg, 'error',{closed:function(){
+                            window.location.reload();}});
+                    }
+                }
+            });
+        }
+        function failBooking(obj) {
+
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    //jBox.tip(v, 'info');
+                    submitCCFB(obj)
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定回访失败么？", "提示",submit);
+
+        }
+        function successBooking(obj) {
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    //jBox.tip(v, 'info');
+                    submitOCFB(obj)
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确认回访成功么？", "提示",submit);
 
         }
         /*]]>*/
     </script>
 </head>
 <body marginwidth="0" marginheight="0">
-<form method="get" action="getDraftList" id="form1" th:object="${draftSearchModel}">
+<form method="get" action="getCrowdFundingPublicList" id="form1" th:object="${crowdFundingPublicSearchModel}">
     <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
+    <input hidden="hidden" id="publicType" name="publicType" th:value="*{publicType}"/>
+    <input hidden="hidden" id="crowdFundingId" name="crowdFundingId" th:value="*{crowdFundingId}"/>
 
     <div class="aspNetHidden">
         <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE"
@@ -377,7 +456,7 @@
             <div class="h">
                 <span class="icon-sprite icon-magnifier"></span>
 
-                <h3>草稿箱搜索</h3>
+                <h3>详细</h3>
 
             </div>
             <div class="tl corner">
@@ -392,18 +471,37 @@
                 <div class="cnt">
 
                     <div class="search-bar">
-                        <label class="first ">众筹标题：：</label>
-                        <input name="draftTitle" type="text" th:value="*{draftTitle}" id="draftTitle" class="input-small" style="width: 120px;"/>
+                        <label><h3>众筹信息：</h3></label>
+                        <br/>
+
+                        <label class="first ">项目标题：<span th:text="${crowdFundingTitle}"></span></label>
+                        <br/>
+                        <br/>
+                        <label class="first ">开始时间：<span th:text="${crowFundingStart}"></span></label>
+                        <br/>
+                        <br/>
+                        <label class="first ">结束时间：<span th:text="${crowFundingEnd}"></span></label>
+                        <br/>
+                        <br/>
+                        <label class="first ">已预约人：<span th:text="${currentBooking}"></span></label>
+                        <br/>
+                        <br/>
+                        <label class="first ">概况：<span th:text="${content}"></span></label>
+                        <br/>
+                        <br/>
+                        <label><h3>众筹预约人搜索：</h3></label>
+                        <br/>
+                        <label class="first ">人名搜索：</label>
+                        <input name="crowdFundingPublicName" type="text" th:value="*{crowdFundingPublicName}" id="crowdFundingPublicName" class="input-small" style="width: 120px;"/>
                         <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
                         <br/>
                         <br/>
 
-                        <label class="first ">类型：</label>
-                        <select name="draftType" id="draftType">
+                        <label th:if="*{crowdFundingType==1 }" class="first ">类型：</label>
+                        <select th:if="*{crowdFundingType==1 }" name="peopleType" id="peopleType">
                             <option selected="selected" value="-1">==所有==</option>
-                            <option value="1" th:selected="*{draftType==1}">预约类</option>
-                            <option value="2" th:selected="*{draftType==2}">合作类</option>
-                            <option value="3" th:selected="*{draftType==3}">认购类</option>
+                            <option value="1" th:selected="*{peopleType==1}">合作发起人</option>
+                            <option value="2" th:selected="*{peopleType==2}">合作人</option>
                         </select>
 
 
@@ -411,7 +509,7 @@
                         <label class="first ">排序：</label>
 
                         <select name="sort" id="sort">
-                            <option selected="selected" value="0">按发布时间</option>
+                            <option selected="selected" value="0">按时间</option>
 
 
 
@@ -432,7 +530,7 @@
                         <br/>
                         <br/>
 
-                        <label class="first ">草稿时间：</label>
+                        <label class="first ">预约时间：</label>
 
                         <input name="startTime" type="text" id="startTime" placeholder=" [开始日期]"
                                th:value="*{startTime}"
@@ -467,8 +565,7 @@
             <div class="h">
                 <span class="icon-sprite icon-list"></span>
 
-                <h3 style="float: left; width: 144px;">草稿信息 </h3>
-
+                <h3 style="float: left; width: 144px;">项目详情</h3>
 
 
             </div>
@@ -487,20 +584,18 @@
                          style="height: 28px;">
                         <ul style="height: 28px; line-height: 28px;">
                             <span class="left-placeholder"></span>
-                            <li class="om-state-default om-corner-top  " id="ddgl1">
-                                <span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner" style="width: auto; height: 27px;">全部</a><span class="liright"></span>
-                            </li>
-                            <li class="om-state-default om-corner-top " id="ddgl2"><span class="lileft"></span><a
-                                    href="javascript:showList(1);" class="om-tabs-inner"
+
+                            <li  th:if="*{crowdFundingType==0 }" class="om-state-default om-corner-top " id="ddgl2"><span class="lileft"></span><a
+                                     class="om-tabs-inner"
                                     style="width: auto; height: 27px;">预约类</a><span class="liright"></span></li>
 
-                            <li class="om-state-default om-corner-top" id="ddgl3"><span class="lileft">
+                            <li th:if="*{crowdFundingType==1 }" class="om-state-default om-corner-top" id="ddgl3"><span class="lileft">
                             </span><a
-                                    href="javascript:showList(2);" class="om-tabs-inner"
+                                     class="om-tabs-inner"
                                     style="width: auto; height: 27px;">合作类</a><span class="liright"></span></li>
 
-                            <li class="om-state-default om-corner-top" id="ddgl4"><span class="lileft"></span><a
-                                    href="javascript:showList(3);" class="om-tabs-inner"
+                            <li th:if="*{crowdFundingType==2 }" class="om-state-default om-corner-top" id="ddgl4"><span class="lileft"></span><a
+                                    class="om-tabs-inner"
                                     style="width: auto; height: 27px;">认购类</a><span class="liright"></span></li>
 
 
@@ -520,24 +615,33 @@
                                         <tr>
                                             <th scope="col">序号 </th>
 
-                                            <th scope="col" >众筹标题
+                                            <th scope="col">名字
                                             </th>
 
-                                            <th scope="col">发布人 </th>
-
-                                            <th scope="col">发布时间
+                                            <th scope="col">电话
                                             </th>
 
-                                            <th scope="col">类型
-                                            </th>
-
-                                            <th scope="col">中介费
+                                            <th scope="col">时间
                                             </th>
 
 
-                                            <th scope="col">操作
+                                            <th scope="col" th:if="*{crowdFundingType==0}">支付金额
                                             </th>
 
+                                            <th scope="col" th:if="*{crowdFundingType==0}" >支付账号流水记录
+                                            </th>
+
+                                            <th scope="col" th:if="*{crowdFundingType==1}">属性
+                                            </th>
+
+                                            <th scope="col" th:if="*{crowdFundingType==1 || crowdFundingType==2}" >意向金额
+                                            </th>
+
+                                            <th scope="col">回访结果
+                                            </th>
+
+                                            <th scope="col">备注
+                                            </th>
                                         </tr>
                                         <tr style="background: #FFC; text-align: center; display: none;"
                                             id="trSelectNote">
@@ -549,53 +653,112 @@
                                         </tr>
                                         <tbody th:remove="all-but-first" id="o1">
 
-                                        <tr th:each="drafts:${allDraftList}" class="even">
-                                            <td class="txt20 c" style="width: 15px;" th:text="${drafts.id}">
+
+                                        <tr  th:each="crowdFundingPublics:${(#object.crowdFundingType==1 and #object.viewType==4) ? allCrowdFundingPublicList : allCrowdFundingPublicList.people}" class="even">
+
+                                            <td class="txt20 c" style="width: 15px;" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}">
                                                 1
                                             </td>
-                                            <td class="txt40" th:text="${drafts.name}" th:attr="crowdFundingsId=${drafts.id}"  onclick="jumpToCF(this)">
+                                            <td class="txt40" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.name:crowdFundingPublics.name}">
                                                 &nbsp;
                                             </td>
-                                            <td class="txt80" th:text="${drafts.manager==null ? null : drafts.manager.name}">
+                                            <td class="txt80" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.phone:crowdFundingPublics.phone}">
 
                                             </td>
 
-                                            <td class="txt80" th:text="${drafts.time}">
+                                            <td class="txt80" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.time:crowdFundingPublics.time}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
 
-                                            <td class="txt80" th:text="${drafts.crowdFundingType.name}">
+                                            <td  th:if="*{crowdFundingType==1  and viewType==4}" class="txt20">
+                                                <span >发起人</span>
+                                            </td>
+                                            <td  th:if="*{crowdFundingType==1  and viewType!=4}" class="txt20">
+                                                <span th:if="${allCrowdFundingPublicList.peopleType==1}" >发起人</span>
+                                                <span th:if="${allCrowdFundingPublicList.peopleType==3}" >合作人</span>
+                                            </td>
+
+                                            <td class="txt80" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.money:crowdFundingPublics.money}">
+                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
+                                            </td>
+
+                                            <td  th:if="*{crowdFundingType==2 }" class="txt20">
+                                                <span th:text="${crowdFundingPublics.orderNo}"></span>
+                                            </td>
+                                            <td class="txt20">
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==0 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successPublic(this)">点此成功</a>
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==0 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failPublic(this)">点此失败</a>
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==1 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failPublic(this)">修改失败</a>
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==2 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successPublic(this)">修改成功</a>
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==0 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successBooking(this)">点此成功</a>
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==0 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failBooking(this)">点此失败</a>
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==1 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failBooking(this)">修改失败</a>
+                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==2 }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successBooking(this)">修改成功</a>
+
+                                            </td>
+                                            <td class="txt20">
+                                                <span th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.remark:crowdFundingPublics.remark}"></span>
+                                            </td>
+
+
+                                            <td class="txt40 c tail">
+                                                <div th:inline="text">
+                                                </div>
+                                            </td>
+
+
+
+
+
+                                        <tr  th:each="crowdFundingBookings:${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.booking:null}" class="even">
+                                            <td class="txt20 c" style="width: 15px;" th:text="${crowdFundingBookings.id}">
+                                                1
+                                            </td>
+                                            <td class="txt40" th:text="${crowdFundingBookings.name}">
+                                                &nbsp;
+                                            </td>
+                                            <td class="txt80" th:text="${crowdFundingBookings.phone}">
+
+                                            </td>
+
+                                            <td class="txt80" th:text="${crowdFundingBookings.time}">
+                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
+                                            </td>
+
+                                            <td   class="txt20">
+                                               合作人
+                                            </td>
+
+                                            <td class="txt80" th:text="${crowdFundingBookings.money}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
 
                                             <td class="txt20">
-                                                <span th:text="${drafts.agencyFeeRate}">0</span>
+                                                <a th:if="${crowdFundingBookings.status==0 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="successBooking(this)">点此成功</a>
+                                                <a th:if="${crowdFundingBookings.status==0 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="failBooking(this)">点此失败</a>
+                                                <a th:if="${crowdFundingBookings.status==1 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="failBooking(this)">修改失败</a>
+                                                <a th:if="${crowdFundingBookings.status==2 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="successBooking(this)">修改成功</a>
                                             </td>
-
-
-                                            <td class="txt40">
-
-                                                <!--<a th:if="${settlement.customerCheckable() and settlement.checkAble()}" th:attr="settlementNo=${settlement.settlementNo}" href="#" onclick="showUpdateStatus(this)">审核</a>-->
-                                                <a  th:attr="draftId=${drafts.id}"  onclick="delDraft(this)">删除</a>
-                                                <a  th:attr="draftId=${drafts.id}" onclick="openDraft(this)">上架启用</a>
-                                                <a  th:attr="draftId=${drafts.id}"  onclick="auditDraft(this)">修改</a>
-
+                                            <td class="txt20">
+                                                <span th:text="${crowdFundingBookings.remark}"></span>
                                             </td>
 
                                             <td class="txt40 c tail">
                                                 <div th:inline="text">
                                                 </div>
                                             </td>
+
                                         </tr>
 
+                                    </tr>
                                         </tbody>
                                     </table>
-                                </div>
-                                <div class="pager-bar">
+                                         </div>
+                                <div  class="pager-bar">
                                     <div class="msg" style="margin-left: 10px;">共
-                                        <span th:text="${allDraftList.totalElements}">0</span>条记录，当前第
-                                        <span name="noNumber" th:text="${allDraftList.number+1}" id="noNumber">1</span>页/共
-                                        <span  name="numberBug" id="numberBug"  th:text="${allDraftList.totalPages==0?1:allDraftList.totalPages}">1</span>页，每页
+                                        <span th:text="${totalElements}">0</span>条记录，当前第
+                                        <span name="noNumber" th:text="${number+1}" id="noNumber">1</span>页/共
+                                        <span  name="numberBug" id="numberBug"  th:text="${totalPages==0?1:totalPages}">1</span>页，每页
                                         <span>20</span>条记录
                                     </div>
                                     <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
@@ -614,10 +777,12 @@
                                            onkeydown="J.EnterSubmit(event, Pager.Jump);"
                                            class="input-small"
                                            style="text-align:center;" type="text"
-                                           value="1" th:value="${allDraftList.number+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                                           value="1" th:text="${number+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
                                 </div>
-                            </div>
+
+
+                           </div>
                         </div>
                     </div>
                 </div>
@@ -675,8 +840,10 @@
         $('#form1').submit();
     }
     function searchOrderAll() {
-        $("#draftTitle").attr("value", "");
-        $("#draftType").attr("value", -1);
+        $("#crowdFundingPublicName").attr("value", "");
+        $("#crowdFundingType").attr("value", -1);
+        $("#peopleType").attr("value", -1);
+        $("#publicType").attr("value", -1);
         $("#sort").attr("value", 0);
         $("#raSortType").attr("value", 0);
         $("#startTime").attr("value", "");

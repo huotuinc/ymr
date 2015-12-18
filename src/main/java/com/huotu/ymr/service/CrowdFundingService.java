@@ -3,7 +3,9 @@ package com.huotu.ymr.service;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingBooking;
 import com.huotu.ymr.entity.CrowdFundingPublic;
+import com.huotu.ymr.model.searchCondition.CrowdFundingPublicSearchModel;
 import com.huotu.ymr.model.searchCondition.CrowdFundingSearchModel;
+import com.huotu.ymr.model.searchCondition.DraftSearchModel;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -65,4 +67,31 @@ public interface CrowdFundingService {
      */
     Page<CrowdFunding> findCrowdFundingPage(CrowdFundingSearchModel searchModel);
 
+    /**
+     * 后台获取草稿箱分页
+     * 获取一页草稿箱表格
+     * @return
+     */
+    Page<CrowdFunding> findDraftPage(DraftSearchModel draftSearchModel);
+
+    /**
+     * 后台获取众筹项目人分页
+     * 获取一页众筹项目人表格
+     * @return
+     */
+    Page<CrowdFundingPublic> findPublicPage(CrowdFundingPublicSearchModel crowdFundingPublicSearchModel);
+
+    /**
+     * 后台通过合作发起人查找合作人
+     * 获取一页合作人表格
+     * @return
+     */
+    List<CrowdFundingBooking> findBookingsByPublic(CrowdFundingPublic crowdFundingPublic,Long crowdId);
+
+    /**
+     * 后台获取合作人分页
+     * 获取一页合作人表格
+     * @return
+     */
+    Page<CrowdFundingBooking> findBookingPages(CrowdFundingPublicSearchModel crowdFundingPublicSearchModel);
 }

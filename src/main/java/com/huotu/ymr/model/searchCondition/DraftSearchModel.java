@@ -4,16 +4,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 众筹项目查询
+ * 众筹项目草稿箱
  * Created by xhk on 2015/12/14.
  */
 @Getter
 @Setter
-public class CrowdFundingSearchModel {
+public class DraftSearchModel {
     /**
-     * 文章标题
+     * 草稿箱标题
      */
-    private String crowdFundingTitle="";
+    private String draftTitle="";
 
     /**
      * 全部：-1
@@ -26,9 +26,7 @@ public class CrowdFundingSearchModel {
     /**
      * subscription(2, "认购")
      */
-    private Integer crowdFundingType=-1;
-
-
+    private Integer draftType=-1;
 
 
     /**

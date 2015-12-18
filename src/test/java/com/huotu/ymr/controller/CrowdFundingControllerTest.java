@@ -206,9 +206,9 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             userLevelList.add(userLevels[1]);
             crowdFunding.setVisibleLevel(userLevelList);
             crowdFunding.setTime(new Date());
-            crowdFunding.setCheckStatus(checkTypes[i%5]);
+            crowdFunding.setCheckStatus(checkTypes[i % 5]);
             crowdFunding.setContent("这个是众筹项目" + name);
-            crowdFunding.setCrowdFundingType(cFType[i%3]);
+            crowdFunding.setCrowdFundingType(cFType[i % 3]);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundings.add(crowdFunding);
         }
@@ -994,4 +994,110 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
             Assert.assertEquals("请求认购者列表下页条数断言", 0, list3.size());
 
     }
+
+    //存入50草稿箱用来进行后台测试
+    @Test
+    //@Rollback(false)
+    public void saveDraft() {
+        int number=50;
+        List<CrowdFunding> crowdFundings=new ArrayList<CrowdFunding>();
+        String[] chinese={"徐和","和康","徐康"};
+        CommonEnum.CrowdFundingType[]  cFType={CommonEnum.CrowdFundingType.booking,CommonEnum.CrowdFundingType.cooperation,CommonEnum.CrowdFundingType.subscription};
+        //CommonEnum.CheckType[] checkTypes={CommonEnum.CheckType.audit,CommonEnum.CheckType.close,CommonEnum.CheckType.pass,CommonEnum.CheckType.open,CommonEnum.CheckType.notPass};
+        for(int i=0;i<number;i++){
+            CrowdFunding crowdFunding=new CrowdFunding();
+            String name=UUID.randomUUID().toString();
+            crowdFunding.setName(name+chinese[i%3]);
+            crowdFunding.setStartTime(new Date());
+            List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+            userLevelList.add(userLevels[0]);
+            userLevelList.add(userLevels[1]);
+            crowdFunding.setVisibleLevel(userLevelList);
+            crowdFunding.setTime(new Date());
+            crowdFunding.setCheckStatus(CommonEnum.CheckType.draft);
+            crowdFunding.setContent("这个是众筹项目" + name);
+            crowdFunding.setCrowdFundingType(cFType[i%3]);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+            crowdFundings.add(crowdFunding);
+        }
+    }
+
+    //详情测试数据存入
+    @Test
+    @Rollback(false)
+    public void detailTest() {
+        int number =2;
+        List<CrowdFunding> crowdFundings=new ArrayList<CrowdFunding>();
+        String[] chinese={"徐和","和康","徐康"};
+        CommonEnum.CrowdFundingType[]  cFType={CommonEnum.CrowdFundingType.subscription,CommonEnum.CrowdFundingType.cooperation};
+        CommonEnum.CheckType[] checkTypes={CommonEnum.CheckType.audit,CommonEnum.CheckType.close,CommonEnum.CheckType.pass,CommonEnum.CheckType.open,CommonEnum.CheckType.notPass};
+        for(int i=0;i<number;i++){
+            CrowdFunding crowdFunding=new CrowdFunding();
+            String name=UUID.randomUUID().toString();
+            crowdFunding.setName(name+chinese[i]);
+            crowdFunding.setStartTime(new Date());
+            List<CommonEnum.UserLevel> userLevelList=new ArrayList<CommonEnum.UserLevel>();
+            userLevelList.add(userLevels[0]);
+            userLevelList.add(userLevels[1]);
+            crowdFunding.setVisibleLevel(userLevelList);
+            crowdFunding.setTime(new Date());
+            crowdFunding.setCheckStatus(checkTypes[i%5]);
+            crowdFunding.setContent("这个是众筹项目" + name);
+            crowdFunding.setCrowdFundingType(cFType[i%3]);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+            crowdFundings.add(crowdFunding);
+        }
+
+        List<CrowdFundingPublic> crowdFundingPublicList=new ArrayList<CrowdFundingPublic>();
+
+        for(int i=0;i<40;i++) {
+            CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
+            String name = UUID.randomUUID().toString();
+            crowdFundingPublic.setName(name);
+            crowdFundingPublic.setCrowdFunding(crowdFundings.get(0));
+            crowdFundingPublic.setOwnerId(Long.parseLong(i + ""));
+            crowdFundingPublic.setTime(new Date());
+            crowdFundingPublic.setStatus(i%3);//都设置为审核通过
+            crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
+            crowdFundingPublicList.add(crowdFundingPublic);
+        }
+        //进行合作项目发起人存储
+        List<CrowdFundingPublic> crowdFundingPublicList1=new ArrayList<CrowdFundingPublic>();
+
+        for(int i=0;i<10;i++) {
+            double money = 50000.0;
+            double lastMoney = money * (100 - 10) / 100;
+            CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
+            crowdFundingPublic.setAgencyFee(money - lastMoney);
+            crowdFundingPublic.setMoney(lastMoney);
+            crowdFundingPublic.setStatus(i%3);//都设置为审核通过
+            //crowdFundingPublic.setOwnerId(users.get(0).getId());
+            crowdFundingPublic.setCrowdFunding(crowdFundings.get(1));
+            crowdFundingPublic.setStatus(1);
+            crowdFundingPublic.setName(UUID.randomUUID().toString());
+            crowdFundingPublic = crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
+            crowdFundingPublicList1.add(crowdFundingPublic);
+        }
+
+        //进行合作人的存储
+        for(int i=0;i<50;i++) {
+            double bookMoney = 10000.00 * (100 - 10) / 100;
+            CrowdFundingBooking crowdFundingBooking = new CrowdFundingBooking();
+            crowdFundingBooking.setMoney(bookMoney);
+            crowdFundingBooking.setPhone(13852 + "" + 666666 + "");
+            crowdFundingBooking.setRemark("我要与合作者hahaha!");
+            crowdFundingBooking.setAgencyFee(10000.00 - bookMoney);
+            //crowdFundingBooking.setOwnerId(users.get(1).getId());
+            crowdFundingBooking.setName("合作者0");
+            crowdFundingBooking.setName(UUID.randomUUID().toString());
+            crowdFundingBooking.setCrowdFunding(crowdFundings.get(1));
+            crowdFundingBooking.setCrowdFundingPublic(crowdFundingPublicList1.get(i%10));
+            crowdFundingBooking.setStatus(0);
+            crowdFundingBooking = crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking);
+        }
+
+
+    }
+
+
 }

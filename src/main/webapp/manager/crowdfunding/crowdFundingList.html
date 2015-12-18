@@ -54,17 +54,17 @@
                 $("#crowdFundingType").attr("value", -1);
                 $('#form1').submit();
             } else if (statu == 1) {
-                $("#crowdFundingType").attr("value", 0);
+                $("#crowdFundingType").attr("value", 1);
                 $('#form1').submit();
                 //$('.aparent3').parent().toggleClass('om-state-default om-corner-top  om-tabs-activated om-state-active');
             } else if (statu == 2) {
-                $("#crowdFundingType").attr("value", 1);
-                $('#form1').submit();
-            } else if (statu == 3) {
                 $("#crowdFundingType").attr("value", 2);
                 $('#form1').submit();
-            }else if (statu == 4) {
+            } else if (statu == 3) {
                 $("#crowdFundingType").attr("value", 3);
+                $('#form1').submit();
+            }else if (statu == 4) {
+                $("#crowdFundingType").attr("value", 4);
                 $('#form1').submit();
             }
         }
@@ -287,17 +287,57 @@
             J.PopupIFrame(url,"审核",1300,700,"ifrm","","auto","");
 
         }
-        function closeCF(obj) {
-            var settlementNo = $(obj).attr("crowdFundingsId");
-            var url="closeCrowdFunding?crowdFundingsId="+settlementNo;
-            var submit = function (v, h, f) {
-                if (v == '关闭') {
-                    jBox.tip(v, 'info');
-                    $.get(url);
 
-                    window.location.reload();
+        var submitCCF=function (obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            $.jBox.tip("正在修改...", "loading");
+            $.ajax({
+                type:"POST",
+                url:"closeCrowdFunding",
+                data:{
+                    crowdFundingsId:settlementNo
+                },
+                dataType:"json",
+                success: function (msg) {
+                    if(msg.code == 200){
+                        $.jBox.tip(msg.msg, 'success',{closed:function(){
+                            window.location.reload();}});
+                    }else{
+                        $.jBox.tip(msg.msg, 'error',{closed:function(){
+                            window.location.reload();}});
+                    }
                 }
-                else if (v == '返回')
+            });
+        }
+        var submitOCF=function (obj) {
+            var settlementNo = $(obj).attr("crowdFundingsId");
+            $.jBox.tip("正在修改...", "loading");
+            $.ajax({
+                type:"POST",
+                url:"openCrowdFunding",
+                data:{
+                    crowdFundingsId:settlementNo
+                },
+                dataType:"json",
+                success: function (msg) {
+                    if(msg.code == 200){
+                        $.jBox.tip(msg.msg, 'success',{closed:function(){
+                            window.location.reload();}});
+                    }else{
+                        $.jBox.tip(msg.msg, 'error',{closed:function(){
+                            window.location.reload();}});
+                    }
+                }
+            });
+        }
+        function closeCF(obj) {
+
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    jBox.tip(v, 'info');
+                    submitCCF(obj)
+                }
+                else if (v == 'cancel')
                     jBox.tip(v, 'info');
                 return true;
             };
@@ -308,13 +348,11 @@
             var settlementNo = $(obj).attr("crowdFundingsId");
             var url="openCrowdFunding?crowdFundingsId="+settlementNo;
             var submit = function (v, h, f) {
-                if (v == '开启') {
+                if (v == 'ok') {
                     jBox.tip(v, 'info');
-                    $.get(url);
-
-                    window.location.reload();
+                    submitOCF(obj)
                 }
-                else if (v == '返回')
+                else if (v == 'cancel')
                     jBox.tip(v, 'info');
                 return true;
             };
@@ -359,7 +397,7 @@
                 <div class="cnt">
 
                     <div class="search-bar">
-                        <label class="first ">众筹标题：：</label>
+                        <label class="first ">众筹标题：</label>
                         <input name="crowdFundingTitle" type="text" th:value="*{crowdFundingTitle}" id="crowdFundingTitle" class="input-small" style="width: 120px;"/>
                         <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
                         <br/>
@@ -368,9 +406,9 @@
                         <label class="first ">类型：</label>
                         <select name="crowdFundingType" id="crowdFundingType">
                             <option selected="selected" value="-1">==所有==</option>
-                            <option value="1" th:selected="*{crowdFundingType==0}">预约类</option>
-                            <option value="2" th:selected="*{crowdFundingType==1}">合作类</option>
-                            <option value="3" th:selected="*{crowdFundingType==2}">认购类</option>
+                            <option value="1" th:selected="*{crowdFundingType==1}">预约类</option>
+                            <option value="2" th:selected="*{crowdFundingType==2}">合作类</option>
+                            <option value="3" th:selected="*{crowdFundingType==3}">认购类</option>
                         </select>
 
 
@@ -549,14 +587,17 @@
                                             <td class="txt20">
                                                 <span th:text="${crowdFundings.view}">0</span>
                                             </td>
+                                            <td class="txt20">
+                                                <span th:text="${crowdFundings.currentBooking}">0</span>
+                                            </td>
 
                                             <td class="txt40">
 
                                                 <!--<a th:if="${settlement.customerCheckable() and settlement.checkAble()}" th:attr="settlementNo=${settlement.settlementNo}" href="#" onclick="showUpdateStatus(this)">审核</a>-->
                                                 <a th:if="${crowdFundings.checkStatus.value==0 }" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="auditCF(this)">点此审核</a>
                                                 <a th:if="${crowdFundings.checkStatus.value==1 or crowdFundings.checkStatus.value==3 or crowdFundings.checkStatus.value==5  }" th:attr="crowdFundingsId=${crowdFundings.id}" >通过</a>
-                                                <a th:if="${crowdFundings.checkStatus.value==3 or crowdFundings.checkStatus.value==1}" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="openCF(this)">点此开启</a>
-                                                <a th:if="${crowdFundings.checkStatus.value==5 }" th:attr="crowdFundingsId=${crowdFundings.id}" onclick="closeCF(this)">点此关闭</a>
+                                                <a th:if="${crowdFundings.checkStatus.value==3}" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="openCF(this)">点此开启</a>
+                                                <a th:if="${crowdFundings.checkStatus.value==5 or crowdFundings.checkStatus.value==1}" th:attr="crowdFundingsId=${crowdFundings.id}" onclick="closeCF(this)">点此关闭</a>
                                                 <a th:if="${crowdFundings.checkStatus.value==2 }" th:attr="crowdFundingsId=${crowdFundings.id}" >不通过</a>
 
                                             </td>

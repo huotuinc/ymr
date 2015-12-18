@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -17,6 +20,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -47,6 +51,14 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(commonInterceptor)
                 .addPathPatterns("/app/*");
     }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON));
+        converters.add(converter);
+    }
+
 
     /**
      * 设置控制器方法参数化输出
@@ -98,6 +110,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         rootTemplateResolver.setPrefix("/");
         rootTemplateResolver.setCacheable(false);
         rootTemplateResolver.setSuffix(".html");
+        rootTemplateResolver.setCacheable(false);
         rootTemplateResolver.setCharacterEncoding("UTF-8");
 
         engine.setTemplateResolver(rootTemplateResolver);
