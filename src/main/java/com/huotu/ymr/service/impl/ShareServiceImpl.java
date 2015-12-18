@@ -134,7 +134,7 @@ public class ShareServiceImpl implements ShareService {
             @Override
             public Predicate toPredicate(Root<Share> root, CriteriaQuery<?> query, CriteriaBuilder cb){
                 /**
-                 * 前提条件:1.发布人为商家
+                 * 前提条件: 1.指定发布人
                  *          2.checkType状态不是删除的
                  *
                   */
@@ -146,6 +146,7 @@ public class ShareServiceImpl implements ShareService {
                         cb.notEqual(root.get("checkStatus").as(CommonEnum.CheckType.class),
                                 CommonEnum.CheckType.delete)
                 );
+
                 //检查状态搜索(主要用于草稿箱)
                 if(shareSearchModel.getCheckType()==-1){
                     predicate=cb.and(predicate,

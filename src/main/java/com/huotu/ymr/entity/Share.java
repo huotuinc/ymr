@@ -137,4 +137,9 @@ public class Share implements YmrComment {
      * 审核未通过的原因
      */
     private String reason;
+
+    /**
+     * 是否是精品
+     */
+    private Boolean boutique;
 }

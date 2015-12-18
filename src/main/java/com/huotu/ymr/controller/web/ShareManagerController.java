@@ -78,6 +78,9 @@ public class ShareManagerController {
     @RequestMapping(value = "/getYmrShareList",method = RequestMethod.GET)
     public String getYmrShareList(ShareSearchModel shareSearchModel,Model model) throws Exception {
         //todo 用户权限方面的操作
+        if (shareSearchModel.getPageNoStr() < 0) {
+            shareSearchModel.setPageNoStr(0);
+        }
         Page<Share> shares=shareService.findPcShareList(shareSearchModel);
         List<BackendShareModel> backendShareModels=new ArrayList<>();
         for(Share s:shares){
@@ -113,11 +116,27 @@ public class ShareManagerController {
         if (shareSearchModel.getPageNoStr() < 0) {
             shareSearchModel.setPageNoStr(0);
         }
+        shareSearchModel.setOwnerType(0);
         Page<Share> shares=shareService.findPcShareList(shareSearchModel);
-        model.addAttribute("allShareList", shares);//文章列表
+        List<BackendShareModel> backendShareModels=new ArrayList<>();
+        for(Share s:shares){
+            BackendShareModel backendShareModel=new BackendShareModel();
+            backendShareModel.setShareTitle(s.getTitle());
+            backendShareModel.setId(s.getId());
+            backendShareModel.setTop(s.getTop());
+            backendShareModel.setTime(s.getTime());
+            backendShareModel.setUserType(s.getOwnerType().getName());
+            backendShareModel.setPraiseQuantity(s.getPraiseQuantity());
+            backendShareModel.setRelayQuantity(s.getRelayQuantity());
+            backendShareModel.setView(s.getView());
+            backendShareModel.setCheckType(s.getCheckStatus().getName());
+            backendShareModels.add(backendShareModel);
+        }
+        model.addAttribute("allShareList", backendShareModels);//文章列表model
+        model.addAttribute("pageNo",shareSearchModel.getPageNoStr());//当前页数
         model.addAttribute("totalPages",shares.getTotalPages());//总页数
-        model.addAttribute("pageNoStr",shareSearchModel.getPageNoStr());//当前页数
         model.addAttribute("totalRecords", shares.getTotalElements());//总记录数
+
         return "manager/share/userShareList";
 
     }
@@ -230,7 +249,7 @@ public class ShareManagerController {
 
 
     /**
-     * 帖子的操作，0：置顶，1：审核通过，2：取消置顶，3：审核不通过， 4：删除,5:移至草稿箱
+     * 帖子的操作，0：置顶，1：审核通过，2：取消置顶，3：审核不通过， 4：删除,5:移至草稿箱，6：加精
      * @param shareId   帖子ID
      * @param type      操作类型
      * @return
@@ -268,6 +287,10 @@ public class ShareManagerController {
                 break;
             case 5:
                 share.setCheckStatus(CommonEnum.CheckType.draft);
+                break;
+            case 6:
+                share.setBoutique(true);
+                //加精
                 break;
             default:
                 break;
