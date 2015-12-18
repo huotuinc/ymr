@@ -137,12 +137,4 @@ public class Share implements YmrComment {
      * 审核未通过的原因
      */
     private String reason;
-
-
-    /**
-     * 是否进入了草稿箱
-     */
-    private Boolean drafts=false;
-
-
 }

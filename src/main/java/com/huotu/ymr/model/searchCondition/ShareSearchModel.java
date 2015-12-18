@@ -46,4 +46,10 @@ public class ShareSearchModel {
      * 指定查询页码
      */
     private Integer pageNoStr = 0;
+
+    /**
+     * 检查状态 -1：为排除草稿箱状态和删除状态
+     *          6：为草稿箱状态
+     */
+    private Integer checkType=-1;
 }

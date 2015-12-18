@@ -106,6 +106,7 @@ public class ShareServiceImpl implements ShareService {
 
     @Override
     public Page<Share> findPcShareList(ShareSearchModel shareSearchModel) throws Exception {
+        //排序
         Sort sort;
         Sort.Direction direction = shareSearchModel.getRaSortType() == 0 ? Sort.Direction.DESC : Sort.Direction.ASC;
         switch (shareSearchModel.getSort()) {
@@ -134,15 +135,27 @@ public class ShareServiceImpl implements ShareService {
             public Predicate toPredicate(Root<Share> root, CriteriaQuery<?> query, CriteriaBuilder cb){
                 /**
                  * 前提条件:1.发布人为商家
-                 *      2.不是在草稿箱里的
+                 *          2.checkType状态不是删除的
+                 *
                   */
                 Predicate predicate = cb.and(
                         cb.equal(
                                 root.get("ownerType").as(CommonEnum.UserType.class),
                                 EnumHelper.getEnumType(CommonEnum.UserType.class,
                                 shareSearchModel.getOwnerType())),
-                        cb.isFalse(root.get("drafts").as(Boolean.class))
+                        cb.notEqual(root.get("checkStatus").as(CommonEnum.CheckType.class),
+                                CommonEnum.CheckType.delete)
                 );
+                //检查状态搜索(主要用于草稿箱)
+                if(shareSearchModel.getCheckType()==-1){
+                    predicate=cb.and(predicate,
+                            cb.notEqual(root.get("checkStatus").as(CommonEnum.CheckType.class), CommonEnum.CheckType.draft));
+
+                }else {
+                    predicate=cb.and(predicate,
+                            cb.equal(root.get("checkStatus").as(CommonEnum.CheckType.class),
+                                    EnumHelper.getEnumType(CommonEnum.CheckType.class,shareSearchModel.getCheckType())));
+                }
                 //加入标题模糊搜索
                 if (!StringUtils.isEmpty(shareSearchModel.getShareTitle())){
                     predicate = cb.and(predicate,cb.like(root.get("title").as(String.class),"%"+shareSearchModel.getShareTitle()+"%"));

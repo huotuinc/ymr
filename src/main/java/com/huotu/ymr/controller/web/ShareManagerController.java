@@ -267,6 +267,7 @@ public class ShareManagerController {
                 share.setCheckStatus(CommonEnum.CheckType.delete);
                 break;
             case 5:
+                share.setCheckStatus(CommonEnum.CheckType.draft);
                 break;
             default:
                 break;
@@ -276,37 +277,6 @@ public class ShareManagerController {
         resultModel.setMessage(share.getCheckStatus().getName());
         return resultModel;
     }
-
-//    /**
-//     * 置顶与取消
-//     * @param shareId   帖子ID
-//     * @param type
-//     * @return
-//     * @throws Exception
-//     */
-//    @RequestMapping(value = "/setTopOrNot")
-//    @ResponseBody
-//    public ResultModel setTopOrNot(Long shareId,Long type) throws Exception{
-//        ResultModel resultModel=new ResultModel();
-//        if(shareId==null){
-//            resultModel.setCode(0);
-//            resultModel.setMessage("参数异常");
-//            return resultModel;
-//        }
-//        Share share=shareService.findOneShare(shareId);
-//        if(Objects.isNull(share)){
-//            resultModel.setCode(0);
-//            resultModel.setMessage("没找到该帖子，或许已被删除!");
-//        }
-//
-//
-//
-//
-//    }
-
-
-
-
 
 
 }

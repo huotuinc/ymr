@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -31,6 +32,9 @@ import java.util.List;
 @EnableWebMvc
 @ComponentScan(value = {"com.huotu.ymr.service.impl,com.huotu.ymr.controller"})
 public class MvcConfig extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    private Environment environment;
 
     @Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
@@ -108,9 +112,9 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         ServletContextTemplateResolver rootTemplateResolver = new ServletContextTemplateResolver();
         rootTemplateResolver.setPrefix("/");
-        rootTemplateResolver.setCacheable(false);
         rootTemplateResolver.setSuffix(".html");
-        rootTemplateResolver.setCacheable(false);
+        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development"))
+            rootTemplateResolver.setCacheable(false);
         rootTemplateResolver.setCharacterEncoding("UTF-8");
 
         engine.setTemplateResolver(rootTemplateResolver);

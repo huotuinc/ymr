@@ -58,9 +58,9 @@
                                                 <!--<input th:each="type:${shareTypes}"-->
                                                        <!--th:checked="*{shareType==null?false:(shareType.name==${type.name})}"-->
                                                        <!--type="radio" name="shareType" th:id="${type.value}"/>-->
-                                                <input onchange="changeType()" th:value="${shareTypes[0]}" type="radio" name="shareType"/><label>资讯</label>
-                                                <input onchange="changeType()" th:value="${shareTypes[1]}" type="radio" name="shareType" /><label>团购</label>
-                                                <input onchange="changeType()" th:value="${shareTypes[2]}" type="radio" name="shareType" /><label>众筹项目</label>
+                                                <input onchange="changeType()" th:value="${shareTypes[0]}" id="type1" type="radio" name="shareType"/><label for="type1">资讯</label>
+                                                <input onchange="changeType()" th:value="${shareTypes[1]}" id="type2" type="radio" name="shareType" /><label for="type2">团购</label>
+                                                <input onchange="changeType()" th:value="${shareTypes[2]}" id="type3" type="radio" name="shareType" /><label for="type3">众筹项目</label>
                                             </td>
                                         </tr>
                                         <tr>
@@ -266,9 +266,6 @@
             $.jBox.tip("积分请输入数字！");
             return;
         }
-
-
-
         $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
             if (v == 'ok')
                 $("#form1").submit();
