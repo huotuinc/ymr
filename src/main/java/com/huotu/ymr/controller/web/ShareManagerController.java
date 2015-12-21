@@ -1,6 +1,7 @@
 package com.huotu.ymr.controller.web;
 
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.model.ResultModel;
@@ -42,29 +43,97 @@ public class ShareManagerController {
 
 
     @RequestMapping(value = "/showBottomGeneralize",method = RequestMethod.GET)
-    public String showBottomGeneralize() throws Exception{
+    public String showBottomGeneralize(Model model) throws Exception{
+        Config bottom=configRepository.findOne(ConfigKey.BOTTOM_GENERALIZE);
+        if(bottom==null){
+            bottom=new Config();
+            bottom.setKey(ConfigKey.BOTTOM_GENERALIZE);
+            bottom.setValue("");
+            configRepository.save(bottom);
+        }
+        model.addAttribute("bottom",bottom.getValue());
         return "manager/share/bottomGeneralize";
 
     }
 
     @RequestMapping(value = "/showIntegralConfig",method = RequestMethod.GET)
-    public String showIntegralConfig() throws Exception{
+    public String showIntegralConfig(Model model) throws Exception{
+        model.addAttribute("userGT",configRepository.findOne(ConfigKey.USER_TRANSMIT).getValue());
+        model.addAttribute("userTT",configRepository.findOne(ConfigKey.USER_TOTAL).getValue());
+        model.addAttribute("globalGT",configRepository.findOne(ConfigKey.GLOBAL_TRANSMIT).getValue());
+        model.addAttribute("globalTT",configRepository.findOne(ConfigKey.GLOBAL_TOTAL).getValue());
         return "manager/share/integralConfig";
     }
 
     @RequestMapping(value = "/saveUserIntegralConfig",method = RequestMethod.POST)
-    public String saveUserIntegralConfig(Integer score,Integer relayReward) throws Exception{
-        return "manager/share/integralConfig";
+    public String saveUserIntegralConfig(Integer score,Integer relayReward,Integer type,Model model) throws Exception{
+        if(score==null||relayReward==null||type==null){
+            throw new IllegalArgumentException("参数异常");
+        }
+        Config GT=new Config();
+        Config TT=new Config();
+        if(type==0){//官方
+            GT=configRepository.findOne(ConfigKey.GLOBAL_TRANSMIT);
+            TT=configRepository.findOne(ConfigKey.GLOBAL_TOTAL);
+        }
+        if(type==1){//用户
+            GT=configRepository.findOne(ConfigKey.USER_TRANSMIT);
+            TT=configRepository.findOne(ConfigKey.USER_TOTAL);
+        }
+        GT.setValue(relayReward+"");
+        TT.setValue(score+"");
+        configRepository.save(GT);
+        configRepository.save(TT);
+        return "redirect:/manager/showIntegralConfig";
+    }
+    @RequestMapping(value = "/saveBottomConfig",method = RequestMethod.POST)
+    public String saveBottomConfig(String content,Model model) throws Exception{
+        Config bottom=configRepository.findOne(ConfigKey.BOTTOM_GENERALIZE);
+        if(bottom==null){
+            bottom=new Config();
+            bottom.setKey(ConfigKey.BOTTOM_GENERALIZE);
+
+        }
+        bottom.setValue(content);
+        configRepository.save(bottom);
+        model.addAttribute("bottom",bottom.getValue());
+        return "manager/share/bottomGeneralize";
     }
 
-    @RequestMapping(value = "/saveMerchantIntegralConfig",method = RequestMethod.POST)
-    public String saveMerchantIntegralConfig(Integer score,Integer relayReward) throws Exception{
-        return "manager/share/integralConfig";
-    }
 
-
+    /**
+     * 草稿箱列表
+     * @param shareSearchModel
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/showDraftsList",method = RequestMethod.GET)
-    public String showDraftsList() throws Exception{
+    public String showDraftsList(ShareSearchModel shareSearchModel,Model model) throws Exception{
+        //todo 用户权限方面的操作
+        if (shareSearchModel.getPageNoStr() < 0) {
+            shareSearchModel.setPageNoStr(0);
+        }
+        shareSearchModel.setCheckType(6);
+        Page<Share> shares=shareService.findPcShareList(shareSearchModel);
+        List<BackendShareModel> backendShareModels=new ArrayList<>();
+        for(Share s:shares){
+            BackendShareModel backendShareModel=new BackendShareModel();
+            backendShareModel.setShareTitle(s.getTitle());
+            backendShareModel.setId(s.getId());
+            backendShareModel.setTop(s.getTop());
+            backendShareModel.setTime(s.getTime());
+            backendShareModel.setUserType(s.getOwnerType().getName());
+            backendShareModel.setPraiseQuantity(s.getPraiseQuantity());
+            backendShareModel.setRelayQuantity(s.getRelayQuantity());
+            backendShareModel.setView(s.getView());
+            backendShareModel.setCheckType(s.getCheckStatus().getName());
+            backendShareModels.add(backendShareModel);
+        }
+        model.addAttribute("allShareList", backendShareModels);//文章列表model
+        model.addAttribute("pageNo",shareSearchModel.getPageNoStr());//当前页数
+        model.addAttribute("totalPages",shares.getTotalPages());//总页数
+        model.addAttribute("totalRecords", shares.getTotalElements());//总记录数
+
         return "manager/share/draftsList";
     }
 
@@ -213,7 +282,7 @@ public class ShareManagerController {
      * @return
      */
     @RequestMapping(value = "/saveShare",method = RequestMethod.POST)
-    public String saveShare(Share share,HttpServletRequest request) throws Exception{
+    public String saveShare(Share share,HttpServletRequest request,Integer checkType) throws Exception{
        String contextPath= request.getContextPath();
         //新增
         if(share.getId()==null){
@@ -229,7 +298,11 @@ public class ShareManagerController {
             share.setReason("");
             share.setTop(false);
             share.setUsedScore(0);
-            share.setCheckStatus(CommonEnum.CheckType.audit);
+            if(checkType==1){
+                share.setCheckStatus(CommonEnum.CheckType.audit);
+            }else {
+                share.setCheckStatus(CommonEnum.CheckType.draft);
+            }
             shareService.saveShare(share);
         //修改
         }else{
@@ -237,6 +310,11 @@ public class ShareManagerController {
             Uri uri=new Uri(share.getImg());
             String imgPath=uri.getPath().substring(uri.getPath().indexOf(contextPath)+contextPath.length());
             modifyShare.setImg(imgPath);
+            if(checkType==1){
+                modifyShare.setCheckStatus(CommonEnum.CheckType.audit);
+            }else {
+                modifyShare.setCheckStatus(CommonEnum.CheckType.draft);
+            }
             modifyShare.setTitle(share.getTitle());
             modifyShare.setContent(share.getContent());
             modifyShare.setUseLink(share.getUseLink());
@@ -249,7 +327,7 @@ public class ShareManagerController {
 
 
     /**
-     * 帖子的操作，0：置顶，1：审核通过，2：取消置顶，3：审核不通过， 4：删除,5:移至草稿箱，6：加精
+     * 帖子的操作，0：置顶，1：审核通过，2：取消置顶，3：审核不通过， 4：删除,5:移至草稿箱，6：加精，7:取消加精，8:上架
      * @param shareId   帖子ID
      * @param type      操作类型
      * @return
@@ -292,6 +370,11 @@ public class ShareManagerController {
                 share.setBoutique(true);
                 //加精
                 break;
+            case 7:
+                share.setBoutique(false);
+                break;
+            case 8:
+                share.setCheckStatus(CommonEnum.CheckType.audit);
             default:
                 break;
         }

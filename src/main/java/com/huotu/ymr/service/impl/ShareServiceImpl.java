@@ -39,7 +39,7 @@ public class ShareServiceImpl implements ShareService {
         boolean isEnough=true;
         //判断查找置顶的分享还是普通的分享，true为置顶
         Boolean findWho=true;
-        hql.append("select s from Share as s where s.status=true and s.checkStatus=1 and s.drafts=false ");
+        hql.append("select s from Share as s where s.checkStatus=:checkType ");
         if(!StringUtils.isEmpty(key)){
             hql.append(" and s.title like :key ");
         }
@@ -60,6 +60,7 @@ public class ShareServiceImpl implements ShareService {
         }
         final boolean finalFindWho=findWho;
         List list = shareRepository.queryHql(hql.toString(),query -> {
+            query.setParameter("checkType",CommonEnum.CheckType.pass);
             if(!StringUtils.isEmpty(key)){
                 query.setParameter("key","%"+key+"%");
             }
@@ -75,6 +76,7 @@ public class ShareServiceImpl implements ShareService {
             String otherHql=hql.toString().replaceAll("and s.id<:lastId"," ");
             Share data=(Share)list.get(list.size() - 1);
             List otherList = shareRepository.queryHql(otherHql,query -> {
+                query.setParameter("checkType",CommonEnum.CheckType.pass);
                 if(!StringUtils.isEmpty(key)){
                     query.setParameter("key","%"+key+"%");
                 }

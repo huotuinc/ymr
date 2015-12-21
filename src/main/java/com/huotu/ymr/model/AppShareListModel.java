@@ -65,4 +65,6 @@ public class AppShareListModel {
      * 转发可得积分
      */
     private Integer relayScore;
+
+
 }

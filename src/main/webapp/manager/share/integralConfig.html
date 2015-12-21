@@ -29,8 +29,8 @@
 
 <body onload="firstLoad()">
 
-<form method="post" th:action="@{modifyInvoiceConfig}" id="form1" th:object="${invoiceConfig}"
-      enctype="multipart/form-data">
+<form method="post" th:action="@{saveUserIntegralConfig}" id="form1">
+    <input type="hidden" name="type" value="0"/>
     <div class="container">
         <div class="blank10">
         </div>
@@ -49,7 +49,7 @@
             <div class="br corner">
             </div>
             <div class="cnt-wp" style="padding: 35px 10px 10px;">
-                <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all"
+                <div class="cnt om-tabs om-widget om-widget-content om-corner-all"
                      style="width: auto; height: auto;">
 
                     <div class="cnt" id="config1">
@@ -57,7 +57,7 @@
                     </div>
                     <div class="om-tabs-panels om-widget-content om-corner-bottom" id="config2">
                         <div class="om-widget om-panel">
-                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                            <div class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
                                 <div class="division">
                                     <div>
                                     </div>
@@ -67,13 +67,13 @@
                                         <tbody>
                                         <tr>
                                             <th>转发奖励:</th>
-                                            <td><span id="lblOrderId"></span>
-                                                <input name="companyName" type="text"
-                                                       th:value="${invoiceConfig} == null ? '': ${invoiceConfig.companyName}"
-                                                       id="companyName1" class="input-normal" placeholder=""/></td>
+                                            <td><span></span>
+                                                <input name="relayReward" type="text"
+                                                       th:value="${globalGT} == null ? '': ${globalGT}"
+                                                       id="globalGT" class="input-normal" placeholder=""/></td>
                                             <th>帖子总奖励:</th>
-                                            <td><input name="companyTel" type="text" id="companyTel1"
-                                                       th:value="${invoiceConfig} == null ? '': ${invoiceConfig.companyTel}"
+                                            <td><input name="score" type="text" id="globalTT"
+                                                       th:value="${globalTT} == null ? '': ${globalTT}"
                                                        class="input-normal" placeholder=""/></td>
                                         </tr>
                                         </tbody>
@@ -87,9 +87,9 @@
 
             <div style="text-align: center;">
                 <div style="display: none;">
-                    <input type="submit" name="btnSave" value="" id="btnSave"/>
+                    <input type="submit" name="btnSave" value=""/>
                 </div>
-                <a class="btn-lit" href="javascript:submitForm2();">
+                <a class="btn-lit" href="javascript:submitForm1();">
                     <span>保存修改</span>
                 </a>
             </div>
@@ -100,8 +100,8 @@
 </form>
 
 
-<form method="post" th:action="@{modifyInvoiceConfig}" id="form2" th:object="${invoiceConfig}"
-      enctype="multipart/form-data">
+<form method="post" th:action="@{saveUserIntegralConfig}" id="form2">
+    <input type="hidden" name="type" value="1"/>
     <div class="container">
         <div class="blank10">
         </div>
@@ -123,7 +123,7 @@
                 <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all"
                      style="width: auto; height: auto;">
 
-                    <div class="cnt" id="config2">
+                    <div class="cnt">
 
                     </div>
                     <div class="om-tabs-panels om-widget-content om-corner-bottom" id="config2">
@@ -138,13 +138,13 @@
                                         <tbody>
                                         <tr>
                                             <th>转发奖励:</th>
-                                            <td><span id="lblOrderId"></span>
-                                                <input name="companyName" type="text"
-                                                       th:value="${invoiceConfig} == null ? '': ${invoiceConfig.companyName}"
-                                                       id="companyName1" class="input-normal" placeholder=""/></td>
+                                            <td><span></span>
+                                                <input name="relayReward" type="text"
+                                                       th:value="${userGT} == null ? '': ${userGT}"
+                                                       id="userGT" class="input-normal" placeholder=""/></td>
                                             <th>帖子总奖励:</th>
-                                            <td><input name="companyTel" type="text" id="companyTel1"
-                                                       th:value="${invoiceConfig} == null ? '': ${invoiceConfig.companyTel}"
+                                            <td><input name="score" type="text" id="userTT"
+                                                       th:value="${userTT} == null ? '': ${userTT}"
                                                        class="input-normal" placeholder=""/></td>
                                         </tr>
                                         </tbody>
@@ -175,129 +175,63 @@
 
 
 <script>
-    //提交所填信息
+    //提交官方积分配置
     function submitForm1(obj) {
-        var companyAddr = $("#companyAddr").val();
-        var companyName = $("#companyName").val();
-        var companyTel = $("#companyTel").val();
-        var taxpayerCode = $("#taxpayerCode ").val();
-        var bankName = $("#bankName ").val();
-        var accountNo = $("#accountNo").val();
-        var generalCertificateUrl = document.getElementById("generalCertificateFile").value;
-        var taxRegistCertificateUrl = document.getElementById("taxRegistCertificateFile").value;
-        var uploadpicCover3 = document.getElementById("uploadpicCover3").value;
-        var uploadpicCover4 = document.getElementById("uploadpicCover4").value;
-        if (companyAddr == "" || companyAddr == null) {
-            $.jBox.tip("请填写公司地址");
+        var globalGT = $("#globalGT").val();
+        var globalTT = $("#globalTT").val();
+        if (globalGT.length == 0) {
+            $.jBox.tip("请输入全局配置的转发积分");
             return;
         }
-        if (companyName == null || companyName == "") {
-            $.jBox.tip("请填写公司名称");
+        if (globalTT.length==0) {
+            $.jBox.tip("请输入全局配置的总积分");
             return;
         }
-        if (companyTel == null || companyTel == "") {
-            $.jBox.tip("请填写注册电话");
+        var rex=/^[0-9]*$/;
+        if(!rex.test(globalGT)) {
+            $.jBox.tip("积分请输入数字！");
             return;
         }
-        if (taxpayerCode == "" || taxpayerCode == null) {
-            $.jBox.tip("请填写纳税人识别码");
+        var rex=/^(-1)*|[0-9]*$/;
+        if(!rex.test(globalTT)){
+            $.jBox.tip("积分请输入数字！");
             return;
         }
-        if (bankName == "" || bankName == null) {
-            $.jBox.tip("请填写开户银行名称");
-            return;
-        }
-        if (accountNo == "" || accountNo == null) {
-            $.jBox.tip("请填写开户银行账号");
-            return;
-        }
-        if (taxRegistCertificateUrl == null || taxRegistCertificateUrl == "") {
-            if (uploadpicCover3 == null || uploadpicCover3 == "") {
-                $.jBox.tip("请提交税务登记证");
-                return;
-            }
-        }
-        if (generalCertificateUrl == null || generalCertificateUrl == "") {
-            if (uploadpicCover4 == null || uploadpicCover4 == "") {
-                $.jBox.tip("请提交纳税人资格证");
-                return;
-            }
-        }
-        $.MsgBox.Confirm("友情提示", "即将保存内容，确定继续吗？", function () {
-            $("#form1").submit();
+        $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
+            if (v == 'ok')
+                $("#form1").submit();
         });
 
     }
-    //提交普通发票
+    //提交用户积分配置
     function submitForm2(obj) {
-        var companyAddr1 = $("#companyAddr1").val();
-        var companyName1 = $("#companyName1").val();
-        var companyTel1 = $("#companyTel1").val();
-        if (companyAddr1 == "" || companyAddr1 == null) {
-            $.jBox.tip("请填写公司名称");
+        var userGT = $("#userGT").val();
+        var userTT = $("#userTT").val();
+        if (userGT.length == 0) {
+            $.jBox.tip("请输入全局配置的转发积分");
             return;
         }
-        if (companyName1 == null || companyName1 == "") {
-            $.jBox.tip("请填写注册电话");
+        if (userTT.length==0) {
+            $.jBox.tip("请输入全局配置的总积分");
             return;
         }
-        if (companyTel1 == null || companyTel1 == "") {
-            $.jBox.tip("请填写注册地址");
+        var rex=/^[0-9]*$/;
+        if(!rex.test(userGT)) {
+            $.jBox.tip("积分请输入数字！");
             return;
         }
-        $.MsgBox.Confirm("友情提示", "即将保存内容，确定继续吗？", function () {
-            $("#form2").submit();
+        var rex=/^(-1)*|[0-9]*$/;
+        if(!rex.test(userTT)){
+            $.jBox.tip("积分请输入数字！");
+            return;
+        }
+        $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
+            if (v == 'ok')
+                $("#form2").submit();
         });
 
-
     }
 
-
-    //初始化进页面
-    function firstLoad() {
-
-        var i = $("#defaultType3").val();
-        if (i == 0) {
-            document.getElementById('defaultType1').checked = false;
-            document.getElementById('defaultType2').checked = true;
-            document.getElementById('form1').style.display = 'none';
-            document.getElementById('form2').style.display = '';
-            document.getElementById('form3').style.display = 'none';
-            document.getElementById('RadioGroup4').checked = true;
-        }
-        if (i == 1) {
-            document.getElementById('defaultType1').checked = true;
-            document.getElementById('defaultType2').checked = false;
-            document.getElementById('form1').style.display = '';
-            document.getElementById('form2').style.display = 'none';
-            document.getElementById('form3').style.display = 'none';
-            document.getElementById('RadioGroup1').checked = true;
-        }
-    }
-    //是否默认发票
-    function check(type) {
-        if (type == 1) {
-            if (document.getElementById('defaultType1').checked == true) {
-                document.getElementById('defaultType2').checked = false;
-                $("#defaultType3").val("1");
-                $("#defaultType4").val("1");
-            }
-            else {
-                $("#defaultType3").val("0");
-                $("#defaultType4").val("0");
-            }
-
-
-        }
-        if (type == 2) {
-            document.getElementById('defaultType1').checked = false;
-            ;
-            $("#defaultType3").val("0");
-            $("#defaultType4").val("0");
-
-
-        }
-    }
 </script>
 </body>
 </html>

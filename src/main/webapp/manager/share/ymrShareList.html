@@ -681,36 +681,36 @@
         switch (text){
             case '置顶':
                 type=0;
-                ajaxSetUpload(shareId,type);
+                ajaxSetUpload(shareId,type,obj);
                 return;
             case '通过':
                 type=1;
-                 ajaxSetUpload(shareId,type);
+                 ajaxSetUpload(shareId,type,obj);
                 return;
             case '取消':
                 type=2;
-                 ajaxSetUpload(shareId,type);
+                 ajaxSetUpload(shareId,type,obj);
                 return;
             case '不通过':
                 type=3;
-                 ajaxSetUpload(shareId,type);
+                 ajaxSetUpload(shareId,type,obj);
                 return;
             case '删除':
                 jBox.confirm("友情提示", "即将删除，确定继续吗？",function(v,h,f){
                     if (v == 'ok')
-                        ajaxSetUpload(shareId,4);
+                        ajaxSetUpload(shareId,4,obj);
                 });
                 break;
             case '移至草稿箱':
                     jBox.confirm("友情提示", "即将移动到草稿箱，确定继续吗？",function(v,h,f){
                         if (v == 'ok')
-                            ajaxSetUpload(shareId,4);
+                            ajaxSetUpload(shareId,4,obj);
                     });
                 break;
         }
     }
 
-    function ajaxSetUpload(shareId,type){
+    function ajaxSetUpload(shareId,type,obj){
         $.ajax({
             type:'POST',
             url: 'setShare',

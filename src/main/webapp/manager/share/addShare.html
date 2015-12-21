@@ -31,6 +31,7 @@
 <body onload="firstLoad()">
 <form method="post" action="saveShare" id="form1" th:object="${share}">
     <input type="hidden" name="id" th:value="*{id}"/>
+    <input type="hidden" name="checkType" value="1"/>
     <div class="container">
         <div class="blank10">
         </div>
@@ -162,12 +163,12 @@
 
                 <!--以下是按钮-->
                 <div style="text-align: center; margin-top:12px" >
-                    <a class="btn-lit" href="javascript:submitForm();" style=" margin-right:10px;">
+                    <a id="drafts" class="btn-lit" href="javascript:submitForm1(false);" style=" margin-right:10px;">
         <span>
         保存到草稿箱
         </span>
                     </a>
-                    <a class="btn-lit" href="javascript:submitForm1();">
+                    <a id="audit" class="btn-lit" href="javascript:submitForm1(true);">
         <span>
         直接发布
         </span>
@@ -218,6 +219,18 @@
     }
 
 
+//    //提交草稿
+//    function drafts(obj) {
+//        $("input[name='checkType']").val(0);
+//        $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
+//            if (v == 'ok')
+//                $("#form1").submit();
+//        });
+//
+//    }
+
+
+
     //提交帖子
     function submitForm1(obj) {
         var shareTitle = $("#title").val();
@@ -266,12 +279,12 @@
             $.jBox.tip("积分请输入数字！");
             return;
         }
+        if(!obj){
+            $("input[name='checkType']").val(0);
+        }
         $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
             if (v == 'ok')
                 $("#form1").submit();
-            else if (v == 'cancel')
-                return;
-
         });
 
     }

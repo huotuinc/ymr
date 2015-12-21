@@ -266,7 +266,7 @@
     </script>
 </head>
 <body marginwidth="0" marginheight="0">
-<form method="get" action="getYmrShareList" id="form1" th:object="${shareSearchModel}">
+<form method="get" action="getUserShareList" id="form1" th:object="${shareSearchModel}">
     <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
     <input hidden="hidden" id="ownerType" name="ownerType" value="1"/>
     <div class="container">
@@ -356,19 +356,6 @@
         <div class="blank10">
         </div>
         <div class="block">
-            <!--<div class="h">-->
-                <!--<span class="icon-sprite icon-list"></span>-->
-
-                <!--<h3 style="float: left; width: 144px;">文章管理 </h3>-->
-
-                <!--<div class="bar">-->
-                    <!--<a class="btn-lit aucontrol" href="" th:href="@{/manager/addShare}">-->
-                        <!--<span>新增资讯类</span></a>-->
-                    <!--<a class="btn-lit aucontrol" href="">-->
-                        <!--<span>新增团购类</span></a>-->
-                <!--</div>-->
-
-            <!--</div>-->
             <div class="tl corner">
             </div>
             <div class="tr corner">
@@ -380,29 +367,6 @@
             <div class="cnt-wp">
 
                 <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
-                    <!--<div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border"-->
-                         <!--style="height: 28px;">-->
-                        <!--<ul style="height: 28px; line-height: 28px;">-->
-                            <!--<span class="left-placeholder"></span>-->
-                            <!--<li class="om-state-default om-corner-top  " id="ddgl1">-->
-                                <!--<span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner" style="width: auto; height: 27px;">全部</a><span class="liright"></span>-->
-                            <!--</li>-->
-                            <!--<li class="om-state-default om-corner-top " id="ddgl2"><span class="lileft"></span><a-->
-                                    <!--href="javascript:showList(1);" class="om-tabs-inner"-->
-                                    <!--style="width: auto; height: 27px;">资讯</a><span class="liright"></span></li>-->
-
-                            <!--<li class="om-state-default om-corner-top" id="ddgl3"><span class="lileft">-->
-                            <!--</span><a-->
-                                    <!--href="javascript:showList(2);" class="om-tabs-inner"-->
-                                    <!--style="width: auto; height: 27px;">团购</a><span class="liright"></span></li>-->
-
-                            <!--<li class="om-state-default om-corner-top" id="ddgl4"><span class="lileft"></span><a-->
-                                    <!--href="javascript:showList(3);" class="om-tabs-inner"-->
-                                    <!--style="width: auto; height: 27px;">众筹宣传</a><span class="liright"></span></li>-->
-
-                            <!--<span class="right-placeholder"></span>-->
-                        <!--</ul>-->
-                    <!--</div>-->
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
 
                         <div class="om-widget om-panel ">
@@ -438,14 +402,6 @@
                                             <th scope="col">操作
                                             </th>
                                         </tr>
-                                        <!--<tr style="background: #FFC; text-align: center; display: none;"-->
-                                        <!--id="trSelectNote">-->
-                                        <!--<td colspan="11">您当前选定了<span id="spSelectedNum">20条</span>记录，<a-->
-                                        <!--href="javascript:void(0);" id="btnCancelSelect">点此取消选定</a>。<a-->
-                                        <!--href="javascript:void(0);" id="btnCheckAll">点此选定全部</a> 的<span-->
-                                        <!--id="spAllSelectedNum">25</span>条记录-->
-                                        <!--</td>-->
-                                        <!--</tr>-->
                                         <tbody th:remove="all-but-first" id="o1">
 
                                         <tr th:each="shares:${allShareList}" class="even">
@@ -477,13 +433,12 @@
                                                     <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">不通过</a>
                                                 </span>
                                                 <span th:case="*" th:text="${shares.checkType}"></span>
-                                                <!--<span th:case="'未通过'">未通过</span>-->
-                                                <!--<span th:case="'关闭'">关闭</span>-->
-                                                <!--<span th:case="'删除'">删除</span>-->
                                             </td>
                                             <td class="txt40 c tail">
                                                 <div>
-                                                    <a th:href="'#'" onclick="setShare(this)" th:text="${shares.top}?'取消':'置顶'"  th:attr="shareId=''+${shares.id}">置顶</a>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:text="${shares.top}?'取消置顶':'置顶'"  th:attr="shareId=''+${shares.id}">置顶</a>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:text="${shares.boutique}?'取消加精':'加精'"  th:attr="shareId=''+${shares.id}">置顶</a>
+
                                                     <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">删除</a>
 
                                                     <!--@thymesVar id="orders" type="com.huotu.hotsupplier.sup.service.entity.order.Orders"-->
@@ -539,7 +494,7 @@
                 type=1;
                 ajaxSetUpload(shareId,type);
                 return;
-            case '取消':
+            case '取消置顶':
                 type=2;
                 ajaxSetUpload(shareId,type);
                 return;
@@ -552,6 +507,14 @@
                     if (v == 'ok')
                         ajaxSetUpload(shareId,4);
                 });
+                break;
+            case '加精':
+                type=6;
+                ajaxSetUpload(shareId,type);
+                break;
+            case '取消加精':
+                type=7;
+                ajaxSetUpload(shareId,type);
                 break;
         }
     }
