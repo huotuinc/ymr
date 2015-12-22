@@ -90,24 +90,31 @@ public class ArticleControllerTest extends SpringBaseTest {
         //先进行文章类别的存贮
         Category category = new Category();
         category.setPicture("d://a.png");
-        category.setName("自传故事");
+        category.setName("公司介绍");
         category.setSort(1);
         category = categoryRepository.saveAndFlush(category);
         categories.add(category);
 
         Category category1 = new Category();
         category1.setPicture("d://b.png");
-        category1.setName("学院介绍");
+        category1.setName("自传故事");
         category1.setSort(2);
         category1 = categoryRepository.saveAndFlush(category1);
         categories.add(category1);
 
         Category category2 = new Category();
         category2.setPicture("d://c.png");
-        category2.setName("美容知识");
+        category2.setName("学院介绍");
         category2.setSort(3);
         category2 = categoryRepository.saveAndFlush(category2);
         categories.add(category2);
+
+        Category category3 = new Category();
+        category3.setPicture("d://d.png");
+        category3.setName("美容知识");
+        category3.setSort(4);
+        category3 = categoryRepository.saveAndFlush(category3);
+        categories.add(category3);
         return categories;
     }
 
@@ -117,6 +124,7 @@ public class ArticleControllerTest extends SpringBaseTest {
     * 最后比较取出来的数据与数据库中的数据是否一样
      */
     @Test
+    @Rollback(false)
     public void testGetCategoryList() throws Exception {
         List<Category> categories = categoryRepository.findAll();
         if (categories.size() < 3) {
@@ -231,6 +239,7 @@ public class ArticleControllerTest extends SpringBaseTest {
     * 3.进行一篇文章的请求,并判断是否是想要的结果
      */
     @Test
+    @Rollback(false)
     public void testGetArticleInfo() throws Exception {
         //如果文章分类或文章数为0，则进行存储
         List<Article> articleList = articleRepository.findAll();
@@ -249,4 +258,6 @@ public class ArticleControllerTest extends SpringBaseTest {
         HashMap map = JsonPath.read(result, "$.resultData.data");
         Assert.assertEquals("断言请求文章id", articleList.get(0).getTitle(), map.get("title"));
     }
+
+
 }

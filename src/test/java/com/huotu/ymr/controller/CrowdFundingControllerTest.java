@@ -8,10 +8,7 @@ import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.common.CommonEnum;
-import com.huotu.ymr.entity.CrowdFunding;
-import com.huotu.ymr.entity.CrowdFundingBooking;
-import com.huotu.ymr.entity.CrowdFundingPublic;
-import com.huotu.ymr.entity.User;
+import com.huotu.ymr.entity.*;
 import com.huotu.ymr.mallentity.MallMerchant;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallMerchantRepository;
@@ -1099,5 +1096,15 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 
     }
 
+    @Test
+    @Rollback(false)
+    public  void testSetConfig(){
+        Config config=new Config();
+        config.setKey("GlobalAgencyFee");
+        config.setValue("0");
+        config=configRepository.saveAndFlush(config);
+
+
+    }
 
 }

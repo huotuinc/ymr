@@ -3,11 +3,13 @@ package com.huotu.ymr.service.impl;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingBooking;
+import com.huotu.ymr.entity.CrowdFundingMoneyRange;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.model.searchCondition.CrowdFundingPublicSearchModel;
 import com.huotu.ymr.model.searchCondition.CrowdFundingSearchModel;
 import com.huotu.ymr.model.searchCondition.DraftSearchModel;
 import com.huotu.ymr.repository.CrowdFundingBookingRepository;
+import com.huotu.ymr.repository.CrowdFundingMoneyRangeRepository;
 import com.huotu.ymr.repository.CrowdFundingPublicRepository;
 import com.huotu.ymr.repository.CrowdFundingRepository;
 import com.huotu.ymr.service.CrowdFundingService;
@@ -43,6 +45,8 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
     @Autowired
     private CrowdFundingBookingRepository crowdFundingBookingRepository;
 
+    @Autowired
+    private CrowdFundingMoneyRangeRepository crowdFundingMoneyRangeRepository;
     @Override
     public List<CrowdFundingPublic> findCrowdListFromLastIdWithNumber(Long crowdId, Long lastId, int number) {
         StringBuilder hql = new StringBuilder();
@@ -441,5 +445,17 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
                 return predicate;
             }
         },new PageRequest(crowdFundingPublicSearchModel.getPageNoStr(), 20,sort));
+    }
+
+    @Override
+    public List<CrowdFundingMoneyRange> findRangesByCrowdFunding(CrowdFunding crowdFunding) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFundingMoneyRange as range where " +
+                "  range.crowdFunding.id=:crowdId ");
+        List<CrowdFundingMoneyRange> rangeList = crowdFundingMoneyRangeRepository.queryHql(hql.toString(), query -> {
+            query.setParameter("crowdId", crowdFunding.getId());
+
+        });
+        return rangeList;
     }
 }

@@ -22,6 +22,12 @@ public class CrowdFundingMoneyRange {
     private Integer id;
 
     /**
+     * 所属众筹
+     */
+    @ManyToOne
+    private CrowdFunding crowdFunding;
+
+    /**
      * 类型
      */
     private CommonEnum.CrowdFundingType crowdFundingType;

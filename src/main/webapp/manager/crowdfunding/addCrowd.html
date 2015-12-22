@@ -4,20 +4,33 @@
 <head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>众筹后台</title>
-    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"/>
-    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"/>
-    <link href="../../resource/css/settlements.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"></script>
-    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="../../resource/css/settlements.css"/>
-    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"></script>
-    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"></script>
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.content.css}"/>
+    <link href="../../resource/css/settlements.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/css/settlements.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.4.2.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.7.2.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
+            th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
+    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
+            th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../../resource/css/settlements.css"
+          th:href="@{/resource/css/settlements.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
+            th:src="@{/resource/3rdParty/js/admin.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
+            th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" src="../../resource/js/ajaxfileupload.js"
+            th:src="@{/resource/js/ajaxfileupload.js}"></script>
 </head>
-
-<body>
-<form method="get" action="settlements" id="form1" th:object="${settlementSearcher}">
+<body onload="firstLoad()">
+<form method="post" action="auditCrowdFunding" id="form1" th:object="${addCrowdFundingModel}">
+    <input type="hidden" name="id" id="id" th:value="*{id}"/>
+   <input type="hidden" name="isDraft" id="isDraft" th:value="*{isDraft}"/>
     <div class="container">
         <div class="blank10">
         </div>
@@ -25,68 +38,28 @@
             <div class="h">
       <span class="icon-sprite icon-magnifier">
       </span>
-                <h3>众筹新增后台</h3>
+                <h3>众筹后台</h3>
             </div>
             <div class="cnt-wp" style="padding: 35px 10px 10px;">
                 <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
 
                     <!-- 以下是页卡-->
-                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border" style="height: 28px;">
-                        <ul style="height: 28px; line-height: 28px;">
-            <span class="left-placeholder">
-            </span>
-                            <li class="om-state-default om-corner-top">
-              <span class="lileft">
-              </span>
-              <span class="lileft">
-              </span>
-                                <a href="#tab1" onclick="changeClick('2')" tabid="om-tabs-7c1f-1" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    预约类
-                                </a>
-              <span class="liright">
-              </span>
-                            </li>
-                            <li class="om-state-default om-corner-top om-tabs-activated om-state-active">
-              <span class="lileft">
-              </span>
-              <span class="lileft">
-              </span>
-                                <a href="#tab0" onclick="changeClick('1')" tabid="om-tabs-7c1f-0" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    合伙众筹型
-                                </a>
-              <span class="liright">
-              </span>
-                            </li>
-            <span class="right-placeholder">
-            </span>
-                            <li class="om-state-default om-corner-top ">
-              <span class="lileft">
-              </span>
-                                <a href="javascript:showList(2);" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    认购类
-                                </a>
-              <span class="liright">
-              </span>
-                            </li>
-            <span class="right-placeholder">
-            </span>
-                        </ul>
-                    </div>
+
                     <!-- 页卡结束-->
 
                     <!-- 以下是可见等级-->
                     <div class="cnt">
                         <div class="search-bar">
-                            <label style="padding-right:30px;">
+                            <label style="padding-right:30px;" name="level">
               <span class="first ">
               可见等级
               </span>
                                 &nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" checked="checked" />
+                                <input type="checkbox" th:checked="*{lev1==1?true:false}" th:value="*{lev1}" name="lev1"/>
                                 Lv1
-                                <input type="checkbox" checked="checked" />
+                                <input type="checkbox" th:checked="*{lev2==1?true:false}"  th:value="*{lev2}" name="lev2"/>
                                 Lv2
-                                <input type="checkbox" />
+                                <input type="checkbox" th:checked="*{lev3==1?true:false}" name="lev3" th:value="*{lev3}"/>
                                 Lv3 </label>
                         </div>
                     </div>
@@ -96,28 +69,45 @@
                     <!-- 以下设置表单-->
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
                         <div class="om-widget om-panel">
-                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                            <div id="tab01" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
                                 <div class="division">
-                                    <div th:if="${order.shipStatus}!=0">
-                                    </div>
+
                                     <div>
                                     </div>
                                     <table cellpadding="0" cellspacing="0" width="100%">
                                         <tbody>
+
+                                        <tr>
+                                            <th>众筹类型类型:</th>
+                                            <td>
+                                                <!--<input th:each="type:${shareTypes}"-->
+                                                <!--th:checked="*{shareType==null?false:(shareType.name==${type.name})}"-->
+                                                <!--type="radio" name="shareType" th:id="${type.value}"/>-->
+                                                <input onchange="changeType()"  th:value="${crowdTypes[0]}" type="radio" name="crowdFundingType"/><label>预约</label>
+                                                <input onchange="changeType()"  th:value="${crowdTypes[1]}" type="radio" name="crowdFundingType" /><label>合作</label>
+                                                <input onchange="changeType()"  th:value="${crowdTypes[2]}" type="radio" name="crowdFundingType" /><label>认购</label>
+                                            </td>
+                                        </tr>
                                         <tr>
                                             <th>设置项目名称:</th>
-                                            <td style="width:41.5%;     border-top: 1px solid #ddd;"><span id="lblOrderId" th:text="${order.orderId}">
-                        </span>
-                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
+                                            <td style="border-top: 1px solid #ddd;">
+                                                <input name="name" type="text" id="name" th:value="*{name}" class="input-normal" placeholder=""/></td>
+
+
+
+                                            </tr>
+                                        <tr>
                                             <th>设置起始时间:</th>
                                             <td style="    border-top: 1px solid #ddd;"><div>
-                                                <input name="startDate" type="text" id="txtBeginTime" placeholder=" [开始时间]"
+                                                <input name="startDate" type="text" id="startDate" placeholder=" [开始时间]"
+                                                       th:value="*{startDate}"
                                                        class="input-normal Wdate"
                                                        onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false})"
-                                                       th:value="*{startDate}"/>
+                                                      />
                                                 <label class="first ">---</label>
-                                                <input name="endDate" type="text" id="txtEndTime" placeholder=" [结束时间]"
-                                                       class="input-normal Wdate" th:value="*{endDate}"
+                                                <input name="endDate" type="text" id="endDate" placeholder=" [结束时间]"
+                                                       th:value="*{endDate}"
+                                                       class="input-normal Wdate"
                                                        onfocus="WdatePicker({dateFmt:'yyyy-MM-dd',isShowClear:false,minDate:'#F{$dp.$D(\'txtBeginTime\')}'})"/>
                                             </div></td>
                                         </tr>
@@ -132,26 +122,44 @@
                                                     $('#logisticsName').val(lname);
                                                 }
                                             </script>
-                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
+                                                <input name="limitMoney" type="text" id="limitMoney" class="input-normal" th:value="*{limitMoney}" /></td>
+                                            </tr>
+                                        <tr>
                                             <th>设置人上限数:</th>
-                                            <td><input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
+                                            <td><input name="limitPeople" type="text" id="limitPeople" class="input-normal" th:value="*{limitPeople}" /></td>
                                         </tr>
                                         <tr>
                                             <th>封面:</th>
-                                            <td><div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;"> 未上传 </div>
+                                            <td>
+
+                                                <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
+                                                    <span th:style="*{picture}!=null?'display:none':''">未上传</span>
+                                                    <img  th:style="*{picture}==null?'display:none':''" id="crowd_img" th:src="*{picture}" width="80px" height="80px"/>
+                                                    <input type="hidden" name="picture" th:value="*{picture}"/>
+                                                </div>
+
                                                 <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
                                                     <a id="uploadpic" class="btn-lit jUploader-button" href="#" style="cursor: pointer; position: relative; overflow: hidden; direction: ltr;">
-                        <span style="color: #c1b3a9">
-                        上传
-                        </span>
-                                                        <input type="file" onchange="this.blur();" id="jUploader-file1" name="jUploaderFile" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
+                                                        <span style="color: #c1b3a9">
+                                                                上传
+                                                        </span>
+                                                        <input type="file" onchange="uploadImage()"  name="shareImage" id="shareImage" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
                                                     </a>
                                                 </div>
-                                                <input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/></td>
-                                            <th>内容:</th>
-                                            <td><textarea maxlength="" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
-                                                </span>
+                                                <!--<input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>-->
+                                            </td>
                                         </tr>
+
+                                        <tr>
+                                            <th>内容:</th>
+                                            <td th:if="*{id==null || isDraft==1}"><textarea id="content" th:text="*{content}" name="content"  class="input-normal" style=" width: 393px; height: 76px;"></textarea>
+                                            </td>
+                                            <td th:if="*{id!=null and isDraft!=1}"><textarea id="content1" th:text="*{content}" name="content1"  disabled="true" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
+                                            </td>
+
+                                        </tr>
+
+
                                         </tbody>
 
                                     </table>
@@ -163,26 +171,24 @@
                     <!-- 设置表结束-->
 
                     <!--以下是全局默认 -->
-                    <div class="cnt">
+                    <div class="cnt" id="agencyFee0">
                         <div class="search-bar">
                             <label>
-                                <input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="
+                                <input name="globleOrSingle" type="radio" id="globleOrSingle1" style="
     vertical-align: text-top;
-" value="单选" checked="checked"/>
+" value="1" th:checked="*{globleOrSingle==1?true:false}"/>
                                 全局默认：0%中介费</label>
                         </div>
                     </div>
                     <!-- 全局默认结束-->
 
                     <!--以下是单独设置 -->
-                    <div class="cntaa">
+                    <div class="cntaa" id="agencyFee1">
                         <div class="search-bar">
                             <label>
-                                <input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style="
-    vertical-align: text-top;
-"/>
+                                <input type="radio" name="globleOrSingle" value="0" th:checked="*{globleOrSingle==0?true:false}"  id="globleOrSingle0" style=" vertical-align: text-top;"/>
                                 单独设置</label>
-                            <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>
+                            <input name="singleSet" type="text" id="singleSet" th:value="*{singleSet}" class="input-normal" placeholder="默认0%中介费" style="text-align:center;"/>
             <span style=" vertical-align: text-top;">
             中介费
             </span>
@@ -192,85 +198,50 @@
 
                 </div>
 
-                <div>
+                <div id="addBox">
                     <div class="om-tabs-panels om-widget-content om-corner-bottom" style="    border: 1px solid #ddd; background-color:#fff;">
                         <div class="om-widget om-panel">
                             <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
                                 <div class="division">
-                                    <div th:if="${order.shipStatus}!=0">
-                                    </div>
+
 
 
                                     <!--以下是设置“发起/合作人”可选金额范围-->
                                     <div class="cnt">
-                                        <div class="search-bar">
+                                        <div class="search-bar" id="cooperation">
                                             设置“发起/合作人”可选金额范围
+                                        </div>
+                                        <div class="search-bar" id="subscription">
+                                            设置“认购”可选金额范围
                                         </div>
                                     </div>
                                     <table cellpadding="0" cellspacing="0" width="100%">
-                                        <tbody>
+                                        <tbody id="addButton">
 
-                                        <tr>
-                                            <th style="    background-color: #fff;     border-left: 1px solid #ddd;
+<tr id="cooAdd">
+                                            <th style="background-color: #fff;border-left: 1px solid #ddd;">
+                                                <input th:if="*{isDraft==1||id==null}" name="cooperatrionAdd" type="text" id="cooperatrionAdd" class="input-normal"  style="text-align:center;" placeholder="默认0（合作人可选）"/>
+                                            </th>
+                                            <td th:if="*{isDraft==1||id==null}"><span id="orderId0" >
+                        </span>
+                                                <a class="btn-lit" href="javascript:add(0)">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
+</tr>
+<tr id="subAdd">
+                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
+"><input th:if="*{isDraft==1||id==null}" name="subscriptionAdd" type="text" id="subscriptionAdd"  class="input-normal" style="text-align:center;" placeholder="100000"/></th>
+                                            <td th:if="*{isDraft==1||id==null}"><span id="orderId1" >
+                        </span>
+                                                <a class="btn-lit" href="javascript:add(1)">
+                        <span>
+                        新增
+                        </span>
+                                                </a></td>
 
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="默认0（合作人可选"></th>
-                                            <td><span id="lblOrderId" th:text="${order.orderId}">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        新增
-                        </span>
-                                                </a></td>
-                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="100000"></th>
-                                            <td><span id="lblOrderId" th:text="${order.orderId}">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        新增
-                        </span>
-                                                </a></td>
-                                        </tr>
-                                        <tr>
-                                            <th style="    background-color: #fff;  border-left: 1px solid #ddd;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="200000"></th>
-                                            <td><span id="lblOrderId" th:text="${order.orderId}">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        新增
-                        </span>
-                                                </a></td>
-                                            <th style="    background-color: #fff;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="500000"></th>
-                                            <td><span id="lblOrderId" th:text="${order.orderId}">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        新增
-                        </span>
-                                                </a></td>
-                                        </tr>
-                                        <tr>
-                                            <th style="    background-color: #fff;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="600000"></th>
-                                            <td><span id="lblOrderId" th:text="${order.orderId}">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        删除
-                        </span>
-                                                </a></td>
-                                            <th style="    background-color: #fff;
-"><input name="txtCatName" type="text" id="txtCatName" class="input-normal" style="text-align:center;" placeholder="700000"></th>
-                                            <td><span id="lblOrderId" th:text="${order.orderId}">
-                        </span>
-                                                <a class="btn-lit" href="javascript:submitForm();">
-                        <span>
-                        删除
-                        </span>
-                                                </a></td>
-                                        </tr>
+    </tr>
                                         </tbody>
                                     </table>
                                     <!-- 设置“发起/合作人”可选金额范围结束-->
@@ -294,22 +265,414 @@
 
                 <!--以下是按钮-->
                 <div style="text-align: center; margin-top:12px" >
-                    <a class="btn-lit" href="javascript:submitForm();" style=" margin-right:10px;">
-        <span>
-        保存到草稿箱
-        </span>
-                    </a>
-                    <a class="btn-lit" href="javascript:submitForm();">
+
+                    <a th:if="*{id==null}" class="btn-lit" href="javascript:submitForm1(0);">
         <span>
         直接发布
         </span>
                     </a>
+                    <a th:if="*{id!=null}" class="btn-lit" href="javascript:auditCrowd(1);" style=" margin-right:10px;">
+        <span>
+        通过并发布
+        </span>
+                    </a>
+                    <a th:if="*{id==null || isDraft==1}" class="btn-lit" href="javascript:submitForm1(1);" style=" margin-right:10px;">
+        <span>
+        保存到草稿箱
+        </span>
+                    </a>
+                    <a th:if="*{id!=null and isDraft!=1}" class="btn-lit" href="javascript:auditCrowd(0);">
+        <span>
+            不通过并删除
+        </span>
+                    </a>
+
                 </div>
                 <!--按钮结束-->
 
             </div>
         </div>
+        </div>
 </form>
-<div class="blank10">
+<script type="text/javascript" th:inline="javascript">
+
+    var count=0;
+
+    var submitOCF=function () {
+        var settlementNo = $("#id").val();
+        var url="getCrowdFundingList";
+        $.get(url);
+        $.jBox.tip("正在修改...", "loading");
+        $.ajax({
+            type:"POST",
+            url:"openCrowdFunding",
+            data:{
+                crowdFundingsId:settlementNo
+            },
+            dataType:"json",
+            success: function (msg) {
+                if(msg.code == 200){
+                    $.jBox.tip(msg.msg, 'success');
+                    window.location.href=url;
+                }else{
+                    $.jBox.tip(msg.msg, 'error',{closed:function(){
+                        window.location.reload();}});
+                }
+            }
+        });
+    }
+
+    var submitDCF=function () {
+        var settlementNo = $("#id").val();
+        var url="getCrowdFundingList";
+        $.jBox.tip("正在修改...", "loading");
+        $.ajax({
+            type:"POST",
+            url:"delCrowdFunding",
+            data:{
+                crowdFundingsId:settlementNo
+            },
+            dataType:"json",
+            success: function (msg) {
+                if(msg.code == 200){
+                    $.jBox.tip(msg.msg, 'success');
+                    window.location.href=url;
+                }else{
+                    $.jBox.tip(msg.msg, 'error',{closed:function(){
+                        window.location.reload();}});
+                }
+            }
+        });
+    }
+
+
+    var submitDraftCF=function () {
+        var settlementNo = $("#id").val();
+        var url="getDraftList";
+        $.jBox.tip("正在修改...", "loading");
+        $.ajax({
+            type:"POST",
+            url:"saveAsDratf",
+            data:{
+                crowdFundingsId:settlementNo
+            },
+            dataType:"json",
+            success: function (msg) {
+                if(msg.code == 200){
+                    $.jBox.tip(msg.msg, 'success');
+                    window.location.href=url;
+                }else{
+                    $.jBox.tip(msg.msg, 'error',{closed:function(){
+                        window.location.reload();}});
+                }
+            }
+        });
+    }
+    function auditCrowd(obj) {
+        if(obj==1) {
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    submitOCF()
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定开启此众筹项目吗？", "提示", submit);
+        }
+        else if(obj==0){
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    submitDCF()
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定删除此众筹项目吗？", "提示", submit);
+        }else if(obj==2){
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    submitDraftCF()
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定继续保存到草稿箱么吗？", "提示", submit);
+        }
+    }
+
+    //切换帖子类型
+    function changeType() {
+        var type=$("input[name='crowdFundingType']:checked").val();
+
+        //预约
+        if (type =='booking') {
+            $("#agencyFee0").fadeOut();
+            $("#agencyFee1").fadeOut();
+            $("#addBox").fadeOut();
+            window.editor.readonly(false);
+        }
+        //合作
+        if (type == 'cooperation') {
+            $("#agencyFee0").fadeIn();
+            $("#agencyFee1").fadeIn();
+            $("#addBox").fadeIn();
+            $("#cooperation").fadeIn();
+            $("#subscription").fadeOut();
+            $("#subAdd").fadeOut();
+            $("#cooAdd").fadeIn();
+
+            if($("#id").val()=="") {
+                for (var i = 0; count >= i; i++) {
+                    var delId = "del" + i;
+                    var holder = document.getElementById("addButton");
+                    var obj = document.getElementById(delId);
+                    if (obj != null) {
+                        holder.removeChild(obj);
+                    }
+                }
+            }
+            window.editor.readonly(false);
+
+        }
+        //认购
+        if (type == 'subscription') {
+            $("#agencyFee0").fadeIn();
+            $("#agencyFee1").fadeIn();
+            $("#addBox").fadeIn();
+            $("#cooperation").fadeOut();
+            $("#subscription").fadeIn();
+            $("#subAdd").fadeIn();
+            $("#cooAdd").fadeOut();
+
+            if($("#id").val()=="") {
+                for (var i = 0; count >= i; i++) {
+                    var delId = "del" + i;
+                    var holder = document.getElementById("addButton");
+                    var obj = document.getElementById(delId);
+                    if (obj != null) {
+                        holder.removeChild(obj);
+                    }
+                }
+            }
+            window.editor.readonly(false);
+        }
+    }
+    //封面图片上传
+    function uploadImage() {
+        $.ajaxFileUpload({
+            url: 'UploadImg',
+            secureuri: false,
+            fileElementId: 'shareImage',
+            dataType: 'json',
+            data: null,
+            success: function(resultModel) {
+                if(resultModel.code==1){
+                    $.jBox("上传成功");
+                    $("#crowd_img").attr("src",resultModel.message);
+                    $("#crowd_img").show();
+                    $("#uploadpicCover").children("span").hide();
+                    $("input[name='picture']").val(resultModel.message);
+                }
+            },
+            error: function(data, status, e) {
+
+                $.jBox("上传失败，请检查网络后重试"+e);
+            }
+        });
+    }
+
+
+    function recommendGoods(){
+        $.jBox("iframe:http://www.baidu.com", {
+            title: "百度一下",
+            width: 800,
+            height: 350,
+            buttons: { '关闭': true }
+        });
+    }
+
+
+    //提交帖子
+    function submitForm1(obj) {
+        var crowdName= $("#name").val();
+        var content = $("#content").val();
+        var endDate = $("#endDate").val();
+        var startDate = $("#startDate").val();
+        var imgUrl=$("input[name='picture']").val();
+        var limitPeople = $("#limitPeople").val();
+        var limitMoney = $("#limitMoney").val();
+
+
+        if (crowdName.length == 0) {
+            $.jBox.tip("请输入众筹标题");
+            return;
+        }
+        if (endDate.length == 0) {
+            $.jBox.tip("请输入众筹开始时间");
+            return;
+        }
+        if (startDate.length == 0) {
+            $.jBox.tip("请输入众筹结束时间");
+            return;
+        }
+        if (startDate>endDate) {
+            $.jBox.tip("众筹结束时间不能早于开始时间");
+            return;
+
+        }
+        if (limitPeople.length == 0) {
+            $.jBox.tip("请输入人上限数");
+            return;
+        }
+        if (!(/^([1-9]\d*|[0]{1,1})$/.test(limitPeople))) {
+            $.jBox.tip("人上限数格式为正整数");
+            return;
+        }
+
+        if (limitMoney.length == 0) {
+            $.jBox.tip("请输入预约金额");
+            return;
+        }
+        if (isNaN(limitMoney)) {
+            $.jBox.tip("预约金额格式为数字");
+            return;
+        }
+        if (imgUrl.length == 0) {
+            $.jBox.tip("请上传封面图片");
+            return;
+        }
+        if (content.length==0) {
+            $.jBox.tip("请输入众筹内容");
+            return;
+        }
+
+        if(obj==0){
+            $("#isDraft").attr("value",0);
+        }
+        if(obj==1){
+            $("#isDraft").attr("value",1);
+        }
+        $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
+            if (v == 'ok')
+                $("#form1").submit();
+            else if (v == 'cancel')
+                return;
+
+        });
+
+    }
+    //初始化进页面
+    function firstLoad() {
+        /*<![CDATA[*/
+        var crowdFunding=/*[[${addCrowdFundingModel.crowdFundingType}]]*/'';
+        var fees=/*[[${fees}]]*/'';
+        if(crowdFunding!=null){
+            //将类型选择禁用(修改模式)
+            if($("#isDraft").val()==0) {
+
+                if(crowdFunding.$name=='cooperation'||crowdFunding.$name=='subscription'){
+                    for(var i=0;fees.length>i;i++){
+                        $("#addButton").append('<tr id="del'+i +
+                                '"><th style="background-color: #fff;">' +
+                                '<input name="feeButton0" type="text" value="'+fees[i]+'" class="input-normal" style="text-align:center;" disabled="true" />' +
+                                '</th><td></td></tr>');
+                    }
+                }
+                $("input[name='crowdFundingType']").attr("disabled", true);
+                $("input[name='lev1']").attr("disabled", true);
+                $("input[name='lev2']").attr("disabled", true);
+                $("input[name='lev3']").attr("disabled", true);
+                $("input[name='name']").attr("disabled", true);
+                $("input[name='startDate']").attr("disabled", true);
+                $("input[name='endDate']").attr("disabled", true);
+                $("input[name='shareImage']").attr("disabled", true);
+                $("input[name='limitPeople']").attr("disabled", true);
+                $("input[name='limitMoney']").attr("disabled", true);
+                $("input[name='singleSet']").attr("disabled", true);
+                $("#globleOrSingle1").attr("disabled", true);
+                $("#globleOrSingle0").attr("disabled", true);
+            }else if($("#isDraft").val()==1){
+                $("input[name='crowdFundingType']").attr("disabled", true);
+
+               if(crowdFunding.$name=='cooperation'||crowdFunding.$name=='subscription'){
+                        for(var i=0;fees.length>i;i++){
+                            $("#addButton").append('<tr id="del'+i +
+                                    '"><th style="background-color: #fff;">' +
+                                    '<input name="feeButton0" type="text" value="'+fees[i]+'" class="input-normal" style="text-align:center;" disabled="true" />' +
+                                    '<input type="hidden" name="feeButton" value="'+fees[i]+'"/>'+
+                                    '</th><td><a class="btn-lit" href="javascript:deleteitem('+i + ');"><span>删除</span></a></td></tr>');
+                        }
+                }
+
+
+
+            }
+            switch (crowdFunding.$name){
+                case 'booking':
+                    $("input[name='crowdFundingType']").eq(0).attr("checked","checked");
+                    break;
+                case 'cooperation':
+                    $("input[name='crowdFundingType']").eq(1).attr("checked","checked");
+                    break;
+                case 'subscription':
+                    $("input[name='crowdFundingType']").eq(2).attr("checked","checked");
+                    break;
+            }
+        }else{
+            $("input[name='crowdFundingType']").eq(0).attr("checked","checked");
+        }
+        changeType();
+//        $("#linkUrl").attr("disabled",true);
+        /*]]>*/
+
+    }
+
+    function useLinkchange(obj){
+        var link=$("input[name='useLink']:checked").val();
+        if(link==0){
+            window.editor.readonly(false);
+            //$("#content").removeAttr("readonly");
+            $("#linkUrl").attr("disabled",true);
+        }
+        if(link==1){
+            window.editor.readonly(true);
+            //$("#content").attr("readonly","readonly");
+            $("#linkUrl").attr("disabled",false);
+        }
+    }
+
+
+    function add(type)
+    {
+        var cos=0;
+        if(type==0) {
+            cos = $("#cooperatrionAdd").val();
+        }else if(type==1) {
+            cos = $("#subscriptionAdd").val();
+        }
+        if(cos==""){cos=0;}
+        count++;
+        $("#addButton").append('<tr id="del'+count +
+                '"><th style="background-color: #fff;">' +
+                '<input name="feeButton0" type="text" value="'+cos+'" class="input-normal" style="text-align:center;" disabled="true" />' +
+                '<input type="hidden" name="feeButton" value="'+cos+'"/>'+
+                '</th><td><a class="btn-lit" href="javascript:deleteitem('+count + ');"><span>删除</span></a></td></tr>');
+    }
+    function deleteitem(delId)
+    {
+        var delId="del"+delId;
+        var holder = document.getElementById("addButton");
+        var obj = document.getElementById(delId);
+        holder.removeChild(obj);
+    }
+
+
+</script>
+<script charset="utf-8" src="richText/kindeditor-min.js" th:src="@{/richText/kindeditor-min.js}"></script>
+<script charset="utf-8" src="richText/lang/zh_CN.js" th:src="@{/richText/lang/zh_CN.js}"></script>
+<script charset="utf-8" src="richText/init.js" th:src="@{/richText/init.js}"></script>
 </body>
 </html>

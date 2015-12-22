@@ -1,51 +1,36 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>增加文章</title>
+    <title>文章后台</title>
     <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
-          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+            th:href="@{/resource/3rdParty/css/admin.global.css}"/>
     <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
-          th:href="@{/resource/3rdParty/css/admin.content.css}"/>
+            th:href="@{/resource/3rdParty/css/admin.content.css}"/>
     <link href="../../resource/css/settlements.css" rel="stylesheet" type="text/css"
-          th:href="@{/resource/css/settlements.css}"/>
+            th:href="@{/resource/css/settlements.css}"/>
     <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.4.2.min.js"
-            th:src="@{/resource/3rdParty/js/jquery-1.4.2.min.js}"></script>
+            th:src="@{/resource/3rdParty/js/jquery-1.7.2.min.js}"></script>
     <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
             th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
     <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
-          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+            th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
     <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
             th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
     <link rel="stylesheet" type="text/css" href="../../resource/css/settlements.css"
-          th:href="@{/resource/css/settlements.css}"/>
+            th:href="@{/resource/css/settlements.css}"/>
     <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
             th:src="@{/resource/3rdParty/js/admin.js}"></script>
     <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
             th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
-    <script type="text/javascript" th:inline="javascript">
-    function showList(statu) {
-    if (statu == 0) {
-    $("#ddlShipStatus").attr("value", -1);
-    $('#form1').submit();
-    } else if (statu == 2) {
-    $("#ddlShipStatus").attr("value", 0);
-    $('#form1').submit();
-    //$('.aparent3').parent().toggleClass('om-state-default om-corner-top  om-tabs-activated om-state-active');
-    } else if (statu == 3) {
-    $("#ddlShipStatus").attr("value", 1);
-    $('#form1').submit();
-    } else if (statu == 4) {
-    $("#ddlShipStatus").attr("value", 4);
-    $('#form1').submit();
-    }
-    }
-    </script>
+    <script type="text/javascript" src="../../resource/js/ajaxfileupload.js"
+            th:src="@{/resource/js/ajaxfileupload.js}"></script>
+
 </head>
 
-<body>
-<form method="get" action="settlements" id="form1">
+<body onload="firstLoad()">
+<form method="post" action="saveArticle" id="form1" th:object="${article}">
+    <input type="hidden" name="id" th:value="*{id}"/>
     <div class="container">
         <div class="blank10">
         </div>
@@ -56,118 +41,82 @@
                 <h3>文章新增后台</h3>
             </div>
             <div class="cnt-wp" style="padding: 35px 10px 10px;">
-                <div id="make-tab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
-
-                    <!-- 以下是页卡-->
-                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border" style="height: 28px;">
-                        <ul style="height: 28px; line-height: 28px;">
-            <span class="left-placeholder">
-            </span>
-                            <li class="om-state-default om-corner-top om-tabs-activated om-state-active" >
-              <span class="lileft">
-              </span>
-              <span class="lileft">
-              </span>
-                                <a href="javascript:showList(1);" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    公司介绍
-                                </a>
-              <span class="liright">
-              </span>
-                            </li>
-                            <li class="om-state-default om-corner-top ">
-              <span class="lileft">
-              </span>
-              <span class="lileft">
-              </span>
-                                <a href="javascript:showList(2);" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    自传故事
-                                </a>
-              <span class="liright">
-              </span>
-                            </li>
-            <span class="right-placeholder">
-            </span>
-                            <li class="om-state-default om-corner-top ">
-              <span class="lileft">
-              </span>
-                                <a href="javascript:showList(3);" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    学院介绍
-                                </a>
-              <span class="liright">
-              </span>
-                            </li>
-            <span class="right-placeholder">
-            </span>
-
-                            <li class="om-state-default om-corner-top ">
-              <span class="lileft">
-              </span>
-                                <a href="javascript:showList(4);" class="om-tabs-inner" style="width: auto; height: 27px;">
-                                    美容知识
-                                </a>
-              <span class="liright">
-              </span>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- 页卡结束-->
-
-
+                <div id="makeTab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
 
                     <!-- 以下设置表单-->
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
                         <div class="om-widget om-panel">
-                            <div id="tab0" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                            <div id="tab0001" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
                                 <div class="division">
-
-                                    <table cellpadding="0" cellspacing="0" width="100%">
+                                    <div></div>
+                                    <div></div>
+                                    <table id="submitTable" cellpadding="0" cellspacing="0" width="100%">
                                         <tbody>
                                         <tr>
-                                            <th>文章标题:</th>
-                                            <td style="width:41.5%;     border-top: 1px solid #ddd;"><span id="lblOrderId" >
-                        </span>
-                                                <input name="txtCatName" type="text" id="txtCatName" class="input-normal" placeholder=""/></td>
-                                            <th>关闭外链:</th>
-                                            <td style="    border-top: 1px solid #ddd;">
-                                                <div>
-                                                    <label>
-                                                <input name="RadioGroup1" type="radio" id="RadioGroup1_0" style="vertical-align: text-top;" value="单选" checked="checked"/>
-                                                关闭</label>
+                                            <th>文章类型:</th>
+                                            <td>
+                                                <!--<input th:each="type:${shareTypes}"-->
+                                                       <!--th:checked="*{shareType==null?false:(shareType.name==${type.name})}"-->
+                                                       <!--type="radio" name="shareType" th:id="${type.value}"/>-->
+                                                <input onchange="changeType()" th:value="${articleTypes[0]}" type="radio" name="articleType"/><label>公司介绍</label>
+                                                <input onchange="changeType()" th:value="${articleTypes[1]}" type="radio" name="articleType" /><label>自传故事</label>
+                                                <input onchange="changeType()" th:value="${articleTypes[2]}" type="radio" name="articleType" /><label>学院介绍</label>
+                                                <input onchange="changeType()" th:value="${articleTypes[3]}" type="radio" name="articleType" /><label>美容知识</label>
 
-                                            </div></td>
-                                        </tr>
-                                        <p style="clean:both;">
-                                        </p>
-                                        <tr>
-                                            <th></th>
-                                            <td>
-                                                </td>
-                                            <th>开启外链:</th>
-                                            <td>
-                                                <label><input type="radio" name="RadioGroup1" value="单选" id="RadioGroup1_1" style="
-    vertical-align: text-top;
-"/>
-                                                链接</label>
-                                                <input name="txtCatName" type="text" id="txtCatName1" class="input-normal" placeholder="默认关闭外链" style="text-align:center;"/></td>
-                                        </tr>
-                                        <tr>
-                                            <th>封面:</th>
-                                            <td><div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;"> 未上传 </div>
-                                                <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
-                                                    <a id="uploadpic" class="btn-lit jUploader-button" href="#" style="cursor: pointer; position: relative; overflow: hidden; direction: ltr;">
-                        <span style="color: #c1b3a9">
-                        上传
-                        </span>
-                                                        <input type="file" onchange="this.blur();" id="jUploader-file1" name="jUploaderFile" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
-                                                    </a>
-                                                </div>
-                                                <input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/></td>
-                                            <th>内容:</th>
-                                            <td>
-                                                <span><textarea maxlength="" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
-                                                </span>
                                             </td>
                                         </tr>
+
+                                            <tr>
+                                                <th>标题:</th>
+                                                    <td style="border-top: 1px solid #ddd;">
+                                                        <span id="sharezx"></span>
+                                                <input maxlength="13" style="width:170px" name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
+
+                                            </tr>
+                                        <p style="clean:both;"></p>
+
+                                        <tr>
+                                            <th>封面:</th>
+                                            <td>
+
+                                                <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
+                                                    <span th:style="*{picture}!=null?'display:none':''">未上传</span>
+                                                    <img  th:style="*{picture}==null?'display:none':''" id="article_img" th:src="*{picture}" width="80px" height="80px"/>
+                                                    <input type="hidden" name="picture" th:value="*{picture}"/>
+                                                </div>
+
+                                                <div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">
+                                                    <a id="uploadpic" class="btn-lit jUploader-button" href="#" style="cursor: pointer; position: relative; overflow: hidden; direction: ltr;">
+                                                        <span style="color: #c1b3a9">
+                                                                上传
+                                                        </span>
+                                                        <input type="file" onchange="uploadImage()"  name="shareImage" id="shareImage" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
+                                                    </a>
+                                                </div>
+                                                <!--<input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>-->
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>内容:</th>
+                                            <td><textarea id="content" th:text="*{content}" name="content" class="input-normal" style=" width: 393px; height: 76px;"></textarea>
+                                            </td>
+                                        </tr>
+
+                                        <tr id="useLink">
+                                            <th>外链:</th>
+                                            <td>
+                                                <input value="0" onchange="useLinkchange(this)" type="radio" name="useLink" th:checked="!*{useLink}"/>关闭
+                                                <input value="1" onchange="useLinkchange(this)" type="radio" name="useLink" th:checked="*{useLink}"/>启用外链
+                                            </td>
+                                        </tr>
+                                        <tr id="linkUrlTr">
+                                            <th>外链地址</th>
+                                            <td><input style="width: 49%" type="text" id="linkUrl" name="linkUrl" th:value="*{linkUrl}"/></td>
+
+                                        </tr>
+
+
                                         </tbody>
 
                                     </table>
@@ -176,20 +125,16 @@
                         </div>
                     </div>
 
-                    <!-- 设置表结束-->
 
+                </div>
 
+                <!--是否在资讯栏目发一篇介绍范围结束-->
 
                 <!--以下是按钮-->
                 <div style="text-align: center; margin-top:12px" >
-                    <!--<a class="btn-lit" href="javascript:submitForm();" style=" margin-right:10px;">-->
-        <!--<span>-->
-        <!--保存到草稿箱-->
-        <!--</span>-->
-                    <!--</a>-->
-                    <a class="btn-lit" href="javascript:submitForm();">
+                    <a class="btn-lit" href="javascript:submitForm1();">
         <span>
-       进行发布
+        发布
         </span>
                     </a>
                 </div>
@@ -197,9 +142,184 @@
 
             </div>
         </div>
-        </div>
-        </div>
+    </div>
 </form>
 
+
+<div class="blank10"></div>
+<script type="text/javascript" th:inline="javascript">
+    //封面图片上传
+    function uploadImage() {
+        $.ajaxFileUpload({
+            url: 'UploadImg',
+            secureuri: false,
+            fileElementId: 'shareImage',
+            dataType: 'json',
+            data: null,
+            success: function(resultModel) {
+                if(resultModel.code==1){
+                    $.jBox("上传成功");
+                    $("#article_img").attr("src",resultModel.message);
+                    $("#article_img").show();
+                    $("#uploadpicCover").children("span").hide();
+                    $("input[name='picture']").val(resultModel.message);
+                }
+            },
+            error: function(data, status, e) {
+
+                $.jBox("上传失败，请检查网络后重试"+e);
+            }
+        });
+    }
+
+
+    function recommendGoods(){
+        $.jBox("iframe:http://www.baidu.com", {
+            title: "百度一下",
+            width: 800,
+            height: 350,
+            buttons: { '关闭': true }
+        });
+    }
+
+
+    //提交帖子
+    function submitForm1(obj) {
+        var shareTitle = $("#title").val();
+        var content = $("#content").val();
+        var imgUrl=$("input[name='picture']").val();
+
+        if (shareTitle.length == 0) {
+            $.jBox.tip("请输入文章标题");
+            return;
+        }
+        if (imgUrl.length == 0) {
+            $.jBox.tip("请上传封面图片");
+            return;
+        }
+        if (content.length==0) {
+            $.jBox.tip("请输入文章内容");
+            return;
+        }
+
+        $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
+            if (v == 'ok')
+                $("#form1").submit();
+            else if (v == 'cancel')
+                return;
+
+        });
+
+    }
+    //初始化进页面
+    function firstLoad() {
+        /*<![CDATA[*/
+        var article=/*[[${article.category}]]*/'';
+        if(article!=null){
+            //将类型选择禁用(修改模式)
+            $("input[name='articleType']").attr("disabled",true);
+            switch (article.name){
+                case '公司介绍':
+                    $("input[name='articleType']").eq(0).attr("checked","checked");
+                    break;
+                case '自传故事':
+                    $("input[name='articleType']").eq(1).attr("checked","checked");
+                    break;
+                case '学院介绍':
+                    $("input[name='articleType']").eq(2).attr("checked","checked");
+                    break;
+                case '美容知识':
+                    $("input[name='articleType']").eq(3).attr("checked","checked");
+                    break;
+            }
+        }else{
+            $("input[name='articleType']").eq(0).attr("checked","checked");
+        }
+        changeType();
+//        $("#linkUrl").attr("disabled",true);
+        /*]]>*/
+
+    }
+
+    function useLinkchange(obj){
+        var link=$("input[name='useLink']:checked").val();
+        if(link==0){
+            window.editor.readonly(false);
+            //$("#content").removeAttr("readonly");
+            $("#linkUrl").attr("disabled",true);
+        }
+        if(link==1){
+            window.editor.readonly(true);
+            //$("#content").attr("readonly","readonly");
+            $("#linkUrl").attr("disabled",false);
+        }
+    }
+
+    //切换帖子类型
+    function changeType() {
+//        var type=$("input[name='articleType']:checked").val();
+
+        //公司
+        //if (type == "company") {
+            $("#useLink").fadeIn();
+            $("#linkUrlTr").fadeIn();
+//            $("#enabledRecommendProduct").fadeIn();
+//            $("#recommend").fadeIn();
+            var urlFlag=$("input[name='useLink']:checked").val();
+            if(urlFlag==0){
+                $("input[name='linkUrl']").attr("disabled",true);
+                window.editor.readonly(false);
+            }else{
+                window.editor.readonly(true);
+            }
+       // }
+        //自传
+//        if (type == "autobiography") {
+//            $("#useLink").fadeIn();
+//            $("#linkUrlTr").fadeIn();
+//            $("#enabledRecommendProduct").fadeIn();
+//            $("#recommend").fadeIn();
+//            var urlFlag=$("input[name='useLink']:checked").val();
+//            if(urlFlag==0){
+//                $("input[name='linkUrl']").attr("disabled",true);
+//                window.editor.readonly(false);
+//            }else{
+//                window.editor.readonly(true);
+//            }
+//
+//        }
+//        //学院
+//        if (type == "college") {
+//            $("#useLink").fadeIn();
+//            $("#linkUrlTr").fadeIn();
+//            $("#enabledRecommendProduct").fadeIn();
+//            $("#recommend").fadeIn();
+//            var urlFlag=$("input[name='useLink']:checked").val();
+//            if(urlFlag==0){
+//                $("input[name='linkUrl']").attr("disabled",true);
+//                window.editor.readonly(false);
+//            }else{
+//                window.editor.readonly(true);
+//            }
+//        }
+//        //美容
+//        if (type == "hairdressing") {
+//            $("#useLink").fadeIn();
+//            $("#linkUrlTr").fadeIn();
+//            $("#enabledRecommendProduct").fadeIn();
+//            $("#recommend").fadeIn();
+//            var urlFlag=$("input[name='useLink']:checked").val();
+//            if(urlFlag==0){
+//                $("input[name='linkUrl']").attr("disabled",true);
+//                window.editor.readonly(false);
+//            }else{
+//                window.editor.readonly(true);
+//            }
+//        }
+    }
+</script>
+<script charset="utf-8" src="richText/kindeditor-min.js" th:src="@{/richText/kindeditor-min.js}"></script>
+<script charset="utf-8" src="richText/lang/zh_CN.js" th:src="@{/richText/lang/zh_CN.js}"></script>
+<script charset="utf-8" src="richText/init.js" th:src="@{/richText/init.js}"></script>
 </body>
 </html>

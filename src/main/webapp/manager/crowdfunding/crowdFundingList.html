@@ -283,7 +283,7 @@
         }
         function auditCF(obj) {
             var settlementNo = $(obj).attr("crowdFundingsId");
-            var url="auditCrowdFunding?crowdFundingsId="+settlementNo;
+            var url="auditCrowdFunding?id="+settlementNo;
             J.PopupIFrame(url,"审核",1300,700,"ifrm","","auto","");
 
         }
@@ -334,7 +334,6 @@
 
             var submit = function (v, h, f) {
                 if (v == 'ok') {
-                    jBox.tip(v, 'info');
                     submitCCF(obj)
                 }
                 else if (v == 'cancel')
@@ -349,7 +348,6 @@
             var url="openCrowdFunding?crowdFundingsId="+settlementNo;
             var submit = function (v, h, f) {
                 if (v == 'ok') {
-                    jBox.tip(v, 'info');
                     submitOCF(obj)
                 }
                 else if (v == 'cancel')
@@ -458,7 +456,7 @@
                         <label><a class="btn-lit btn-middle" id="search" href="javascript:searchOrder();"
                                   style="margin-bottom: 3px;"><span>搜索</span></a></label>
                         <label><a class="btn-lit btn-middle" id="searchAll" href="javascript:searchOrderAll();"
-                                  style="margin-bottom: 3px;"><span>显示全部</span></a></label>
+                                  style="margin-bottom: 3px;"><span>显示全部(点击文章标题进入详情页)</span></a></label>
 
                         <br/>
                         <br/>
@@ -476,7 +474,7 @@
 
                 <div class="bar">
 
-                    <a class="btn-lit aucontrol" th:href="@{/manager/jumpToAddCrowdFunding}">
+                    <a class="btn-lit aucontrol" th:href="@{/manager/jumpToAddCrowd}">
                         <span>添加众筹</span></a>
                 </div>
 
@@ -594,7 +592,7 @@
                                             <td class="txt40">
 
                                                 <!--<a th:if="${settlement.customerCheckable() and settlement.checkAble()}" th:attr="settlementNo=${settlement.settlementNo}" href="#" onclick="showUpdateStatus(this)">审核</a>-->
-                                                <a th:if="${crowdFundings.checkStatus.value==0 }" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="auditCF(this)">点此审核</a>
+                                                <a th:if="${crowdFundings.checkStatus.value==0 }" th:attr="crowdFundingsId=${crowdFundings.id}"  th:href="@{jumpToAuditCrowdFunding(id=${crowdFundings.id})}">点此审核</a>
                                                 <a th:if="${crowdFundings.checkStatus.value==1 or crowdFundings.checkStatus.value==3 or crowdFundings.checkStatus.value==5  }" th:attr="crowdFundingsId=${crowdFundings.id}" >通过</a>
                                                 <a th:if="${crowdFundings.checkStatus.value==3}" th:attr="crowdFundingsId=${crowdFundings.id}"  onclick="openCF(this)">点此开启</a>
                                                 <a th:if="${crowdFundings.checkStatus.value==5 or crowdFundings.checkStatus.value==1}" th:attr="crowdFundingsId=${crowdFundings.id}" onclick="closeCF(this)">点此关闭</a>

@@ -2,6 +2,7 @@ package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.CrowdFundingBooking;
+import com.huotu.ymr.entity.CrowdFundingMoneyRange;
 import com.huotu.ymr.entity.CrowdFundingPublic;
 import com.huotu.ymr.model.searchCondition.CrowdFundingPublicSearchModel;
 import com.huotu.ymr.model.searchCondition.CrowdFundingSearchModel;
@@ -94,4 +95,11 @@ public interface CrowdFundingService {
      * @return
      */
     Page<CrowdFundingBooking> findBookingPages(CrowdFundingPublicSearchModel crowdFundingPublicSearchModel);
+
+    /**
+     * 后台通过项目获取该项目所有的金额范围
+     * @return
+     */
+    List<CrowdFundingMoneyRange> findRangesByCrowdFunding(CrowdFunding crowdFunding);
+
 }

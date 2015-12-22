@@ -329,7 +329,6 @@
 
             var submit = function (v, h, f) {
                 if (v == 'ok') {
-                    jBox.tip(v, 'info');
                     submitDD(obj)
                 }
                 else if (v == 'cancel')
@@ -344,7 +343,6 @@
             var url="putawayDraft?draftId="+settlementNo;
             var submit = function (v, h, f) {
                 if (v == 'ok') {
-                    jBox.tip(v, 'info');
                     submitOD(obj)
                 }
                 else if (v == 'cancel')
@@ -578,7 +576,7 @@
                                                 <!--<a th:if="${settlement.customerCheckable() and settlement.checkAble()}" th:attr="settlementNo=${settlement.settlementNo}" href="#" onclick="showUpdateStatus(this)">审核</a>-->
                                                 <a  th:attr="draftId=${drafts.id}"  onclick="delDraft(this)">删除</a>
                                                 <a  th:attr="draftId=${drafts.id}" onclick="openDraft(this)">上架启用</a>
-                                                <a  th:attr="draftId=${drafts.id}"  onclick="auditDraft(this)">修改</a>
+                                                <a  th:attr="draftId=${drafts.id}"  th:href="@{jumpToAuditCrowdFunding(id=${drafts.id})}">修改</a>
 
                                             </td>
 

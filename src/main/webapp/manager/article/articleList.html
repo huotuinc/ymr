@@ -280,7 +280,7 @@
 
         function alterArticle(obj) {
             var settlementNo = $(obj).attr("articlesId");
-            var url="jumpToUpdateArticle?articleId="+settlementNo;
+            var url="jumpToSaveArticle?articleId="+settlementNo;
             J.PopupIFrame(url,"文章编辑",1300,700,"ifrm","","auto","");
         }
         function delArticle(obj) {
@@ -526,7 +526,7 @@
                                                 <a th:attr="articlesId=${articles.id}" onclick="delArticle(this)"
                                                    title="删除">删除</a>
                                                 <!--<a th:if="${settlement.customerCheckable() and settlement.checkAble()}" th:attr="settlementNo=${settlement.settlementNo}" href="#" onclick="showUpdateStatus(this)">审核</a>-->
-                                                <a th:attr="articlesId=${articles.id}" onclick="alterArticle(this)"
+                                                <a th:href="@{jumpToSaveArticle(articleId=${articles.id})}"
                                                    title="编辑">编辑</a>
                                             </td>
                                             <td class="txt40 c tail">

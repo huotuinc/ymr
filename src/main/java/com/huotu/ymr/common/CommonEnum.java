@@ -129,6 +129,53 @@ public interface CommonEnum {
     }
 
     /**
+     * 文章类型
+     */
+    enum ArticleType implements ICommonEnum {
+        /**
+         * company(0, "公司介绍"),
+         */
+        company(0, "公司介绍"),
+        /**
+         *  autobiography(1, "自传故事"),
+         */
+        autobiography(1, "自传故事"),
+        /**
+         * college(2,"学院介绍"),
+         */
+        college(2,"学院介绍"),
+        /**
+         *  hairdressing(3,"美容知识");
+         */
+        hairdressing(3,"美容知识");
+        private int value;
+
+        private String name;
+
+        ArticleType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    /**
      * 爱美容类型
      */
     enum ShareType implements ICommonEnum {
