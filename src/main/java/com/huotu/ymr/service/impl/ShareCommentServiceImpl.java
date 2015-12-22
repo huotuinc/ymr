@@ -55,4 +55,9 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     public ShareComment findOneShareComment(Long shareCommentId) throws Exception {
         return shareCommentRepository.findOne(shareCommentId);
     }
+
+    @Override
+    public void deleteComment(Long shareCommentId) throws Exception {
+        shareCommentRepository.deleteComment("|"+shareCommentId+"|");
+    }
 }

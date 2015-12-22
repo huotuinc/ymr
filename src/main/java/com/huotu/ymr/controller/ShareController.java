@@ -12,6 +12,7 @@ import com.huotu.ymr.model.AppShareCommentListModel;
 import com.huotu.ymr.model.AppShareInfoModel;
 import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.AppShareReplyModel;
+import com.huotu.ymr.repository.CommentPraiseRepository;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.repository.PraiseRepository;
 import com.huotu.ymr.repository.UserRepository;
@@ -57,6 +58,9 @@ public class ShareController implements ShareSystem {
 
     @Autowired
     PraiseRepository praiseRepository;
+
+    @Autowired
+    CommentPraiseRepository commentPraiseRepository;
 
     @RequestMapping("/searchShareList")
     @Override
@@ -130,8 +134,10 @@ public class ShareController implements ShareSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
         Share share=shareService.findOneShare(shareId);
+        if(Objects.isNull(share)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_SHARE_NOT_FOUND);
+        }
         AppShareInfoModel shareInfoModel=new AppShareInfoModel();
-        if(share!=null){
             shareInfoModel.setTitle(share.getTitle());
             shareInfoModel.setTime(share.getTime());
             shareInfoModel.setContent(share.getContent());
@@ -139,16 +145,13 @@ public class ShareController implements ShareSystem {
             shareInfoModel.setRelayReward(share.getRelayReward());
             shareInfoModel.setRelayQuantity(share.getRelayQuantity());
             data.outputData(shareInfoModel);
-        }else {
-            data.outputData(null);
-        }
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @Override
-    public ApiResult clickPraise(Long shareId, Long userId, Integer type) throws Exception {
+    public ApiResult clickPraise(Output<Long> data,Long shareId, Long userId) throws Exception {
         //数据有效性检查
-        if(shareId==null||userId==null||type==null){
+        if(shareId==null||userId==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
         Share share=shareService.findOneShare(shareId);
@@ -162,17 +165,49 @@ public class ShareController implements ShareSystem {
         }
         //往数据库中插入一条点赞记录
         Praise praise=praiseRepository.findByShareAndUser(share,user);//todo 根据用户和文章找出的点赞记录
+        //如果没有点过赞
         if(Objects.isNull(praise)){
             praise=new Praise();
             praise.setShare(share);
             praise.setUser(user);
+            praiseRepository.save(praise);
+            //帖子点赞量修改
+            share.setPraiseQuantity(share.getPraiseQuantity()+1);
+            shareService.saveShare(share);
         }
-        praise.setType(type);
-        praiseRepository.save(praise);
-        //帖子点赞量修改
-        share.setPraiseQuantity(share.getPraiseQuantity()+type);
-        shareService.saveShare(share);
+        data.outputData(share.getPraiseQuantity());
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult clickCommentPraise(Output<Integer>data,Long commentId, Long userId) throws Exception {
+        //数据有效性检查
+        if(commentId==null||userId==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        ShareComment comment=shareCommentService.findOneShareComment(commentId);
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(comment)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_COMMENT_NOT_FOUND);
+
+        }
+        if(Objects.isNull(user)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_SHARE_NOT_FOUND);
+        }
+        CommentPraise commentPraise=commentPraiseRepository.findByCommentAndUser(comment, user);//todo 根据用户和评论找出的点赞记录
+        //如果没有点过赞
+        if(Objects.isNull(commentPraise)){
+            commentPraise=new CommentPraise();
+            commentPraise.setComment(comment);
+            commentPraise.setUser(user);
+            commentPraiseRepository.save(commentPraise);
+            //帖子点赞量修改
+            comment.setPraiseQuantity(comment.getPraiseQuantity()+1);
+            shareCommentService.saveShareComment(comment);
+        }
+        data.outputData(comment.getPraiseQuantity());
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+
     }
 
     @RequestMapping("/searchShareCommentList")
@@ -256,6 +291,26 @@ public class ShareController implements ShareSystem {
         reply.setCommentPath(shareComment.getCommentPath()+reply.getId()+"|");
         shareCommentService.saveShareComment(reply);
         //todo 返回值需要讨论
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult deleteComment(Long commentId, Long userId) throws Exception {
+        if(commentId==null||userId==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        ShareComment comment=shareCommentService.findOneShareComment(commentId);
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(comment)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_COMMENT_NOT_FOUND);
+        }
+        if(Objects.isNull(user)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        if(userId.equals(comment.getUserId())){
+            shareCommentService.deleteComment(commentId);
+        }
+
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 

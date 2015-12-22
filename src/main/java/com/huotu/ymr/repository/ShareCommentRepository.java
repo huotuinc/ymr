@@ -17,4 +17,7 @@ import java.util.List;
 public interface ShareCommentRepository extends JpaRepository<ShareComment,Long> {
     @Query("select c from ShareComment as c where c.share.id=?1 and c.id>?2 order by c.id")
     List<ShareComment> findByShareOrderByTime(Long shareId,Long lastId,Pageable pageable);
+
+    @Query("delete from ShareComment as c where c.commentPath like ?1")
+    void deleteComment(String commentPath);
 }

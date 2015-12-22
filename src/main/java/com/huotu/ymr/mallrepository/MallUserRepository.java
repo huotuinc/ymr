@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Created by lgh on 2015/12/8.
  */
 public interface MallUserRepository extends JpaRepository<MallUser, Long>, ClassicsRepository<MallUser> {
-//    MallUser findByMerchant(MallMerchant merchant);
+//    MallUserModel findByMerchant(MallMerchant merchant);
 
 }

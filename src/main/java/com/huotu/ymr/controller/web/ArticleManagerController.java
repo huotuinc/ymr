@@ -32,7 +32,6 @@ public class ArticleManagerController {
      * 获取关于美投文章列表
      * @param articleSearchModel 前台传过来的参数
      * @param model
-     * @return
      * @throws Exception
      */
     @RequestMapping(value = "/getArticleList",method = RequestMethod.GET)
@@ -170,7 +169,6 @@ public class ArticleManagerController {
     /**
      * 删除文章
      * @param articleId 前台传过来的参数
-     * @return
      * @throws Exception
      */
     @RequestMapping(value = "/delArticle",method = RequestMethod.GET)

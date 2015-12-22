@@ -17,10 +17,12 @@ public class ArticleSearchModel {
 
     /**
      * 众筹类型
-     * <option value="1">公司介绍</option>
-     *<option value="2">自传故事</option>
-     *<option value="3">学院介绍</option>
-     <*option value="4">美容知识</option>
+     * <ul>
+     *     <li>公司介绍</li>
+     *     <li>自传故事</li>
+     *     <li>学院介绍</li>
+     *     <li>美容知识</li>
+     * </ul>
      */
     private Integer articleType=-1;
 

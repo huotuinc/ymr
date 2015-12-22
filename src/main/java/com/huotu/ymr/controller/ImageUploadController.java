@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -34,8 +35,8 @@ public class ImageUploadController implements ResourceSystem {
         byte[] headPic = Base64.getMimeDecoder().decode(profileData.toString());
         ByteArrayInputStream in=new ByteArrayInputStream(headPic);
         String fileName = StaticResourceService.SHSRES_IMG + UUID.randomUUID().toString() + ".png";
-        staticResourceService.uploadResource(fileName,in);
-        data.outputData(fileName);
+        URI uri=staticResourceService.uploadResource(fileName, in);
+        data.outputData(uri.toString());
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 }
