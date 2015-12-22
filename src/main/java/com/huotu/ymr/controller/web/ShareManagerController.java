@@ -4,10 +4,12 @@ import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.entity.ShareProduct;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.share.BackendShareModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ConfigRepository;
+import com.huotu.ymr.repository.ShareProductRepository;
 import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.StaticResourceService;
 import com.sun.jndi.toolkit.url.Uri;
@@ -40,6 +42,9 @@ public class ShareManagerController {
 
     @Autowired
     ConfigRepository configRepository;
+
+    @Autowired
+    ShareProductRepository shareProductRepository;
 
 
     @RequestMapping(value = "/showBottomGeneralize",method = RequestMethod.GET)
@@ -145,7 +150,7 @@ public class ShareManagerController {
      * @throws Exception
      */
     @RequestMapping(value = "/getYmrShareList",method = RequestMethod.GET)
-    public String getYmrShareList(ShareSearchModel shareSearchModel,Model model) throws Exception {
+    public String getYmrShareList(ShareSearchModel shareSearchModel,String goods,Model model) throws Exception {
         //todo 用户权限方面的操作
         if (shareSearchModel.getPageNoStr() < 0) {
             shareSearchModel.setPageNoStr(0);
@@ -210,6 +215,57 @@ public class ShareManagerController {
 
     }
 
+
+    /**
+     * 获取商品分类列表
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/sortsList",method = RequestMethod.GET)
+    public ResultModel sortsList()throws Exception{
+        ResultModel resultModel=new ResultModel();
+        //获取分类列表
+
+        return  resultModel;
+    }
+
+    /**
+     * 商品列表
+     * @param shareSearchModel
+     * @param goods
+     * @param model
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/goodsList",method = RequestMethod.GET)
+    public String goodsList(ShareSearchModel shareSearchModel,String goods,Model model) throws Exception {
+        //todo 用户权限方面的操作
+        if (shareSearchModel.getPageNoStr() < 0) {
+            shareSearchModel.setPageNoStr(0);
+        }
+        Page<Share> shares=shareService.findPcShareList(shareSearchModel);
+        List<BackendShareModel> backendShareModels=new ArrayList<>();
+        for(Share s:shares){
+            BackendShareModel backendShareModel=new BackendShareModel();
+            backendShareModel.setShareTitle(s.getTitle());
+            backendShareModel.setId(s.getId());
+            backendShareModel.setTop(s.getTop());
+            backendShareModel.setTime(s.getTime());
+            backendShareModel.setUserType(s.getOwnerType().getName());
+            backendShareModel.setPraiseQuantity(s.getPraiseQuantity());
+            backendShareModel.setRelayQuantity(s.getRelayQuantity());
+            backendShareModel.setView(s.getView());
+            backendShareModel.setCheckType(s.getCheckStatus().getName());
+            backendShareModels.add(backendShareModel);
+        }
+        model.addAttribute("allShareList", backendShareModels);//文章列表model
+        model.addAttribute("pageNo",shareSearchModel.getPageNoStr());//当前页数
+        model.addAttribute("totalPages",shares.getTotalPages());//总页数
+        model.addAttribute("totalRecords", shares.getTotalElements());//总记录数
+        return "manager/share/goodsList";
+
+    }
+
     /**
      * 进入新增帖子页面
      * @param share
@@ -270,6 +326,8 @@ public class ShareManagerController {
             configTT.setValue("0");
             configRepository.save(configTT);
         }
+        List<ShareProduct> shareProducts=shareProductRepository.findByShare(share);
+        model.addAttribute("shareProducts",shareProducts);
         model.addAttribute("GlobalTransmit",configGT.getValue());
         model.addAttribute("GlobalTotal",configTT.getValue());
         model.addAttribute("shareTypes",CommonEnum.ShareType.values());
@@ -292,6 +350,7 @@ public class ShareManagerController {
             share.setOwnerId(123L);//todo 官方ID
             share.setName("官方");
             share.setOwnerType(CommonEnum.UserType.official);
+
             share.setIntro("");//todo 简介从内容中获取
             share.setTime(new Date());
             share.setPostReward(0);
@@ -353,6 +412,7 @@ public class ShareManagerController {
                 break;
             case 1:
                 share.setCheckStatus(CommonEnum.CheckType.pass);
+                share.setTime(new Date());
                 break;
             case 2:
                 share.setTop(false);

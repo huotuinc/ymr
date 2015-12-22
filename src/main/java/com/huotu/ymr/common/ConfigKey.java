@@ -28,6 +28,11 @@ public class ConfigKey {
      */
 	public static final String BOTTOM_GENERALIZE="BottomGeneralize";
 
+	/**
+	 * 用户发帖奖励的积分
+	 */
+	public static final String USER_POST="UserPost";
+
     /**
      * 用户转发积分
      */

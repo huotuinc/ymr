@@ -4,10 +4,8 @@ import com.huotu.common.api.ApiResult;
 import com.huotu.common.api.Output;
 import com.huotu.ymr.api.ShareSystem;
 import com.huotu.ymr.common.CommonEnum;
-import com.huotu.ymr.entity.Config;
-import com.huotu.ymr.entity.Share;
-import com.huotu.ymr.entity.ShareComment;
-import com.huotu.ymr.entity.User;
+import com.huotu.ymr.common.ConfigKey;
+import com.huotu.ymr.entity.*;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppShareCommentListModel;
@@ -15,6 +13,7 @@ import com.huotu.ymr.model.AppShareInfoModel;
 import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.AppShareReplyModel;
 import com.huotu.ymr.repository.ConfigRepository;
+import com.huotu.ymr.repository.PraiseRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.ShareCommentService;
@@ -56,6 +55,9 @@ public class ShareController implements ShareSystem {
     @Autowired
     StaticResourceService staticResourceService;
 
+    @Autowired
+    PraiseRepository praiseRepository;
+
     @RequestMapping("/searchShareList")
     @Override
     public ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId) throws Exception {
@@ -74,12 +76,13 @@ public class ShareController implements ShareSystem {
                 appShareListModel.setIntro(share.getIntro());
                 appShareListModel.setCommentQuantity(share.getCommentQuantity());
                 appShareListModel.setContent(share.getContent());
+                appShareListModel.setShareType(share.getShareType());
                 appShareListModel.setPraiseQuantity(share.getPraiseQuantity());
                 appShareListModel.setRelayQuantity(share.getRelayQuantity());
                 appShareListModel.setRelayScore(share.getRelayReward());
                 appShareListModel.setTime(share.getTime());
                 appShareListModel.setTop(share.getTop());
-                appShareListModel.setUserHeadUrl(staticResourceService.getResource(share.getLinkUrl()).toString());//todo
+                appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
                 appShareListModels[i]=appShareListModel;
             }
             list.outputData(appShareListModels);
@@ -90,26 +93,33 @@ public class ShareController implements ShareSystem {
     @RequestMapping("/addShare")
     @Override
     public ApiResult addShare(String title, String content,String imgUrl,Long userId) throws Exception {
-        Config config=configRepository.findOne("integral");//todo
-        if(config==null){
-            config=new Config();
-            config.setKey("integral");
-            config.setValue("0");
-        }
+        Config userGT=configRepository.findOne(ConfigKey.USER_TRANSMIT);//todo
+        Config userPT=configRepository.findOne(ConfigKey.USER_POST);
+        Config userTT=configRepository.findOne(ConfigKey.USER_TOTAL);
 
         if(title==null||content==null||imgUrl==null||userId==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
+        MallUser user=mallUserRepository.findOne(userId);// todo 最后通过数据中心返回用户信息
         Share share=new Share();
         share.setOwnerId(userId);
+        share.setName(user.getWxNickName());
+        share.setOwnerType(CommonEnum.UserType.user);
         share.setTitle(title);
-        share.setContent(content);
-//        share.setImg(commonConfigService.getResoureServerUrl()+imgUrl);//todo
+        share.setShareType(CommonEnum.ShareType.userShare);
         share.setImg(staticResourceService.getResource(imgUrl).toString());//todo
+        share.setContent(content);
         share.setIntro("");
-        share.setPostReward(Integer.parseInt(config.getValue()));
-
-
+        share.setTop(false);
+        share.setTime(new Date());
+        share.setPostReward(Integer.parseInt(userPT.getValue()));
+        share.setRelayReward(Integer.parseInt(userGT.getValue()));
+        share.setScore(Integer.parseInt(userTT.getValue()));
+        share.setUsedScore(0);
+        share.setCheckStatus(CommonEnum.CheckType.audit);
+        share.setReason("");
+        share.setBoutique(false);
+        shareService.saveShare(share);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
@@ -132,6 +142,36 @@ public class ShareController implements ShareSystem {
         }else {
             data.outputData(null);
         }
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult clickPraise(Long shareId, Long userId, Integer type) throws Exception {
+        //数据有效性检查
+        if(shareId==null||userId==null||type==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        Share share=shareService.findOneShare(shareId);
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(share)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+
+        }
+        if(Objects.isNull(user)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_SHARE_NOT_FOUND);
+        }
+        //往数据库中插入一条点赞记录
+        Praise praise=praiseRepository.findByShareAndUser(share,user);//todo 根据用户和文章找出的点赞记录
+        if(Objects.isNull(praise)){
+            praise=new Praise();
+            praise.setShare(share);
+            praise.setUser(user);
+        }
+        praise.setType(type);
+        praiseRepository.save(praise);
+        //帖子点赞量修改
+        share.setPraiseQuantity(share.getPraiseQuantity()+type);
+        shareService.saveShare(share);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 

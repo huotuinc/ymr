@@ -15,7 +15,7 @@ public interface ShareService {
     /**
      * 查找出已经通过审核的爱分享文章
      * @param key       搜索关键字
-     * @param lastId    最后一条文章ID
+     * @param lastId    最后一条文章ID，第一次lastId为0
      * @param pageSize  每次显示的文章数量
      * @return
      * @throws Exception

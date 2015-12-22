@@ -17,6 +17,11 @@ public class AppShareInfoModel {
     private String title;
 
     /**
+     * 封面图片
+     */
+    private String img;
+
+    /**
      * 内容
      */
     private String content;
@@ -41,5 +46,14 @@ public class AppShareInfoModel {
      */
     private Integer relayReward;
 
+    /**
+     * 总共可用积分
+     */
+    private Integer totalIntegral;
+
+    /**
+     * 已分享积分
+     */
+    private Integer useIntegral;
 
 }

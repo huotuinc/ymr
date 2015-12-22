@@ -1,9 +1,11 @@
 package com.huotu.ymr.model;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 爱分享列表
@@ -13,6 +15,9 @@ import java.util.Date;
 @Setter
 public class AppShareListModel {
 
+    /**
+     * ID
+     */
     private Long pId;
     /**
      * 用户头像
@@ -22,6 +27,11 @@ public class AppShareListModel {
      * 标题
      */
     private String title;
+
+    /**
+     * 爱分享文章类型
+     */
+    private CommonEnum.ShareType shareType;
 
     /**
      * 图片
@@ -34,7 +44,7 @@ public class AppShareListModel {
     private String intro;
 
     /**
-     * 内容
+     * 内容 todo 暂时还没发现需要用到
      */
     private String content;
 
@@ -42,6 +52,11 @@ public class AppShareListModel {
      * 置顶
      */
     private Boolean top;
+
+    /**
+     * 是否是精品
+     */
+    private Boolean boutique;
     /**
      * 发帖时间
      */
@@ -65,6 +80,11 @@ public class AppShareListModel {
      * 转发可得积分
      */
     private Integer relayScore;
+
+    /**
+     * 点赞者头像列表
+     */
+    private List<String> headUrls;
 
 
 }

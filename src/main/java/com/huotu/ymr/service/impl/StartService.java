@@ -36,6 +36,7 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
             Config bottom=configRepository.findOne(ConfigKey.BOTTOM_GENERALIZE);
             Config userGT=configRepository.findOne(ConfigKey.USER_TRANSMIT);
             Config userTT=configRepository.findOne(ConfigKey.USER_TOTAL);
+            Config userPT=configRepository.findOne(ConfigKey.USER_POST);
             if(configGT==null){
                 configGT=new Config();
                 configGT.setKey(ConfigKey.GLOBAL_TRANSMIT);
@@ -53,6 +54,12 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
                 bottom.setKey(ConfigKey.BOTTOM_GENERALIZE);
                 bottom.setValue("");
                 configRepository.save(bottom);
+            }
+            if(userPT==null){
+                userPT=new Config();
+                userPT.setKey(ConfigKey.USER_POST);
+                userPT.setValue("0");
+                configRepository.save(userPT);
             }
             if(userGT==null){
                 userGT=new Config();

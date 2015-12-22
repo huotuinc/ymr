@@ -40,4 +40,9 @@ public class ShareProduct {
      * 原价
      */
     private Double originalPrice;
+
+    /**
+     * 积分
+     */
+    private Integer integral;
 }

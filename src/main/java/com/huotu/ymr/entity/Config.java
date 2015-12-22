@@ -21,6 +21,7 @@ import javax.persistence.*;
  * GlobalTotal=-1        官方配置总积分，默认为-1 表示无限制
  * UserTransmit=0        用户转发积分，默认为0
  * UserTotal=0           用户总奖励积分，默认为0
+ * UserPost=0            用户发帖奖励的积分，默认为0
  * BoottomGeneralize    底部推广富文本
  *
  */

@@ -3,8 +3,13 @@
 <head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>众筹后台</title>
-    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
-            th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+    <link rel="stylesheet" href="../../resource/css/fmwebbb.css"
+    th:href="@{/resource/css/fmwebbb.css}"/>
+    <link rel="stylesheet" type="text/css" href="../../resource/css/search.css"
+    th:href="@{/resource/css/search.css}" />
+    <link rel="stylesheet" type="text/css" href="../../resource/css/newonedow.css"
+    th:href="@{/resource/css/newonedow.css}" />
+
     <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
             th:href="@{/resource/3rdParty/css/admin.content.css}"/>
     <link href="../../resource/css/settlements.css" rel="stylesheet" type="text/css"
@@ -25,7 +30,8 @@
             th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
     <script type="text/javascript" src="../../resource/js/ajaxfileupload.js"
             th:src="@{/resource/js/ajaxfileupload.js}"></script>
-
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
 </head>
 
 <body onload="firstLoad()">
@@ -135,15 +141,52 @@
                                             <tr id="enabledRecommendProduct">
                                                 <th>是否开启推荐产品:</th>
                                                 <td>
-                                                    <input value="0" type="radio" name="enabledRecommendProduct" th:checked="!*{enabledRecommendProduct}"/>关闭
-                                                    <input value="1" type="radio" name="enabledRecommendProduct" th:checked="*{enabledRecommendProduct}"/>开启
+                                                    <input value="0" onchange="productRecommend(this)" type="radio" name="enabledRecommendProduct" th:checked="!*{enabledRecommendProduct}"/>关闭
+                                                    <input value="1" onchange="productRecommend(this)" type="radio" name="enabledRecommendProduct" th:checked="*{enabledRecommendProduct}"/>开启
                                                 </td>
                                             </tr>
                                             <tr id="recommend">
                                                 <th>推荐产品</th>
-                                                <td><a class="btn-lit" href="javascript:recommendGoods();">
+                                                <td><a id="searchGoods" class="btn-lit" href="javascript:recommendGoods();" style="color: #fff">
                                                     <span>添加产品</span>
                                                     </a>
+
+
+                                                    <div class="commfont">
+
+                                                        <div class="superli clearfix editing">
+                                                            <div class="control-group" >
+                                                                <div class="sc-goods-list clearfix size-3 normal list">
+                                                                    <ul  th:remove="all-but-first">
+                                                                        <li class="goods-card normal" th:each="goods:${shareProducts}">
+                                                                            <a href="javascript: void(0);" class="link js-goods clearfix">
+                                                                                <div class="photo-block">
+                                                                                    <img class="goods-photo js-goods-lazy" src="images/goodsa.jpg" th:src="@{goods.pictureUrl}"/>
+                                                                                </div>
+                                                                                <div class="info">
+                                                                                    <p class="goods-title" th:text="${goods.name}">此处显示商品名称</p>
+                                                                                    <p class="goods-price"><em th:text="'￥'+${goods.price}">￥379.00</em></p>
+                                                                                    <p class="priceyj" th:text="${goods.originalPrice}">￥500.00</p>
+                                                                                    <p class="goods-price-taobao"></p>
+                                                                                    <div class="jifendy">
+                                                                                        <span class="jfd">
+                                                                                            <img src="images/jifen.png"/></span>
+                                                                                        <span class="jfbq" th:text="${goods.integral}">10积分</span></div>
+                                                                                    <!--  D 此处标签已换成积分标签 -->
+                                                                                </div>
+                                                                            </a>
+                                                                        </li>
+                                                                    </ul>
+
+
+
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
                                                 </td>
 
                                             </tr>
@@ -156,6 +199,41 @@
                         </div>
                     </div>
 
+                    <!-- 添加商品弹窗 -->
+                    <div id="asaimsg" class="AsaiDivShow" style="display: none">
+                        <input type="hidden" id="eventLogger" />
+
+                        <P align="right" style="margin: 0px; padding: 0px;">
+                            <a href="javascript:void(0)"
+                               onclick="document.getElementById('asaimsg').style.display='none';document.getElementById('asaimsgbg').style.display='none'"><FONT
+                                    style="color: #111; font-size: 20px;">×</FONT></a>
+                        </P>
+                        分类筛选:<select id="categoryList" style="width: 200px;"></select>
+                        关键字：<input type="text" id="searchName"/><a class="btn-lit btn-middle" id="search" href="javascript:void(0)" style="margin-bottom: 3px;"><span style="color: #fff">搜索</span></a>
+                        <div id="goodsListByNameAndCategory"></div>
+                        <table class="data-table even1" width="80%" border="0" cellspacing="0"
+                               cellpadding="0">
+                            <thead>
+                            <tr class="even">
+                                <th></th>
+                                <th scope="col">商品名称</th>
+                                <th scope="col">商品价格（元）</th>
+                                <th scope="col">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody th:remove="all-but-first" id="goodListByNameAndCategory">
+                            <tr th:each="g:${goodsList}">
+                                <td class="txt40 c" th:text="${g.id}"></td>
+                                <td class="txt40 c" th:text="${g.title}">瓜子</td>
+                                <td class="txt40 c" th:text="${g.price}">120</td>
+                                <td class="txt40 c"><a href="javascript:void(0)"
+                                                       onclick="choiceGoods(this)">选择</a></td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 弹窗结束 -->
 
                 </div>
 
@@ -163,12 +241,12 @@
 
                 <!--以下是按钮-->
                 <div style="text-align: center; margin-top:12px" >
-                    <a id="drafts" class="btn-lit" href="javascript:submitForm1(false);" style=" margin-right:10px;">
+                    <a id="drafts" class="btn-lit" href="javascript:submitForm1(false);" style=" margin-right:10px;color:#fff">
         <span>
         保存到草稿箱
         </span>
                     </a>
-                    <a id="audit" class="btn-lit" href="javascript:submitForm1(true);">
+                    <a id="audit" class="btn-lit" href="javascript:submitForm1(true);" style="color:#fff">
         <span>
         直接发布
         </span>
@@ -183,6 +261,22 @@
 
 
 <div class="blank10"></div>
+
+
+<!--<div id="asaimsg" class="AsaiDivShow" style="display: none">-->
+    <!--<input type="hidden" id="eventLogger"/>-->
+
+    <!--<P align="right" style="margin: 0px; padding: 0px;">-->
+        <!--<a href="javascript:void(0)"-->
+           <!--onclick="document.getElementById('asaimsg').style.display='none';document.getElementById('asaimsgbg').style.display='none'"><FONT-->
+                <!--style="color: #111; font-size: 20px;">×</FONT></a>-->
+    <!--</P>-->
+    <!--分类筛选:<select id="categoryList" style="width: 200px;"></select>-->
+    <!--关键字：<input type="text" id="searchName"/><a class="btn-lit btn-middle" id="search" href="javascript:void(0)" style="margin-bottom: 3px;"><span>搜索</span></a>-->
+    <!--<div id="goodsListByNameAndCategory"></div>-->
+<!--</div>-->
+
+
 <script type="text/javascript" th:inline="javascript">
     //封面图片上传
     function uploadImage() {
@@ -210,12 +304,14 @@
 
 
     function recommendGoods(){
-        $.jBox("iframe:http://www.baidu.com", {
-            title: "百度一下",
-            width: 800,
-            height: 350,
-            buttons: { '关闭': true }
-        });
+        //ajax请求商品列表
+        $("#asaimsg").show();
+//        $.jBox("iframe:goodsList", {
+//            title: "选择商品",
+//            width: 800,
+//            height: 600,
+//            buttons: { '关闭': true }
+//        });
     }
 
 
@@ -329,6 +425,17 @@
         }
     }
 
+    function productRecommend(obj){
+        var ep=$("input[name='enabledRecommendProduct']:checked").val();
+        if(ep==0){
+            $("#recommend").fadeOut();
+        }
+        if(ep==1){
+            $("#recommend").fadeIn();
+        }
+
+    }
+
     //切换帖子类型
     function changeType() {
         var type=$("input[name='shareType']:checked").val();
@@ -338,7 +445,11 @@
             $("#useLink").fadeIn();
             $("#linkUrlTr").fadeIn();
             $("#enabledRecommendProduct").fadeIn();
-            $("#recommend").fadeIn();
+            if($("input[name='enabledRecommendProduct']:checked").val()==0){
+                $("#recommend").hide();
+            }else{
+                $("#recommend").show();
+            }
             var urlFlag=$("input[name='useLink']:checked").val();
             if(urlFlag==0){
                 $("input[name='linkUrl']").attr("disabled",true);

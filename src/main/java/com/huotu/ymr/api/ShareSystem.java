@@ -47,6 +47,17 @@ public interface ShareSystem {
     @RequestMapping(method = RequestMethod.GET)
     ApiResult getShareInfo(Output<AppShareInfoModel> data, Long shareId) throws Exception;
 
+    /**
+     * 点赞或取消点赞
+     * @param shareId   文章ID
+     * @param userId    用户ID
+     * @param type      类型，-1:取消点赞，1：点赞
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    ApiResult clickPraise(Long shareId,Long userId,Integer type) throws Exception;
+
 
     /**
      * 爱分享评论列表
