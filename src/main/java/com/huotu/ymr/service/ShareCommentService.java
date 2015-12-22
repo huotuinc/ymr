@@ -24,6 +24,13 @@ public interface ShareCommentService {
 
     ShareComment findOneShareComment(Long shareCommentId) throws Exception;
 
+    /**
+     * 删除评论
+     * @param shareCommentId    评论的ID
+     * @throws Exception
+     */
+    void deleteComment(Long shareCommentId) throws Exception;
+
 
 
 

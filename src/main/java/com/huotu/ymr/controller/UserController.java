@@ -15,10 +15,12 @@ import com.huotu.ymr.mallentity.MallUserBinding;
 import com.huotu.ymr.mallrepository.MallUserBindingRepository;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.*;
+import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.ConfigAppVersionRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.repository.VerificationCodeRepository;
 import com.huotu.ymr.service.CommonConfigService;
+import com.huotu.ymr.service.DataCenterService;
 import com.huotu.ymr.service.StaticResourceService;
 import com.huotu.ymr.service.VerificationService;
 import org.apache.commons.logging.Log;
@@ -68,6 +70,9 @@ public class UserController implements UserSystem {
     @Autowired
     private StaticResourceService staticResourceService;
 
+    @Autowired
+    DataCenterService dataCenterService;
+
     @RequestMapping("/init")
     @Override
     public ApiResult init(Output<AppGlobalModel> global, Output<AppUserInfoModel> user, Output<AppUpdateModel> update) throws Exception {
@@ -82,9 +87,7 @@ public class UserController implements UserSystem {
         if (appUserInfoModel == null) {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_LOGIN_FAIL);
         }
-
         user.outputData(appUserInfoModel);
-
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
@@ -100,19 +103,19 @@ public class UserController implements UserSystem {
     @RequestMapping("/login")
     @Override
     public ApiResult login(Output<AppUserInfoModel> data, Output<AppSimpleUserModel[]> list, String unionId) throws Exception {
-        MallUser mallUser = null;
+        MallUserModel mallUserModel = dataCenterService.getUserInfo();//todo 调用数据中心
         Long merchantId = Long.parseLong(commonConfigService.getYmrMerchantId());
         if (unionId == null) {
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
         List<MallUserBinding> mallUserBinding = mallUserBindingRepository.findByUnionIdAndMerchantId(unionId, merchantId);//todo 数据中心去取
-        if (mallUserBinding.isEmpty()) {
-            mallUser = new MallUser();//todo 调用注册接口注册商城的用户
-        } else if (mallUserBinding.size() == 1) {
-            mallUser = mallUserBinding.get(0).getUserInfo();
-            User user = userRepository.findOne(mallUser.getId());
-            data.outputData(getAppUserInfoModel(mallUser, user));
-        }
+//        if (mallUserBinding.isEmpty()) {
+//            mallUser = new MallUser();//todo 调用注册接口注册商城的用户
+//        } else if (mallUserBinding.size() == 1) {
+//            mallUser = mallUserBinding.get(0).getUserInfo();
+//            User user = userRepository.findOne(mallUser.getId());
+//            data.outputData(getAppUserInfoModel(mallUser, user));
+//        }
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
@@ -152,7 +155,7 @@ public class UserController implements UserSystem {
         if (Objects.isNull(verificationCode)) {
             ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
         }
-        MallUser mallUser = new MallUser();//todo 新建商城用户
+        MallUser mallUser = new MallUser();//todo 调用数据中心新建商城用户
         User user = new User();
         data.outputData(getAppUserInfoModel(mallUser, user));
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
@@ -190,11 +193,7 @@ public class UserController implements UserSystem {
     @Override
     public ApiResult sendSMS(String phone, int type) throws Exception {
         CommonEnum.VerificationType verificationType = EnumHelper.getEnumType(CommonEnum.VerificationType.class, type);
-
-
         Date date = new Date();
-
-
         // **********************************************************
         // 发送短信前处理
         if (!SysRegex.IsValidMobileNo(phone)) {
@@ -224,7 +223,18 @@ public class UserController implements UserSystem {
     @RequestMapping("/bindMobile")
     @Override
     public ApiResult bindMobile(String code, String phone) throws Exception {
-        return null;
+        if(StringUtils.isEmpty(code)||StringUtils.isEmpty(phone)){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        VerificationCode verificationCode=verificationCodeRepository.findByMobileAndType(phone, CommonEnum.VerificationType.bind);
+        if(!code.equals(verificationCode.getCode())){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
+        }
+        //检查是否已经绑定了手机号
+
+        //开始绑定手机号
+
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/modifyMobile")

@@ -29,8 +29,10 @@ public interface ShareSystem {
     /**
      * 添加爱分享内容
      *
-     * @param title
-     * @param content
+     * @param title     标题
+     * @param content   内容
+     * @param imgUrl    封面图片
+     * @param userId    用户ID
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
@@ -48,16 +50,27 @@ public interface ShareSystem {
     ApiResult getShareInfo(Output<AppShareInfoModel> data, Long shareId) throws Exception;
 
     /**
-     * 点赞或取消点赞
+     * 文章点赞
+     * @param data      点赞数量
      * @param shareId   文章ID
      * @param userId    用户ID
-     * @param type      类型，-1:取消点赞，1：点赞
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult clickPraise(Long shareId,Long userId,Integer type) throws Exception;
+    ApiResult clickPraise(Output<Long> data,Long shareId,Long userId) throws Exception;
 
+
+    /**
+     * 评论点赞
+     * @param data      点赞数量
+     * @param commentId   评论ID
+     * @param userId    用户ID
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    ApiResult clickCommentPraise(Output<Integer> data,Long commentId,Long userId) throws Exception;
 
     /**
      * 爱分享评论列表
@@ -92,5 +105,15 @@ public interface ShareSystem {
      */
     @RequestMapping(method = RequestMethod.POST)
     ApiResult addReply(Long userId,Long parentId,String content) throws Exception;
+
+    /**
+     * 删除评论
+     * @param commentId 评论ID
+     * @param userId    用户ID
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult deleteComment(Long commentId,Long userId) throws Exception;
 
 }
