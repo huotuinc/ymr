@@ -33,6 +33,15 @@ public interface CommonEnum {
          * ERROR_WRONG_MOBILE(53003, "不合法的手机号")
          */
         ERROR_WRONG_MOBILE(53003, "不合法的手机号"),
+
+        /**
+         *  ERROR_MOBILE_ALREADY_BINDING(53004, "手机号已绑定")
+         */
+        ERROR_MOBILE_ALREADY_BINDING(53004, "手机号已绑定"),
+        /**
+         *  ERROR_MOBILE_NOT_BINDING(53005, "手机号未绑定")
+         */
+        ERROR_MOBILE_NOT_BINDING(53005, "手机号未绑定"),
         /**
          * ERROR_WRONG_VERIFICATION_INTERVAL(53014, "验证码发送间隔为90秒")
          */
@@ -55,7 +64,17 @@ public interface CommonEnum {
         /**
          * ERROR_COMMENT_NOT_FOUND(60002,"评论不存在")
          */
-        ERROR_COMMENT_NOT_FOUND(60002,"评论不存在");
+        ERROR_COMMENT_NOT_FOUND(60002,"评论不存在"),
+
+        /**
+         * ERROR_INTEGRAL_INSUFFICIENT(70001,"积分不足")
+         */
+        ERROR_INTEGRAL_INSUFFICIENT(70001,"积分不足"),
+
+        /**
+         * ERROR_EXTRACT_FIAL(70002,"提现失败")
+         */
+        ERROR_EXTRACT_FIAL(70002,"提现失败");
 
 
         private int value;
@@ -477,6 +496,8 @@ public interface CommonEnum {
         reg(0, "注册"),
 
         bind(1,"绑定手机");
+
+
 
         private int value;
 

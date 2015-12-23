@@ -6,20 +6,18 @@ import com.huotu.common.api.Output;
 import com.huotu.common.base.RegexHelper;
 import com.huotu.ymr.api.UserSystem;
 import com.huotu.ymr.common.*;
+import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.ConfigAppVersion;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.entity.VerificationCode;
 import com.huotu.ymr.exception.InterrelatedException;
-import com.huotu.ymr.mallrepository.MallUserBindingRepository;
-import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.*;
 import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.ConfigAppVersionRepository;
+import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.repository.VerificationCodeRepository;
-import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.DataCenterService;
-import com.huotu.ymr.service.StaticResourceService;
 import com.huotu.ymr.service.VerificationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,10 +28,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Date;
-import java.util.Objects;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 用户系统
@@ -48,9 +43,6 @@ public class UserController implements UserSystem {
     private UserRepository userRepository;
 
     @Autowired
-    private MallUserRepository mallUserRepository;
-
-    @Autowired
     private AppGlobalModel appGlobalModel;
 
     @Autowired
@@ -60,22 +52,16 @@ public class UserController implements UserSystem {
     private VerificationService verificationService;
 
     @Autowired
-    private MallUserBindingRepository mallUserBindingRepository;
-
-    @Autowired
-    private CommonConfigService commonConfigService;
-
-    @Autowired
     private VerificationCodeRepository verificationCodeRepository;
-
-    @Autowired
-    private StaticResourceService staticResourceService;
 
     @Autowired
     DataCenterService dataCenterService;
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private ConfigRepository configRepository;
 
 
     @RequestMapping("/init")
@@ -303,36 +289,92 @@ public class UserController implements UserSystem {
 
     @RequestMapping("/bindMobile")
     @Override
-    public ApiResult bindMobile(String code, String phone) throws Exception {
-        if(StringUtils.isEmpty(code)||StringUtils.isEmpty(phone)){
+    public ApiResult bindMobile(String code, String phone,Long currentDate,Long userId) throws Exception {
+        if(StringUtils.isEmpty(code)||StringUtils.isEmpty(phone)||userId==null||currentDate==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        VerificationCode verificationCode=verificationCodeRepository.findByMobileAndType(phone, CommonEnum.VerificationType.bind);
-        if(!code.equals(verificationCode.getCode())){
-            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        List<VerificationCode> codeList = verificationCodeRepository.findByMobileAndTypeAndSendTimeGreaterThan(
+                phone, CommonEnum.VerificationType.bind, new Date(currentDate - 60 * 1000));
+        for (VerificationCode verificationCode : codeList) {
+            if (!verificationCode.getCode().equals(code))
+                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
         }
-        //检查是否已经绑定了手机号
 
-        //开始绑定手机号
+        //检查是否已经绑定了手机号
+        if(mallUserModel.getIsBindMobile()){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE_ALREADY_BINDING);
+        }
+        //todo 开始绑定手机号
+        dataCenterService.bindingMobile();
 
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/modifyMobile")
     @Override
-    public ApiResult modifyMobile(String code, String phone) throws Exception {
-        return null;
+    public ApiResult modifyMobile(String code, String phone,Long currentDate,Long userId) throws Exception {
+        if(StringUtils.isEmpty(code)||StringUtils.isEmpty(phone)||userId==null||currentDate==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        List<VerificationCode> codeList = verificationCodeRepository.findByMobileAndTypeAndSendTimeGreaterThan(
+                phone, CommonEnum.VerificationType.bind, new Date(currentDate - 60 * 1000));
+        for (VerificationCode verificationCode : codeList) {
+            if (!verificationCode.getCode().equals(code))
+                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
+        }
+//        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+//        if(SysRegex.IsValidMobileNo(mallUserModel.getUserName()))
+        //todo 修改绑定手机
+        dataCenterService.modifyUserInfo();
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/putToCoffers")
     @Override
-    public ApiResult putToCoffers() throws Exception {
-        return null;
+    public ApiResult putToCoffers(Long userId) throws Exception {
+        if(userId==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        Double scoreToGold=Double.parseDouble(configRepository.findOne(ConfigKey.SCORE_TO_GOLD).getValue());
+        Integer score=user.getScore();
+        if(score<=0||scoreToGold*score>1){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_INTEGRAL_INSUFFICIENT);
+        }
+        //可以提现的金币数量
+        Double golds=score*scoreToGold;
+        //todo 充值小金库
+        boolean flag=dataCenterService.rechargeCoffers();
+        if(flag){
+            //改变积分数值
+            userRepository.save(user);
+            return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+        }else {
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_EXTRACT_FIAL);
+        }
+
     }
 
     @RequestMapping("/getScorePutInfo")
     @Override
-    public ApiResult getScorePutInfo(Output<Double> upgradeMoney, Output<Double> rate) throws Exception {
+    public ApiResult getScorePutInfo(Output<Double> upgradeMoney, Output<Double> rate,Long userId) throws Exception {
+        if(userId==null){
+            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+        }
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        Config upT=configRepository.findOne(ConfigKey.UPGRADE_INTEGRAL);
+        Integer money=Integer.parseInt(upT.getValue())-user.getContinuedScore();
+        if(money>0){
+
+        }
+
         return null;
     }
 

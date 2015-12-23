@@ -43,5 +43,20 @@ public class ConfigKey {
      */
 	public static final String USER_TOTAL="UserTotal";
 
+    /**
+     * 积分与金币之间的兑换
+     */
+	public static final String MONEY_TO_SCORE="MoneyToScore";
+
+    /**
+     * 积分与金币之间的兑换
+     */
+    public static final String SCORE_TO_GOLD="ScoreToGold";
+
+    /**
+     * 从一级升二级所需的积分
+     */
+    public static final String UPGRADE_INTEGRAL="UpgradeIntegral";
+
 
 }

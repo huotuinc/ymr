@@ -455,6 +455,7 @@ public class ShareManagerController {
         if(Objects.isNull(share)){
             throw new Exception("帖子不存在！,或许已被删除！");
         }
+        share.setImg(staticResourceService.getResource(share.getImg()).toString());
         List<ShareProduct> shareProducts=shareProductRepository.findByShare(share);
         model.addAttribute("share",share);
         model.addAttribute("shareProducts",shareProducts);

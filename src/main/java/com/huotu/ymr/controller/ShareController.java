@@ -111,7 +111,7 @@ public class ShareController implements ShareSystem {
         share.setOwnerType(CommonEnum.UserType.user);
         share.setTitle(title);
         share.setShareType(CommonEnum.ShareType.userShare);
-        share.setImg(staticResourceService.getResource(imgUrl).toString());//todo
+        share.setImg(imgUrl);
         share.setContent(content);
         share.setIntro("");
         share.setTop(false);
@@ -138,13 +138,16 @@ public class ShareController implements ShareSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_SHARE_NOT_FOUND);
         }
         AppShareInfoModel shareInfoModel=new AppShareInfoModel();
-            shareInfoModel.setTitle(share.getTitle());
-            shareInfoModel.setTime(share.getTime());
-            shareInfoModel.setContent(share.getContent());
-            shareInfoModel.setPraiseQuantity(share.getPraiseQuantity());
-            shareInfoModel.setRelayReward(share.getRelayReward());
-            shareInfoModel.setRelayQuantity(share.getRelayQuantity());
-            data.outputData(shareInfoModel);
+        shareInfoModel.setTitle(share.getTitle());
+        shareInfoModel.setTime(share.getTime());
+        shareInfoModel.setImg(staticResourceService.getResource(share.getImg()).toString());
+        shareInfoModel.setContent(share.getContent());
+        shareInfoModel.setPraiseQuantity(share.getPraiseQuantity());
+        shareInfoModel.setRelayReward(share.getRelayReward());
+        shareInfoModel.setRelayQuantity(share.getRelayQuantity());
+        shareInfoModel.setTotalIntegral(share.getScore());
+        shareInfoModel.setUseIntegral(share.getUsedScore());
+        data.outputData(shareInfoModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 

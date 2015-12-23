@@ -26,9 +26,11 @@ public interface ResourceSystem {
     /**
      * 上传爱分享文章的图片
      * @param profileData      图片数据
+     * @param data             用于展示的绝对路径
+     * @param relativeUrl      用于上传的相对路径
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult uploadShareImg(Output<String> data,@RequestParam Object profileData) throws Exception;
+    ApiResult uploadShareImg(Output<String> data,Output<String> relativeUrl, @RequestParam Object profileData) throws Exception;
 }

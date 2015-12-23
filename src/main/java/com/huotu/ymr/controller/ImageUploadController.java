@@ -31,12 +31,13 @@ public class ImageUploadController implements ResourceSystem {
 
     @Override
     @RequestMapping(value = "/uploadShareImg")
-    public ApiResult uploadShareImg(Output<String> data,@RequestParam Object profileData) throws Exception {
+    public ApiResult uploadShareImg(Output<String> data,Output<String> relativeUrl,@RequestParam Object profileData) throws Exception {
         byte[] headPic = Base64.getMimeDecoder().decode(profileData.toString());
         ByteArrayInputStream in=new ByteArrayInputStream(headPic);
         String fileName = StaticResourceService.SHSRES_IMG + UUID.randomUUID().toString() + ".png";
         URI uri=staticResourceService.uploadResource(fileName, in);
         data.outputData(uri.toString());
+        relativeUrl.outputData(fileName);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 }

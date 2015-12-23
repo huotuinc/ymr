@@ -81,7 +81,7 @@
                                                 <span style=" vertical-align: text-top;">分(奖励总积分默认为-1:表示积分无限制)</span>
                                                 <br/>
                                                 已使用积分:
-                                                <span th:text="*{score}"></span>
+                                                <span th:text="*{usedScore}"></span>
                                                 <span style=" vertical-align: text-top;">分</span>
                                             </td>
                                         </tr>
@@ -101,7 +101,7 @@
 
                                                 <div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">
                                                     <span th:if="*{img==null}">未上传</span>
-                                                    <img th:if="*{img!=null}"  id="share_img" th:src="@{*{img}}" width="80px" height="80px"/>
+                                                    <img th:if="*{img!=null}"  id="share_img" th:src="*{img}" width="80px" height="80px"/>
                                                 </div>
 
                                                 <!--<div style="margin-left: 10px; float: left; line-height: 80px;padding-top: 30px;">-->

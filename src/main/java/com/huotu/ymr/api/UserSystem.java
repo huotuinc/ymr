@@ -88,13 +88,15 @@ public interface UserSystem {
      * 绑定手机
      * 前置条件 没有绑定手机
      *
-     * @param code  验证码
-     * @param phone 手机号
+     * @param code          验证码
+     * @param phone         手机号
+     * @param currentDate   当前时间的时间戳
+     * @param userId        用户ID
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult bindMobile(String code, String phone) throws Exception;
+    ApiResult bindMobile(String code, String phone,Long currentDate,Long userId) throws Exception;
 
     /**
      * 修改手机号
@@ -105,7 +107,7 @@ public interface UserSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult modifyMobile(String code, String phone) throws Exception;
+    ApiResult modifyMobile(String code, String phone,Long currentDate,Long userId) throws Exception;
 
     /**
      * 积分充值到小金库
@@ -117,7 +119,7 @@ public interface UserSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult putToCoffers() throws Exception;
+    ApiResult putToCoffers(Long userId) throws Exception;
 
     /**
      * 获取积分充值所需的信息
@@ -129,7 +131,7 @@ public interface UserSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getScorePutInfo(Output<Double> upgradeMoney, Output<Double> rate) throws Exception;
+    ApiResult getScorePutInfo(Output<Double> upgradeMoney, Output<Double> rate,Long userId) throws Exception;
 
 
     /**
