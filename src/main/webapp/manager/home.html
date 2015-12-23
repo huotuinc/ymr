@@ -85,6 +85,9 @@
             $('#menu04').click(function () {
                 mallMenuManager.showUsers();
             });
+            $('#menu05').click(function () {
+                mallMenuManager.showConfigs();
+            });
         };
 
 
@@ -115,6 +118,13 @@
             var _url = /*[['getUserList']]*/ "userList.html";
             _loadMain(_url);
             _loadLeftMenu('../manager/userManager.html');
+        }
+        mallMenuManager.showConfigs = function () {
+            $(".active").removeClass("active");
+            $("#menu05").addClass("active");
+            var _url = /*[['configRefund']]*/ "configRefund.html";
+            _loadMain(_url);
+            _loadLeftMenu('../manager/configManager.html');
         }
         //#endregion
 
@@ -220,6 +230,10 @@
                         <li class="" id="menu04">
                             <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
                                 <span>用户管理</span></a>
+                        </li>
+                        <li class="" id="menu05">
+                            <a style="cursor: pointer;"><i class="fa fa-folder-o"></i>
+                                <span>配置管理</span></a>
                         </li>
 
 

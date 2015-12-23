@@ -67,7 +67,7 @@ public class ArticleManagerController {
      * @return
      */
     @RequestMapping(value = "/saveArticle", method = RequestMethod.POST)
-    public String saveShare(Article article, HttpServletRequest request) throws Exception {
+    public String saveArticle(Article article, HttpServletRequest request) throws Exception {
         MngPublicModel mpm = PublicManagerParameterHolder.get();
         String contextPath = request.getContextPath();
         //新增

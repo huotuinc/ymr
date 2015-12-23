@@ -458,4 +458,14 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
         });
         return rangeList;
     }
+
+    @Override
+    public void deleteRangesByCrowdFunding(CrowdFunding crowdFunding) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("delete from CrowdFundingMoneyRange as range where " +
+                "  range.crowdFunding.id=:crowdId ");
+        crowdFundingMoneyRangeRepository.executeHql(hql.toString(), query -> {
+            query.setParameter("crowdId", crowdFunding.getId());
+        });
+    }
 }

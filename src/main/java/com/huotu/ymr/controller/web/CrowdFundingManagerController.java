@@ -1,5 +1,6 @@
 package com.huotu.ymr.controller.web;
 
+import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.PublicManagerParameterHolder;
 import com.huotu.ymr.entity.CrowdFunding;
@@ -263,65 +264,110 @@ public class CrowdFundingManagerController {
 
         String result="redirect:getCrowdFundingList";
         MngPublicModel mpm = PublicManagerParameterHolder.get();
-        String contextPath = request.getContextPath();
         //int isDraft=Integer.parseInt(request.getParameter("isDraft"));
         //新增
         if (addCrowdFundingModel.getId() == null) {
-            Uri uri = new Uri(addCrowdFundingModel.getPicture());
-            String imgPath = uri.getPath().substring(uri.getPath().indexOf(contextPath) + contextPath.length());
-            //addCrowdFundingModel.setPicture(imgPath);
-           CrowdFunding crowdFunding=new CrowdFunding();
 
-            crowdFunding.setPuctureUrl(imgPath);
-            if(addCrowdFundingModel.getIsDraft()==0){
-                crowdFunding.setCheckStatus(CommonEnum.CheckType.audit);
-                result ="redirect:getCrowdFundingList";
-            }else if(addCrowdFundingModel.getIsDraft()==1){
-                crowdFunding.setCheckStatus(CommonEnum.CheckType.draft);
-                result ="redirect:getDraftList";
+            result=auditCF(addCrowdFundingModel,request,0);
+            //修改
+        } else {
+
+            //URI uri=staticResourceService.getResource(article.getPicture());
+           if(addCrowdFundingModel.getIsDraft()==0){
+               CrowdFunding modifyCrowdFunding = crowdFundingRepository.findOne(addCrowdFundingModel.getId());
+               modifyCrowdFunding.setCheckStatus(CommonEnum.CheckType.pass);
+               modifyCrowdFunding=crowdFundingRepository.save(modifyCrowdFunding);
+        }else if(addCrowdFundingModel.getIsDraft()==1){
+               //modifyCrowdFunding.setCheckStatus(CommonEnum.CheckType.draft);
+               result=auditCF(addCrowdFundingModel,request,0);
+            //result ="redirect:getDraftList";
+        }
+        }
+        return result;
+    }
+
+    /**
+     * 统一的众筹添加修改操作
+     * @param addCrowdFundingModel
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    private String auditCF(AddCrowdFundingModel addCrowdFundingModel, HttpServletRequest request,int dToA) throws Exception {
+        //将原来的旧项目从数据库移除
+        if(addCrowdFundingModel.getId()!=null) {
+            CrowdFunding crowdFunding = crowdFundingRepository.findOne(addCrowdFundingModel.getId());
+            crowdFundingService.deleteRangesByCrowdFunding(crowdFunding);
+            crowdFundingRepository.delete(crowdFunding);
+        }
+        //添加到数据库
+        String result=null;
+        String contextPath = request.getContextPath();
+        Uri uri = new Uri(addCrowdFundingModel.getPicture());
+        String imgPath = uri.getPath().substring(uri.getPath().indexOf(contextPath) + contextPath.length());
+        //addCrowdFundingModel.setPicture(imgPath);
+        CrowdFunding crowdFunding=new CrowdFunding();
+
+        crowdFunding.setPuctureUrl(imgPath);
+        if(addCrowdFundingModel.getIsDraft()==0){
+            crowdFunding.setCheckStatus(CommonEnum.CheckType.audit);
+            result ="redirect:getCrowdFundingList";
+        }else if(addCrowdFundingModel.getIsDraft()==1){
+            crowdFunding.setCheckStatus(CommonEnum.CheckType.draft);
+            result ="redirect:getDraftList";
+        }
+
+        List<CommonEnum.UserLevel> userLevels=new ArrayList<CommonEnum.UserLevel>();
+        if(addCrowdFundingModel.getLev1()==1){
+            userLevels.add(CommonEnum.UserLevel.one);
+        }
+        if(addCrowdFundingModel.getLev2()==1){
+            userLevels.add(CommonEnum.UserLevel.two);
+        }
+        if(addCrowdFundingModel.getLev3()==1){
+            userLevels.add(CommonEnum.UserLevel.three);
+        }
+
+        crowdFunding.setVisibleLevel(userLevels);
+        crowdFunding.setCrowdFundingType(addCrowdFundingModel.getCrowdFundingType());
+        crowdFunding.setTime(new Date());
+        crowdFunding.setName(addCrowdFundingModel.getName());
+        crowdFunding.setToBooking(addCrowdFundingModel.getLimitPeople());
+        crowdFunding.setToMoeny(addCrowdFundingModel.getLimitMoney());
+        crowdFunding.setContent(addCrowdFundingModel.getContent());
+
+        if(addCrowdFundingModel.getCrowdFundingType()!=CommonEnum.CrowdFundingType.booking) {
+
+            if (addCrowdFundingModel.getGlobleOrSingle() == 1) {
+                crowdFunding.setAgencyFeeRate(Integer.parseInt(configRepository.findOne("GlobalAgencyFee").getValue()));//todo 数据库中存入全局
+            } else if (addCrowdFundingModel.getGlobleOrSingle() == 0) {
+                crowdFunding.setAgencyFeeRate(addCrowdFundingModel.getSingleSet());
             }
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        date = sdf.parse(addCrowdFundingModel.getEndDate());
+        crowdFunding.setEndTime(date);
 
-            List<CommonEnum.UserLevel> userLevels=new ArrayList<CommonEnum.UserLevel>();
-            if(addCrowdFundingModel.getLev1()==1){
-                userLevels.add(CommonEnum.UserLevel.one);
-            }
-            if(addCrowdFundingModel.getLev2()==1){
-                userLevels.add(CommonEnum.UserLevel.two);
-            }
-            if(addCrowdFundingModel.getLev3()==1){
-                userLevels.add(CommonEnum.UserLevel.three);
-            }
-
-            crowdFunding.setVisibleLevel(userLevels);
-            crowdFunding.setCrowdFundingType(addCrowdFundingModel.getCrowdFundingType());
-            crowdFunding.setTime(new Date());
-            crowdFunding.setName(addCrowdFundingModel.getName());
-            crowdFunding.setToBooking(addCrowdFundingModel.getLimitPeople());
-            crowdFunding.setToMoeny(addCrowdFundingModel.getLimitMoney());
-            crowdFunding.setContent(addCrowdFundingModel.getContent());
-
-            if(addCrowdFundingModel.getCrowdFundingType()!=CommonEnum.CrowdFundingType.booking) {
-
-                if (addCrowdFundingModel.getGlobleOrSingle() == 1) {
-                    crowdFunding.setAgencyFeeRate(Integer.parseInt(configRepository.findOne("GlobalAgencyFee").getValue()));//todo 数据库中存入全局
-                } else if (addCrowdFundingModel.getGlobleOrSingle() == 0) {
-                    crowdFunding.setAgencyFeeRate(addCrowdFundingModel.getSingleSet());
-                }
-            }
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = null;
-            date = sdf.parse(addCrowdFundingModel.getEndDate());
-            crowdFunding.setEndTime(date);
-
-            date = sdf.parse(addCrowdFundingModel.getStartDate());
-            crowdFunding.setStartTime(date);
-            //crowdFunding.setManager(managerRepository.findOne(mpm.getManager().getId()));//todo 发布者
-            crowdFunding.setContent(addCrowdFundingModel.getContent());
-            crowdFunding=crowdFundingRepository.save(crowdFunding);
+        date = sdf.parse(addCrowdFundingModel.getStartDate());
+        crowdFunding.setStartTime(date);
+        //crowdFunding.setManager(managerRepository.findOne(mpm.getManager().getId()));//todo 发布者
+        crowdFunding.setContent(addCrowdFundingModel.getContent());
+        crowdFunding=crowdFundingRepository.save(crowdFunding);
 
 
-            if(crowdFunding.getCrowdFundingType()!=CommonEnum.CrowdFundingType.booking) {
+        if(crowdFunding.getCrowdFundingType()!=CommonEnum.CrowdFundingType.booking) {
+
+            if(dToA==0) {
                 String[] feeButton = request.getParameterValues("feeButton");
+
+            if(feeButton==null){
+                CrowdFundingMoneyRange crowdFundingMoneyRange = new CrowdFundingMoneyRange();
+                crowdFundingMoneyRange.setMoney(0.0);
+                crowdFundingMoneyRange.setCrowdFundingType(addCrowdFundingModel.getCrowdFundingType());
+                crowdFundingMoneyRange.setCrowdFunding(crowdFunding);
+                crowdFundingMoneyRange = crowdFundingMoneyRangeRepository.save(crowdFundingMoneyRange);
+            }else {
                 for (int i = 0; i < feeButton.length; i++) {
                     CrowdFundingMoneyRange crowdFundingMoneyRange = new CrowdFundingMoneyRange();
                     crowdFundingMoneyRange.setMoney(Double.parseDouble(feeButton[i]));
@@ -330,20 +376,26 @@ public class CrowdFundingManagerController {
                     crowdFundingMoneyRange = crowdFundingMoneyRangeRepository.save(crowdFundingMoneyRange);
                 }
             }
-
-
-            //修改
-        } else {
-            CrowdFunding modifyCrowdFunding = crowdFundingRepository.findOne(addCrowdFundingModel.getId());
-            //URI uri=staticResourceService.getResource(article.getPicture());
-           if(addCrowdFundingModel.getIsDraft()==0){
-               modifyCrowdFunding.setCheckStatus(CommonEnum.CheckType.pass);
-        }else if(addCrowdFundingModel.getIsDraft()==1){
-               modifyCrowdFunding.setCheckStatus(CommonEnum.CheckType.draft);
-            result ="redirect:getDraftList";
+            }else if(dToA==1){
+                Double[] feeButton = (Double[]) request.getAttribute("feeButton");
+                if(feeButton==null){
+                    CrowdFundingMoneyRange crowdFundingMoneyRange = new CrowdFundingMoneyRange();
+                    crowdFundingMoneyRange.setMoney(0.0);
+                    crowdFundingMoneyRange.setCrowdFundingType(addCrowdFundingModel.getCrowdFundingType());
+                    crowdFundingMoneyRange.setCrowdFunding(crowdFunding);
+                    crowdFundingMoneyRange = crowdFundingMoneyRangeRepository.save(crowdFundingMoneyRange);
+                }else {
+                    for (int i = 0; i < feeButton.length; i++) {
+                        CrowdFundingMoneyRange crowdFundingMoneyRange = new CrowdFundingMoneyRange();
+                        crowdFundingMoneyRange.setMoney(feeButton[i]);
+                        crowdFundingMoneyRange.setCrowdFundingType(addCrowdFundingModel.getCrowdFundingType());
+                        crowdFundingMoneyRange.setCrowdFunding(crowdFunding);
+                        crowdFundingMoneyRange = crowdFundingMoneyRangeRepository.save(crowdFundingMoneyRange);
+                    }
+                }
+            }
         }
-            modifyCrowdFunding=crowdFundingRepository.save(modifyCrowdFunding);
-        }
+
         return result;
     }
 
@@ -370,15 +422,59 @@ public class CrowdFundingManagerController {
     /**
      * 开启众筹
      * @param crowdFundingsId 前台传过来的众筹id
+     * @param addCrowdFundingModel 前台传过来的众筹信息
+     *
      * @return
      * @throws Exception
      */
     @RequestMapping(value="/openCrowdFunding",method = RequestMethod.POST)
     @ResponseBody
-    public Msg openCrowdFunding(Long crowdFundingsId) throws Exception {
+    public Msg openCrowdFunding(String addCrowdFundingModel,HttpServletRequest request,Long crowdFundingsId,String fees) throws Exception {
         CrowdFunding crowdFunding=crowdFundingRepository.findOne(crowdFundingsId);
-        crowdFunding.setCheckStatus(CommonEnum.CheckType.open);
-        crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+        if(crowdFunding.getCheckStatus()==CommonEnum.CheckType.draft){
+
+            Double[] feesButton=JSON.parseObject(fees,Double[].class);
+            request.setAttribute("feeButton",feesButton);
+
+            //进行字符串中的枚举类的值获取
+            byte[] bytes=addCrowdFundingModel.getBytes();
+            String type=null;
+
+            int count=0;
+            for(int i=0;i<bytes.length;i++){
+                if(bytes[i]=='}'){
+                    count++;
+                }
+            }
+            if(count>1){
+                int begin=addCrowdFundingModel.lastIndexOf("{");
+                int end=addCrowdFundingModel.indexOf("}");
+               type=addCrowdFundingModel.substring(begin,end+1);
+                addCrowdFundingModel=addCrowdFundingModel.replace(addCrowdFundingModel.substring(begin,end+1),"null");
+                AddCrowdFundingModel addCrowdFundingM=JSON.parseObject(addCrowdFundingModel,AddCrowdFundingModel.class);
+
+                if(type.contains("booking")){
+                    addCrowdFundingM.setCrowdFundingType(CommonEnum.CrowdFundingType.booking);
+                }else if(type.contains("cooperation")){
+                    addCrowdFundingM.setCrowdFundingType(CommonEnum.CrowdFundingType.cooperation);
+                }else if(type.contains("subscription")) {
+                    addCrowdFundingM.setCrowdFundingType(CommonEnum.CrowdFundingType.subscription);
+                }
+                addCrowdFundingM.setIsDraft(0);
+                int dToA=1;
+                String result = auditCF(addCrowdFundingM, request,dToA);
+            }else {
+
+
+                AddCrowdFundingModel addCrowdFundingM = JSON.parseObject(addCrowdFundingModel, AddCrowdFundingModel.class);
+                //AddCrowdFundingModel addCrowdFundingModel= (AddCrowdFundingModel) request.getAttribute("addCrowdFundingModel");
+                String result = auditCF(addCrowdFundingM, request,0);
+            }
+        }else{
+            crowdFunding.setCheckStatus(CommonEnum.CheckType.open);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+        }
+
         Msg msg = new Msg();
         msg.setCode(200);
         msg.setMsg("success");

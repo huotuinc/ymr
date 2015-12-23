@@ -55,11 +55,11 @@
               可见等级
               </span>
                                 &nbsp;&nbsp;&nbsp;
-                                <input type="checkbox" th:checked="*{lev1==1?true:false}" th:value="*{lev1}" name="lev1"/>
+                                <input type="checkbox" th:checked="*{lev1==1?true:false}" value="1" name="lev1"/>
                                 Lv1
-                                <input type="checkbox" th:checked="*{lev2==1?true:false}"  th:value="*{lev2}" name="lev2"/>
+                                <input type="checkbox" th:checked="*{lev2==1?true:false}"  value="1" name="lev2"/>
                                 Lv2
-                                <input type="checkbox" th:checked="*{lev3==1?true:false}" name="lev3" th:value="*{lev3}"/>
+                                <input type="checkbox" th:checked="*{lev3==1?true:false}" name="lev3" value="1"/>
                                 Lv3 </label>
                         </div>
                     </div>
@@ -300,14 +300,36 @@
 
     var submitOCF=function () {
         var settlementNo = $("#id").val();
+
+//        var requestData={
+//            crowdFundingsId:"",
+//            addCrowdFundingModel:{},
+//            fees:[]
+//        };
+//        requestData.addCrowdFundingModel.id=1;
+//        var x={};
+//        fees.push(x);
+
+        //Json(requestData)
+        var addCrowdFundingModel=/*[[${addCrowdFundingModel}]]*/'';
+        var ACFM=JSON.stringify(addCrowdFundingModel);
+        var valArr = new Array;
+        $("input[name='feeButton']").each(function(i){
+            valArr[i] = $(this).val();
+        });
+        var fees=JSON.stringify(valArr);
+//        var input = doucment.getElementsByTagName('feeButton');
+//        var feeButton = $("#feeButton").val();
         var url="getCrowdFundingList";
-        $.get(url);
+//        $.get(url);
         $.jBox.tip("正在修改...", "loading");
         $.ajax({
             type:"POST",
             url:"openCrowdFunding",
             data:{
-                crowdFundingsId:settlementNo
+                crowdFundingsId:settlementNo,
+                addCrowdFundingModel:ACFM,
+                fees:fees
             },
             dataType:"json",
             success: function (msg) {
@@ -595,7 +617,7 @@
                 $("#globleOrSingle1").attr("disabled", true);
                 $("#globleOrSingle0").attr("disabled", true);
             }else if($("#isDraft").val()==1){
-                $("input[name='crowdFundingType']").attr("disabled", true);
+
 
                if(crowdFunding.$name=='cooperation'||crowdFunding.$name=='subscription'){
                         for(var i=0;fees.length>i;i++){
