@@ -9,15 +9,20 @@
 
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.Config;
+import com.huotu.ymr.entity.User;
 import com.huotu.ymr.repository.ConfigRepository;
+import com.huotu.ymr.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Created by lgh on 2015/9/6.
@@ -27,9 +32,27 @@ import javax.transaction.Transactional;
 public class StartService implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     ConfigRepository configRepository;
+    @Autowired
+    UserRepository userRepository;
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        if(Objects.isNull(userRepository.findOne(1234L))){
+            User user=new User();
+            user.setId(1234L);
+            user.setUserLevel(CommonEnum.UserLevel.one);
+            user.setToken(UUID.randomUUID().toString().replaceAll("-",""));
+            user.setContinuedScore(0);
+            userRepository.save(user);
+        }
+        if(Objects.isNull(userRepository.findOne(5678L))){
+            User user=new User();
+            user.setId(5678L);
+            user.setUserLevel(CommonEnum.UserLevel.one);
+            user.setToken(UUID.randomUUID().toString().replaceAll("-",""));
+            user.setContinuedScore(0);
+            userRepository.save(user);
+        }
         if (event.getApplicationContext().getParent() == null) {
             Config configGT =configRepository.findOne(ConfigKey.GLOBAL_TRANSMIT);
             Config configTT =configRepository.findOne(ConfigKey.GLOBAL_TOTAL);
@@ -37,6 +60,7 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
             Config userGT=configRepository.findOne(ConfigKey.USER_TRANSMIT);
             Config userTT=configRepository.findOne(ConfigKey.USER_TOTAL);
             Config userPT=configRepository.findOne(ConfigKey.USER_POST);
+            Config upT=configRepository.findOne(ConfigKey.UPGRADE_INTEGRAL);
             if(configGT==null){
                 configGT=new Config();
                 configGT.setKey(ConfigKey.GLOBAL_TRANSMIT);
@@ -72,6 +96,12 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
                 userTT.setKey(ConfigKey.USER_TOTAL);
                 userTT.setValue("0");
                 configRepository.save(userTT);
+            }
+            if(upT==null){
+                upT=new Config();
+                upT.setKey(ConfigKey.UPGRADE_INTEGRAL);
+                upT.setValue("-1");
+                configRepository.save(upT);
             }
         }
     }
