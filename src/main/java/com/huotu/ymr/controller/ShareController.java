@@ -148,6 +148,7 @@ public class ShareController implements ShareSystem {
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
+    @RequestMapping("/clickPraise")
     @Override
     public ApiResult clickPraise(Output<Long> data,Long shareId, Long userId) throws Exception {
         //数据有效性检查
@@ -179,6 +180,7 @@ public class ShareController implements ShareSystem {
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
+    @RequestMapping("/clickCommentPraise")
     @Override
     public ApiResult clickCommentPraise(Output<Integer>data,Long commentId, Long userId) throws Exception {
         //数据有效性检查
