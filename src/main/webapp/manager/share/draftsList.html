@@ -591,8 +591,8 @@
                                             <td class="txt20 c" style="width: 15px;" th:text="${sharesStat.count}">
                                                 1
                                             </td>
-                                            <td class="txt40" th:text="${shares.shareTitle}">
-                                                2015092173663935&nbsp;
+                                            <td class="txt40">
+                                                <a th:text="${shares.shareTitle}" th:href="@{lookShareInfo(shareId=${shares.id})}">2015092173663935&nbsp;</a>
                                             </td>
                                             <td class="txt80" th:text="${shares.userType}">
                                                 2015/9/21 20:18:01

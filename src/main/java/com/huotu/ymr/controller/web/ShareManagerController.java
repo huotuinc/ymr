@@ -199,6 +199,7 @@ public class ShareManagerController {
             backendShareModel.setId(s.getId());
             backendShareModel.setTop(s.getTop());
             backendShareModel.setTime(s.getTime());
+            backendShareModel.setBoutique(s.getBoutique());
             backendShareModel.setUserType(s.getOwnerType().getName());
             backendShareModel.setPraiseQuantity(s.getPraiseQuantity());
             backendShareModel.setRelayQuantity(s.getRelayQuantity());
@@ -443,6 +444,23 @@ public class ShareManagerController {
         resultModel.setMessage(share.getCheckStatus().getName());
         return resultModel;
     }
+
+
+    @RequestMapping(value = "/lookShareInfo",method = RequestMethod.GET)
+    public String lookShareInfo(Long shareId,Model model) throws Exception{
+        if(shareId==null){
+            throw new Exception("参数错误！,参数为空！");
+        }
+        Share share=shareService.findOneShare(shareId);
+        if(Objects.isNull(share)){
+            throw new Exception("帖子不存在！,或许已被删除！");
+        }
+        List<ShareProduct> shareProducts=shareProductRepository.findByShare(share);
+        model.addAttribute("share",share);
+        model.addAttribute("shareProducts",shareProducts);
+        return "manager/share/DetailedShare";
+    }
+
 
 
 }

@@ -408,8 +408,8 @@
                                             <td class="txt20 c" style="width: 15px;" th:text="${sharesStat.count}">
                                                 1
                                             </td>
-                                            <td class="txt40" th:text="${shares.shareTitle}">
-                                                2015092173663935&nbsp;
+                                            <td class="txt40">
+                                                <a th:text="${shares.shareTitle}" th:href="@{lookShareInfo(shareId=${shares.id})}">2015092173663935&nbsp;</a>
                                             </td>
                                             <td class="txt80" th:text="${shares.userType}">
                                                 2015/9/21 20:18:01
@@ -488,38 +488,38 @@
         switch (text){
             case '置顶':
                 type=0;
-                ajaxSetUpload(shareId,type);
+                ajaxSetUpload(shareId,type,obj);
                 return;
             case '通过':
                 type=1;
-                ajaxSetUpload(shareId,type);
+                ajaxSetUpload(shareId,type,obj);
                 return;
             case '取消置顶':
                 type=2;
-                ajaxSetUpload(shareId,type);
+                ajaxSetUpload(shareId,type,obj);
                 return;
             case '不通过':
                 type=3;
-                ajaxSetUpload(shareId,type);
+                ajaxSetUpload(shareId,type,obj);
                 return;
             case '删除':
                 jBox.confirm("友情提示", "即将删除，确定继续吗？",function(v,h,f){
                     if (v == 'ok')
-                        ajaxSetUpload(shareId,4);
+                        ajaxSetUpload(shareId,4,obj);
                 });
                 break;
             case '加精':
                 type=6;
-                ajaxSetUpload(shareId,type);
+                ajaxSetUpload(shareId,type,obj);
                 break;
             case '取消加精':
                 type=7;
-                ajaxSetUpload(shareId,type);
+                ajaxSetUpload(shareId,type,obj);
                 break;
         }
     }
 
-    function ajaxSetUpload(shareId,type){
+    function ajaxSetUpload(shareId,type,obj){
         $.ajax({
             type:'POST',
             url: 'setShare',

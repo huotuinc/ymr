@@ -122,4 +122,9 @@ public class BackendShareModel {
      */
     private String  userType="官方";
 
+    /**
+     * 是否是精品
+     */
+    private Boolean boutique;
+
 }

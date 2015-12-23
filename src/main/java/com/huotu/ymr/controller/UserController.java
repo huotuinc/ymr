@@ -10,8 +10,6 @@ import com.huotu.ymr.entity.ConfigAppVersion;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.entity.VerificationCode;
 import com.huotu.ymr.exception.InterrelatedException;
-import com.huotu.ymr.mallentity.MallUser;
-import com.huotu.ymr.mallentity.MallUserBinding;
 import com.huotu.ymr.mallrepository.MallUserBindingRepository;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.*;
@@ -26,13 +24,16 @@ import com.huotu.ymr.service.VerificationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * 用户系统
@@ -73,6 +74,10 @@ public class UserController implements UserSystem {
     @Autowired
     DataCenterService dataCenterService;
 
+    @Autowired
+    private Environment environment;
+
+
     @RequestMapping("/init")
     @Override
     public ApiResult init(Output<AppGlobalModel> global, Output<AppUserInfoModel> user, Output<AppUpdateModel> update) throws Exception {
@@ -84,9 +89,10 @@ public class UserController implements UserSystem {
 
 
         AppUserInfoModel appUserInfoModel = pms.getCurrentUser();
-        if (appUserInfoModel == null) {
-            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_LOGIN_FAIL);
-        }
+        user.outputData(appUserInfoModel);
+//        if (appUserInfoModel == null) {
+//            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_LOGIN_FAIL);
+//        }
         user.outputData(appUserInfoModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
@@ -94,6 +100,11 @@ public class UserController implements UserSystem {
 
     /**
      * 获取该用户数据
+     * 通过unionId去商城获取用户数据
+     *
+     *      1.一条数据，判断本地数据库中User是否存在，如果存在则登录成功，如果不存在则创建一个User,修改token,最后返回该User信息
+     *      2.0条数据，请求商城创建一个MallUser,本地数据库创建一个User,修改token,最后返回该User信息
+     *
      *
      * @param data    用户数据
      * @param unionId 微信唯一号
@@ -102,91 +113,161 @@ public class UserController implements UserSystem {
      */
     @RequestMapping("/login")
     @Override
-    public ApiResult login(Output<AppUserInfoModel> data, Output<AppSimpleUserModel[]> list, String unionId) throws Exception {
-        MallUserModel mallUserModel = dataCenterService.getUserInfo();//todo 调用数据中心
-        Long merchantId = Long.parseLong(commonConfigService.getYmrMerchantId());
-        if (unionId == null) {
-            return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+    public ApiResult login(Output<AppUserInfoModel> data, String unionId,String accreditInfo) throws Exception {
+        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development")){
+            //测试用
+            User usertest=userRepository.findOne(1234L);
+            String tokentest=UUID.randomUUID().toString().replaceAll("-","");
+            AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
+            appUserInfoModel.setUserId(usertest.getId());
+            appUserInfoModel.setUserName("小开开专属测试号");
+            appUserInfoModel.setHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");
+            appUserInfoModel.setNickName("小开开");
+            appUserInfoModel.setScore(usertest.getScore());
+            appUserInfoModel.setUserLevel(usertest.getUserLevel());
+            appUserInfoModel.setMerchantId(456L);
+            appUserInfoModel.setName("方开金");
+            appUserInfoModel.setSex("男");
+            appUserInfoModel.setMobile("13588741728");
+            appUserInfoModel.setIsBindMobile(false);
+            appUserInfoModel.setToken(tokentest);
+            usertest.setToken(tokentest);
+            userRepository.save(usertest);
+            data.outputData(appUserInfoModel);
         }
-        List<MallUserBinding> mallUserBinding = mallUserBindingRepository.findByUnionIdAndMerchantId(unionId, merchantId);//todo 数据中心去取
-//        if (mallUserBinding.isEmpty()) {
-//            mallUser = new MallUser();//todo 调用注册接口注册商城的用户
-//        } else if (mallUserBinding.size() == 1) {
-//            mallUser = mallUserBinding.get(0).getUserInfo();
-//            User user = userRepository.findOne(mallUser.getId());
-//            data.outputData(getAppUserInfoModel(mallUser, user));
-//        }
+        if(environment.acceptsProfiles("prod")){
+            if (unionId == null) {
+                return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+            }
+            MallUserModel mallUserModel = dataCenterService.getUserInfoByUniond(unionId)[0];//todo 调用数据中心
+            if(Objects.isNull(mallUserModel)){
+                mallUserModel=dataCenterService.createUser(accreditInfo);
+            }
+            User user=getUser(mallUserModel.getUserId());
+            AppUserInfoModel appUserInfoModel=getAppUserInfoModel(user,mallUserModel);
+            data.outputData(appUserInfoModel);
+        }
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
-    @RequestMapping("/selectOneUser")
+    @RequestMapping("/changeUser")
     @Override
-    public ApiResult selectOneUser(Output<AppUserInfoModel> data, Long userId) throws Exception {
-        if (userId == null) {
+    public ApiResult changeUser(Output<AppUserInfoModel[]> list, String unionId) throws Exception {
+        if (unionId == null) {
             ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        MallUser mallUser = mallUserRepository.findOne(userId);
-        if (Objects.isNull(mallUser)) {
-            ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        MallUserModel[] mallUserModels=dataCenterService.getUserInfoByUniond(unionId);
+        AppUserInfoModel[] appUserInfoModels=new AppUserInfoModel[mallUserModels.length];
+        for(int i=0;i<mallUserModels.length;i++){
+            User user=getUser(mallUserModels[i].getUserId());
+            AppUserInfoModel appUserInfoModel=getAppUserInfoModel(user,mallUserModels[i]);
+            appUserInfoModels[i]=appUserInfoModel;
         }
-        User user = userRepository.findOne(mallUser.getId());
-        data.outputData(getAppUserInfoModel(mallUser, user));
+        list.outputData(appUserInfoModels);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     /**
-     * 判断验证码是否正确
-     * 不正确：返回信息
-     * 正确：
-     *
-     * @param data  返回的用户数据
-     * @param phone 手机号
-     * @param code  验证码
+     * 根据userId，返回User对象，如果没有则创建一个
+     * @param userId
      * @return
      * @throws Exception
      */
-    @RequestMapping("/loginByMobile")
-    @Override
-    public ApiResult loginByMobile(Output<AppUserInfoModel> data, String phone, String code) throws Exception {
-        if (StringUtils.isEmpty(phone) || StringUtils.isEmpty(code)) {
-            ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+    private User getUser(Long userId) throws Exception{
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            user=new User();
+            user.setId(userId);
+            user.setUserLevel(CommonEnum.UserLevel.one);
+            user.setScore(0);
+            user.setContinuedScore(0);
+
         }
-        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndType(phone, CommonEnum.VerificationType.reg);
-        if (Objects.isNull(verificationCode)) {
-            ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
-        }
-        MallUser mallUser = new MallUser();//todo 调用数据中心新建商城用户
-        User user = new User();
-        data.outputData(getAppUserInfoModel(mallUser, user));
-        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+        //创建一个新的token
+        String token=UUID.randomUUID().toString().replaceAll("-","");
+        user.setToken(token);
+        userRepository.save(user);
+        return user;
+
     }
 
-
-    private AppUserInfoModel getAppUserInfoModel(MallUser mallUser, User user) throws URISyntaxException {
-        AppUserInfoModel appUserInfoModel = new AppUserInfoModel();
-        if (Objects.isNull(user)) {
-            user = new User();
-            user.setId(mallUser.getId());
-            user.setToken(UUID.randomUUID().toString().replace("-", ""));
-            user.setUserLevel(CommonEnum.UserLevel.one);
-            user = userRepository.save(user);
-        }
-        appUserInfoModel.setUserId(mallUser.getId());
-        appUserInfoModel.setUserName(mallUser.getUsername());
-//        appUserInfoModel.setHeadUrl(staticResourceService.getResource("").toString());//todo 图片
-        appUserInfoModel.setHeadUrl(staticResourceService.getResource(mallUser.getWxHeadUrl()).toString());
-        appUserInfoModel.setNickName(mallUser.getWxNickName());
+    /**
+     * 根据User和MallUserModel返回AppUserInfoModel
+     * @param user
+     * @param mallUserModel
+     * @return
+     * @throws Exception
+     */
+    private AppUserInfoModel getAppUserInfoModel(User user,MallUserModel mallUserModel)throws Exception{
+        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
+        appUserInfoModel.setUserId(mallUserModel.getUserId());
+        appUserInfoModel.setUserName(mallUserModel.getUserName());
+        appUserInfoModel.setHeadUrl(mallUserModel.getHeadUrl());
+        appUserInfoModel.setNickName(mallUserModel.getNickName());
         appUserInfoModel.setScore(user.getScore());
         appUserInfoModel.setUserLevel(user.getUserLevel());
-        appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
-        appUserInfoModel.setName(mallUser.getRealName());
-        appUserInfoModel.setSex(mallUser.getGender());
-        appUserInfoModel.setMobile(mallUser.getMobile());
-        appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
+        appUserInfoModel.setMerchantId(mallUserModel.getMerchantId());
+        appUserInfoModel.setName(mallUserModel.getName());
+        appUserInfoModel.setSex(mallUserModel.getSex());
+        appUserInfoModel.setMobile(mallUserModel.getMobile());
+        appUserInfoModel.setIsBindMobile(mallUserModel.getIsBindMobile());
         appUserInfoModel.setToken(user.getToken());
         return appUserInfoModel;
-
     }
+
+//    /**
+//     * 判断验证码是否正确
+//     * 不正确：返回信息
+//     * 正确：
+//     *
+//     * @param data  返回的用户数据
+//     * @param phone 手机号
+//     * @param code  验证码
+//     * @return
+//     * @throws Exception
+//     */
+//    @RequestMapping("/loginByMobile")
+//    @Override
+//    public ApiResult loginByMobile(Output<AppUserInfoModel> data, String phone, String code) throws Exception {
+//        if (StringUtils.isEmpty(phone) || StringUtils.isEmpty(code)) {
+//            ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
+//        }
+//        VerificationCode verificationCode = verificationCodeRepository.findByMobileAndType(phone, CommonEnum.VerificationType.reg);
+//        if (Objects.isNull(verificationCode)) {
+//            ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
+//        }
+//        MallUser mallUser = new MallUser();//todo 调用数据中心新建商城用户
+//        User user = new User();
+////        data.outputData(getAppUserInfoModel(mallUser, user));
+//        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+//    }
+
+
+//    private AppUserInfoModel getAppUserInfoModel(MallUser mallUser, User user) throws URISyntaxException {
+//        AppUserInfoModel appUserInfoModel = new AppUserInfoModel();
+//        if (Objects.isNull(user)) {
+//            user = new User();
+//            user.setId(mallUser.getId());
+//            user.setToken(UUID.randomUUID().toString().replace("-", ""));
+//            user.setUserLevel(CommonEnum.UserLevel.one);
+//            user = userRepository.save(user);
+//        }
+//        appUserInfoModel.setUserId(mallUser.getId());
+//        appUserInfoModel.setUserName(mallUser.getUsername());
+////        appUserInfoModel.setHeadUrl(staticResourceService.getResource("").toString());//todo 图片
+//        appUserInfoModel.setHeadUrl(staticResourceService.getResource(mallUser.getWxHeadUrl()).toString());
+//        appUserInfoModel.setNickName(mallUser.getWxNickName());
+//        appUserInfoModel.setScore(user.getScore());
+//        appUserInfoModel.setUserLevel(user.getUserLevel());
+//        appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
+//        appUserInfoModel.setName(mallUser.getRealName());
+//        appUserInfoModel.setSex(mallUser.getGender());
+//        appUserInfoModel.setMobile(mallUser.getMobile());
+//        appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
+//        appUserInfoModel.setToken(user.getToken());
+//        return appUserInfoModel;
+//
+//    }
 
 
     @RequestMapping("/sendSMS")

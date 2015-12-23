@@ -40,27 +40,35 @@ public interface UserSystem {
      *
      * @param data    用户数据
      * @param unionId 微信唯一号
+     * @param accreditInfo  微信授权信息
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult login(Output<AppUserInfoModel> data,Output<AppSimpleUserModel[]> list, String unionId) throws Exception;
-
-
-    @RequestMapping(method = RequestMethod.GET)
-    ApiResult selectOneUser(Output<AppUserInfoModel> data,Long userId) throws Exception;
+    ApiResult login(Output<AppUserInfoModel> data, String unionId,String accreditInfo) throws Exception;
 
 
     /**
-     * 微信授权失败调用的手机号登录
-     *
-     * @param data  返回的用户数据
-     * @param phone 手机号
-     * @param code  验证码
+     * 选择其中之一,如果有多个user
+     * @param data
+     * @param unionId
      * @return
      * @throws Exception
      */
-    @RequestMapping(method = RequestMethod.POST)
-    ApiResult loginByMobile(Output<AppUserInfoModel> data, String phone,String code) throws Exception;
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult changeUser(Output<AppUserInfoModel[]> data,String unionId) throws Exception;
+
+
+//    /**
+//     * 微信授权失败调用的手机号登录
+//     *
+//     * @param data  返回的用户数据
+//     * @param phone 手机号
+//     * @param code  验证码
+//     * @return
+//     * @throws Exception
+//     */
+//    @RequestMapping(method = RequestMethod.POST)
+//    ApiResult loginByMobile(Output<AppUserInfoModel> data, String phone,String code) throws Exception;
 
 
     /**
