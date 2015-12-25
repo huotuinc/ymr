@@ -6,9 +6,8 @@ import com.huotu.ymr.service.ShareCommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * 评论服务
@@ -20,30 +19,41 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     ShareCommentRepository shareCommentRepository;
 
     @Override
-    public Map<Long,List<ShareComment>> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception {
+    public List<ShareComment> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception {
         List<ShareComment> list= shareCommentRepository.findByShareOrderByTime(shareId, lastId, new PageRequest(0,pageSize));
-        Map<Long,List<ShareComment>> map=new TreeMap<Long,List<ShareComment>>(new Comparator<Long>() {
-            @Override
-            public int compare(Long o1, Long o2) {
-                return o2-o1>0?1:-1;
-            }
-        });
-        for(ShareComment sc:list){
-            if(sc.getParentId()==0L){
-                List<ShareComment> comments=new ArrayList<>();
-                comments.add(sc);
-                map.put(sc.getId(),comments);
-            }else {
-                String commentIdStr=sc.getCommentPath().split("\\|")[1];
-                if(!StringUtils.isEmpty(commentIdStr)){
-                    Long commentId=Long.parseLong(commentIdStr);
-                    List<ShareComment> shareComments=map.get(commentId);
-                    shareComments.add(sc);
-                    map.put(commentId,shareComments);
-                }
-            }
-        }
-        return map;
+//        Map<Long,List<ShareComment>> map=new TreeMap<Long,List<ShareComment>>(new Comparator<Long>() {
+//            @Override
+//            public int compare(Long o1, Long o2) {
+//                return o2-o1>0?1:-1;
+//            }
+//        });
+//        //先把评论放到map中去
+//        for(ShareComment sc:list){
+//            if(sc.getParentId()==0L){
+//                List<ShareComment> comments=new ArrayList<>();
+//                comments.add(sc);
+//                map.put(sc.getId(),comments);
+//            }
+//        }
+//
+//        //再把回复放到map中去，回复放到对应的评论中去
+//        for(ShareComment sc:list){
+//            if(sc.getParentId()!=0L){
+//                //获取父
+//                String commentIdStr=sc.getCommentPath().split("\\|")[1];
+//                if(!StringUtils.isEmpty(commentIdStr)){
+//                    Long commentId=Long.parseLong(commentIdStr);
+//                    //获取父评论的回复列表
+//                    List<ShareComment> shareComments=map.get(commentId);
+//                    if(Objects.isNull(shareComments)){
+//                        shareComments=new ArrayList<>();
+//                    }
+//                    shareComments.add(sc);
+//                    map.put(commentId,shareComments);
+//                }
+//            }
+//        }
+        return list;
     }
 
     @Override

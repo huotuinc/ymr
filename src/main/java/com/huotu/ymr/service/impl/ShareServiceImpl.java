@@ -193,4 +193,9 @@ public class ShareServiceImpl implements ShareService {
             }
         },new PageRequest(shareSearchModel.getPageNoStr(), 20,sort));
     }
+
+    @Override
+    public List<Share> findPraiseList(List<Long> shareIds, Long lastId) throws Exception {
+        return shareRepository.getShareByIds(shareIds, lastId);
+    }
 }

@@ -36,7 +36,7 @@ public class Praise {
     private User user;
 
     /**
-     * 状态 -1：为取消点赞，1：为点赞
+     * 状态 -1：为取消点赞，1：为点赞(废弃了)
      */
     private Integer type;
 }

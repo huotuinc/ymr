@@ -57,4 +57,14 @@ public interface CommonConfigService {
      */
     String getResourcesHome();
 
+    /**
+     * appid
+     */
+    String getAppId();
+
+    /**
+     * appsecret
+     */
+    String getAppsecret();
+
 }

@@ -12,22 +12,19 @@ import com.huotu.ymr.model.AppShareCommentListModel;
 import com.huotu.ymr.model.AppShareInfoModel;
 import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.AppShareReplyModel;
+import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.CommentPraiseRepository;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.repository.PraiseRepository;
 import com.huotu.ymr.repository.UserRepository;
-import com.huotu.ymr.service.CommonConfigService;
-import com.huotu.ymr.service.ShareCommentService;
-import com.huotu.ymr.service.ShareService;
-import com.huotu.ymr.service.StaticResourceService;
+import com.huotu.ymr.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by lgh on 2015/12/1.
@@ -61,6 +58,12 @@ public class ShareController implements ShareSystem {
 
     @Autowired
     CommentPraiseRepository commentPraiseRepository;
+
+    @Autowired
+    DataCenterService dataCenterService;
+
+    @Autowired
+    private Environment environment;
 
     @RequestMapping("/searchShareList")
     @Override
@@ -221,43 +224,48 @@ public class ShareController implements ShareSystem {
         if(lastId==null){
             lastId=0L;
         }
-        Map<Long,List<ShareComment>> shareComments=shareCommentService.findShareComment(shareId,lastId,10);
-        if(shareComments!=null&&shareComments.size()!=0){
-            AppShareCommentListModel[] appShareCommentListModels=new AppShareCommentListModel[shareComments.size()];
-            int n=0;
-
-
-            for (Map.Entry<Long, List<ShareComment>> entry : shareComments.entrySet()) {
-                List<ShareComment> commentList=entry.getValue();
-                if(commentList==null||commentList.size()==0){
-                    continue;
-                }
+        List<ShareComment> shareComments=shareCommentService.findShareComment(shareId,lastId,10);
+        if(shareComments!=null||shareComments.isEmpty()){
+            List<AppShareCommentListModel> appShareCommentListModels=new ArrayList<>();
+            for(int i=0;i<shareComments.size();i++){
+                ShareComment shareComment=shareComments.get(i);
                 AppShareCommentListModel appShareCommentListModel=new AppShareCommentListModel();
-                ShareComment shareComment=commentList.get(0);
-                appShareCommentListModel.setPid(shareComment.getId());
-                appShareCommentListModel.setLevel(shareComment.getLevel());
-                appShareCommentListModel.setName(shareComment.getCommentName());//todo
-                appShareCommentListModel.setContent(shareComment.getContent());
-                appShareCommentListModel.setUserHeadUrl(shareComment.getHeadUrl());//todo
-                appShareCommentListModel.setCommentQuantity(shareComment.getCommentQuantity());
-                appShareCommentListModel.setPraiseQuantity(shareComment.getPraiseQuantity());
-                appShareCommentListModel.setTime(shareComment.getTime());
+                if(shareComment.getParentId()==0){
+                    appShareCommentListModel.setPid(shareComment.getId());
+                    appShareCommentListModel.setName(shareComment.getCommentName());
+                    appShareCommentListModel.setLevel(shareComment.getLevel());
+                    appShareCommentListModel.setUserHeadUrl(staticResourceService.getResource(shareComment.getHeadUrl()).toString());
+                    appShareCommentListModel.setContent(shareComment.getContent());
+                    appShareCommentListModel.setTime(shareComment.getTime());
+                    appShareCommentListModel.setCommentQuantity(shareComment.getCommentQuantity());
+                    appShareCommentListModel.setPraiseQuantity(shareComment.getPraiseQuantity());
 
-                AppShareReplyModel[] appShareReplyModels=new AppShareReplyModel[commentList.size()-1];
-                for(int i=0;i<commentList.size()-1;i++){
-                    AppShareReplyModel appShareReplyModel=new AppShareReplyModel();
-                    ShareComment reply=commentList.get(i+1);
-                    appShareReplyModel.setRid(reply.getId());
-                    appShareReplyModel.setReplyName(reply.getCommentName());//todo
-                    appShareReplyModel.setContent(reply.getContent());
-                    appShareReplyModel.setToReplyName(reply.getParentName());
-                    appShareReplyModels[i]=appShareReplyModel;
+                    //开始查找该评论下的回复
+                    List<AppShareReplyModel> appShareReplyModels=new ArrayList<>();
+                    for(int j=0;j<shareComments.size();j++){
+                        ShareComment reply=shareComments.get(j);
+                        if(reply.getParentId()!=0){
+                            Long parentId=Long.parseLong(reply.getCommentPath().split("\\|")[1]);
+                            if(parentId.equals(shareComment.getId())){
+                                AppShareReplyModel appShareReplyModel=new AppShareReplyModel();
+                                appShareReplyModel.setRid(reply.getId());
+                                appShareReplyModel.setReplyName(reply.getCommentName());
+                                appShareReplyModel.setToReplyName(reply.getParentName());
+                                appShareReplyModel.setContent(reply.getContent());
+                                appShareReplyModels.add(appShareReplyModel);
+
+                            }
+                        }
+                    }
+                    //评论查找完毕
+
+                    appShareCommentListModel.setReplyModels(appShareReplyModels);
+                    appShareCommentListModels.add(appShareCommentListModel);
                 }
-                appShareCommentListModel.setReplyModels(appShareReplyModels);
-                appShareCommentListModels[n]=appShareCommentListModel;
-                n++;
+
             }
-            list.outputData(appShareCommentListModels);
+
+            list.outputData(appShareCommentListModels.toArray(new AppShareCommentListModel[appShareCommentListModels.size()]));
         }else {
             list.outputData(null);
         }
@@ -321,17 +329,23 @@ public class ShareController implements ShareSystem {
 
     @Override
     @RequestMapping(value = "/addComment")
-    public ApiResult addComment(Long userId, Long shareId, String content) throws Exception {
+    public ApiResult addComment(@RequestParam(required = true)Long userId, Long shareId, String content) throws Exception {
         if(userId==null||shareId==null||content==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        MallUser mallUser=mallUserRepository.findOne(userId);
-        if(Objects.isNull(mallUser)){
-            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        User user=new User();
+        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development")){
+             user = userRepository.findOne(1234L);
         }
-        User user=userRepository.findOne(mallUser.getId());
-        if(Objects.isNull(user)){
-            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        if (environment.acceptsProfiles("prod")) {
+            MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(userId);
+            if (Objects.isNull(mallUserModel)) {
+                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+            }
+             user = userRepository.findOne(mallUserModel.getUserId());
+            if (Objects.isNull(user)) {
+                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+            }
         }
         Share share=shareService.findOneShare(shareId);
         if(Objects.isNull(share)){
@@ -340,10 +354,16 @@ public class ShareController implements ShareSystem {
         }
         ShareComment shareComment=new ShareComment();
         shareComment.setShare(share);
-        shareComment.setUserId(mallUser.getId());
-        shareComment.setCommentName(mallUser.getWxNickName());
-        shareComment.setLevel(user.getUserLevel());
-        shareComment.setHeadUrl(staticResourceService.getResource(mallUser.getWxHeadUrl()).toString());//todo
+        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development")){
+            shareComment.setUserId(1234L);
+            shareComment.setCommentName("小开开");
+            shareComment.setLevel(user.getUserLevel());
+            shareComment.setHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");
+        }
+//        shareComment.setUserId(mallUserModel.getUserId());
+//        shareComment.setCommentName(mallUserModel.getNickName());
+//        shareComment.setLevel(user.getUserLevel());
+//        shareComment.setHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());//todo
         shareComment.setContent(content);
         shareComment.setTime(new Date());
         shareComment.setParentId(0L);

@@ -41,6 +41,9 @@ public class Message {
     @Temporal(TemporalType.TIMESTAMP)
     private Date invalidTime;
 
+    /**
+     * 是否删除
+     */
     private boolean deleted;
 
     /**

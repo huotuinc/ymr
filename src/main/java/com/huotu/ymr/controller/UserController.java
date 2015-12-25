@@ -6,19 +6,13 @@ import com.huotu.common.api.Output;
 import com.huotu.common.base.RegexHelper;
 import com.huotu.ymr.api.UserSystem;
 import com.huotu.ymr.common.*;
-import com.huotu.ymr.entity.Config;
-import com.huotu.ymr.entity.ConfigAppVersion;
-import com.huotu.ymr.entity.User;
-import com.huotu.ymr.entity.VerificationCode;
+import com.huotu.ymr.entity.*;
 import com.huotu.ymr.exception.InterrelatedException;
+import com.huotu.ymr.exception.UserNotExitsException;
 import com.huotu.ymr.model.*;
 import com.huotu.ymr.model.mall.MallUserModel;
-import com.huotu.ymr.repository.ConfigAppVersionRepository;
-import com.huotu.ymr.repository.ConfigRepository;
-import com.huotu.ymr.repository.UserRepository;
-import com.huotu.ymr.repository.VerificationCodeRepository;
-import com.huotu.ymr.service.DataCenterService;
-import com.huotu.ymr.service.VerificationService;
+import com.huotu.ymr.repository.*;
+import com.huotu.ymr.service.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +57,22 @@ public class UserController implements UserSystem {
     @Autowired
     private ConfigRepository configRepository;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    ShareService shareService;
+
+    @Autowired
+    ShareCommentService shareCommentService;
+
+    @Autowired
+    PraiseRepository praiseRepository;
+
 
     @RequestMapping("/init")
     @Override
-    public ApiResult init(Output<AppGlobalModel> global, Output<AppUserInfoModel> user, Output<AppUpdateModel> update) throws Exception {
+     public ApiResult init(Output<AppGlobalModel> global, Output<AppUserInfoModel> user, Output<AppUpdateModel> update) throws Exception {
         global.outputData(appGlobalModel);
 
         AppPublicModel pms = PublicParameterHolder.get();
@@ -91,15 +97,19 @@ public class UserController implements UserSystem {
      *      1.一条数据，判断本地数据库中User是否存在，如果存在则登录成功，如果不存在则创建一个User,修改token,最后返回该User信息
      *      2.0条数据，请求商城创建一个MallUser,本地数据库创建一个User,修改token,最后返回该User信息
      *
-     *
-     * @param data    用户数据
-     * @param unionId 微信唯一号
-     * @return
      * @throws Exception
      */
     @RequestMapping("/login")
     @Override
-    public ApiResult login(Output<AppUserInfoModel> data, String unionId,String accreditInfo) throws Exception {
+    public ApiResult login(Output<AppUserInfoModel> data,
+                           String unionid,
+                           String headimgurl,
+                           String city,
+                           String country,
+                           Integer sex,
+                           String province,
+                           String nickname ,
+                           String openid) throws Exception {
         if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development")){
             //测试用
             User usertest=userRepository.findOne(1234L);
@@ -122,15 +132,15 @@ public class UserController implements UserSystem {
             data.outputData(appUserInfoModel);
         }
         if(environment.acceptsProfiles("prod")){
-            if (unionId == null) {
+            if (unionid == null) {
                 return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
             }
-            MallUserModel mallUserModel = dataCenterService.getUserInfoByUniond(unionId)[0];//todo 调用数据中心
+            MallUserModel mallUserModel = dataCenterService.getUserInfoByUniond(unionid)[0];//todo 调用数据中心
             if(Objects.isNull(mallUserModel)){
-                mallUserModel=dataCenterService.createUser(accreditInfo);
+                mallUserModel=null;
             }
-            User user=getUser(mallUserModel.getUserId());
-            AppUserInfoModel appUserInfoModel=getAppUserInfoModel(user,mallUserModel);
+            User user=userService.getUser(mallUserModel.getUserId());
+            AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
             data.outputData(appUserInfoModel);
         }
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
@@ -145,61 +155,61 @@ public class UserController implements UserSystem {
         MallUserModel[] mallUserModels=dataCenterService.getUserInfoByUniond(unionId);
         AppUserInfoModel[] appUserInfoModels=new AppUserInfoModel[mallUserModels.length];
         for(int i=0;i<mallUserModels.length;i++){
-            User user=getUser(mallUserModels[i].getUserId());
-            AppUserInfoModel appUserInfoModel=getAppUserInfoModel(user,mallUserModels[i]);
+            User user=userService.getUser(mallUserModels[i].getUserId());
+            AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModels[i]);
             appUserInfoModels[i]=appUserInfoModel;
         }
         list.outputData(appUserInfoModels);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
-    /**
-     * 根据userId，返回User对象，如果没有则创建一个
-     * @param userId
-     * @return
-     * @throws Exception
-     */
-    private User getUser(Long userId) throws Exception{
-        User user=userRepository.findOne(userId);
-        if(Objects.isNull(user)){
-            user=new User();
-            user.setId(userId);
-            user.setUserLevel(CommonEnum.UserLevel.one);
-            user.setScore(0);
-            user.setContinuedScore(0);
+//    /**
+//     * 根据userId，返回User对象，如果没有则创建一个
+//     * @param userId
+//     * @return
+//     * @throws Exception
+//     */
+//    private User getUser(Long userId) throws Exception{
+//        User user=userRepository.findOne(userId);
+//        if(Objects.isNull(user)){
+//            user=new User();
+//            user.setId(userId);
+//            user.setUserLevel(CommonEnum.UserLevel.one);
+//            user.setScore(0);
+//            user.setContinuedScore(0);
+//
+//        }
+//        //创建一个新的token
+//        String token=UUID.randomUUID().toString().replaceAll("-","");
+//        user.setToken(token);
+//        userRepository.save(user);
+//        return user;
+//
+//    }
 
-        }
-        //创建一个新的token
-        String token=UUID.randomUUID().toString().replaceAll("-","");
-        user.setToken(token);
-        userRepository.save(user);
-        return user;
-
-    }
-
-    /**
-     * 根据User和MallUserModel返回AppUserInfoModel
-     * @param user
-     * @param mallUserModel
-     * @return
-     * @throws Exception
-     */
-    private AppUserInfoModel getAppUserInfoModel(User user,MallUserModel mallUserModel)throws Exception{
-        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
-        appUserInfoModel.setUserId(mallUserModel.getUserId());
-        appUserInfoModel.setUserName(mallUserModel.getUserName());
-        appUserInfoModel.setHeadUrl(mallUserModel.getHeadUrl());
-        appUserInfoModel.setNickName(mallUserModel.getNickName());
-        appUserInfoModel.setScore(user.getScore());
-        appUserInfoModel.setUserLevel(user.getUserLevel());
-        appUserInfoModel.setMerchantId(mallUserModel.getMerchantId());
-        appUserInfoModel.setName(mallUserModel.getName());
-        appUserInfoModel.setSex(mallUserModel.getSex());
-        appUserInfoModel.setMobile(mallUserModel.getMobile());
-        appUserInfoModel.setIsBindMobile(mallUserModel.getIsBindMobile());
-        appUserInfoModel.setToken(user.getToken());
-        return appUserInfoModel;
-    }
+//    /**
+//     * 根据User和MallUserModel返回AppUserInfoModel
+//     * @param user
+//     * @param mallUserModel
+//     * @return
+//     * @throws Exception
+//     */
+//    private AppUserInfoModel getAppUserInfoModel(User user,MallUserModel mallUserModel)throws Exception{
+//        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
+//        appUserInfoModel.setUserId(mallUserModel.getUserId());
+//        appUserInfoModel.setUserName(mallUserModel.getUserName());
+//        appUserInfoModel.setHeadUrl(mallUserModel.getHeadUrl());
+//        appUserInfoModel.setNickName(mallUserModel.getNickName());
+//        appUserInfoModel.setScore(user.getScore());
+//        appUserInfoModel.setUserLevel(user.getUserLevel());
+//        appUserInfoModel.setMerchantId(mallUserModel.getMerchantId());
+//        appUserInfoModel.setName(mallUserModel.getName());
+//        appUserInfoModel.setSex(mallUserModel.getSex());
+//        appUserInfoModel.setMobile(mallUserModel.getMobile());
+//        appUserInfoModel.setIsBindMobile(mallUserModel.getIsBindMobile());
+//        appUserInfoModel.setToken(user.getToken());
+//        return appUserInfoModel;
+//    }
 
 //    /**
 //     * 判断验证码是否正确
@@ -369,13 +379,21 @@ public class UserController implements UserSystem {
         if(Objects.isNull(user)){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
+        //一级升二级所需积分
         Config upT=configRepository.findOne(ConfigKey.UPGRADE_INTEGRAL);
-        Integer money=Integer.parseInt(upT.getValue())-user.getContinuedScore();
-        if(money>0){
-
+        //用户实际所需的积分
+        Integer realNeedIntegral=Integer.parseInt(upT.getValue())-user.getContinuedScore();
+        //钱转积分的比例
+        Double mts=Double.parseDouble(configRepository.findOne(ConfigKey.MONEY_TO_SCORE).getValue());
+        if(realNeedIntegral>0){
+            //取整
+            Double realNeedMoney=Math.ceil(realNeedIntegral/mts);
+            upgradeMoney.outputData(realNeedMoney);
+        }else {
+            upgradeMoney.outputData(0.0);
         }
-
-        return null;
+        rate.outputData(mts);
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/put")
@@ -386,8 +404,45 @@ public class UserController implements UserSystem {
 
     @RequestMapping("/updateUserProfile")
     @Override
-    public ApiResult updateUserProfile(Output<AppUserInfoModel> data, @RequestParam(required = true) Integer profileType, Object profileData) throws Exception {
+    public ApiResult updateUserProfile(Output<AppUserInfoModel> data,
+                                       @RequestParam(required = true)Long userId,
+                                       @RequestParam(required = true)Integer profileType,
+                                       @RequestParam(required = true)Object profileData) throws Exception {
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        if(Objects.isNull(user.getId())){
+            throw new UserNotExitsException();
+        }
+        switch (profileType){
+            case 0:
+                //上传头像
+                break;
+            case 1:
+                //昵称修改
+                String nickName=(String)profileData;
+                break;
+            case 2:
+                //姓名修改
+                String realName=(String)profileData;
+                break;
+            case 3:
+                //性别修改
+                String sex=(String)profileData;
+                break;
+            case 4:
+                //联系电话
+                String phone=(String)profileData;
+                break;
+            case 5:
+                //定位
+                break;
+        }
+
         return null;
+
     }
 
     @RequestMapping("/messages")
@@ -399,6 +454,25 @@ public class UserController implements UserSystem {
     @RequestMapping("/getMyCrowdFundingList")
     @Override
     public ApiResult getMyCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {
+        return null;
+    }
+
+    @RequestMapping("/getPraiseList")
+    @Override
+    public ApiResult getPraiseList(Output<AppShareListModel[]> list,
+                                   @RequestParam(required = true)Long userId,
+                                   @RequestParam(required = true)Long lastId) throws Exception {
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+        List<Long> shareIds=praiseRepository.getPraiseShareIds(user);
+        if(!shareIds.isEmpty()){
+            List<Share> shares=shareService.findPraiseList(shareIds, lastId);
+        }
+
+
+
         return null;
     }
 

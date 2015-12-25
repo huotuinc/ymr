@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by lgh on 2015/11/27.
@@ -56,7 +57,7 @@ public class AppShareCommentListModel {
     /**
      * 回复内容
      */
-    private AppShareReplyModel[] replyModels;
+    private List<AppShareReplyModel> replyModels;
 
 
 }

@@ -3,7 +3,6 @@ package com.huotu.ymr.service;
 import com.huotu.ymr.entity.ShareComment;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 评论管理
@@ -18,7 +17,7 @@ public interface ShareCommentService {
      * @return          评论列表
      * @throws Exception
      */
-    Map<Long,List<ShareComment>> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception;
+    List<ShareComment> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception;
 
     ShareComment saveShareComment(ShareComment shareComment) throws Exception;
 

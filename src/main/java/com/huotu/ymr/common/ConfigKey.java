@@ -44,7 +44,7 @@ public class ConfigKey {
 	public static final String USER_TOTAL="UserTotal";
 
     /**
-     * 积分与金币之间的兑换
+     * 钱与积分之间的兑换
      */
 	public static final String MONEY_TO_SCORE="MoneyToScore";
 

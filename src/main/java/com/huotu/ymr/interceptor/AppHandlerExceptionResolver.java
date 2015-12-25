@@ -5,6 +5,7 @@ import com.huotu.ymr.exception.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
@@ -26,6 +27,9 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             result.setSystemResultDescription(ex.getLocalizedMessage());
             try {
                 throw ex;
+            } catch (MissingServletRequestParameterException e){
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("参数出错！");
             } catch (AmountErrorException e) {
                 result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
                 result.setSystemResultDescription("认购金额小于起购金额");
@@ -42,7 +46,7 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
                 result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
                 result.setSystemResultDescription("该用户级别不被允许此操作");
             }catch (UserNotExitsException e){
-                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultCode(CommonEnum.AppCode.ERROR_USER_NOT_FOUND.getValue());
                 result.setSystemResultDescription("用户不存在");
             }catch (UserRequestIllegalException e){
                 result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());

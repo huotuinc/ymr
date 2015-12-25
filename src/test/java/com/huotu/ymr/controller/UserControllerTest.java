@@ -7,12 +7,16 @@ import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
+import com.huotu.ymr.entity.Praise;
+import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.mallentity.MallMerchant;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallMerchantRepository;
 import com.huotu.ymr.mallrepository.MallUserRepository;
+import com.huotu.ymr.repository.PraiseRepository;
 import com.huotu.ymr.repository.UserRepository;
+import com.huotu.ymr.service.ShareService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +27,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
 
@@ -51,6 +56,12 @@ public class UserControllerTest extends SpringBaseTest {
     private MallUserRepository mockMallUserRepository;
     @Autowired
     private MallMerchantRepository mockMallMerchantRepository;
+
+    @Autowired
+    private ShareService shareService;
+
+    @Autowired
+    private PraiseRepository praiseRepository;
 
 
     @Before
@@ -86,6 +97,27 @@ public class UserControllerTest extends SpringBaseTest {
 
     @Test
     public void testBindMobile() throws Exception {
+
+    }
+
+    @Test
+    public void testGetPraiseList() throws Exception {
+        Share share=new Share();
+        share.setTime(new Date());
+        share.setTitle("测试1");
+        share=shareService.saveShare(share);
+
+
+        Praise praise=new Praise();
+        praise.setUser(mockUser);
+        praise.setShare(share);
+        praise=praiseRepository.save(praise);
+
+
+        String result=mockMvc.perform(device.getApi("getPraiseList")
+                .param("userId",  mockUser.getId()+"")
+                .param("lastId", "0").build())
+                .andReturn().getResponse().getContentAsString();
 
     }
 }

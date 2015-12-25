@@ -6,6 +6,7 @@ import com.huotu.ymr.entity.User;
 import org.luffy.lib.libspring.data.ClassicsRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -16,4 +17,7 @@ public interface PraiseRepository extends JpaRepository<Praise, Long> ,ClassicsR
     Praise findByShareAndUser(Share share,User user);
     List<Praise> findByShare(Share share);
     List<Praise> findByUser(User user);
+
+    @Query("select p from Praise as p where p.user=?1")
+    List<Long> getPraiseShareIds(User user);
 }

@@ -5,7 +5,6 @@ import com.huotu.common.api.Output;
 import com.huotu.ymr.model.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * 用户系统接口
@@ -38,13 +37,28 @@ public interface UserSystem {
      * <p>
      * 此接口数据来源为商城数据库
      *
-     * @param data    用户数据
-     * @param unionId 微信唯一号
-     * @param accreditInfo  微信授权信息
+     * @param data      用户数据
+     * @param unionid   微信唯一的ID
+     * @param openid    openId
+     * @param headimgurl 用户头像
+     * @param nickname  昵称
+     * @param sex       性别
+     * @param city      城市
+     * @param province  省份
+     * @param country   国家
+
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult login(Output<AppUserInfoModel> data, String unionId,String accreditInfo) throws Exception;
+    ApiResult login(Output<AppUserInfoModel> data,
+                    String unionid,
+                    String headimgurl,
+                    String city,
+                    String country,
+                    Integer sex,
+                    String province,
+                    String nickname ,
+                    String openid ) throws Exception;
 
 
     /**
@@ -147,22 +161,23 @@ public interface UserSystem {
 
 
     /**
-     * 更新用户个人信息
+     * 更新用户个人信息 todo
      *
      * @param data
-     * @param profileType 1 姓名 2 性别 (值根据商城来定) 3 定位
-     * @param profileData 1 String 2 Integer 3 Integer
+     * @param profileType 上传类型：0：图片，1：昵称，2：姓名，3：性别，4：联系电话(绑定手机)，5：定位
+     * @param profileData 上传的数据
+     * @param userId      用户ID
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult updateUserProfile(Output<AppUserInfoModel> data, @RequestParam(required = true) Integer profileType, Object profileData) throws Exception;
+    ApiResult updateUserProfile(Output<AppUserInfoModel> data,Long userId,Integer profileType, Object profileData) throws Exception;
 
 
     /**
      * 获取系统消息
      *
-     * @param messages
+     * @param messages todo
      * @param lastId
      * @return
      * @throws Exception
@@ -181,6 +196,17 @@ public interface UserSystem {
      */
     @RequestMapping(method = RequestMethod.GET)
     ApiResult getMyCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception;
+
+    /**
+     *
+     * 获取我点赞过的文章
+     * @param list      文章列表
+     * @param lastId    最后一条文章ID
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult getPraiseList(Output<AppShareListModel[]> list,Long userId,Long lastId) throws Exception;
 
     /**
      * <p>无需登录</p>

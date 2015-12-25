@@ -61,5 +61,15 @@ public class CommonConfigServiceImpl implements CommonConfigService {
         return env.getProperty("huotu.resourcesHome", (String) null);
     }
 
+    @Override
+    public String getAppId() {
+        return env.getProperty("com.huotu.huobanplus.mall.api.appid", "73d29a4c9a6d389a0b7288ec27b4c4c4");
+    }
+
+    @Override
+    public String getAppsecret() {
+        return env.getProperty("com.huotu.huobanplus.mall.api.appsecrect", "9389e8a5c32eefa3134340640fb4ceaa");
+    }
+
 
 }

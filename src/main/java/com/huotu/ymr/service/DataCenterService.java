@@ -4,6 +4,7 @@ import com.huotu.ymr.model.mall.CategoryModel;
 import com.huotu.ymr.model.mall.MallGoodModel;
 import com.huotu.ymr.model.mall.MallUserModel;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,13 +28,19 @@ public interface DataCenterService {
      * 获取用户信息(根据userId)
      * @return
      */
-    MallUserModel getUserInfoByUserId(Long userId);
+    MallUserModel getUserInfoByUserId(Long userId) throws IOException;
 
     /**
-     * 创建一个用户(参数暂无)
+     * 创建一个用户
      * @return
      */
-    MallUserModel createUser(String accreditInfo);
+    MallUserModel createUser(String unionid,
+                             String city,
+                             String country,
+                             Integer sex,
+                             String province,
+                             String nickname ,
+                             String openid) throws IOException;
 
     /**
      *  获取商品分类

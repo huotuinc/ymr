@@ -28,5 +28,14 @@ public interface ShareService {
 
     Page<Share> findPcShareList(ShareSearchModel shareSearchModel) throws Exception;
 
+    /**
+     * 查找包含文章ID的文章列表
+     * @param shareIds      文章ID列表
+     * @param lastId        最后一条文章ID
+     * @return
+     * @throws Exception
+     */
+    List<Share> findPraiseList(List<Long> shareIds,Long lastId) throws Exception;
+
 
 }

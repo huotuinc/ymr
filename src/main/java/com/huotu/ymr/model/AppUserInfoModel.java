@@ -61,9 +61,6 @@ public class AppUserInfoModel {
      * 是否绑定手机号
      */
     private Boolean isBindMobile;
-
-
-
     /**
      * 用户token身份标示
      * 32位的UUID
