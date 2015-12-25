@@ -26,6 +26,15 @@ import javax.persistence.*;
  * UserPost=0            用户发帖奖励的积分，默认为0
  * BoottomGeneralize    底部推广富文本
  *
+ *
+ * 微信退款设置项
+ * MCHID      微信支付商户号
+ * APPID      公众账号ID
+ * APPSECRET   用来换取access_token
+ * PAYSIGNKEY 签名密钥
+ * CERTIFICATE 证书
+ * CERTIFICATEKEY 证书密钥
+ *
  */
 public class Config {
 

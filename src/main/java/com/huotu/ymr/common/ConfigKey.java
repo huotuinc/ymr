@@ -58,5 +58,34 @@ public class ConfigKey {
      */
     public static final String UPGRADE_INTEGRAL="UpgradeIntegral";
 
+    /**
+     *微信支付商户号
+     */
+    public static final String MCHID="MCHID";
+
+    /**
+     *公众账号ID
+     */
+    public static final String APPID="APPID";
+    /**
+     *用来换取access_token
+     */
+    public static final String APPSECRET="APPSECRET";
+
+    /**
+     *签名密钥
+     */
+    public static final String PAYSIGNKEY="PAYSIGNKEY";
+
+    /**
+     *证书
+     */
+    public static final String CERTIFICATE="CERTIFICATE";
+
+    /**
+     * 证书密钥
+     */
+    public static final String CERTIFICATEKEY="CERTIFICATEKEY";
+
 
 }

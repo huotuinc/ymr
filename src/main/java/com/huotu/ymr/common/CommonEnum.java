@@ -249,10 +249,18 @@ public interface CommonEnum {
          * paying(0, "支付中")
          */
         paying(0, "支付中"),
+
         /**
          * payed(1, "支付成功")
          */
-        payed(1, "支付成功");
+        payed(1, "支付成功"),
+
+        /**
+         * refund(2, "被退款")
+         */
+        refunded(2, "被退款");
+
+
         private int value;
 
         private String name;

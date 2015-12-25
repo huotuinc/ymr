@@ -3,10 +3,7 @@ package com.huotu.ymr.controller.web;
 import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.PublicManagerParameterHolder;
-import com.huotu.ymr.entity.CrowdFunding;
-import com.huotu.ymr.entity.CrowdFundingBooking;
-import com.huotu.ymr.entity.CrowdFundingMoneyRange;
-import com.huotu.ymr.entity.CrowdFundingPublic;
+import com.huotu.ymr.entity.*;
 import com.huotu.ymr.model.backend.crowdFunding.AddCrowdFundingModel;
 import com.huotu.ymr.model.backend.crowdFunding.CrowdFundingBookingModel;
 import com.huotu.ymr.model.backend.crowdFunding.CrowdFundingPeopleModel;
@@ -17,6 +14,8 @@ import com.huotu.ymr.model.searchCondition.CrowdFundingSearchModel;
 import com.huotu.ymr.model.searchCondition.DraftSearchModel;
 import com.huotu.ymr.repository.*;
 import com.huotu.ymr.service.CrowdFundingService;
+import com.huotu.ymr.service.FundService;
+import com.huotu.ymr.service.OrderService;
 import com.huotu.ymr.service.StaticResourceService;
 import com.sun.jndi.toolkit.url.Uri;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +63,15 @@ public class CrowdFundingManagerController {
 
     @Autowired
     CrowdFundingMoneyRangeRepository crowdFundingMoneyRangeRepository;
+
+    @Autowired
+    FundService fundService;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    OrderService orderService;
 
 
     /**
@@ -180,7 +188,11 @@ public class CrowdFundingManagerController {
 
         model.addAttribute("content",crowdFunding.getContent()); //todo 信息过滤图片
         model.addAttribute("pageNoStr",1);//当前页数
-        return "manager/crowdfunding/crowdFundingPublicList";
+        if(crowdFunding.getCrowdFundingType()== CommonEnum.CrowdFundingType.booking){
+            return "manager/crowdfunding/crowdFundingBookingList";
+        }else {
+            return "manager/crowdfunding/crowdFundingPublicList";
+        }
     }
 
     /**
@@ -724,5 +736,70 @@ public class CrowdFundingManagerController {
         return msg;
     }
 
+
+    /**
+     * 回访预约项目成功
+     * @param userId 前台传过来的项目人id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/successBooking",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg successBooking(Long userId) throws Exception {
+
+        Msg msg = new Msg();
+        CrowdFundingPublic crowdFundingPublic=crowdFundingPulicRepository.findOne(userId);
+
+        CrowdFunding crowdFunding=crowdFundingRepository.findOne(crowdFundingPublic.getCrowdFunding().getId());
+        if(crowdFunding.getCurrentBooking()>=crowdFunding.getToBooking()||
+                crowdFunding.getCurrentMoeny()>=crowdFunding.getCurrentMoeny()) { //todo 考虑一下高并发量？
+            msg.setCode(501);
+            msg.setMsg("error");//todo 提示已经满了，不能继续确认成功
+        }else {
+            crowdFundingPublic.setStatus(1);
+            crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny()+crowdFundingPublic.getMoney());
+            fundService.increaseIntegral(crowdFundingPublic.getOwnerId(),crowdFundingPublic.getMoney());//todo 加积分
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
+            crowdFundingPublic = crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);
+            msg.setCode(200);
+            msg.setMsg("success");
+        }
+        return msg;
+
+    }
+    /**
+     * 回访预约项目失败
+     * @param userId 前台传过来的项目人id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/failBooking",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg failBooking(Long userId) throws Exception {
+        Msg msg = new Msg();
+        CrowdFundingPublic crowdFundingPublic=crowdFundingPulicRepository.findOne(userId);
+
+        CrowdFunding crowdFunding=crowdFundingRepository.findOne(crowdFundingPublic.getCrowdFunding().getId());
+        if(fundService.refundByUserId(crowdFunding,crowdFundingPublic.getOwnerId())==true){//todo 退款
+            crowdFundingPublic.setStatus(2);
+            //crowdFundingPublic.setMoney(0.0);
+            Order order=orderService.findOneByIds(crowdFunding.getId(), crowdFundingPublic.getOwnerId());
+            order.setPayType(CommonEnum.PayType.refunded);
+            order=orderRepository.saveAndFlush(order);
+            crowdFundingPublic=crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);
+
+            msg.setCode(200);
+            msg.setMsg("success");
+        }else{
+            //crowdFundingPublic.setStatus(2);
+            //crowdFundingPublic.setMoney(0.0);
+            //crowdFundingPublic=crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);
+
+            msg.setCode(500);
+            msg.setMsg("error");//todo 提示系统错误
+        }
+
+        return msg;
+    }
 
 }

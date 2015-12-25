@@ -93,4 +93,5 @@ public abstract class AbstractStaticResourceService implements StaticResourceSer
         String path = uri.toString().substring(uriPrefix.toString().length());
         deleteResource(path);
     }
+
 }

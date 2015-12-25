@@ -81,4 +81,39 @@ public class FileUploadController {
         return resultModel;
 
     }
+
+
+    /**
+     * 商家微信证书上传
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/UploadCel")
+    @ResponseBody
+    public ResultModel UploadCel(@RequestParam(value = "cel")MultipartFile cel,HttpServletResponse response) throws Exception{
+        ResultModel resultModel=new ResultModel();
+//        MultipartFile file=request.getFile("shareImage");
+        //文件格式判断
+//        if (ImageIO.read(cel.getInputStream()) == null) {
+//            resultModel.setCode(0);
+//            resultModel.setMessage("请上传证书！");
+//            return resultModel;
+//        }
+        if (cel.getSize() == 0) {
+            resultModel.setCode(0);
+            resultModel.setMessage("请上传证书！");
+            return resultModel;
+        }
+        //保存证书
+        String originName=cel.getOriginalFilename();
+        String suffix=originName.substring(originName.lastIndexOf("."),originName.length());
+        String fileName = StaticResourceService.CEL_IMG + UUID.randomUUID().toString() + suffix;
+        URI uri=staticResourceService.uploadResource(fileName, cel.getInputStream());
+        String path=uri.getPath();
+        response.setHeader("X-frame-Options", "SAMEORIGIN");
+        resultModel.setCode(1);
+        resultModel.setMessage(path);
+        return resultModel;
+
+    }
 }

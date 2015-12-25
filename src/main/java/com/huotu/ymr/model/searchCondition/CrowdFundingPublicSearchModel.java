@@ -15,6 +15,7 @@ public class CrowdFundingPublicSearchModel {
      */
     private String crowdFundingPublicName="";
 
+
     /**
      * 众筹项目Id
      */

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head id="Head1">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>文章后台</title>
+    <title>配置后台</title>
     <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
             th:href="@{/resource/3rdParty/css/admin.global.css}"/>
     <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
@@ -28,9 +28,8 @@
 
 </head>
 
-<body onload="firstLoad()">
-<form method="post" action="saveArticle" id="form1" th:object="${article}">
-    <input type="hidden" name="id" th:value="*{id}"/>
+<body>
+<form method="post" action="saveWeiXinConfig" id="form1" th:object="${weiXinConfigModel}">
     <div class="container">
         <div class="blank10">
         </div>
@@ -56,31 +55,31 @@
                                         <tr>
                                             <th>微信支付商户号（MCHID）:</th>
                                             <td style="border-top: 1px solid #ddd;">
-                                                <span id="sharezx"></span>
-                                                <input maxlength="13" style="width:170px" name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
+                                                <span id="sharezx0"></span>
+                                                <input maxlength="13" style="width:170px" name="mchid" type="text" id="mchid" th:value="*{mchid}" class="input-normal" placeholder=""/></td>
 
                                         </tr>
                                         <p style="clean:both;"></p>
                                             <tr>
                                                 <th>APPID:</th>
                                                     <td style="border-top: 1px solid #ddd;">
-                                                        <span id="sharezx"></span>
-                                                <input maxlength="13" style="width:170px" name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
+                                                        <span id="sharezx1"></span>
+                                                <input maxlength="13" style="width:170px" name="appid" type="text" id="appid" th:value="*{appid}" class="input-normal" placeholder=""/></td>
 
                                             </tr>
                                         <p style="clean:both;"></p>
                                             <tr>
                                                 <th>AppSecret:</th>
                                                 <td style="border-top: 1px solid #ddd;">
-                                                    <span id="sharezx"></span>
-                                                    <input maxlength="13" style="width:170px" name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
+                                                    <span id="sharezx2"></span>
+                                                    <input maxlength="13" style="width:170px" name="appSecret" type="text" id="appSecret" th:value="*{appSecret}" class="input-normal" placeholder=""/></td>
 
                                             </tr>
                                             <p style="clean:both;"></p>
 
                                         <tr id="linkUrlTr">
-                                            <th>签名密钥</th>
-                                            <td><input style="width: 49%" type="text" id="linkUrl" name="linkUrl" th:value="*{linkUrl}"/></td>
+                                            <th>签名密钥(paySignKey)</th>
+                                            <td><input style="width: 49%" type="text" id="paySignKey" name="paySignKey" th:value="*{paySignKey}"/></td>
 
                                         </tr>
                                         <p style="clean:both;"></p>
@@ -88,14 +87,14 @@
                                             <th>上传证书:</th>
                                             <td>
 
-                                            <input style="width: 49%" type="text" id="picture" name="picture" th:value="*{picture}"/>
+                                            <input style="width: 49%" type="text" id="celPath" name="celPath" th:value="*{celPath}"/>
 
 
                                                     <a id="uploadpic" class="btn-lit jUploader-button" href="#" style="cursor: pointer; position: relative; overflow: hidden; direction: ltr;">
                                                         <span style="color: #c1b3a9">
                                                                 上传
                                                         </span>
-                                                        <input type="file" onchange="uploadImage()"  name="shareImage" id="shareImage" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
+                                                        <input type="file" onchange="uploadCel()"  name="cel" id="cel" style="position: absolute; right: 0px; top: 0px; margin: 0px; opacity: 0; padding: 0px; font-family: Arial; font-size: 118px; vertical-align: baseline; cursor: pointer;"/>
                                                     </a>
 
                                                 <!--<input name="txtReplyUrl1" type="hidden" id="txtReplyUrl1" value="/resource/images/wechat/mall_cat_def.png"/>-->
@@ -104,8 +103,8 @@
                                         <tr>
                                             <th>证书密钥:</th>
                                             <td style="border-top: 1px solid #ddd;">
-                                                <span id="sharezx"></span>
-                                                <input maxlength="13" style="width:170px" name="title" type="text" id="title" th:value="*{title}" class="input-normal" placeholder=""/></td>
+                                                <span id="sharezx3"></span>
+                                                <input maxlength="13" style="width:170px" name="celKey" type="celKey" id="celKey" th:value="*{celKey}" class="input-normal" placeholder=""/></td>
 
                                         </tr>
 
@@ -127,7 +126,7 @@
                 <div style="text-align: center; margin-top:12px" >
                     <a class="btn-lit" href="javascript:submitForm1();">
         <span>
-        发布
+        保存
         </span>
                     </a>
                 </div>
@@ -142,20 +141,20 @@
 <div class="blank10"></div>
 <script type="text/javascript" th:inline="javascript">
     //封面图片上传
-    function uploadImage() {
+    function uploadCel() {
         $.ajaxFileUpload({
-            url: 'UploadImg',
+            url: 'UploadCel',
             secureuri: false,
-            fileElementId: 'shareImage',
+            fileElementId: 'cel',
             dataType: 'json',
             data: null,
             success: function(resultModel) {
                 if(resultModel.code==1){
                     $.jBox("上传成功");
-                    $("#article_img").attr("src",resultModel.message);
-                    $("#article_img").show();
-                    $("#uploadpicCover").children("span").hide();
-                    $("input[name='picture']").val(resultModel.message);
+//                    $("#article_img").attr("src",resultModel.message);
+//                    $("#article_img").show();
+//                    $("#uploadpicCover").children("span").hide();
+                    $("input[name='celPath']").val(resultModel.message);
                 }
             },
             error: function(data, status, e) {
@@ -178,22 +177,40 @@
 
     //提交帖子
     function submitForm1(obj) {
-        var shareTitle = $("#title").val();
-        var content = $("#content").val();
-        var imgUrl=$("input[name='picture']").val();
+        var mchid = $("#mchid").val();
+        var appid = $("#appid").val();
+        var celPath=$("input[name='celPath']").val();
+        var appSecret = $("#appSecret").val();
+        var paySignKey = $("#paySignKey").val();
+        var celKey = $("#celKey").val();
 
-        if (shareTitle.length == 0) {
-            $.jBox.tip("请输入文章标题");
+
+        if (mchid.length == 0) {
+            $.jBox.tip("请输入mchid");
             return;
         }
-        if (imgUrl.length == 0) {
-            $.jBox.tip("请上传封面图片");
+        if (appid.length == 0) {
+            $.jBox.tip("请输入appid");
             return;
         }
-        if (content.length==0) {
-            $.jBox.tip("请输入文章内容");
+        if (celPath.length==0) {
+            $.jBox.tip("请上传证书");
             return;
         }
+        if (appSecret.length == 0) {
+            $.jBox.tip("请输入appSecret");
+            return;
+        }
+        if (paySignKey.length == 0) {
+            $.jBox.tip("请输入paySignKey");
+            return;
+        }
+        if (celKey.length == 0) {
+            $.jBox.tip("请输入celKey");
+            return;
+        }
+
+        $.jBox("success");
 
         $.jBox.confirm("友情提示", "即将保存内容，确定继续吗？",function(v,h,f){
             if (v == 'ok')
@@ -205,34 +222,7 @@
 
     }
     //初始化进页面
-    function firstLoad() {
-        /*<![CDATA[*/
-        var article=/*[[${article.category}]]*/'';
-        if(article!=null){
-            //将类型选择禁用(修改模式)
-            $("input[name='articleType']").attr("disabled",true);
-            switch (article.name){
-                case '公司介绍':
-                    $("input[name='articleType']").eq(0).attr("checked","checked");
-                    break;
-                case '自传故事':
-                    $("input[name='articleType']").eq(1).attr("checked","checked");
-                    break;
-                case '学院介绍':
-                    $("input[name='articleType']").eq(2).attr("checked","checked");
-                    break;
-                case '美容知识':
-                    $("input[name='articleType']").eq(3).attr("checked","checked");
-                    break;
-            }
-        }else{
-            $("input[name='articleType']").eq(0).attr("checked","checked");
-        }
-        changeType();
-//        $("#linkUrl").attr("disabled",true);
-        /*]]>*/
 
-    }
 
     function useLinkchange(obj){
         var link=$("input[name='useLink']:checked").val();

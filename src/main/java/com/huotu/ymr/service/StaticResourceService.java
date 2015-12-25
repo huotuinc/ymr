@@ -36,6 +36,7 @@ public interface StaticResourceService {
      * 爱分享图片
      */
     String SHSRES_IMG="_resource/image/shares/";
+    String CEL_IMG="_resource/cels/";
 
     /**
      * 上传资源
@@ -69,5 +70,6 @@ public interface StaticResourceService {
      * @throws IOException
      */
     void deleteResource(URI uri) throws IOException;
+
 
 }

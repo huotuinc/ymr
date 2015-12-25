@@ -280,22 +280,15 @@
             var url="jumpToCFDetail?crowdFundingsId="+settlementNo;
             window.location.href=url;
         }
-        function auditCF(obj) {
-            var settlementNo = $(obj).attr("crowdFundingsId");
-            var url="auditCrowdFunding?crowdFundingsId="+settlementNo;
-            J.PopupIFrame(url,"审核",1300,700,"ifrm","","auto","");
-
-        }
 
         var submitCCF=function (obj) {
             var settlementNo = $(obj).attr("crowdFundingPublicsId");
             $.jBox.tip("正在修改...", "loading");
             $.ajax({
                 type:"POST",
-                url:"failCrowdFunding",
+                url:"failBooking",
                 data:{
                     userId:settlementNo,
-                    booking:0
                 },
                 dataType:"json",
                 success: function (msg) {
@@ -314,10 +307,9 @@
             $.jBox.tip("正在修改...", "loading");
             $.ajax({
                 type:"POST",
-                url:"successCrowdFunding",
+                url:"successBooking",
                 data:{
                     userId:settlementNo,
-                    booking:0
                 },
                 dataType:"json",
                 success: function (msg) {
@@ -342,7 +334,7 @@
                     jBox.tip(v, 'info');
                 return true;
             };
-            $.jBox.confirm("确定回访失败么？", "提示",submit);
+            $.jBox.confirm("确定回访失败，给用户退款么，确认后不可更改？", "提示",submit);
 
         }
         function successPublic(obj) {
@@ -355,82 +347,11 @@
                     jBox.tip(v, 'info');
                 return true;
             };
-            $.jBox.confirm("确认回访成功么？", "提示",submit);
+            $.jBox.confirm("确认回访成功么，确认后不可更改？", "提示",submit);
 
         }
 
-        var submitCCFB=function (obj) {
-            var settlementNo = $(obj).attr("crowdFundingPublicsId");
-            $.jBox.tip("正在修改...", "loading");
-            $.ajax({
-                type:"POST",
-                url:"failCrowdFunding",
-                data:{
-                    userId:settlementNo,
-                    booking:1
-                },
-                dataType:"json",
-                success: function (msg) {
-                    if(msg.code == 200){
-                        $.jBox.tip(msg.msg, 'success',{closed:function(){
-                            window.location.reload();}});
-                    }else{
-                        $.jBox.tip(msg.msg, 'error',{closed:function(){
-                            window.location.reload();}});
-                    }
-                }
-            });
-        }
-        var submitOCFB=function (obj) {
-            var settlementNo = $(obj).attr("crowdFundingPublicsId");
-            $.jBox.tip("正在修改...", "loading");
-            $.ajax({
-                type:"POST",
-                url:"successCrowdFunding",
-                data:{
-                    userId:settlementNo,
-                    booking:1
 
-                },
-                dataType:"json",
-                success: function (msg) {
-                    if(msg.code == 200){
-                        $.jBox.tip(msg.msg, 'success',{closed:function(){
-                            window.location.reload();}});
-                    }else{
-                        $.jBox.tip(msg.msg, 'error',{closed:function(){
-                            window.location.reload();}});
-                    }
-                }
-            });
-        }
-        function failBooking(obj) {
-
-            var submit = function (v, h, f) {
-                if (v == 'ok') {
-                    //jBox.tip(v, 'info');
-                    submitCCFB(obj)
-                }
-                else if (v == 'cancel')
-                    jBox.tip(v, 'info');
-                return true;
-            };
-            $.jBox.confirm("确定回访失败么？", "提示",submit);
-
-        }
-        function successBooking(obj) {
-            var submit = function (v, h, f) {
-                if (v == 'ok') {
-                    //jBox.tip(v, 'info');
-                    submitOCFB(obj)
-                }
-                else if (v == 'cancel')
-                    jBox.tip(v, 'info');
-                return true;
-            };
-            $.jBox.confirm("确认回访成功么？", "提示",submit);
-
-        }
         /*]]>*/
     </script>
 </head>
@@ -625,16 +546,10 @@
                                             </th>
 
 
-                                            <th scope="col" th:if="*{crowdFundingType==0}">支付金额
+                                            <th scope="col">支付金额
                                             </th>
 
-                                            <th scope="col" th:if="*{crowdFundingType==0}" >支付账号流水记录
-                                            </th>
-
-                                            <th scope="col" th:if="*{crowdFundingType==1}">属性
-                                            </th>
-
-                                            <th scope="col" th:if="*{crowdFundingType==1 || crowdFundingType==2}" >意向金额
+                                            <th scope="col">支付账号流水记录
                                             </th>
 
                                             <th scope="col">回访结果
@@ -654,101 +569,48 @@
                                         <tbody th:remove="all-but-first" id="o1">
 
 
-                                        <tr  th:each="crowdFundingPublics:${(#object.crowdFundingType==1 and #object.viewType==4) ? allCrowdFundingPublicList : allCrowdFundingPublicList.people}" class="even">
+                                        <tr  th:each="crowdFundingPublics:${allCrowdFundingPublicList.people}" class="even">
 
-                                            <td class="txt20 c" style="width: 15px;" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}">
+                                            <td class="txt20 c" style="width: 15px;" th:text="${crowdFundingPublics.id}">
                                                 1
                                             </td>
-                                            <td class="txt40" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.name:crowdFundingPublics.name}">
+                                            <td class="txt40" th:text="${crowdFundingPublics.name}">
                                                 &nbsp;
                                             </td>
-                                            <td class="txt80" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.phone:crowdFundingPublics.phone}">
+                                            <td class="txt80" th:text="${crowdFundingPublics.phone}">
 
                                             </td>
 
-                                            <td class="txt80" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.time:crowdFundingPublics.time}">
+                                            <td class="txt80" th:text="${crowdFundingPublics.time}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
 
-                                            <td  th:if="*{crowdFundingType==1  and viewType==4}" class="txt20">
-                                                <span >发起人</span>
-                                            </td>
-                                            <td  th:if="*{crowdFundingType==1  and viewType!=4}" class="txt20">
-                                                <span th:if="${allCrowdFundingPublicList.peopleType==1}" >发起人</span>
-                                                <span th:if="${allCrowdFundingPublicList.peopleType==3}" >合作人</span>
-                                            </td>
-
-                                            <td class="txt80" th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.money:crowdFundingPublics.money}">
-                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
-                                            </td>
-
-                                            <td  th:if="*{crowdFundingType==0 }" class="txt20">
-                                                <span th:text="${crowdFundingPublics.orderNo}"></span>
-                                            </td>
-                                            <td class="txt20">
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==0 or ((#object.crowdFundingType!=1 or #object.viewType==1)and crowdFundingPublics.status==0) }" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successPublic(this)">点此成功</a>
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==0  or ((#object.crowdFundingType!=1 or  #object.viewType==1)and crowdFundingPublics.status==0)}" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failPublic(this)">点此失败</a>
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==1  or ((#object.crowdFundingType!=1 or #object.viewType==1)and crowdFundingPublics.status==1)}" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failPublic(this)">修改为失败</a>
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)!=3) ?crowdFundingPublics.person.status:6)==2  or ((#object.crowdFundingType!=1 or  #object.viewType==1)and crowdFundingPublics.status==2)}" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successPublic(this)">修改为成功</a>
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==0  or (#object.crowdFundingType==1 and #object.viewType==3 and crowdFundingPublics.status==0)}" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successBooking(this)">点此成功</a>
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==0 or (#object.crowdFundingType==1 and #object.viewType==3 and crowdFundingPublics.status==0)}" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failBooking(this)">点此失败</a>
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==1 or (#object.crowdFundingType==1 and #object.viewType==3 and crowdFundingPublics.status==1)}" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="failBooking(this)">修改为失败</a>
-                                                <a th:if="${((#object.crowdFundingType==1 and #object.viewType==4 and ((#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.peopleType:allCrowdFundingPublicList.peopleType)==3) ?crowdFundingPublics.status:6)==2 or (#object.crowdFundingType==1 and #object.viewType==3 and crowdFundingPublics.status==2)}" th:attr="crowdFundingPublicsId=${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.id:crowdFundingPublics.id}"  onclick="successBooking(this)">修改为成功</a>
-
-                                            </td>
-                                            <td class="txt20">
-                                                <span th:text="${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.person.remark:crowdFundingPublics.remark}"></span>
-                                            </td>
 
 
-                                            <td class="txt40 c tail">
-                                                <div th:inline="text">
-                                                </div>
-                                            </td>
-
-
-
-
-
-                                        <tr  th:each="crowdFundingBookings:${(#object.crowdFundingType==1 and #object.viewType==4) ?crowdFundingPublics.booking:null}" class="even">
-                                            <td class="txt20 c" style="width: 15px;" th:text="${crowdFundingBookings.id}">
-                                                1
-                                            </td>
-                                            <td class="txt40" th:text="${crowdFundingBookings.name}">
-                                                &nbsp;
-                                            </td>
-                                            <td class="txt80" th:text="${crowdFundingBookings.phone}">
-
-                                            </td>
-
-                                            <td class="txt80" th:text="${crowdFundingBookings.time}">
+                                            <td class="txt80" th:text="${crowdFundingPublics.money}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
 
                                             <td   class="txt20">
-                                               合作人
-                                            </td>
-
-                                            <td class="txt80" th:text="${crowdFundingBookings.money}">
-                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
-                                            </td>
-
-                                            <td class="txt20">
-                                                <a th:if="${crowdFundingBookings.status==0 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="successBooking(this)">点此成功</a>
-                                                <a th:if="${crowdFundingBookings.status==0 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="failBooking(this)">点此失败</a>
-                                                <a th:if="${crowdFundingBookings.status==1 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="failBooking(this)">修改失败</a>
-                                                <a th:if="${crowdFundingBookings.status==2 }" th:attr="crowdFundingPublicsId=${crowdFundingBookings.id}"  onclick="successBooking(this)">修改成功</a>
+                                                <span th:text="${crowdFundingPublics.orderNo}"></span>
                                             </td>
                                             <td class="txt20">
-                                                <span th:text="${crowdFundingBookings.remark}"></span>
+                                                <a th:if="${crowdFundingPublics.status==0}" th:attr="crowdFundingPublicsId=${crowdFundingPublics.id}"  onclick="successPublic(this)">点此成功</a>
+                                                <a th:if="${crowdFundingPublics.status==0}" th:attr="crowdFundingPublicsId=${crowdFundingPublics.id}"  onclick="failPublic(this)">点此失败</a>
+                                                <a th:if="${crowdFundingPublics.status==1}"  >成功</a>
+                                                <a th:if="${crowdFundingPublics.status==2}"  >失败</a>
+
                                             </td>
+                                            <td class="txt20">
+                                                <span th:text="${crowdFundingPublics.remark}"></span>
+                                            </td>
+
 
                                             <td class="txt40 c tail">
                                                 <div th:inline="text">
                                                 </div>
                                             </td>
 
-                                        </tr>
 
                                     </tr>
                                         </tbody>

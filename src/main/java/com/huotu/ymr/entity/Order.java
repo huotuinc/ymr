@@ -18,6 +18,11 @@ import java.util.Date;
 @Cacheable(value = false)
 @Table(name = "orders")
 public class Order {
+    /**
+    * 所属众筹
+    */
+    @ManyToOne
+    private CrowdFunding crowdFunding;
 
     /**
      * 订单号
