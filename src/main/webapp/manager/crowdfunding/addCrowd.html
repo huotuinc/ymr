@@ -114,7 +114,7 @@
                                         <p style="clean:both;">
                                         </p>
                                         <tr>
-                                            <th>设置预约金额:</th>
+                                            <th>设置起始预约金额:</th>
                                             <td><script type="text/javascript">
                                                 function quickSetLogiName() {
                                                     var _cur = $("#selLogiName  option:selected");
@@ -122,11 +122,15 @@
                                                     $('#logisticsName').val(lname);
                                                 }
                                             </script>
-                                                <input name="limitMoney" type="text" id="limitMoney" class="input-normal" th:value="*{limitMoney}" /></td>
+                                                <input name="startMoney" type="text" id="startMoney" class="input-normal" th:value="*{startMoney}" /></td>
                                             </tr>
-                                        <tr>
-                                            <th>设置人上限数:</th>
+                                        <tr name="limitP" id="limitP">
+                                            <th >设置人上限数:</th>
                                             <td><input name="limitPeople" type="text" id="limitPeople" class="input-normal" th:value="*{limitPeople}" /></td>
+                                        </tr>
+                                        <tr  name="limitM" id="limitM">
+                                            <th >设置目标金额:</th>
+                                            <td><input name="limitMoney" type="text" id="limitMoney" class="input-normal" th:value="*{limitMoney}" /></td>
                                         </tr>
                                         <tr>
                                             <th>封面:</th>
@@ -434,6 +438,8 @@
             $("#agencyFee0").fadeOut();
             $("#agencyFee1").fadeOut();
             $("#addBox").fadeOut();
+            $("#limitP").fadeIn();
+            $("#limitM").fadeOut();
             window.editor.readonly(false);
         }
         //合作
@@ -445,7 +451,8 @@
             $("#subscription").fadeOut();
             $("#subAdd").fadeOut();
             $("#cooAdd").fadeIn();
-
+            $("#limitP").fadeOut();
+            $("#limitM").fadeIn();
             if($("#id").val()=="") {
                 for (var i = 0; count >= i; i++) {
                     var delId = "del" + i;
@@ -468,7 +475,8 @@
             $("#subscription").fadeIn();
             $("#subAdd").fadeIn();
             $("#cooAdd").fadeOut();
-
+            $("#limitP").fadeOut();
+            $("#limitM").fadeIn();
             if($("#id").val()=="") {
                 for (var i = 0; count >= i; i++) {
                     var delId = "del" + i;
@@ -526,7 +534,9 @@
         var imgUrl=$("input[name='picture']").val();
         var limitPeople = $("#limitPeople").val();
         var limitMoney = $("#limitMoney").val();
+        var startMoney = $("#startMoney").val();
 
+        var type=$("input[name='crowdFundingType']:checked").val();
 
         if (crowdName.length == 0) {
             $.jBox.tip("请输入众筹标题");
@@ -545,20 +555,28 @@
             return;
 
         }
-        if (limitPeople.length == 0) {
-            $.jBox.tip("请输入人上限数");
-            return;
+        if (type == 'booking') {
+            if (limitPeople.length == 0) {
+                $.jBox.tip("请输入人上限数");
+                return;
+            }
+        }
+        if (type != 'booking') {
+            if (limitMoney.length == 0) {
+                $.jBox.tip("请输入人最大金额");
+                return;
+            }
         }
         if (!(/^([1-9]\d*|[0]{1,1})$/.test(limitPeople))) {
             $.jBox.tip("人上限数格式为正整数");
             return;
         }
 
-        if (limitMoney.length == 0) {
+        if (startMoney.length == 0) {
             $.jBox.tip("请输入预约金额");
             return;
         }
-        if (isNaN(limitMoney)) {
+        if (isNaN(startMoney)) {
             $.jBox.tip("预约金额格式为数字");
             return;
         }
@@ -612,7 +630,7 @@
                 $("input[name='endDate']").attr("disabled", true);
                 $("input[name='shareImage']").attr("disabled", true);
                 $("input[name='limitPeople']").attr("disabled", true);
-                $("input[name='limitMoney']").attr("disabled", true);
+                $("input[name='startMoney']").attr("disabled", true);
                 $("input[name='singleSet']").attr("disabled", true);
                 $("#globleOrSingle1").attr("disabled", true);
                 $("#globleOrSingle0").attr("disabled", true);

@@ -91,15 +91,15 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 
         device.setToken(mockUser.getToken());
 
-//        Config config=new Config(); //todo 注释
-//        config.setKey("CrowdFundingTip");
-//        config.setValue("我有A万，找人合作筹募");
-//        config=configRepository.saveAndFlush(config);
-//
-//        Config config1=new Config();
-//        config1.setKey("MoneyToScore");
-//        config1.setValue("10");
-//        config1=configRepository.saveAndFlush(config1);
+        Config config=new Config(); //todo 注释
+        config.setKey("CrowdFundingTip");
+        config.setValue("我有A万，找人合作筹募");
+        config=configRepository.saveAndFlush(config);
+
+        Config config1=new Config();
+        config1.setKey("MoneyToScore");
+        config1.setValue("10");
+        config1=configRepository.saveAndFlush(config1);
 
     }
 
@@ -348,14 +348,14 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
         crowdFunding.setCrowdFundingType(CommonEnum.CrowdFundingType.booking);
         crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
 
-        double lastMoney=50000.00*(100-crowdFunding.getAgencyFeeRate())/100;
+        double lastMoney=50000.00;
         CrowdFundingPublic crowdFundingPublic = new CrowdFundingPublic();
         crowdFundingPublic.setMoney(lastMoney);
         crowdFundingPublic.setStatus(1);//都设置为审核通过
-        crowdFundingPublic.setPhone(13852108585.0+"");
+        crowdFundingPublic.setPhone(13852+""+108585+"");
         crowdFundingPublic.setRemark("我要发起预约hahaha!");
         Long userId=mockUser.getId();
-        crowdFundingPublic.setAgencyFee(50000.00 - lastMoney);
+        //crowdFundingPublic.setAgencyFee(50000.00 - lastMoney);
         crowdFundingPublic.setName("预约者");
         //正常请求
         String result11=mockMvc.perform(device.getApi("raiseBooking")
@@ -378,10 +378,22 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
                 }
             }
         }
+
         Assert.assertEquals("提交预约，断言Money", lastMoney+"", (double) crowdFCheck.getMoney()+"");
         Assert.assertEquals("提交预约，断言Phone", crowdFundingPublic.getPhone(), crowdFCheck.getPhone());
         Assert.assertEquals("提交预约，断言Name", crowdFundingPublic.getName(), crowdFCheck.getName());
         Assert.assertEquals("提交预约，断言Remark", crowdFundingPublic.getRemark(), crowdFCheck.getRemark());
+
+        //同一个项目不能多次请求报错
+        String result111=mockMvc.perform(device.getApi("raiseBooking")//todo 因为不能重复请求，所以测试只能一个一个测
+                .param("money", 40000 + "")
+                .param("phone",13852+""+108585+"")
+                .param("remark", "我要发起预约hahaha!")
+                .param("crowdId",crowdFunding.getId()+"")
+                .build())
+                .andReturn().getResponse().getContentAsString();
+        String exception111 = JsonPath.read(result111, "$.systemResultDescription");
+        Assert.assertEquals("同一个项目不能多次请求报错","同一个项目不能多次请求",exception111);
 
         //预约金额小于起购金额报错
         String result=mockMvc.perform(device.getApi("raiseBooking")

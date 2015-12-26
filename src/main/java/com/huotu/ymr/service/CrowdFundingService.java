@@ -49,14 +49,14 @@ public interface CrowdFundingService {
 
     /**
      * 通过众筹项目crowdId，获得成功的合作项目合作发起者
-     * 获取一页众筹表格
+     * 获取一页众筹者表格
      * @return
      */
     List<CrowdFundingPublic> getPublicByCrowdId(Long crowdId);
 
     /**
      * 通过合作发起者Id，与该合作发起者成功合作的合作者
-     * 获取一页众筹表格
+     * 获取一页众筹者表格
      * @return
      */
     List<CrowdFundingBooking> getBookingByPublicId(Long crowdId,Long id);
@@ -84,7 +84,7 @@ public interface CrowdFundingService {
 
     /**
      * 后台通过合作发起人查找合作人
-     * 获取一页合作人表格
+     * 获取合作人
      * @return
      */
     List<CrowdFundingBooking> findBookingsByPublic(CrowdFundingPublic crowdFundingPublic,Long crowdId);
@@ -107,4 +107,21 @@ public interface CrowdFundingService {
      * @return
      */
     void deleteRangesByCrowdFunding(CrowdFunding crowdFunding);
+
+    /**
+     * 获取众筹预约和认购和合作发起人信息
+     * @param crowdId 众筹id
+     * @param userId 用户id
+     * @return
+     */
+    CrowdFundingPublic findPublicByCFAndUserId(Long crowdId, Long userId);
+
+    /**
+     * 获取合作人信息
+     * @param crowdId 众筹id
+     * @param userId 用户id
+     * @return
+     */
+    CrowdFundingBooking findBookingByCFAndUserId(Long crowdId, Long userId);
+
 }

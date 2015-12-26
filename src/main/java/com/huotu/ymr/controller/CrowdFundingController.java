@@ -5,6 +5,7 @@ import com.huotu.common.api.Output;
 import com.huotu.common.base.RegexHelper;
 import com.huotu.ymr.api.CrowdFundingSystem;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.common.PublicParameterHolder;
 import com.huotu.ymr.entity.*;
 import com.huotu.ymr.exception.*;
@@ -119,6 +120,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         double startMoeny=crowdFunding.getStartMoeny();
         User user=new User();
+        CrowdFundingPublic crowdFundingBooking=crowdFundingService.findPublicByCFAndUserId(crowdId,userId);
+        if(crowdFundingBooking!=null){
+            throw new HaveRaisedException();
+        }
         if(userId==null){
             throw new UserRequestIllegalException();
         }else{
@@ -137,13 +142,15 @@ public class CrowdFundingController implements CrowdFundingSystem {
             throw new UserLevelErrorException();
         }else {
 
-            double rate=Double.parseDouble(configRepository.findOne("MoneyToScore").getValue());
+            double rate=Double.parseDouble(configRepository.findOne(ConfigKey.MONEY_TO_SCORE).getValue());
+            Date date=new Date();
             Order order=new Order();
             order.setMoney(money);
-            order.setTime(new Date());
+            order.setTime(date);
             order.setScore((int)(money*rate));
             order.setUser(user);
             order.setPayType(CommonEnum.PayType.paying);
+            order.setOrderNo(date.getTime()+""+userId);//todo 订单号怎么定
             order=orderRepository.saveAndFlush(order);
 
             orderNo.outputData(order.getOrderNo());
@@ -158,6 +165,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setName(name);
             crowdFundingPublic.setCrowdFunding(crowdFunding);
             crowdFundingPublic.setStatus(0);
+            crowdFundingPublic.setMoney(money);
             crowdFundingPublic.setOrderNo(order.getOrderNo());
             //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人信息，存入合作发起表中
             crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
@@ -204,6 +212,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         double startMoeny=crowdFunding.getStartMoeny();
         User user=new User();
+        CrowdFundingPublic crowdFundingCoo=crowdFundingService.findPublicByCFAndUserId(crowdId,userId);
+        if(crowdFundingCoo!=null){
+            throw new HaveRaisedException();
+        }
         if(userId==null){
             throw new UserRequestIllegalException();
         }else{
@@ -278,7 +290,7 @@ public class CrowdFundingController implements CrowdFundingSystem {
             appRaiseCooperationListModel.setUserHeadUrl(crowdFundingPublic.getUserHeadUrl());
             appRaiseCooperationListModel.setPid(crowdFundingPublic.getId());
             appRaiseCooperationListModel.setAmount(crowdFundingPublic.getAmount());
-            String tip=configRepository.findOne("CrowdFundingTip").getValue();
+            String tip=configRepository.findOne(ConfigKey.CROWDFUDINGTIP).getValue();
            tip =tip.replace("A",crowdFundingPublic.getMoney()/10000+"");//todo 全局变量
             appRaiseCooperationListModel.setTip(tip);
             appRaiseCooperationListModels.add(appRaiseCooperationListModel);
@@ -296,6 +308,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
         CrowdFundingPublic crowdFundingPublic=new CrowdFundingPublic();
         User user=new User();
 
+        CrowdFundingBooking crowdFundingBook=crowdFundingService.findBookingByCFAndUserId(crowdId,userId);
+        if(crowdFundingBook!=null){
+            throw new HaveRaisedException();
+        }
         if(money==null){
             money=0.0;
         }
@@ -348,6 +364,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
         CrowdFunding crowdFunding= crowdFundingRepository.findOne(crowdId);
         double startMoeny=crowdFunding.getStartMoeny();
         User user=new User();
+        CrowdFundingPublic crowdFundingSub=crowdFundingService.findPublicByCFAndUserId(crowdId,userId);
+        if(crowdFundingSub!=null){
+            throw new HaveRaisedException();
+        }
         if(userId==null){
             throw new UserRequestIllegalException();
         }else{

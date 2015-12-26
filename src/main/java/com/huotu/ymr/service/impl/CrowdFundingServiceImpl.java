@@ -468,4 +468,38 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
             query.setParameter("crowdId", crowdFunding.getId());
         });
     }
+
+    @Override
+    public CrowdFundingPublic findPublicByCFAndUserId(Long crowdId, Long userId) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFundingPublic as public where " +
+                "  public.crowdFunding.id=:crowdId " +
+                " and public.ownerId=:userId");
+        List<CrowdFundingPublic> publicList = crowdFundingPublicRepository.queryHql(hql.toString(), query -> {
+            query.setParameter("crowdId", crowdId);
+            query.setParameter("userId", userId);
+        });
+        if(publicList.size()==0){
+            return null;
+        }else {
+            return publicList.get(0);
+        }
+    }
+
+    @Override
+    public CrowdFundingBooking findBookingByCFAndUserId(Long crowdId, Long userId) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFundingBooking as booking where " +
+                "  booking.crowdFunding.id=:crowdId " +
+                " and booking.ownerId=:userId");
+        List<CrowdFundingBooking> bookingList = crowdFundingBookingRepository.queryHql(hql.toString(), query -> {
+            query.setParameter("crowdId", crowdId);
+            query.setParameter("userId", userId);
+        });
+        if(bookingList.size()==0){
+            return null;
+        }else {
+            return bookingList.get(0);
+        }
+    }
 }

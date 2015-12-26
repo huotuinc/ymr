@@ -16,7 +16,8 @@ public interface FundService {
     boolean refundByUserId(CrowdFunding crowdFunding, Long ownerId) throws Exception;
 
     /**
-     * 增加积分
+     * 金额转换积分
+     * 用户增长当前用户积分与累计获得积分
      * @param ownerId 用户id
      * @param money 金额
      */

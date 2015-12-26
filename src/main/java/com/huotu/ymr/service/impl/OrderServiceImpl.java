@@ -27,7 +27,11 @@ public class OrderServiceImpl implements OrderService{
             query.setParameter("id", id);
             query.setParameter("payType", CommonEnum.PayType.payed);
         });
-        return list.get(0);
+        if(list.size()==0){
+            return null;
+        }else {
+            return list.get(0);
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.huotu.ymr.controller.web;
 
 import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.common.PublicManagerParameterHolder;
 import com.huotu.ymr.entity.*;
 import com.huotu.ymr.model.backend.crowdFunding.AddCrowdFundingModel;
@@ -85,7 +86,7 @@ public class CrowdFundingManagerController {
     public String getCrowdFundingList(CrowdFundingSearchModel crowdFundingSearchModel,Model model) throws Exception {
 
         Page<CrowdFunding> crowdFundingPages=crowdFundingService.findCrowdFundingPage(crowdFundingSearchModel);
-        model.addAttribute("allcrowdFundingList", crowdFundingPages);//文章列表
+        model.addAttribute("allcrowdFundingList", crowdFundingPages);//列表
 
         model.addAttribute("pageNoStr",crowdFundingSearchModel.getPageNoStr());//当前页数
         return "manager/crowdfunding/crowdFundingList";
@@ -225,7 +226,7 @@ public class CrowdFundingManagerController {
         addCrowdFundingModel.setEndDate(sdf.format(crowdFunding.getEndTime()));
         addCrowdFundingModel.setStartDate(sdf.format(crowdFunding.getStartTime()));
         addCrowdFundingModel.setSingleSet(crowdFunding.getAgencyFeeRate());
-        addCrowdFundingModel.setLimitMoney(crowdFunding.getToMoeny());
+        addCrowdFundingModel.setStartMoney(crowdFunding.getStartMoeny());
 
         List<CommonEnum.UserLevel> userLevels=crowdFunding.getVisibleLevel();
         for(CommonEnum.UserLevel userL:userLevels){
@@ -241,9 +242,10 @@ public class CrowdFundingManagerController {
         }
         addCrowdFundingModel.setId(crowdFunding.getId());
         addCrowdFundingModel.setLimitPeople(crowdFunding.getToBooking());
+        addCrowdFundingModel.setLimitMoney(crowdFunding.getToMoeny());
 
         if(crowdFunding.getCrowdFundingType()!=CommonEnum.CrowdFundingType.booking) {
-            if (crowdFunding.getAgencyFeeRate() == Integer.parseInt(configRepository.findOne("GlobalAgencyFee").getValue())) {
+            if (crowdFunding.getAgencyFeeRate() == Integer.parseInt(configRepository.findOne(ConfigKey.GLOBALAGENCYFEE).getValue())) {
                 addCrowdFundingModel.setGlobleOrSingle(1);
             } else {
                 addCrowdFundingModel.setGlobleOrSingle(0);
@@ -288,7 +290,7 @@ public class CrowdFundingManagerController {
            if(addCrowdFundingModel.getIsDraft()==0){
                CrowdFunding modifyCrowdFunding = crowdFundingRepository.findOne(addCrowdFundingModel.getId());
                modifyCrowdFunding.setCheckStatus(CommonEnum.CheckType.pass);
-               modifyCrowdFunding=crowdFundingRepository.save(modifyCrowdFunding);
+               modifyCrowdFunding=crowdFundingRepository.saveAndFlush(modifyCrowdFunding);
         }else if(addCrowdFundingModel.getIsDraft()==1){
                //modifyCrowdFunding.setCheckStatus(CommonEnum.CheckType.draft);
                result=auditCF(addCrowdFundingModel,request,0);
@@ -343,15 +345,18 @@ public class CrowdFundingManagerController {
         crowdFunding.setVisibleLevel(userLevels);
         crowdFunding.setCrowdFundingType(addCrowdFundingModel.getCrowdFundingType());
         crowdFunding.setTime(new Date());
+        crowdFunding.setCurrentMoeny(0.0);
+        crowdFunding.setCurrentBooking(0L);
         crowdFunding.setName(addCrowdFundingModel.getName());
         crowdFunding.setToBooking(addCrowdFundingModel.getLimitPeople());
+        crowdFunding.setStartMoeny(addCrowdFundingModel.getStartMoney());
         crowdFunding.setToMoeny(addCrowdFundingModel.getLimitMoney());
         crowdFunding.setContent(addCrowdFundingModel.getContent());
 
         if(addCrowdFundingModel.getCrowdFundingType()!=CommonEnum.CrowdFundingType.booking) {
 
             if (addCrowdFundingModel.getGlobleOrSingle() == 1) {
-                crowdFunding.setAgencyFeeRate(Integer.parseInt(configRepository.findOne("GlobalAgencyFee").getValue()));//todo 数据库中存入全局
+                crowdFunding.setAgencyFeeRate(Integer.parseInt(configRepository.findOne(ConfigKey.GLOBALAGENCYFEE).getValue()));//todo 数据库中存入全局
             } else if (addCrowdFundingModel.getGlobleOrSingle() == 0) {
                 crowdFunding.setAgencyFeeRate(addCrowdFundingModel.getSingleSet());
             }
@@ -365,7 +370,7 @@ public class CrowdFundingManagerController {
         crowdFunding.setStartTime(date);
         //crowdFunding.setManager(managerRepository.findOne(mpm.getManager().getId()));//todo 发布者
         crowdFunding.setContent(addCrowdFundingModel.getContent());
-        crowdFunding=crowdFundingRepository.save(crowdFunding);
+        crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
 
 
         if(crowdFunding.getCrowdFundingType()!=CommonEnum.CrowdFundingType.booking) {
@@ -687,7 +692,7 @@ public class CrowdFundingManagerController {
 
 
     /**
-     * 回访项目成功
+     * 回访预约外项目成功
      * @param userId 前台传过来的项目人id
      * @return
      * @throws Exception
@@ -698,11 +703,19 @@ public class CrowdFundingManagerController {
 
         if(booking==0){
             CrowdFundingPublic crowdFundingPublic=crowdFundingPulicRepository.findOne(userId);
+            CrowdFunding crowdFunding=crowdFundingPublic.getCrowdFunding();
+            crowdFunding.setCurrentBooking(crowdFunding.getCurrentBooking()+1);
+            crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny()+crowdFundingPublic.getMoney());
             crowdFundingPublic.setStatus(1);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundingPublic=crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);
         }else if(booking==1){
             CrowdFundingBooking crowdFundingBooking=crowdFundingBookingRepository.findOne(userId);
+            CrowdFunding crowdFunding=crowdFundingBooking.getCrowdFunding();
+            crowdFunding.setCurrentBooking(crowdFunding.getCurrentBooking()+1);
+            crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny()+crowdFundingBooking.getMoney());
             crowdFundingBooking.setStatus(1);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundingBooking=crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking);
         }
         Msg msg = new Msg();
@@ -712,7 +725,7 @@ public class CrowdFundingManagerController {
     }
 
     /**
-     * 回访项目失败
+     * 回访预约外项目失败
      * @param userId 前台传过来的项目人id
      * @return
      * @throws Exception
@@ -751,14 +764,18 @@ public class CrowdFundingManagerController {
         CrowdFundingPublic crowdFundingPublic=crowdFundingPulicRepository.findOne(userId);
 
         CrowdFunding crowdFunding=crowdFundingRepository.findOne(crowdFundingPublic.getCrowdFunding().getId());
-        if(crowdFunding.getCurrentBooking()>=crowdFunding.getToBooking()||
-                crowdFunding.getCurrentMoeny()>=crowdFunding.getCurrentMoeny()) { //todo 考虑一下高并发量？
+        if(crowdFunding.getCurrentBooking()>=crowdFunding.getToBooking()) { //todo 考虑一下高并发量？
             msg.setCode(501);
             msg.setMsg("error");//todo 提示已经满了，不能继续确认成功
         }else {
+            CrowdFunding crowdFunding1=crowdFundingPublic.getCrowdFunding();
+            crowdFunding.setCurrentBooking(crowdFunding1.getCurrentBooking()+1);
+            crowdFunding.setCurrentMoeny(crowdFunding1.getCurrentMoeny()+crowdFundingPublic.getMoney());
+
             crowdFundingPublic.setStatus(1);
             crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny()+crowdFundingPublic.getMoney());
             fundService.increaseIntegral(crowdFundingPublic.getOwnerId(),crowdFundingPublic.getMoney());//todo 加积分
+            crowdFunding1=crowdFundingRepository.saveAndFlush(crowdFunding1);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundingPublic = crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);
             msg.setCode(200);

@@ -58,6 +58,16 @@ public class ConfigKey {
      */
     public static final String UPGRADE_INTEGRAL="UpgradeIntegral";
 
+
+    /**
+     * 众筹提示
+     */
+    public static final String CROWDFUDINGTIP="CrowdFundingTip";
+
+    /**
+     * 全局中介费
+     */
+    public static final String GLOBALAGENCYFEE="GlobalAgencyFee";
     /**
      *微信支付商户号
      */

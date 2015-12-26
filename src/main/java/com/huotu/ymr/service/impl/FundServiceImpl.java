@@ -6,8 +6,10 @@ import com.huotu.ymr.common.thirdparty.RequestHandler;
 import com.huotu.ymr.common.thirdparty.XMLParser;
 import com.huotu.ymr.entity.CrowdFunding;
 import com.huotu.ymr.entity.Order;
+import com.huotu.ymr.entity.User;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.repository.OrderRepository;
+import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.FundService;
 import com.huotu.ymr.service.OrderService;
 import com.huotu.ymr.service.StaticResourceService;
@@ -37,6 +39,9 @@ public class FundServiceImpl implements FundService{
 
     @Autowired
     StaticResourceService staticResourceService;
+
+    @Autowired
+    UserRepository userRepository;
 
 
     @Override
@@ -78,6 +83,11 @@ public class FundServiceImpl implements FundService{
 
     @Override
     public void increaseIntegral(Long ownerId, Double money) {
-
+        User user=userRepository.findOne(ownerId);
+        //四舍五入
+        int score=(int) (Math.rint(money*Double.parseDouble(configRepository.findOne(ConfigKey.MONEY_TO_SCORE).getValue())));
+        user.setScore(user.getScore()+score);
+        user.setContinuedScore(user.getContinuedScore()+score);
+        user=userRepository.saveAndFlush(user);
     }
 }

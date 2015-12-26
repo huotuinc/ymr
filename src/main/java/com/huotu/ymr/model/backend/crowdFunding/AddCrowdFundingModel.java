@@ -78,9 +78,9 @@ public class AddCrowdFundingModel {
     private String endDate="";
 
     /**
-     * 预约金额
+     * 目标金额
      */
-    private Double bookingMoney;
+    private Double limitMoney;
 
     /**
      * 上限人数
@@ -89,10 +89,10 @@ public class AddCrowdFundingModel {
     private Long limitPeople;
 
     /**
-     * 上限金额
+     * 起购金额
      *
      */
-    private Double limitMoney;
+    private Double startMoney;
 
     /**
      * 封面地址

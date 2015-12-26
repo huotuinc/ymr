@@ -30,7 +30,10 @@ public class AppHandlerExceptionResolver implements HandlerExceptionResolver {
             } catch (MissingServletRequestParameterException e){
                 result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
                 result.setSystemResultDescription("参数出错！");
-            } catch (AmountErrorException e) {
+            }catch (HaveRaisedException e) {
+                result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
+                result.setSystemResultDescription("同一个项目不能多次请求");
+            }catch (AmountErrorException e) {
                 result.setSystemResultCode(CommonEnum.AppCode.PARAMETER_ERROR.getValue());
                 result.setSystemResultDescription("认购金额小于起购金额");
             }catch (CrowdFundingNotExitsException e){
