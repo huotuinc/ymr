@@ -39,7 +39,7 @@ public class MallUserModel {
     /**
      * 性别
      */
-    private String sex;
+    private Integer sex;
     /**
      * 手机号
      */

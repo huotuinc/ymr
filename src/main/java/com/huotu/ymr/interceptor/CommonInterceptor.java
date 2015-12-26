@@ -12,15 +12,14 @@ package com.huotu.ymr.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.PublicParameterHolder;
-import com.huotu.ymr.common.SysRegex;
 import com.huotu.ymr.entity.User;
-import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppPublicModel;
-
 import com.huotu.ymr.model.AppUserInfoModel;
+import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CommonConfigService;
+import com.huotu.ymr.service.DataCenterService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +30,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -51,6 +51,9 @@ public class CommonInterceptor implements HandlerInterceptor {
 
     @Autowired
     private MallUserRepository mallUserRepository;
+
+    @Autowired
+    DataCenterService dataCenterService;
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
@@ -89,7 +92,7 @@ public class CommonInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    private AppPublicModel initPublicParam(HttpServletRequest request) {
+    private AppPublicModel initPublicParam(HttpServletRequest request) throws IOException {
 
         AppPublicModel model = new AppPublicModel();
         String sign = StringUtils.isEmpty(request.getParameter("sign")) ? "" : request.getParameter("sign");
@@ -106,16 +109,17 @@ public class CommonInterceptor implements HandlerInterceptor {
                 appUserInfoModel.setUserLevel(user.getUserLevel());
                 appUserInfoModel.setScore(user.getScore());
                 appUserInfoModel.setToken(token);
-                MallUser mallUser = mallUserRepository.findOne(user.getId());
-                if (mallUser != null) {
-                    appUserInfoModel.setName(mallUser.getRealName());
-                    appUserInfoModel.setNickName(mallUser.getWxNickName());
-                    appUserInfoModel.setHeadUrl(mallUser.getWxHeadUrl());
-                    appUserInfoModel.setSex(mallUser.getGender());
-                    appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
-                    appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
-                    appUserInfoModel.setUserName(mallUser.getUsername());
-                    appUserInfoModel.setMobile(mallUser.getMobile());
+
+                MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(user.getId());
+                if (mallUserModel != null) {
+                    appUserInfoModel.setName(mallUserModel.getName());
+                    appUserInfoModel.setNickName(mallUserModel.getNickName());
+                    appUserInfoModel.setHeadUrl(mallUserModel.getHeadUrl());
+                    appUserInfoModel.setSex(mallUserModel.getSex());
+                    appUserInfoModel.setMerchantId(mallUserModel.getMerchantId());
+                    appUserInfoModel.setIsBindMobile(mallUserModel.getIsBindMobile());
+                    appUserInfoModel.setUserName(mallUserModel.getUserName());
+                    appUserInfoModel.setMobile(mallUserModel.getMobile());
                     model.setCurrentUser(appUserInfoModel);
                 }
             }

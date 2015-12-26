@@ -201,12 +201,34 @@ public interface UserSystem {
      *
      * 获取我点赞过的文章
      * @param list      文章列表
-     * @param lastId    最后一条文章ID
+     * @param userId    用户ID
+     * @param lastId    最后一条点赞ID
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getPraiseList(Output<AppShareListModel[]> list,Long userId,Long lastId) throws Exception;
+    ApiResult getPraiseList(Output<AppUserSharePraiseModel[]> list,Long userId,Long lastId) throws Exception;
+
+    /**
+     * 获取我评论过的文章
+     * @param list      文章列表
+     * @param userId    用户ID
+     * @param lastId    最后一条评论ID
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult getCommentList(Output<AppUserShareCommentModel[]>list,Long userId,Long lastId) throws Exception;
+
+    /**
+     * 获取我分享的文章
+     * @param list      文章列表
+     * @param userId    用户ID
+     * @param lastId    最后一条分享ID
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult getUserShareList(Output<AppUserShareRunningModel[]>list,Long userId,Long lastId) throws Exception;
 
     /**
      * <p>无需登录</p>

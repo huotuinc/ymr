@@ -3,9 +3,11 @@ package com.huotu.ymr.service.impl;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ShareRepository;
 import com.huotu.ymr.service.ShareService;
+import com.huotu.ymr.service.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +34,9 @@ import java.util.List;
 public class ShareServiceImpl implements ShareService {
     @Autowired
     ShareRepository shareRepository;
+
+    @Autowired
+    StaticResourceService staticResourceService;
     @Override
     public List<Share> findAppShareList(String key,Long lastId,int pageSize) throws Exception{
         StringBuilder hql = new StringBuilder();
@@ -195,7 +200,22 @@ public class ShareServiceImpl implements ShareService {
     }
 
     @Override
-    public List<Share> findPraiseList(List<Long> shareIds, Long lastId) throws Exception {
-        return shareRepository.getShareByIds(shareIds, lastId);
+    public AppShareListModel shareToListModel(Share share) throws Exception {
+        AppShareListModel appShareListModel=new AppShareListModel();
+        appShareListModel.setPId(share.getId());
+        appShareListModel.setTitle(share.getTitle());
+        appShareListModel.setImg(staticResourceService.getResource(share.getImg()).toString());//todo
+        appShareListModel.setIntro(share.getIntro());
+        appShareListModel.setCommentQuantity(share.getCommentQuantity());
+        appShareListModel.setContent(share.getContent());
+        appShareListModel.setShareType(share.getShareType());
+        appShareListModel.setPraiseQuantity(share.getPraiseQuantity());
+        appShareListModel.setRelayQuantity(share.getRelayQuantity());
+        appShareListModel.setRelayScore(share.getRelayReward());
+        appShareListModel.setTime(share.getTime());
+        appShareListModel.setTop(share.getTop());
+        //todo
+        appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
+        return appShareListModel;
     }
 }

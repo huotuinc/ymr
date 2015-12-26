@@ -120,4 +120,28 @@ public class UserControllerTest extends SpringBaseTest {
                 .andReturn().getResponse().getContentAsString();
 
     }
+
+
+
+
+    @Test
+    public void testgetPraiseList() throws Exception {
+        Share share=new Share();
+        share.setTime(new Date());
+        share.setTitle("测试1");
+        share=shareService.saveShare(share);
+
+
+        Praise praise=new Praise();
+        praise.setUser(mockUser);
+        praise.setShare(share);
+        praise=praiseRepository.save(praise);
+
+
+        String result=mockMvc.perform(device.getApi("getPraiseList")
+                .param("userId",  mockUser.getId()+"")
+                .param("lastId", "0").build())
+                .andReturn().getResponse().getContentAsString();
+
+    }
 }

@@ -1,17 +1,22 @@
 package com.huotu.ymr.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.huotu.common.base.HttpHelper;
 import com.huotu.huobanplus.common.entity.User;
 import com.huotu.huobanplus.sdk.common.repository.UserRestRepository;
 import com.huotu.ymr.common.SysRegex;
+import com.huotu.ymr.model.AppWeiXinAccreditModel;
 import com.huotu.ymr.model.mall.CategoryModel;
+import com.huotu.ymr.model.mall.MallApiResultModel;
 import com.huotu.ymr.model.mall.MallGoodModel;
 import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.DataCenterService;
+import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -44,6 +49,7 @@ public class DataCenterServiceImpl implements DataCenterService {
 
     @Override
     public MallUserModel[] getUserInfoByUniond(String uniond) {
+
         return null;
     }
 
@@ -60,26 +66,26 @@ public class DataCenterServiceImpl implements DataCenterService {
     }
 
     @Override
-    public MallUserModel createUser(String unionid, String city, String country, Integer sex, String province, String nickname, String openid) throws IOException{
+    public Long createUser(AppWeiXinAccreditModel appWeiXinAccreditModel) throws IOException{
         String url = commonConfigService.getMallApiServerUrl() + "/weixin/LoginAuthorize";
-
-
         Map<String, String> map = new TreeMap<>();
         map.put("timestamp", String.valueOf(new Date().getTime()));
         map.put("appid", appid);
         map.put("customerid",ymrMerchantId);
-        map.put("sex",sex+"");
-        map.put("nickname",nickname);
-        map.put("openid",openid);
-        map.put("city",city);
-        map.put("country",country);
+        map.put("sex",appWeiXinAccreditModel.getSex()+"");
+        map.put("nickname",appWeiXinAccreditModel.getNickname());
+        map.put("openid",appWeiXinAccreditModel.getOpenid());
+        map.put("city",appWeiXinAccreditModel.getCity());
+        map.put("country",appWeiXinAccreditModel.getCountry());
+        map.put("province",appWeiXinAccreditModel.getProvince());
+        map.put("headimgurl",appWeiXinAccreditModel.getHeadimgurl());
+        map.put("unionid",appWeiXinAccreditModel.getUnionid());
         map.put("sign", getSign(map));
-
         String response = HttpHelper.postRequest(url, map);
-
-
-
-
+        MallApiResultModel resultModel = JSON.parseObject(response, MallApiResultModel.class);
+        if (resultModel.getCode() == 200 && !StringUtils.isEmpty(resultModel.getData().toString())) {
+            return Long.parseLong(JsonPath.read(resultModel.getData().toString(), "$.userid").toString());
+        }
         return null;
     }
 
@@ -121,7 +127,7 @@ public class DataCenterServiceImpl implements DataCenterService {
         mallUserModel.setMerchantId(user.getMerchant().getId());
         mallUserModel.setName(user.getRealName());
         mallUserModel.setNickName(user.getNickName());
-        mallUserModel.setSex("男");//todo
+        mallUserModel.setSex(1);//todo
         mallUserModel.setUserName(user.getLoginName());
         mallUserModel.setMobile(user.getMobile());
         return mallUserModel;
@@ -130,7 +136,8 @@ public class DataCenterServiceImpl implements DataCenterService {
     private String getSign(Map<String, String> map) {
         String result = "";
         for (String key : map.keySet()) {
-            result += key + "=" + map.get(key).toString() + "&";
+            if(!StringUtils.isEmpty(map.get(key)))
+                result += key + "=" + map.get(key) + "&";
         }
         String before=result.substring(0, result.length() - 1) + appsecret;
         return DigestUtils.md5DigestAsHex((result.substring(0, result.length() - 1) + appsecret).getBytes());

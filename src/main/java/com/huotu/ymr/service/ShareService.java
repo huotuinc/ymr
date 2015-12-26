@@ -1,6 +1,7 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import org.springframework.data.domain.Page;
 
@@ -29,13 +30,12 @@ public interface ShareService {
     Page<Share> findPcShareList(ShareSearchModel shareSearchModel) throws Exception;
 
     /**
-     * 查找包含文章ID的文章列表
-     * @param shareIds      文章ID列表
-     * @param lastId        最后一条文章ID
+     * share实体转model
+     * @param share
      * @return
      * @throws Exception
      */
-    List<Share> findPraiseList(List<Long> shareIds,Long lastId) throws Exception;
+    AppShareListModel shareToListModel(Share share) throws Exception;
 
 
 }

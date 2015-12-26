@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Repository
 public interface ShareRepository extends JpaRepository<Share, Long>,ClassicsRepository<Share>,JpaSpecificationExecutor<Share> {
-    @Query("select s from Share as s where s.id in ?1 and s.id>?2")
+    @Query("select s from Share as s where s.id in ?1 and s.id>?2 order by s.id desc ")
     List<Share> getShareByIds(List<Long> shareIds,Long lastId);
 
 }

@@ -1,5 +1,6 @@
 package com.huotu.ymr.service;
 
+import com.huotu.ymr.model.AppWeiXinAccreditModel;
 import com.huotu.ymr.model.mall.CategoryModel;
 import com.huotu.ymr.model.mall.MallGoodModel;
 import com.huotu.ymr.model.mall.MallUserModel;
@@ -34,13 +35,7 @@ public interface DataCenterService {
      * 创建一个用户
      * @return
      */
-    MallUserModel createUser(String unionid,
-                             String city,
-                             String country,
-                             Integer sex,
-                             String province,
-                             String nickname ,
-                             String openid) throws IOException;
+    Long createUser(AppWeiXinAccreditModel appWeiXinAccreditModel) throws IOException;
 
     /**
      *  获取商品分类

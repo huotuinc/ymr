@@ -1,8 +1,12 @@
 package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.entity.ShareComment;
+import com.huotu.ymr.model.AppUserShareCommentModel;
+import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.ShareCommentRepository;
+import com.huotu.ymr.service.DataCenterService;
 import com.huotu.ymr.service.ShareCommentService;
+import com.huotu.ymr.service.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -18,41 +22,15 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     @Autowired
     ShareCommentRepository shareCommentRepository;
 
+    @Autowired
+    DataCenterService dataCenterService;
+
+    @Autowired
+    StaticResourceService staticResourceService;
+
     @Override
     public List<ShareComment> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception {
         List<ShareComment> list= shareCommentRepository.findByShareOrderByTime(shareId, lastId, new PageRequest(0,pageSize));
-//        Map<Long,List<ShareComment>> map=new TreeMap<Long,List<ShareComment>>(new Comparator<Long>() {
-//            @Override
-//            public int compare(Long o1, Long o2) {
-//                return o2-o1>0?1:-1;
-//            }
-//        });
-//        //先把评论放到map中去
-//        for(ShareComment sc:list){
-//            if(sc.getParentId()==0L){
-//                List<ShareComment> comments=new ArrayList<>();
-//                comments.add(sc);
-//                map.put(sc.getId(),comments);
-//            }
-//        }
-//
-//        //再把回复放到map中去，回复放到对应的评论中去
-//        for(ShareComment sc:list){
-//            if(sc.getParentId()!=0L){
-//                //获取父
-//                String commentIdStr=sc.getCommentPath().split("\\|")[1];
-//                if(!StringUtils.isEmpty(commentIdStr)){
-//                    Long commentId=Long.parseLong(commentIdStr);
-//                    //获取父评论的回复列表
-//                    List<ShareComment> shareComments=map.get(commentId);
-//                    if(Objects.isNull(shareComments)){
-//                        shareComments=new ArrayList<>();
-//                    }
-//                    shareComments.add(sc);
-//                    map.put(commentId,shareComments);
-//                }
-//            }
-//        }
         return list;
     }
 
@@ -69,5 +47,33 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     @Override
     public void deleteComment(Long shareCommentId) throws Exception {
         shareCommentRepository.deleteComment("|"+shareCommentId+"|");
+    }
+
+    @Override
+    public List<ShareComment> findCommentList(Long userId,Long lastId) throws Exception {
+        List<ShareComment> list=shareCommentRepository.findUserCommentShares(userId,lastId);
+        return list;
+    }
+
+    @Override
+    public AppUserShareCommentModel getCommentToModel(ShareComment shareComment) throws Exception {
+        AppUserShareCommentModel appUserShareCommentModel=new AppUserShareCommentModel();
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(shareComment.getUserId());
+        appUserShareCommentModel.setPId(shareComment.getShare().getId());
+        appUserShareCommentModel.setUserHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());
+        appUserShareCommentModel.setTitle(shareComment.getShare().getTitle());
+        appUserShareCommentModel.setShareType(shareComment.getShare().getShareType());
+        appUserShareCommentModel.setImg(shareComment.getShare().getImg());
+        appUserShareCommentModel.setIntro(shareComment.getShare().getIntro());
+        appUserShareCommentModel.setTop(shareComment.getShare().getTop());
+        appUserShareCommentModel.setBoutique(shareComment.getShare().getBoutique());
+        appUserShareCommentModel.setTime(shareComment.getShare().getTime());
+        appUserShareCommentModel.setCommentUserId(shareComment.getParentId());
+        appUserShareCommentModel.setCommentName(shareComment.getParentName());
+        appUserShareCommentModel.setCommentTime(shareComment.getTime());
+        appUserShareCommentModel.setCommentComment(shareComment.getContent());
+
+        return appUserShareCommentModel;
+
     }
 }

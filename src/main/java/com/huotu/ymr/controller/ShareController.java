@@ -76,20 +76,21 @@ public class ShareController implements ShareSystem {
             AppShareListModel[] appShareListModels = new AppShareListModel[shares.size()];
             for (int i = 0; i < shares.size(); i++) {
                 Share share=shares.get(i);
-                AppShareListModel appShareListModel=new AppShareListModel();
-                appShareListModel.setPId(share.getId());
-                appShareListModel.setTitle(share.getTitle());
-                appShareListModel.setImg(staticResourceService.getResource(share.getImg()).toString());//todo
-                appShareListModel.setIntro(share.getIntro());
-                appShareListModel.setCommentQuantity(share.getCommentQuantity());
-                appShareListModel.setContent(share.getContent());
-                appShareListModel.setShareType(share.getShareType());
-                appShareListModel.setPraiseQuantity(share.getPraiseQuantity());
-                appShareListModel.setRelayQuantity(share.getRelayQuantity());
-                appShareListModel.setRelayScore(share.getRelayReward());
-                appShareListModel.setTime(share.getTime());
-                appShareListModel.setTop(share.getTop());
-                appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
+                AppShareListModel appShareListModel=shareService.shareToListModel(share);
+//                AppShareListModel appShareListModel=new AppShareListModel();
+//                appShareListModel.setPId(share.getId());
+//                appShareListModel.setTitle(share.getTitle());
+//                appShareListModel.setImg(staticResourceService.getResource(share.getImg()).toString());//todo
+//                appShareListModel.setIntro(share.getIntro());
+//                appShareListModel.setCommentQuantity(share.getCommentQuantity());
+//                appShareListModel.setContent(share.getContent());
+//                appShareListModel.setShareType(share.getShareType());
+//                appShareListModel.setPraiseQuantity(share.getPraiseQuantity());
+//                appShareListModel.setRelayQuantity(share.getRelayQuantity());
+//                appShareListModel.setRelayScore(share.getRelayReward());
+//                appShareListModel.setTime(share.getTime());
+//                appShareListModel.setTop(share.getTop());
+//                appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
                 appShareListModels[i]=appShareListModel;
             }
             list.outputData(appShareListModels);
@@ -140,6 +141,9 @@ public class ShareController implements ShareSystem {
         if(Objects.isNull(share)){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_SHARE_NOT_FOUND);
         }
+        //浏览量加+1
+        share.setView(share.getView()+1);
+        shareService.saveShare(share);
         AppShareInfoModel shareInfoModel=new AppShareInfoModel();
         shareInfoModel.setTitle(share.getTitle());
         shareInfoModel.setTime(share.getTime());

@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 爱分享列表
@@ -13,13 +12,17 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class AppShareListModel {
+public class AppUserSharePraiseModel {
 
     /**
      * ID
      */
     private Long pId;
     /**
+     * 用户头像
+     */
+    private String userHeadUrl;
+       /**
      * 标题
      */
     private String title;
@@ -40,11 +43,6 @@ public class AppShareListModel {
     private String intro;
 
     /**
-     * 内容 todo 暂时还没发现需要用到
-     */
-    private String content;
-
-    /**
      * 置顶
      */
     private Boolean top;
@@ -57,30 +55,4 @@ public class AppShareListModel {
      * 发帖时间
      */
     private Date time;
-
-    /**
-     * 点赞量
-     */
-    private Long praiseQuantity;
-
-    /**
-     * 评论量
-     */
-    private Long commentQuantity;
-
-    /**
-     * 转发量
-     */
-    private Long relayQuantity;
-    /**
-     * 转发可得积分
-     */
-    private Integer relayScore;
-
-    /**
-     * 点赞者头像列表
-     */
-    private List<String> headUrls;
-
-
 }

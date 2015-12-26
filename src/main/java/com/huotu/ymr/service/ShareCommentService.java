@@ -1,6 +1,7 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.ShareComment;
+import com.huotu.ymr.model.AppUserShareCommentModel;
 
 import java.util.List;
 
@@ -29,6 +30,23 @@ public interface ShareCommentService {
      * @throws Exception
      */
     void deleteComment(Long shareCommentId) throws Exception;
+
+    /**
+     * 获取该用户的评论过的文章
+     * @param userId            用户ID
+     * @param lastId            最后一条评论的ID
+     * @return
+     * @throws Exception
+     */
+    List<ShareComment> findCommentList(Long userId,Long lastId) throws Exception;
+
+
+    /**
+     * 将评论转换为model
+     * @return
+     * @throws Exception
+     */
+    AppUserShareCommentModel getCommentToModel(ShareComment shareComment) throws Exception;
 
 
 

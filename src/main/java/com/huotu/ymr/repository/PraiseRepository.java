@@ -18,6 +18,6 @@ public interface PraiseRepository extends JpaRepository<Praise, Long> ,ClassicsR
     List<Praise> findByShare(Share share);
     List<Praise> findByUser(User user);
 
-    @Query("select p from Praise as p where p.user=?1")
-    List<Long> getPraiseShareIds(User user);
+    @Query("select p from Praise as p where p.user=?1 and p.id<?2 order by p.id desc ")
+    List<Praise> getPraiseShares(User user,Long lastId);
 }

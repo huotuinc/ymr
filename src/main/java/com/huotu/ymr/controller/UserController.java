@@ -22,7 +22,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+import java.util.Random;
 
 /**
  * 用户系统
@@ -69,6 +72,12 @@ public class UserController implements UserSystem {
     @Autowired
     PraiseRepository praiseRepository;
 
+    @Autowired
+    PraiseService praiseService;
+
+    @Autowired
+    ShareRunningRepository shareRunningRepository;
+
 
     @RequestMapping("/init")
     @Override
@@ -110,39 +119,33 @@ public class UserController implements UserSystem {
                            String province,
                            String nickname ,
                            String openid) throws Exception {
-        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development")){
-            //测试用
-            User usertest=userRepository.findOne(1234L);
-            String tokentest=UUID.randomUUID().toString().replaceAll("-","");
-            AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
-            appUserInfoModel.setUserId(usertest.getId());
-            appUserInfoModel.setUserName("小开开专属测试号");
-            appUserInfoModel.setHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");
-            appUserInfoModel.setNickName("小开开");
-            appUserInfoModel.setScore(usertest.getScore());
-            appUserInfoModel.setUserLevel(usertest.getUserLevel());
-            appUserInfoModel.setMerchantId(456L);
-            appUserInfoModel.setName("方开金");
-            appUserInfoModel.setSex("男");
-            appUserInfoModel.setMobile("13588741728");
-            appUserInfoModel.setIsBindMobile(false);
-            appUserInfoModel.setToken(tokentest);
-            usertest.setToken(tokentest);
-            userRepository.save(usertest);
-            data.outputData(appUserInfoModel);
-        }
-        if(environment.acceptsProfiles("prod")){
-            if (unionid == null) {
-                return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
-            }
-            MallUserModel mallUserModel = dataCenterService.getUserInfoByUniond(unionid)[0];//todo 调用数据中心
+            AppUserInfoModel appUserInfoModel;
+            MallUserModel mallUserModel=null;
+//            MallUserModel mallUserModel = dataCenterService.getUserInfoByUniond(unionid)[0];//todo 调用数据中心
             if(Objects.isNull(mallUserModel)){
-                mallUserModel=null;
+                AppWeiXinAccreditModel appWeiXinAccreditModel=new AppWeiXinAccreditModel();
+                appWeiXinAccreditModel.setUnionid(unionid);
+                appWeiXinAccreditModel.setOpenid(openid);
+                appWeiXinAccreditModel.setNickname(nickname);
+                appWeiXinAccreditModel.setHeadimgurl(headimgurl);
+                appWeiXinAccreditModel.setSex(sex);
+                appWeiXinAccreditModel.setCountry(country);
+                appWeiXinAccreditModel.setCity(city);
+                appWeiXinAccreditModel.setProvince(province);
+                Long userId=dataCenterService.createUser(appWeiXinAccreditModel);
+                if(userId==null){
+                    throw new Exception("商城创建用户失败");
+                }
+                User user=userService.getUser(userId);
+                mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+                mallUserModel.setSex(sex);
+                appUserInfoModel=userService.getAppUserInfoModel(user, mallUserModel);
+            }else {
+                User user=userService.getUser(mallUserModel.getUserId());
+                appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
             }
-            User user=userService.getUser(mallUserModel.getUserId());
-            AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
             data.outputData(appUserInfoModel);
-        }
+
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
@@ -152,7 +155,7 @@ public class UserController implements UserSystem {
         if (unionId == null) {
             ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        MallUserModel[] mallUserModels=dataCenterService.getUserInfoByUniond(unionId);
+        MallUserModel[] mallUserModels=dataCenterService.getUserInfoByUniond(unionId);//todo
         AppUserInfoModel[] appUserInfoModels=new AppUserInfoModel[mallUserModels.length];
         for(int i=0;i<mallUserModels.length;i++){
             User user=userService.getUser(mallUserModels[i].getUserId());
@@ -303,14 +306,13 @@ public class UserController implements UserSystem {
         if(StringUtils.isEmpty(code)||StringUtils.isEmpty(phone)||userId==null||currentDate==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
         List<VerificationCode> codeList = verificationCodeRepository.findByMobileAndTypeAndSendTimeGreaterThan(
                 phone, CommonEnum.VerificationType.bind, new Date(currentDate - 60 * 1000));
         for (VerificationCode verificationCode : codeList) {
             if (!verificationCode.getCode().equals(code))
                 return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
         }
-
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
         //检查是否已经绑定了手机号
         if(mallUserModel.getIsBindMobile()){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE_ALREADY_BINDING);
@@ -459,21 +461,80 @@ public class UserController implements UserSystem {
 
     @RequestMapping("/getPraiseList")
     @Override
-    public ApiResult getPraiseList(Output<AppShareListModel[]> list,
+    public ApiResult getPraiseList(Output<AppUserSharePraiseModel[]> list,
                                    @RequestParam(required = true)Long userId,
                                    @RequestParam(required = true)Long lastId) throws Exception {
         User user=userRepository.findOne(userId);
         if(Objects.isNull(user)){
             throw new UserNotExitsException();
         }
-        List<Long> shareIds=praiseRepository.getPraiseShareIds(user);
-        if(!shareIds.isEmpty()){
-            List<Share> shares=shareService.findPraiseList(shareIds, lastId);
+        List<Praise> praises=praiseService.findPraiseList(user, lastId);
+        if(!praises.isEmpty()){
+            AppUserSharePraiseModel[] appUserSharePraiseModels=new AppUserSharePraiseModel[praises.size()];
+
+            for(int i=0;i<praises.size();i++){
+                appUserSharePraiseModels[i]=praiseService.getpraiseToModel((praises.get(i)));
+            }
+            list.outputData(appUserSharePraiseModels);
+        }else {
+            list.outputData(null);
         }
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+    @RequestMapping("/getCommentList")
+    @Override
+    public ApiResult getCommentList(Output<AppUserShareCommentModel[]> list,
+                                    @RequestParam(required = true)Long userId,
+                                    @RequestParam(required = true)Long lastId) throws Exception {
 
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+        List<ShareComment> shareComments=shareCommentService.findCommentList(userId, lastId);
+        if(!shareComments.isEmpty()){
+            AppUserShareCommentModel[] appUserShareCommentModels=new AppUserShareCommentModel[shareComments.size()];
 
+            for(int i=0;i<shareComments.size();i++){
+                appUserShareCommentModels[i]=shareCommentService.getCommentToModel(shareComments.get(i));
+            }
+            list.outputData(appUserShareCommentModels);
+        }else {
+            list.outputData(null);
+        }
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
 
-        return null;
+    @RequestMapping("/getUserShareList")
+    @Override
+    public ApiResult getUserShareList(Output<AppUserShareRunningModel[]> list,
+                                      @RequestParam(required = true)Long userId,
+                                      @RequestParam(required = true)Long lastId) throws Exception {
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+        List<ShareRunning> shareRunnings=shareRunningRepository.findByUserId(userId,lastId);
+        if(!shareRunnings.isEmpty()){
+            AppUserShareRunningModel[] appUserShareRunningModels=new AppUserShareRunningModel[shareRunnings.size()];
+
+            for(int i=0;i<shareRunnings.size();i++){
+                AppUserShareRunningModel appUserShareRunningModel=new AppUserShareRunningModel();
+                ShareRunning shareRunning=shareRunnings.get(i);
+                appUserShareRunningModel.setPId(shareRunning.getShare().getId());
+                appUserShareRunningModel.setTitle(shareRunning.getShare().getTitle());
+                appUserShareRunningModel.setShareType(shareRunning.getShare().getShareType());
+                appUserShareRunningModel.setImg(shareRunning.getShare().getImg());
+                appUserShareRunningModel.setIntro(shareRunning.getShare().getIntro());
+                appUserShareRunningModel.setTime(shareRunning.getShare().getTime());
+                appUserShareRunningModel.setIntegral(shareRunning.getIntegral());
+                appUserShareRunningModels[i]=appUserShareRunningModel;
+            }
+            list.outputData(appUserShareRunningModels);
+        }else {
+            list.outputData(null);
+        }
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/updateDeviceToken")
