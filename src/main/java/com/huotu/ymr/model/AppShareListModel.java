@@ -35,6 +35,11 @@ public class AppShareListModel {
     private String img;
 
     /**
+     * 头像
+     */
+    private String userHeadUrl;
+
+    /**
      * 简介
      */
     private String intro;
