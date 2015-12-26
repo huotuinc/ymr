@@ -595,10 +595,11 @@
                                                 <span th:text="${crowdFundingPublics.orderNo}"></span>
                                             </td>
                                             <td class="txt20">
-                                                <a th:if="${crowdFundingPublics.status==0}" th:attr="crowdFundingPublicsId=${crowdFundingPublics.id}"  onclick="successPublic(this)">点此成功</a>
-                                                <a th:if="${crowdFundingPublics.status==0}" th:attr="crowdFundingPublicsId=${crowdFundingPublics.id}"  onclick="failPublic(this)">点此失败</a>
-                                                <a th:if="${crowdFundingPublics.status==1}"  >成功</a>
-                                                <a th:if="${crowdFundingPublics.status==2}"  >失败</a>
+                                                <a th:if="${crowdFundingPublics.status==0 and #object.isFull==0}" th:attr="crowdFundingPublicsId=${crowdFundingPublics.id}"  onclick="successPublic(this)">点此成功</a>
+                                                <a th:if="${crowdFundingPublics.status==0 and #object.isFull==1}" th:attr="crowdFundingPublicsId=${crowdFundingPublics.id}"  onclick="failPublic(this)">预约人数已满，请点此失败</a>
+                                                <a th:if="${crowdFundingPublics.status==0 and #object.isFull==0}" th:attr="crowdFundingPublicsId=${crowdFundingPublics.id}"  onclick="failPublic(this)">点此失败</a>
+                                                <a th:if="${crowdFundingPublics.status==1}">成功</a>
+                                                <a th:if="${crowdFundingPublics.status==2}">失败</a>
 
                                             </td>
                                             <td class="txt20">

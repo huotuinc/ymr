@@ -1,6 +1,5 @@
 package com.huotu.ymr.model;
 
-import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import lombok.Getter;
@@ -52,7 +51,7 @@ public class AppGlobalModel {
     public void init() {
 
         //todo 将其他参数也取出来
-        appId=configRepository.findOne(ConfigKey.APPID).getValue();
+        //appId=configRepository.findOne(ConfigKey.APPID).getValue();
     }
 
     //todo run

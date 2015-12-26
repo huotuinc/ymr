@@ -100,6 +100,12 @@ public class CrowdFundingPublicSearchModel {
      */
     private Integer pageNoStr = 0;
 
+    /**
+     *预约项目专用：
+     * 预约人数已满：1
+     * 预约人数未满：0
+     */
+    private Integer isFull=0;
 //    /**
 //     * 辅助详情页面的页码显示
 //     */

@@ -598,6 +598,9 @@ public class CrowdFundingManagerController {
         CrowdFunding crowdFunding=crowdFundingRepository.findOne(crowdFundingPublicSearchModel.getCrowdFundingId());
 
         if(crowdFunding.getCrowdFundingType()== CommonEnum.CrowdFundingType.booking ){
+            if(crowdFunding.getCurrentBooking()>=crowdFunding.getToBooking()) {
+                crowdFundingPublicSearchModel.setIsFull(1);//todo 预约是否满
+            }
             crowdFundingPublicSearchModel.setCrowdFundingType(0);
             crowdFundingPublicSearchModel.setPublicType(0);
         }else if(crowdFunding.getCrowdFundingType()== CommonEnum.CrowdFundingType.subscription){
@@ -766,7 +769,7 @@ public class CrowdFundingManagerController {
         CrowdFunding crowdFunding=crowdFundingRepository.findOne(crowdFundingPublic.getCrowdFunding().getId());
         if(crowdFunding.getCurrentBooking()>=crowdFunding.getToBooking()) { //todo 考虑一下高并发量？
             msg.setCode(501);
-            msg.setMsg("error");//todo 提示已经满了，不能继续确认成功
+            msg.setMsg("预约人数已满，请点击失败取消预约");//todo 提示已经满了，不能继续确认成功
         }else {
             CrowdFunding crowdFunding1=crowdFundingPublic.getCrowdFunding();
             crowdFunding.setCurrentBooking(crowdFunding1.getCurrentBooking()+1);
