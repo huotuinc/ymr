@@ -2,6 +2,7 @@ package com.huotu.ymr.boot;
 
 import com.huotu.common.api.ApiResultHandler;
 import com.huotu.common.api.OutputHandler;
+import com.huotu.huobanplus.sdk.common.CommonClientSpringConfig;
 import com.huotu.ymr.interceptor.AppHandlerExceptionResolver;
 import com.huotu.ymr.interceptor.CommonInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan(value = {"com.huotu.ymr.service.impl,com.huotu.ymr.controller"})
-@Import(SecurityConfig.class)
+@Import({CommonClientSpringConfig.class})
+
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Autowired

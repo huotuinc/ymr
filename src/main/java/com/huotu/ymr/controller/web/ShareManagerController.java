@@ -4,12 +4,12 @@ import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Share;
-import com.huotu.ymr.entity.ShareProduct;
+import com.huotu.ymr.entity.ShareGoods;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.share.BackendShareModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ConfigRepository;
-import com.huotu.ymr.repository.ShareProductRepository;
+import com.huotu.ymr.repository.ShareGoodsRepository;
 import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.StaticResourceService;
 import com.sun.jndi.toolkit.url.Uri;
@@ -44,7 +44,7 @@ public class ShareManagerController {
     ConfigRepository configRepository;
 
     @Autowired
-    ShareProductRepository shareProductRepository;
+    ShareGoodsRepository shareGoodsRepository;
 
 
     @RequestMapping(value = "/showBottomGeneralize",method = RequestMethod.GET)
@@ -327,7 +327,7 @@ public class ShareManagerController {
             configTT.setValue("0");
             configRepository.save(configTT);
         }
-        List<ShareProduct> shareProducts=shareProductRepository.findByShare(share);
+        List<ShareGoods> shareProducts= shareGoodsRepository.findByShare(share);
         model.addAttribute("shareProducts",shareProducts);
         model.addAttribute("GlobalTransmit",configGT.getValue());
         model.addAttribute("GlobalTotal",configTT.getValue());
@@ -456,9 +456,9 @@ public class ShareManagerController {
             throw new Exception("帖子不存在！,或许已被删除！");
         }
         share.setImg(staticResourceService.getResource(share.getImg()).toString());
-        List<ShareProduct> shareProducts=shareProductRepository.findByShare(share);
-        model.addAttribute("share",share);
-        model.addAttribute("shareProducts",shareProducts);
+        List<ShareGoods> shareProducts= shareGoodsRepository.findByShare(share);
+        model.addAttribute("share", share);
+        model.addAttribute("shareProducts", shareProducts);
         return "manager/share/DetailedShare";
     }
 
