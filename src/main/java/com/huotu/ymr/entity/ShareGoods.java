@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Cacheable(value = false)
-public class ShareProduct {
+public class ShareGoods {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +23,12 @@ public class ShareProduct {
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH})
     private Share share;
 
-    private Long productId;
     /**
-     * 名称
+     * 商品Id
+     */
+    private Long goodsId;
+    /**
+     * 商品名称
      */
     private String name;
     /**

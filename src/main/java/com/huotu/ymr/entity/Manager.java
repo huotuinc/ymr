@@ -2,8 +2,12 @@ package com.huotu.ymr.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Created by Administrator on 2015/12/11.
@@ -12,13 +16,22 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Cacheable(value = false)
-public class Manager {
+public class Manager extends Login {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String managerField;
 
-    private String name;
+    public String getManagerField() {
+        return managerField;
+    }
 
-    private String password;
+    public void setManagerField(String managerField) {
+        this.managerField = managerField;
+    }
+
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Arrays.asList(
+                new SimpleGrantedAuthority("ROLE_ADMIN")
+        );
+    }
 }

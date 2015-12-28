@@ -25,6 +25,12 @@ public class HomeController {
         return "manager/home";
     }
 
+
+    @RequestMapping("/login")
+    public String login() {
+        return "manager/login";
+    }
+
     @RequestMapping("/test")
     public String getTest(Model model) throws Exception{
         model.addAttribute("tt","123");
