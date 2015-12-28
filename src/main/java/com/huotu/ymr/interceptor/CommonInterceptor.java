@@ -12,11 +12,12 @@ package com.huotu.ymr.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.PublicParameterHolder;
+import com.huotu.ymr.common.SysRegex;
 import com.huotu.ymr.entity.User;
+import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppPublicModel;
 import com.huotu.ymr.model.AppUserInfoModel;
-import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.DataCenterService;
@@ -110,18 +111,30 @@ public class CommonInterceptor implements HandlerInterceptor {
                 appUserInfoModel.setScore(user.getScore());
                 appUserInfoModel.setToken(token);
 
-                MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(user.getId());
-                if (mallUserModel != null) {
-                    appUserInfoModel.setName(mallUserModel.getName());
-                    appUserInfoModel.setNickName(mallUserModel.getNickName());
-                    appUserInfoModel.setHeadUrl(mallUserModel.getHeadUrl());
-                    appUserInfoModel.setSex(mallUserModel.getSex());
-                    appUserInfoModel.setMerchantId(mallUserModel.getMerchantId());
-                    appUserInfoModel.setIsBindMobile(mallUserModel.getIsBindMobile());
-                    appUserInfoModel.setUserName(mallUserModel.getUserName());
-                    appUserInfoModel.setMobile(mallUserModel.getMobile());
+//                MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(user.getId());
+                MallUser mallUser = mallUserRepository.findOne(user.getId());
+                if (mallUser != null) {
+                    appUserInfoModel.setName(mallUser.getRealName());
+                    appUserInfoModel.setNickName(mallUser.getWxNickName());
+                    appUserInfoModel.setHeadUrl(mallUser.getWxHeadUrl());
+                    appUserInfoModel.setSex(mallUser.getGender().equals("F")?2:1);
+                    appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
+                    appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
+                    appUserInfoModel.setUserName(mallUser.getUsername());
+                    appUserInfoModel.setMobile(mallUser.getMobile());
                     model.setCurrentUser(appUserInfoModel);
                 }
+//                if (mallUserModel != null) {
+//                    appUserInfoModel.setName(mallUserModel.getName());
+//                    appUserInfoModel.setNickName(mallUserModel.getNickName());
+//                    appUserInfoModel.setHeadUrl(mallUserModel.getHeadUrl());
+//                    appUserInfoModel.setSex(mallUserModel.getSex());
+//                    appUserInfoModel.setMerchantId(mallUserModel.getMerchantId());
+//                    appUserInfoModel.setIsBindMobile(mallUserModel.getIsBindMobile());
+//                    appUserInfoModel.setUserName(mallUserModel.getUserName());
+//                    appUserInfoModel.setMobile(mallUserModel.getMobile());
+//                    model.setCurrentUser(appUserInfoModel);
+//                }
             }
         }
 
