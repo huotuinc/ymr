@@ -14,6 +14,7 @@ import com.huotu.ymr.service.StaticResourceService;
 import com.sun.jndi.toolkit.url.Uri;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +53,7 @@ public class ArticleManagerController {
      * @param model
      * @throws Exception
      */
+    @PreAuthorize("haveAnyRole('ADMIN')")
     @RequestMapping(value = "/getArticleList", method = RequestMethod.GET)
     public String getArticleList(ArticleSearchModel articleSearchModel, Model model) throws Exception {
         Page<Article> articlePages = articleService.findArticlePage(articleSearchModel);

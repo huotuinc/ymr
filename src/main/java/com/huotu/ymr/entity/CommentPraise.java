@@ -22,6 +22,9 @@ public class CommentPraise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
+    private  Share share;
+
     /**
      * 文章(帖子)
      */
