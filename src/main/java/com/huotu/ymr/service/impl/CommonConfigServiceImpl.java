@@ -32,7 +32,7 @@ public class CommonConfigServiceImpl implements CommonConfigService {
 
     @Override
     public String getWebUrl() {
-        return env.getProperty("ymr.web.url", "http://apitest.51flashmall.com:8080/ymr");
+        return env.getProperty("ymr.web.url", "http://localhost:8080/ymr");
     }
 
 

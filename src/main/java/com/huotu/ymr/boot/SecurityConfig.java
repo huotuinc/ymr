@@ -56,6 +56,7 @@ public class SecurityConfig {
 //        @Override
 //        public void configure(WebSecurity web) throws Exception {
 //            super.configure(web);
+//            web.ignoring().antMatchers("/resource/**");
 //        }
 
 

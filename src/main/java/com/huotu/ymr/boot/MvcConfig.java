@@ -37,7 +37,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan(value = {"com.huotu.ymr.service.impl,com.huotu.ymr.controller"})
-@Import({CommonClientSpringConfig.class})
+@Import({SecurityConfig.class, CommonClientSpringConfig.class})
 
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
@@ -57,6 +57,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     private CommonInterceptor commonInterceptor;
+
 
 
     public void addInterceptors(InterceptorRegistry registry) {
