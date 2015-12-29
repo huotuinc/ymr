@@ -1,6 +1,7 @@
 package com.huotu.ymr.service;
 
 import com.huotu.ymr.entity.Share;
+import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import org.springframework.data.domain.Page;
@@ -46,7 +47,7 @@ public interface ShareService {
      * @return
      * @throws Exception
      */
-    AppShareListModel shareToListModel(Share share) throws Exception;
+    AppShareListModel shareToListModel(Share share,User user) throws Exception;
 
 
 }

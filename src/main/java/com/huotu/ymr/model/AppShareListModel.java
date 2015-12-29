@@ -58,6 +58,11 @@ public class AppShareListModel {
      * 是否是精品
      */
     private Boolean boutique;
+
+    /**
+     * 该文章是否被用户点赞
+     */
+    private Boolean praise;
     /**
      * 发帖时间
      */

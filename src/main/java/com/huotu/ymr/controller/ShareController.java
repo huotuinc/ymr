@@ -72,16 +72,22 @@ public class ShareController implements ShareSystem {
 
     @RequestMapping("/searchShareList")
     @Override
-    public ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId) throws Exception {
+    public ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId,
+                                     @RequestParam(required = true)Long userId) throws Exception {
         if(lastId==null){
             lastId=0L;
         }
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+
         List<Share> shares=shareService.findAppShareList(key, lastId, 10);//todo
         if(shares!=null) {
             AppShareListModel[] appShareListModels = new AppShareListModel[shares.size()];
             for (int i = 0; i < shares.size(); i++) {
                 Share share=shares.get(i);
-                AppShareListModel appShareListModel=shareService.shareToListModel(share);
+                AppShareListModel appShareListModel=shareService.shareToListModel(share,user);
                 appShareListModels[i]=appShareListModel;
             }
             list.outputData(appShareListModels);
@@ -239,17 +245,23 @@ public class ShareController implements ShareSystem {
 
     @RequestMapping("/searchShareCommentList")
     @Override
-    public ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId) throws Exception {
+    public ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId,
+                                            @RequestParam(required = true)Long userId) throws Exception {
         if(lastId==null){
             lastId=0L;
         }
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
         List<ShareComment> shareComments=shareCommentService.findShareComment(shareId,lastId,10);
-        if(shareComments!=null||shareComments.isEmpty()){
+        if(!Objects.isNull(shareComments)&&!shareComments.isEmpty()){
             List<AppShareCommentListModel> appShareCommentListModels=new ArrayList<>();
             for(int i=0;i<shareComments.size();i++){
                 ShareComment shareComment=shareComments.get(i);
                 AppShareCommentListModel appShareCommentListModel=new AppShareCommentListModel();
                 if(shareComment.getParentId()==0){
+                    CommentPraise commentPraise=commentPraiseRepository.findByCommentAndUser(shareComment,user);
                     appShareCommentListModel.setPid(shareComment.getId());
                     appShareCommentListModel.setName(shareComment.getCommentName());
                     appShareCommentListModel.setLevel(shareComment.getLevel());
@@ -258,7 +270,7 @@ public class ShareController implements ShareSystem {
                     appShareCommentListModel.setTime(shareComment.getTime());
                     appShareCommentListModel.setCommentQuantity(shareComment.getCommentQuantity());
                     appShareCommentListModel.setPraiseQuantity(shareComment.getPraiseQuantity());
-
+                    appShareCommentListModel.setPraise(!Objects.isNull(commentPraise));
                     //开始查找该评论下的回复
                     List<AppShareReplyModel> appShareReplyModels=new ArrayList<>();
                     for(int j=0;j<shareComments.size();j++){
@@ -277,7 +289,6 @@ public class ShareController implements ShareSystem {
                         }
                     }
                     //评论查找完毕
-
                     appShareCommentListModel.setReplyModels(appShareReplyModels);
                     appShareCommentListModels.add(appShareCommentListModel);
                 }

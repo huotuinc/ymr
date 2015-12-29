@@ -20,11 +20,12 @@ public interface ShareSystem {
      * @param list
      * @param key    搜索关键字 按标题搜索
      * @param lastId 上一页的最后一个Id
+     * @param userId 用户ID，用于判断文章是否被点赞
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId) throws Exception;
+    ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId,Long userId) throws Exception;
 
     /**
      * 添加爱分享内容
@@ -92,7 +93,7 @@ public interface ShareSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId) throws Exception;
+    ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId,Long userId) throws Exception;
 
     /**
      * 添加评论

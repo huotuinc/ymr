@@ -3,6 +3,8 @@ package com.huotu.ymr.service;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.AppUserInfoModel;
 import com.huotu.ymr.model.mall.MallUserModel;
+import com.huotu.ymr.model.searchCondition.UserSearchModel;
+import org.springframework.data.domain.Page;
 
 /**
  * 用户管理
@@ -25,6 +27,13 @@ public interface UserService {
      * @throws Exception
      */
     User getUser(Long userId) throws Exception;
+
+    /**
+     * 获取用户列表
+     * @param userSearchModel   查询条件
+     * @return
+     */
+    Page<User> findPcUserList(UserSearchModel userSearchModel);
 
 
 }

@@ -27,4 +27,5 @@ public interface PraiseRepository extends JpaRepository<Praise, Long> ,ClassicsR
 
     @Query("select p from Praise as p where p.share.ownerId=?1 and p.share.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user order by p.id desc ")
     List<Praise> getBePraisedShares(Long userId);
+
 }

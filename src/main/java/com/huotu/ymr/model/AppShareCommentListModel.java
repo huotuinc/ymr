@@ -28,6 +28,10 @@ public class AppShareCommentListModel {
      */
     private CommonEnum.UserLevel level;
 
+    /**
+     * 该评论是否被点赞
+     */
+    private Boolean praise;
 
     /**
      * 头像地址

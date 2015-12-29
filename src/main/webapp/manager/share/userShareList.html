@@ -408,26 +408,26 @@
                                             <td class="txt20 c" style="width: 15px;" th:text="${sharesStat.count}">
                                                 1
                                             </td>
-                                            <td class="txt40">
+                                            <td class="txt40 c">
                                                 <a th:text="${shares.shareTitle}" th:href="@{lookShareInfo(shareId=${shares.id})}">2015092173663935&nbsp;</a>
                                             </td>
-                                            <td class="txt80" th:text="${shares.userType}">
+                                            <td class="txt80 c" th:text="${shares.userType}">
                                                 2015/9/21 20:18:01
                                             </td>
-                                            <td class="txt80" th:text="${#calendars.format(shares.time,'yyyy-MM-dd HH:mm:ss')}">
+                                            <td class="txt80 c" th:text="${#calendars.format(shares.time,'yyyy-MM-dd HH:mm:ss')}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
-                                            <td class="txt20">
+                                            <td class="txt20 c">
                                                 <span th:text="${shares.view}">100</span>
                                             </td>
-                                            <td class="txt20" th:text="${shares.praiseQuantity}">
+                                            <td class="txt20 c" th:text="${shares.praiseQuantity}">
                                                 999
                                             </td>
-                                            <td class="txt40" th:text="${shares.relayQuantity}">
+                                            <td class="txt40 c" th:text="${shares.relayQuantity}">
                                                 745
                                             </td>
 
-                                            <td class="txt40" th:switch="${shares.checkType}">
+                                            <td class="txt40 c" th:switch="${shares.checkType}">
                                                 <span th:case="'审核中'">
                                                     <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">通过</a>
                                                     <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">不通过</a>
