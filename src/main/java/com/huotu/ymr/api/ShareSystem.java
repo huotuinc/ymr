@@ -50,6 +50,16 @@ public interface ShareSystem {
     ApiResult getShareInfo(Output<AppShareInfoModel> data, Long shareId) throws Exception;
 
     /**
+     * 转发成功之后的操作
+     * @param userId
+     * @param shareId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    ApiResult setTransmitShare(Long userId,Long shareId) throws Exception;
+
+    /**
      * 文章点赞
      * @param data      点赞数量
      * @param shareId   文章ID
@@ -115,5 +125,8 @@ public interface ShareSystem {
      */
     @RequestMapping(method = RequestMethod.GET)
     ApiResult deleteComment(Long commentId,Long userId) throws Exception;
+
+
+
 
 }

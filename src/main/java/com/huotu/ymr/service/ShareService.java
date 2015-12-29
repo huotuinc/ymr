@@ -23,6 +23,17 @@ public interface ShareService {
      */
     List<Share> findAppShareList(String key,Long lastId,int pageSize) throws Exception;
 
+
+    /**
+     * 获取我发布的文章(帖子)
+     * @param userId    用户的ID
+     * @param lastId    最后一条文章的ID
+     * @return
+     * @throws Exception
+     */
+    List<Share> findMyIssueShareList(Long userId,Long lastId) throws Exception;
+
+
     Share findOneShare(Long shareId) throws Exception;
 
     Share saveShare(Share share) throws Exception;

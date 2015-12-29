@@ -61,7 +61,12 @@ public class SecurityConfig {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().antMatchers("/app/**", "/resource/**").permitAll().anyRequest().authenticated()
+            http.authorizeRequests().antMatchers(
+                    "/app/**",
+                    "/resource/**",
+                    "/manager/login",
+                    "/transmit/**"
+            ).permitAll().anyRequest().authenticated()
                     .and()
                     .csrf().disable()
                     .formLogin().loginPage(loginPage).defaultSuccessUrl(loginSuccessURL).failureUrl(loginFailedURL).permitAll()

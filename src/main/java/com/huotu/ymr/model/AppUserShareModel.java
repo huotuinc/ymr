@@ -12,27 +12,12 @@ import java.util.Date;
  */
 @Getter
 @Setter
-public class AppUserShareRunningModel {
+public class AppUserShareModel {
 
     /**
      * 文章ID
      */
     private Long pId;
-
-    /**
-     * 用户的ID
-     */
-    private Long userId;
-
-    /**
-     * 转发者姓名
-     */
-    private String name;
-
-    /**
-     * 转发者头像
-     */
-    private String headUrl;
 
     /**
      * 标题
@@ -58,6 +43,11 @@ public class AppUserShareRunningModel {
      * 发帖时间
      */
     private Date time;
+
+    /**
+     * 可获得的积分
+     */
+    private Integer integral;
 
 
 }

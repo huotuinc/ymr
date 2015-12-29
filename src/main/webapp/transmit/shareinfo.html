@@ -1,0 +1,120 @@
+﻿<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="description" content=""/>
+<script type="text/javascript" src="../resource/3rdParty/js/jquery-1.4.2.min.js"
+    th:src="@{/resource/3rdParty/js/jquery-1.7.2.min.js}"></script>
+<link rel="stylesheet" href="../resource/css/common.css"/>
+<link rel="stylesheet" href="../resource/css/fmwebbb.css"/>
+<link rel="stylesheet" type="text/css" href="../resource/css/actions.css"/>
+<link rel="stylesheet" type="text/css" href="../resource/css/search.css"/>
+<link rel="stylesheet" type="text/css" href="../resource/css/newonedow.css"/>
+<title>文章详情</title>
+</head>
+
+<body class="app-edit" onload="firstLoad()">
+<div class="commfont">
+
+  <div class="boxhhh">
+    <p class="tit_rem_big" th:text="${share.title}">标题标题标题标题</p>
+    <p class="tit_rem_small"><span class="ysysleft" th:text="${#calendars.format(share.time,'yyyy-MM-dd HH:mm:ss')}">2015/10/10&nbsp;&nbsp;10:00</span>
+      <span class="ysysright">
+          <span th:text="${share.usedScore}==null?0:${share.usedScore}">105</span>
+          /<span th:text="${share.score}==-1?'无限制':${share.score}">1000</span> 积分</span></p>
+    <!--<p style="clear:both"></p>-->
+    <!--<p style="display:block" class="tit_rem_small"><span class="ysysmoney">起购：5万</span>-->
+      <!--<span class="ysysmoney">目标金额：<i>150万</i></span></p>-->
+    <p style="clear:both"></p>
+    <p style="width:95%; margin:0 auto; margin-top:10px;"><img th:src="@{${share.img}}" src="../resource/images/sss.png"  width="100%"/></p>
+    <div id="content" class="article-content tit_rem_small">内容内容</div>
+  </div>
+  <div class="superli clearfix editing">
+    <div th:if="${shareGoods.size()!=0}" class="control-group" >
+      <div class="sc-goods-list clearfix size-1 card pic">
+      <p style=" margin:10px">推荐产品</p>
+      <p style="border-bottom:1px solid #ddd; margin:10px"></p>
+        <ul th:remove="all-but-first">
+          <li class="goods-card small-pic card" th:each="goods:${shareGoods}">
+            <a href="javascript: void(0);" class="link js-goods clearfix">
+            <div class="photo-block">
+              <img class="goods-photo js-goods-lazy" src="../resource/images/goodsa.jpg" style="width:100%"/>
+            </div>
+            <div class="info clearfix ">
+              <p class="goods-title" th:text="${goods.name}">此处显示商品名称</p>
+              <p class="goods-price"><em th:text="${goods.price}">￥379.00</em></p>
+              <p class="priceyj" th:text="${goods.originalPrice}">￥500.00</p>
+              <p class="goods-price-taobao"></p>
+            </div>
+            <div class="jifendt">
+              <span class="jfd">
+              <img th:src="@{${goods.pictureUrl}}" src="../resource/images/jifen.png"/></span>
+              <span class="jfbq" th:text="${goods.integral}">10积分</span></div>
+            <!--  D 此处标签已换成积分标签 -->
+            </a>
+          </li>
+          <li class="goods-card small-pic card">
+            <a href="javascript: void(0);" class="link js-goods clearfix">
+            <div class="photo-block">
+              <img class="goods-photo js-goods-lazy" src="../resource/images/goodsb.jpg" style="width:100%"/>
+            </div>
+            <div class="info clearfix ">
+              <p class="goods-title">此处显示商品名称</p>
+              <p class="goods-price"><em>￥5000</em></p>
+              <p style="left:0px;clear:both;padding-bottom:5px;font-size:12px;color:#9a9a9a;text-decoration:line-through;">￥500.00</p>
+              <p class="goods-price-taobao"></p>
+            </div>
+            <div class="jifendt">
+              <span class="jfd">
+              <img src="../resource/images/jifen.png"/></span>
+              <span class="jfbq">1000积分</span></div>
+            <!--  D 此处标签已换成积分标签 -->
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="wap_main">
+      <p class=" tit_rem_small" style=" margin:10px">下载美投APP客户端</p>
+      <p style="border-bottom:1px solid #ddd; margin:10px"></p>
+    <div class="m-item-down">
+      <ul>
+        <li>
+            <a href="http://res.fanmore.cn/resource/app/fanmore.apk">
+          <p class="down-icon"><img src="../resource/images/downAndroid.png"/></p>
+          <h4>iOS</h4>
+          </a>
+        </li>
+        <li>
+          <a href="http://res.fanmore.cn/resource/app/fanmore.apk">
+          <p class="down-icon"><img src="../resource/images/downIos.png"/></p>
+          <h4>Android</h4>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <p style="height:10px; clear:both"></p>
+    
+  </div>
+  
+</div>
+
+<script th:inline="javascript">
+  //初始化进页面
+  function firstLoad() {
+    /*<![CDATA[*/
+    var content=/*[[${share.content}]]*/'';
+    $("#content").html(content);
+    /*]]>*/
+
+  }
+
+</script>
+</body>
+</html>

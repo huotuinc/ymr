@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 点赞表
@@ -36,7 +37,8 @@ public class Praise {
     private User user;
 
     /**
-     * 状态 -1：为取消点赞，1：为点赞(废弃了)
+     * 点赞时间
      */
-    private Integer type;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date time;
 }

@@ -15,14 +15,21 @@ import java.util.Date;
 public class AppUserSharePraiseModel {
 
     /**
-     * ID
+     * 点赞ID
      */
     private Long pId;
+
     /**
-     * 用户头像
+     * 文章ID
+     */
+    private Long sId;
+
+    /**
+     * 点赞者头像
      */
     private String userHeadUrl;
-       /**
+
+    /**
      * 标题
      */
     private String title;
@@ -42,17 +49,17 @@ public class AppUserSharePraiseModel {
      */
     private String intro;
 
-    /**
-     * 置顶
-     */
-    private Boolean top;
+//    /**
+//     * 置顶
+//     */
+//    private Boolean top;
 
+//    /**
+//     * 是否是精品
+//     */
+//    private Boolean boutique;
     /**
-     * 是否是精品
-     */
-    private Boolean boutique;
-    /**
-     * 发帖时间
+     * 点赞时间
      */
     private Date time;
 }

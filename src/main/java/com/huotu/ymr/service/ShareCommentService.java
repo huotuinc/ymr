@@ -42,6 +42,16 @@ public interface ShareCommentService {
 
 
     /**
+     * 获取我的文章被别人评论的记录
+     * @param userId
+     * @param lastId
+     * @return
+     * @throws Exception
+     */
+    List<ShareComment> findBeCommentedList(Long userId,Long lastId) throws Exception;
+
+
+    /**
      * 将评论转换为model
      * @return
      * @throws Exception

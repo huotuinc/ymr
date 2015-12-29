@@ -17,4 +17,10 @@ public interface ShareRepository extends JpaRepository<Share, Long>,ClassicsRepo
     @Query("select s from Share as s where s.id in ?1 and s.id>?2 order by s.id desc ")
     List<Share> getShareByIds(List<Long> shareIds,Long lastId);
 
+    @Query("SELECT s from Share as s where s.ownerId=?1 and s.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user order by s.id desc ")
+    List<Share> findMyShares(Long userId);
+
+    @Query("SELECT s from Share as s where s.ownerId=?1 and s.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user and s.id<?2 order by s.id desc ")
+    List<Share> findMyShares(Long userId,Long lastId);
+
 }

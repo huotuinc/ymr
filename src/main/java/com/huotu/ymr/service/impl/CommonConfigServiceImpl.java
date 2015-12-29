@@ -27,7 +27,7 @@ public class CommonConfigServiceImpl implements CommonConfigService {
 
     @Override
     public String getMallApiServerUrl() {
-        return env.getProperty("com.huotu.huobanplus.mall.api.root", "http://mallapi.huobanj.cn");
+        return env.getProperty("com.huotu.huobanplus.mall.api.root", "http://mallapi.fancat.cn");
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CommonConfigServiceImpl implements CommonConfigService {
 
     @Override
     public String getYmrMerchantId() {
-        return env.getProperty("ymr.merchantId","3447");
+        return env.getProperty("ymr.merchantId","4471");
     }
 
     @Override

@@ -56,18 +56,27 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     }
 
     @Override
+    public List<ShareComment> findBeCommentedList(Long userId, Long lastId) throws Exception {
+        if(lastId==0){
+            return shareCommentRepository.findUserBeCommentedShares(userId);
+        }
+        return shareCommentRepository.findUserBeCommentedShares(userId,lastId);
+    }
+
+    @Override
     public AppUserShareCommentModel getCommentToModel(ShareComment shareComment) throws Exception {
         AppUserShareCommentModel appUserShareCommentModel=new AppUserShareCommentModel();
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(shareComment.getUserId());
         appUserShareCommentModel.setPId(shareComment.getShare().getId());
+        appUserShareCommentModel.setCId(shareComment.getId());
         appUserShareCommentModel.setUserHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());
         appUserShareCommentModel.setTitle(shareComment.getShare().getTitle());
         appUserShareCommentModel.setShareType(shareComment.getShare().getShareType());
         appUserShareCommentModel.setImg(shareComment.getShare().getImg());
         appUserShareCommentModel.setIntro(shareComment.getShare().getIntro());
-        appUserShareCommentModel.setTop(shareComment.getShare().getTop());
-        appUserShareCommentModel.setBoutique(shareComment.getShare().getBoutique());
-        appUserShareCommentModel.setTime(shareComment.getShare().getTime());
+//        appUserShareCommentModel.setTop(shareComment.getShare().getTop());
+//        appUserShareCommentModel.setBoutique(shareComment.getShare().getBoutique());
+//        appUserShareCommentModel.setTime(shareComment.getShare().getTime());
         appUserShareCommentModel.setCommentUserId(shareComment.getParentId());
         appUserShareCommentModel.setCommentName(shareComment.getParentName());
         appUserShareCommentModel.setCommentTime(shareComment.getTime());

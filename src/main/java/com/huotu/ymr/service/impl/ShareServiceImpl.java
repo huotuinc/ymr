@@ -102,6 +102,14 @@ public class ShareServiceImpl implements ShareService {
     }
 
     @Override
+    public List<Share> findMyIssueShareList(Long userId,Long lastId) throws Exception {
+        if(lastId==0){
+            return shareRepository.findMyShares(userId);
+        }
+        return shareRepository.findMyShares(userId,lastId);
+    }
+
+    @Override
     public Share findOneShare(Long shareId) throws Exception {
         return shareRepository.findOne(shareId);
     }

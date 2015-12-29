@@ -6,6 +6,8 @@ import com.huotu.ymr.api.ShareSystem;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.*;
+import com.huotu.ymr.exception.ShareNotExitsException;
+import com.huotu.ymr.exception.UserNotExitsException;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppShareCommentListModel;
@@ -13,10 +15,7 @@ import com.huotu.ymr.model.AppShareInfoModel;
 import com.huotu.ymr.model.AppShareListModel;
 import com.huotu.ymr.model.AppShareReplyModel;
 import com.huotu.ymr.model.mall.MallUserModel;
-import com.huotu.ymr.repository.CommentPraiseRepository;
-import com.huotu.ymr.repository.ConfigRepository;
-import com.huotu.ymr.repository.PraiseRepository;
-import com.huotu.ymr.repository.UserRepository;
+import com.huotu.ymr.repository.*;
 import com.huotu.ymr.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -24,7 +23,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by lgh on 2015/12/1.
@@ -65,6 +67,9 @@ public class ShareController implements ShareSystem {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private ShareRunningRepository shareRunningRepository;
+
     @RequestMapping("/searchShareList")
     @Override
     public ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId) throws Exception {
@@ -77,20 +82,6 @@ public class ShareController implements ShareSystem {
             for (int i = 0; i < shares.size(); i++) {
                 Share share=shares.get(i);
                 AppShareListModel appShareListModel=shareService.shareToListModel(share);
-//                AppShareListModel appShareListModel=new AppShareListModel();
-//                appShareListModel.setPId(share.getId());
-//                appShareListModel.setTitle(share.getTitle());
-//                appShareListModel.setImg(staticResourceService.getResource(share.getImg()).toString());//todo
-//                appShareListModel.setIntro(share.getIntro());
-//                appShareListModel.setCommentQuantity(share.getCommentQuantity());
-//                appShareListModel.setContent(share.getContent());
-//                appShareListModel.setShareType(share.getShareType());
-//                appShareListModel.setPraiseQuantity(share.getPraiseQuantity());
-//                appShareListModel.setRelayQuantity(share.getRelayQuantity());
-//                appShareListModel.setRelayScore(share.getRelayReward());
-//                appShareListModel.setTime(share.getTime());
-//                appShareListModel.setTop(share.getTop());
-//                appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
                 appShareListModels[i]=appShareListModel;
             }
             list.outputData(appShareListModels);
@@ -156,6 +147,30 @@ public class ShareController implements ShareSystem {
         shareInfoModel.setUseIntegral(share.getUsedScore());
         data.outputData(shareInfoModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+
+    @Override
+    public ApiResult setTransmitShare(@RequestParam(required = true)Long userId,
+                                      @RequestParam(required = true)Long shareId) throws Exception {
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+        Share share=shareService.findOneShare(shareId);
+        if(Objects.isNull(share)){
+            throw new ShareNotExitsException();
+        }
+
+        ShareRunning shareRunning=new ShareRunning();
+        shareRunning.setUserId(userId);
+        shareRunning.setShare(share);
+        shareRunning.setTime(new Date());
+        shareRunning.setIntegral(share.getRelayReward());
+        shareRunningRepository.save(shareRunning);
+        share.setRelayQuantity(share.getRelayQuantity()+1);
+        shareService.saveShare(share);
+        return  ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+
     }
 
     @RequestMapping("/clickPraise")
