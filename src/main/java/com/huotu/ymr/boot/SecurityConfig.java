@@ -71,8 +71,8 @@ public class SecurityConfig {
                     .csrf().disable()
                     .formLogin().loginPage(loginPage).defaultSuccessUrl(loginSuccessURL).failureUrl(loginFailedURL).permitAll()
                     .and()
-//                    .logout().logoutSuccessUrl(logoutSeccessURL)
-//                    .and(), "/manager/login"
+                    .logout().logoutSuccessUrl(logoutSeccessURL)
+                    .and()
                     .httpBasic();
         }
     }

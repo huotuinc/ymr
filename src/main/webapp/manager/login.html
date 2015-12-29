@@ -39,57 +39,57 @@
                 $.jBox.tip("请输入密码");
                 return;
             }
-            $("#form1").submit();
-
+            $("#loginPage").submit();
+            //login(username,password)
         }
 
-        function login() {
-            $.ajaxFileUpload({
-                url: 'UploadImg',
-                secureuri: false,
-                fileElementId: 'shareImage',
-                dataType: 'json',
-                data: null,
-                success: function(resultModel) {
-                    if(resultModel.code==1){
-                        $.jBox("上传成功");
-                        $("#article_img").attr("src",resultModel.message);
-                        $("#article_img").show();
-                        $("#uploadpicCover").children("span").hide();
-                        $("input[name='picture']").val(resultModel.message);
+        function login(username,password) {
+            $.ajax({
+                url:"managerlogin",
+                type:"post",
+                data:{
+                    username: username,
+                    password:password
+                },//要传递的数据
+                dataType:"json",
+                success:function(msg){
+                    var result=msg.code;
+                    alert(result);
+                    if(result!="200"){
+                        //获取对象的数据用data.userInfo.属性
+                        $("#password").append("<div><font color='red'>用户名或密码错误！</font></div>");
+                    }else{
+                        location.href="getYmrShareList";
                     }
                 },
-                error: function(data, status, e) {
-
-                    $.jBox("上传失败，请检查网络后重试"+e);
-                }
             });
+
         }
 
         </script>
 </head>
 <body>
 <form>
-    ${message}
-    <form action="manager/managerlogin" id="loginPage"  method="post" style="display:block;height:335px;">
+
+    <form action="manager/login" id="loginPage"  method="post" style="display:block;height:335px;">
 
         <div id="roleCode" class="loginFormIpt showPlaceholder" style="display: none;text-align: center;margin: 0 auto;">
             <b class="ico ico-uid"></b>
             <input class="formIpt" tabindex="1" placeholder="商家编号,8位数字,如：10002014" type="text" name="CompanyID" maxlength="50" autocomplete="off"/>
         </div>
-        <div id="name"  class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
+        <div id=""  class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
 
             <input class="formIpt" tabindex="1" title="请输入帐号" id="username" name="username" type="text" maxlength="50" autocomplete="off" placeholder="帐号"/>
         </div>
 
-        <div id="pwd" class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
+        <div id="" class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
 
             <input class="formIpt" tabindex="2" title="请输入密码" id="password" name="password"  type="password" placeholder="密码"/>
         </div>
 
         <div style="text-align: center; margin: 0 auto; width: 389px; padding-top: 10px;">
             <p style="width: 50%;margin: auto">
-                <input id="mallBtn" type="button" onclick="submitForm1" class="buttons3" value="登&nbsp;&nbsp;录"/>
+                <input id="mallBtn" type="button" onclick="submitForm1()" class="buttons3" value="登&nbsp;&nbsp;录"/>
             </p>
 
         </div>

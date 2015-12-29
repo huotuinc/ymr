@@ -104,6 +104,7 @@ public class ArticleController implements ArticleSystem {
             article.setView(view+1);
         }
         data.outputData(articleModel);
+        article=articleRepository.saveAndFlush(article);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 }

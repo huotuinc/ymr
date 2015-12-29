@@ -110,16 +110,42 @@ public class CrowdFundingController implements CrowdFundingSystem {
         Date date=new Date();
         AppCrowdFundingModel appCrowdFundingModel=new AppCrowdFundingModel();
         appCrowdFundingModel.setContent(crowdFunding.getContent());
+        appCrowdFundingModel.setTotalBooking(crowdFunding.getTotalBooking());
         appCrowdFundingModel.setCurrentBooking(crowdFunding.getCurrentBooking());
         appCrowdFundingModel.setCurrentMoeny(crowdFunding.getCurrentMoeny());
         appCrowdFundingModel.setPId(crowdFunding.getId());
         appCrowdFundingModel.setTime(date);
+
+
+        //返回众筹状态
+        if(crowdFunding.getCrowdFundingType()==CommonEnum.CrowdFundingType.booking){
+            if(crowdFunding.getStartTime().before(date)){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.notstarted);
+            }else if(crowdFunding.getCurrentBooking()>=crowdFunding.getToBooking()){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.success);
+            }else if(crowdFunding.getCurrentBooking()<crowdFunding.getToBooking()&&crowdFunding.getEndTime().before(date)){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.fail);
+            }else if(crowdFunding.getCurrentBooking()<crowdFunding.getToBooking()){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.running);
+            }
+        }else{
+            if(crowdFunding.getStartTime().before(date)){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.notstarted);
+            }else if(crowdFunding.getCurrentMoeny()>=crowdFunding.getToMoeny()){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.success);
+            }else if(crowdFunding.getCurrentMoeny()<crowdFunding.getToMoeny()&&crowdFunding.getEndTime().before(date)){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.fail);
+            }else if(crowdFunding.getCurrentMoeny()<crowdFunding.getToMoeny()){
+                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.running);
+            }
+        }
+
         //项目的参与者头像
-        if(crowdFunding.getCrowdFundingType()==CommonEnum.CrowdFundingType.cooperation){
+        if(crowdFunding.getCrowdFundingType()==CommonEnum.CrowdFundingType.cooperation&& appCrowdFundingModel.getPartnerStatue()==CommonEnum.CrowdStatus.success){
             //合作者与合作发起者按时间排序
-            List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFunding.getId(),crowdFundingService.getMaxId(),10);
+            List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingService.findSuccessCrowdsFromLastIdWithNumber(crowdFunding.getId(), crowdFundingService.getMaxId(), 10);
             List<CrowdFundingBooking> crowdFundingBookingList=crowdFundingService.findBookingFromLastIdWithNumber(crowdFunding.getId(),crowdFundingService.getBookingMaxId(),10);
-           CompareModel[] compares=new CompareModel[crowdFundingBookingList.size()+crowdFundingPublicList.size()];
+            CompareModel[] compares=new CompareModel[crowdFundingBookingList.size()+crowdFundingPublicList.size()];
             int count=0;
             for(CrowdFundingPublic crowdFundingPublic:crowdFundingPublicList){
                 CompareModel compareModel=new CompareModel();
@@ -163,9 +189,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
                     }
                 }
             }
+            appCrowdFundingModel.setPeopleHeadUrl(urls);
 
-        }else if(crowdFunding.getCrowdFundingType()==CommonEnum.CrowdFundingType.subscription){
-            List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFunding.getId(),crowdFundingService.getMaxId()+1,10);
+        }else if(crowdFunding.getCrowdFundingType()==CommonEnum.CrowdFundingType.subscription&& appCrowdFundingModel.getPartnerStatue()==CommonEnum.CrowdStatus.success){
+            List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingService.findSuccessCrowdsFromLastIdWithNumber(crowdFunding.getId(),crowdFundingService.getMaxId()+1,10);
             List<String> url=new ArrayList<String>();
             for(CrowdFundingPublic crowdFundingPublic:crowdFundingPublicList){
                 if(crowdFundingPublic.getUserHeadUrl()==null){
@@ -174,34 +201,11 @@ public class CrowdFundingController implements CrowdFundingSystem {
                     url.add(staticResourceService.getResource(crowdFundingPublic.getUserHeadUrl()).toString()); //todo 用户头像
                 }
                 url.add("http://ymr.com/head.png"); //todo 删除
-                  }
+            }
             appCrowdFundingModel.setPeopleHeadUrl(url);
         }
-
-
-        //返回众筹状态
-        if(crowdFunding.getCrowdFundingType()==CommonEnum.CrowdFundingType.booking){
-            if(crowdFunding.getStartTime().before(date)){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.notstarted);
-            }else if(crowdFunding.getCurrentBooking()>=crowdFunding.getToBooking()){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.success);
-            }else if(crowdFunding.getCurrentBooking()<crowdFunding.getToBooking()&&crowdFunding.getEndTime().before(date)){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.fail);
-            }else if(crowdFunding.getCurrentBooking()<crowdFunding.getToBooking()){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.running);
-            }
-        }else{
-            if(crowdFunding.getStartTime().before(date)){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.notstarted);
-            }else if(crowdFunding.getCurrentMoeny()>=crowdFunding.getToMoeny()){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.success);
-            }else if(crowdFunding.getCurrentMoeny()<crowdFunding.getToMoeny()&&crowdFunding.getEndTime().before(date)){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.fail);
-            }else if(crowdFunding.getCurrentMoeny()<crowdFunding.getToMoeny()){
-                appCrowdFundingModel.setPartnerStatue(CommonEnum.CrowdStatus.running);
-            }
-        }
         appCrowdFundingModel.setEndTime(crowdFunding.getEndTime());
+        appCrowdFundingModel.setStartTime(crowdFunding.getStartTime());
         appCrowdFundingModel.setStartMoeny(crowdFunding.getStartMoeny());
         appCrowdFundingModel.setTitle(crowdFunding.getName());
         appCrowdFundingModel.setToBooking(crowdFunding.getToBooking());
@@ -275,7 +279,10 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setStatus(0);
             crowdFundingPublic.setMoney(money);
             crowdFundingPublic.setOrderNo(order.getOrderNo());
+            crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人信息，存入合作发起表中
+
             crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
             //TODO 支付中的订单
 
@@ -357,6 +364,8 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setName(name);
             crowdFundingPublic.setCrowdFunding(crowdFunding);
             crowdFundingPublic.setStatus(0);
+            crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人人信息，存入合作发起表中
             crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
             return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
@@ -469,6 +478,8 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingBooking.setAgencyFee(money-lastMoney);
 
             crowdFundingPublic.setAmount(crowdFundingPublic.getAmount()+1);
+            crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
+            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
             //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中
             crowdFundingBooking=crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking);
@@ -517,6 +528,8 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setName(name);
             crowdFundingPublic.setCrowdFunding(crowdFunding);
             crowdFundingPublic.setStatus(0);
+            crowdFundingPublic.setAmount(crowdFundingPublic.getAmount()+1);
+            crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
 //            /crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中
             crowdFundingPublic=crowdFundingPublicRepository.saveAndFlush(crowdFundingPublic);
             return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);

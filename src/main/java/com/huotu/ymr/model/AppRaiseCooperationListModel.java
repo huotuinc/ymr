@@ -34,6 +34,14 @@ public class AppRaiseCooperationListModel {
 
     /**
      * 用户等级
+     * /**
+     * one(0, "LV1")
+     */
+    /**
+     * two(1, "LV2")
+     */
+    /**
+     * three(2, "LV3")
      */
     private CommonEnum.UserLevel level;
 

@@ -75,12 +75,16 @@ public class AppCrowdFundingModel {
      */
     private Long toBooking;
     /**
-     * 目前众筹人数
+     * 目前成功众筹人数
      */
     private Long currentBooking;
+    /**
+     * 目前众筹总人数
+     */
+    private Long totalBooking;
     /**
      * 项目参与者的头像路径
      * 现默认10个
      */
-    private List<String> peopleHeadUrl;
+    private List<String>  peopleHeadUrl;
 }

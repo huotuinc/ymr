@@ -1,13 +1,11 @@
 package com.huotu.ymr.controller.web;
 
-import com.huotu.ymr.entity.Manager;
 import com.huotu.ymr.service.LoginService;
 import com.huotu.ymr.service.ManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -50,19 +48,20 @@ public class HomeController {
     }
 
     /**
-     * 用户登录
+     * 用户成功
      * @return
      */
-    @RequestMapping(value = "/managerlogin",method = RequestMethod.POST)
-    public String managerLogin(String username,String password) {
-        Manager manager=managerService.checkManager(username,password);
-        if(manager==null){
-
-        }else{
-            loginService.newLogin(manager, password);
-        }
-        loginService.newLogin(manager, password);
-        return "manager/home";
+    @RequestMapping(value = "/loginSuccess")
+    public String loginSuccess() {
+        return "redirect:getYmrShareList";
+    }
+    /**
+     * 用户登录失败
+     * @return
+     */
+    @RequestMapping(value = "/loginFailed")
+    public String loginFailed() {
+        return "manager/login";
     }
 
 

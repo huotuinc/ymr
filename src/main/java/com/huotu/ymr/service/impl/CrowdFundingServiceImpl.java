@@ -64,6 +64,22 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
     }
 
     @Override
+    public List<CrowdFundingPublic> findSuccessCrowdsFromLastIdWithNumber(Long crowdId, Long lastId, int number) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFundingPublic as crowd where crowd.crowdFunding.id=:crowdId " +
+                 " and crowd.status=:status " +
+                " and crowd.id<:lastId " +
+                " order by crowd.id desc");
+        List<CrowdFundingPublic> crowdList = crowdFundingPublicRepository.queryHql(hql.toString(), query -> {
+            query.setParameter("crowdId", crowdId);
+            query.setParameter("status", 1);
+            query.setParameter("lastId", lastId);
+            query.setMaxResults(number);
+        });
+        return crowdList;
+    }
+
+    @Override
     public long getMaxId() {
         StringBuilder hql =new StringBuilder("select max(crowd.id) from CrowdFundingPublic as crowd");
         List<Long> maxIds = crowdFundingPublicRepository.queryHql(hql.toString(), null);
@@ -506,14 +522,16 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
     @Override
     public List<CrowdFundingBooking> findBookingFromLastIdWithNumber(Long crowdId, long lastId, int number) {
         StringBuilder hql = new StringBuilder();
+        //成功以后进行的众筹项目合作人获取
         hql.append("from CrowdFundingBooking as booking where booking.crowdFunding.id=:crowdId " +
-                //" and booking.status=:status " +
+                " and booking.status=:status " +
                 " and booking.id<:lastId " +
                 " order by booking.time desc");
         //" order by crowd.id desc" );
         List<CrowdFundingBooking> crowdList = crowdFundingRepository.queryHql(hql.toString(), query -> {
             //query.setParameter("key","%"+key+"%");
             query.setParameter("crowdId", crowdId);
+            query.setParameter("status",1);
             query.setParameter("lastId", lastId);
             query.setMaxResults(number);
             // query.setMaxResults(number);

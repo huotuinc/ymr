@@ -67,7 +67,7 @@ public class AppCrowdFundingListModel {
      */
     private Long toBooking;
     /**
-     * 目前众筹人数
+     * 目前成功众筹人数
      */
     private Long currentBooking;
     /**

@@ -16,12 +16,18 @@ import java.util.List;
  */
 public interface CrowdFundingService {
     /**
-     * 通过文章类型，前一页最后一个id，每页显示的条数
+     * 通过众筹类型，前一页最后一个id，每页显示的条数
      * 获取一页认购,预约，合作发起人表格
      * @return
      */
     List<CrowdFundingPublic> findCrowdListFromLastIdWithNumber(Long crowdId, Long lastId,int number);
 
+     /**
+     * 通过众筹类型，前一页最后一个id，每页显示的条数
+     * 获取一页认购,预约，合作发起人表格
+     * @return
+     */
+    List<CrowdFundingPublic> findSuccessCrowdsFromLastIdWithNumber(Long crowdId, Long lastId, int number) ;
     /**
      * 获取认购表中最大的id值
      * @return
@@ -125,7 +131,7 @@ public interface CrowdFundingService {
     CrowdFundingBooking findBookingByCFAndUserId(Long crowdId, Long userId);
 
     /**
-     * 获取该项目的合作人
+     * 获取该项目合作成功的合作人
      * @param crowdId 项目id
      * @param lastId 上一页id
      * @param number 获取合作人的数量
