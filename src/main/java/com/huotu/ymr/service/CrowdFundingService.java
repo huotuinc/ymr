@@ -124,4 +124,18 @@ public interface CrowdFundingService {
      */
     CrowdFundingBooking findBookingByCFAndUserId(Long crowdId, Long userId);
 
+    /**
+     * 获取该项目的合作人
+     * @param crowdId 项目id
+     * @param lastId 上一页id
+     * @param number 获取合作人的数量
+     * @return
+     */
+    List<CrowdFundingBooking> findBookingFromLastIdWithNumber(Long crowdId, long lastId, int number);
+
+    /**
+     * 得到最大的合作人id
+     * @return
+     */
+    long getBookingMaxId();
 }

@@ -117,7 +117,7 @@ public class CommonInterceptor implements HandlerInterceptor {
                     appUserInfoModel.setName(mallUser.getRealName());
                     appUserInfoModel.setNickName(mallUser.getWxNickName());
                     appUserInfoModel.setHeadUrl(mallUser.getWxHeadUrl());
-                    appUserInfoModel.setSex(mallUser.getGender().equals("F")?2:1);
+                    appUserInfoModel.setSex(1);
                     appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
                     appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
                     appUserInfoModel.setUserName(mallUser.getUsername());

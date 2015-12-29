@@ -1,5 +1,6 @@
 package com.huotu.ymr.model;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,18 @@ public class AppCrowdFundingListModel {
      */
     private String title;
     /**
+     * 众筹类型
+     */
+    private CommonEnum.CrowdFundingType type;
+    /**
+     * 项目状态
+     *  audit(0, "审核中")
+     * pass(1, "通过")
+     *close(3, "关闭")
+     */
+    private CommonEnum.CheckType status;
+
+    /**
      * 时间
      */
     private Date time;
@@ -39,6 +52,10 @@ public class AppCrowdFundingListModel {
      * 目前金额
      */
     private Double currentMoeny;
+    /**
+     * 预约金额
+     */
+    private Double booingMoeny;
 
     /**
      * 起购金额

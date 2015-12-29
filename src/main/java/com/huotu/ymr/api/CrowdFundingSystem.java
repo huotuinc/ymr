@@ -76,8 +76,8 @@ public interface CrowdFundingSystem {
      * 获取预约人列表
      *
      * @param list
-     * @param lastId 上一页最后一个Id
-     * @param crowdId 上一页最后一个Id
+     * @param lastId 预约人上一页最后一个Id
+     * @param crowdId 项目id
      * @return
      * @throws Exception
      */

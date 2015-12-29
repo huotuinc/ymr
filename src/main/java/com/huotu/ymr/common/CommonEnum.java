@@ -450,6 +450,52 @@ public interface CommonEnum {
     }
 
     /**
+     * 项目状态
+     */
+    enum CrowdStatus implements ICommonEnum {
+        /**
+         * notstarted(0, "未开始"),
+         */
+        notstarted(0, "未开始"),
+        /**
+         * success(1, "成功"),
+         */
+        success(1, "成功"),
+        /**
+         * fail(2, "失败"),
+         */
+        fail(2, "失败"),
+        /**
+         * running(3, "进行中");
+         */
+        running(3, "进行中");
+
+        private int value;
+
+        private String name;
+
+        CrowdStatus(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+    /**
      * 审核类型
      */
     enum CheckType implements ICommonEnum {

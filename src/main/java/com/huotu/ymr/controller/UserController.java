@@ -456,6 +456,7 @@ public class UserController implements UserSystem {
     @RequestMapping("/getMyCrowdFundingList")
     @Override
     public ApiResult getMyCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {
+
         return null;
     }
 

@@ -8,6 +8,7 @@ import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.*;
 import com.huotu.ymr.mallentity.MallMerchant;
 import com.huotu.ymr.mallentity.MallUser;
@@ -220,7 +221,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     * 5.请求不存在的众筹项目，并判断是否是想要的结果
      */
     @Test
-    @Rollback(false)
+    //@Rollback(false)
     public void testGetCrowdFundingList() throws Exception {
 
         //创建一个用户用户
@@ -437,6 +438,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     * 6.请求不存在的预约列表，并判断是否是想要的结果
      */
     @Test
+    @Rollback(false)
     public void testGetBookingList() throws Exception {
 
         //进行众筹和预约者的存贮
@@ -593,68 +595,75 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 * 5.请求不存在的发起合作者，并判断是否是想要的结果
  */
     @Test
+    @Rollback(false)
     public void testGetRaiseCooperationList() throws Exception {
         //进行众筹和中文认购者的存贮
         List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
         List<CrowdFundingPublic> crowdFundingPublicList=crowdFundingPublicRepository.findAll();
-        if(crowdFundings.size()<2){
+        List<CrowdFunding> crowdFundingList1=new ArrayList<CrowdFunding>();
+        for(CrowdFunding crowdFunding:crowdFundings){
+            if(crowdFunding.getCrowdFundingType()==CommonEnum.CrowdFundingType.cooperation){
+                crowdFundingList1.add(crowdFunding);
+            }
+        }
+        if(crowdFundingList1.size()<2){
             saveCrowdFunding();
-            crowdFundings=crowdFundingRepository.findAll();
+            crowdFundingList1=crowdFundingRepository.findAll();
         }
             saveChineseCrowdFundingPublic(crowdFundings);
             crowdFundingPublicList=crowdFundingPublicRepository.findAll();
 
 
         String key="和";
-        //进行认购者列表第一页的请求
-        String result=mockMvc.perform(device.getApi("getRaiseCooperationList").param("crowdId", crowdFundings.get(0).getId() + "").build())
+        //进行合作发起者列表第一页的请求
+        String result=mockMvc.perform(device.getApi("getRaiseCooperationList").param("crowdId", crowdFundingList1.get(0).getId() + "").build())
                 .andReturn().getResponse().getContentAsString();
-        List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
+        List<CrowdFundingPublic> crowdFundingPublics=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundingList1.get(0).getId(), crowdFundingService.getMaxId() + 1, 10);
         List<HashMap> list = JsonPath.read(result, "$.resultData.list");
         System.out.println(result);
         for(int i=0;i<crowdFundingPublics.size();i++) {
-            Assert.assertEquals("请求搜索的认购者列表第一页pid断言", crowdFundingPublics.get(i).getId().longValue(),Long.parseLong(list.get(i).get("pid") + ""));
-           // Assert.assertEquals("请求搜索的认购者列表第一页time断言",crowdFundingPublics.get(i).getTime().getTime(),list.get(i).get("time"));
-            Assert.assertEquals("请求搜索的认购者列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
+            Assert.assertEquals("请求搜索的合作者发起列表第一页pid断言", crowdFundingPublics.get(i).getId().longValue(),Long.parseLong(list.get(i).get("pid") + ""));
+           // Assert.assertEquals("请求搜索的合作者列表第一页time断言",crowdFundingPublics.get(i).getTime().getTime(),list.get(i).get("time"));
+            Assert.assertEquals("请求搜索的合作者发起列表第一页name断言",crowdFundingPublics.get(i).getName(),list.get(i).get("name"));
         }
-        //进行认购者列表下页页的请求
-        String result1=mockMvc.perform(device.getApi("getRaiseCooperationList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+"").build())
+        //进行合作发起者列表下页页的请求
+        String result1=mockMvc.perform(device.getApi("getRaiseCooperationList").param("crowdId",crowdFundingList1.get(0).getId()+"").param("lastId",crowdFundingPublicList.get(40).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
-        List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);
+        List<CrowdFundingPublic> crowdFundingPublics1=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundingList1.get(0).getId(), crowdFundingPublicList.get(40).getId(), 10);
         List<HashMap> list1 = JsonPath.read(result1, "$.resultData.list");
         System.out.println(result1);
         for(int i=0;i<crowdFundingPublics1.size();i++) {
-            Assert.assertEquals("请求搜索的认购者列表下页pid断言", crowdFundingPublics1.get(i).getId().longValue(), Long.parseLong(list1.get(i).get("pid") + ""));
-           // Assert.assertEquals("请求搜索的认购者列表下页time断言",crowdFundingPublics1.get(i).getTime().getTime(),list1.get(i).get("time"));
-            Assert.assertEquals("请求搜索的认购者列表下页name断言", crowdFundingPublics1.get(i).getName(), list1.get(i).get("name"));
+            Assert.assertEquals("请求搜索的合作发起者列表下页pid断言", crowdFundingPublics1.get(i).getId().longValue(), Long.parseLong(list1.get(i).get("pid") + ""));
+           // Assert.assertEquals("请求搜索的合作者列表下页time断言",crowdFundingPublics1.get(i).getTime().getTime(),list1.get(i).get("time"));
+            Assert.assertEquals("请求搜索的合作者发起列表下页name断言", crowdFundingPublics1.get(i).getName(), list1.get(i).get("name"));
         }
 
         //进行认购者列表最后一页的请求
-        String result2=mockMvc.perform(device.getApi("getRaiseCooperationList").param("crowdId",crowdFundings.get(0).getId()+"").param("lastId",0+"").build())
+        String result2=mockMvc.perform(device.getApi("getRaiseCooperationList").param("crowdId",crowdFundingList1.get(0).getId()+"").param("lastId",0+"").build())
                 .andReturn().getResponse().getContentAsString();
-        List<CrowdFundingPublic> crowdFundingPublics2=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundings.get(0).getId(), 0L, 10);
+        List<CrowdFundingPublic> crowdFundingPublics2=crowdFundingService.findCrowdListFromLastIdWithNumber(crowdFundingList1.get(0).getId(), 0L, 10);
         List<HashMap> list2 = JsonPath.read(result2, "$.resultData.list");
         System.out.println(result2);
         for(int i=0;i<crowdFundingPublics2.size();i++) {
-            Assert.assertEquals("请求搜索的认购者列表下页pid断言", crowdFundingPublics2.get(i).getId().longValue(), Long.parseLong(list2.get(i).get("pid") + ""));
-           // Assert.assertEquals("请求搜索的认购者列表下页time断言",crowdFundingPublics2.get(i).getTime().getTime(),list2.get(i).get("time"));
-            Assert.assertEquals("请求搜索的认购者列表下页name断言", crowdFundingPublics2.get(i).getName(), list2.get(i).get("name"));
+            Assert.assertEquals("请求搜索的合作发起者列表下页pid断言", crowdFundingPublics2.get(i).getId().longValue(), Long.parseLong(list2.get(i).get("pid") + ""));
+           // Assert.assertEquals("请求搜索的合作者列表下页time断言",crowdFundingPublics2.get(i).getTime().getTime(),list2.get(i).get("time"));
+            Assert.assertEquals("请求搜索的合作者发起列表下页name断言", crowdFundingPublics2.get(i).getName(), list2.get(i).get("name"));
         }
 
-        //进行搜索的认购者列表不存在页的请求
+        //进行搜索的合作者列表不存在页的请求
         long maxId=0;
-        for(CrowdFunding funding:crowdFundings){
+        for(CrowdFunding funding:crowdFundingList1){
             if(funding.getId()>maxId){
                 maxId=funding.getId();
             }
         }
         key="罗";
         String result3=mockMvc.perform(device.getApi("getRaiseCooperationList")
-                .param("crowdId", crowdFundings.get(0).getId() + "")
-                .param("lastId",crowdFundingPublicList.get(40).getId()+"").build())
+                .param("crowdId", crowdFundingList1.get(0).getId() + "")
+                .param("lastId",crowdFundingList1.get(40).getId()+"").build())
                 .andReturn().getResponse().getContentAsString();
         List<HashMap> list3 = JsonPath.read(result3, "$.resultData.list");
-        Assert.assertEquals("请求搜索的认购者列表下页条数断言", 0, list3.size());
+        Assert.assertEquals("请求搜索的合作者列表下页条数断言", 0, list3.size());
     }
 
     /*
@@ -665,6 +674,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
    * 5.进行正常的用户合作请求，并断言
     */
     @Test
+    @Rollback(false)
     public void testGetCooperationResult() throws Exception {
         List<User> users=userRepository.findAll();
         if(users.size()<=2){
@@ -761,6 +771,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     * 4.进行正常的用户合作请求，并断言
      */
     @Test
+    @Rollback(false)
     public void testGoCooperation() throws Exception {
 //
 //        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
@@ -946,6 +957,7 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
 * 6.请求不存在的认购列表，并判断是否是想要的结果
  */
     @Test
+    @Rollback(false)
     public void testGetSubscriptionList() throws Exception {
         //进行众筹和认购者的存贮
         List<CrowdFunding> crowdFundings=crowdFundingRepository.findAll();
@@ -1112,9 +1124,22 @@ public class CrowdFundingControllerTest extends SpringBaseTest {
     @Rollback(false)
     public  void testSetConfig(){
         Config config=new Config();
-        config.setKey("GlobalAgencyFee");
+        config.setKey(ConfigKey.GLOBALAGENCYFEE);
         config.setValue("0");
         config=configRepository.saveAndFlush(config);
+
+        Config config1=new Config();
+        config1.setKey(ConfigKey.APPID);
+        config1.setValue("1111111111111");
+        config1=configRepository.saveAndFlush(config1);
+        Config config2=new Config();
+        config2.setKey(ConfigKey.APPSECRET);
+        config2.setValue("22222222222222222");
+        config2=configRepository.saveAndFlush(config2);
+        Config config3=new Config();
+        config3.setKey(ConfigKey.MCHID);
+        config3.setValue("3333333333333");
+        config3=configRepository.saveAndFlush(config);
 
 
     }

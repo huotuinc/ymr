@@ -502,4 +502,33 @@ public class CrowdFundingServiceImpl implements CrowdFundingService {
             return bookingList.get(0);
         }
     }
+
+    @Override
+    public List<CrowdFundingBooking> findBookingFromLastIdWithNumber(Long crowdId, long lastId, int number) {
+        StringBuilder hql = new StringBuilder();
+        hql.append("from CrowdFundingBooking as booking where booking.crowdFunding.id=:crowdId " +
+                //" and booking.status=:status " +
+                " and booking.id<:lastId " +
+                " order by booking.time desc");
+        //" order by crowd.id desc" );
+        List<CrowdFundingBooking> crowdList = crowdFundingRepository.queryHql(hql.toString(), query -> {
+            //query.setParameter("key","%"+key+"%");
+            query.setParameter("crowdId", crowdId);
+            query.setParameter("lastId", lastId);
+            query.setMaxResults(number);
+            // query.setMaxResults(number);
+        });
+        return crowdList;
+    }
+
+    @Override
+    public long getBookingMaxId() {
+        StringBuilder hql =new StringBuilder("select max(booking.id) from CrowdFundingBooking as booking");
+        List<Long> maxIds = crowdFundingBookingRepository.queryHql(hql.toString(), null);
+        long maxId = 0L;
+        if (maxIds.size()>0&&maxIds.get(0)!=null) {
+            maxId = maxIds.get(0);
+        }
+        return maxId;
+    }
 }

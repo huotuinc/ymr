@@ -137,6 +137,7 @@ public class ArticleControllerTest extends SpringBaseTest {
         String result = mockMvc.perform(device.getApi("getCategoryList").build())
                 .andDo(print())
                 .andReturn().getResponse().getContentAsString();
+        System.out.print(result);
         List<HashMap> list1 = JsonPath.read(result, "$.resultData.list");
         for (int i = 0; i < list1.size(); i++) {
             Assert.assertEquals("进行文章类别的名字断言", categories.get(i).getName(), list1.get(i).get("name"));

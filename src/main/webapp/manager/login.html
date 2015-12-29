@@ -1,30 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head lang="en">
     <meta charset="UTF-8"/>
-    <title></title>
+    <title>用户登录</title>
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.content.css}"/>
+    <link href="../../resource/css/settlements.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/css/settlements.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.4.2.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.7.2.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
+            th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
+    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
+            th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../../resource/css/settlements.css"
+          th:href="@{/resource/css/settlements.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
+            th:src="@{/resource/3rdParty/js/admin.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
+            th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" src="../../resource/js/ajaxfileupload.js"
+            th:src="@{/resource/js/ajaxfileupload.js}"></script>
+    <script type="text/javascript">
+
+        function submitForm1(obj) {
+            var username = $("#username").val();
+            var password = $("#password").val();
+
+            if (username.length == 0) {
+                $.jBox.tip("请输入用户名");
+                return;
+            }
+            if (password.length == 0) {
+                $.jBox.tip("请输入密码");
+                return;
+            }
+            $("#form1").submit();
+
+        }
+
+        function login() {
+            $.ajaxFileUpload({
+                url: 'UploadImg',
+                secureuri: false,
+                fileElementId: 'shareImage',
+                dataType: 'json',
+                data: null,
+                success: function(resultModel) {
+                    if(resultModel.code==1){
+                        $.jBox("上传成功");
+                        $("#article_img").attr("src",resultModel.message);
+                        $("#article_img").show();
+                        $("#uploadpicCover").children("span").hide();
+                        $("input[name='picture']").val(resultModel.message);
+                    }
+                },
+                error: function(data, status, e) {
+
+                    $.jBox("上传失败，请检查网络后重试"+e);
+                }
+            });
+        }
+
+        </script>
 </head>
 <body>
 <form>
+    ${message}
     <form action="manager/managerlogin" id="loginPage"  method="post" style="display:block;height:335px;">
 
         <div id="roleCode" class="loginFormIpt showPlaceholder" style="display: none;text-align: center;margin: 0 auto;">
             <b class="ico ico-uid"></b>
             <input class="formIpt" tabindex="1" placeholder="商家编号,8位数字,如：10002014" type="text" name="CompanyID" maxlength="50" autocomplete="off"/>
         </div>
-        <div id="" class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
+        <div id="name"  class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
 
             <input class="formIpt" tabindex="1" title="请输入帐号" id="username" name="username" type="text" maxlength="50" autocomplete="off" placeholder="帐号"/>
         </div>
 
-        <div id="" class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
+        <div id="pwd" class="loginFormIpt showPlaceholder" style="text-align: center; margin: 0 auto;">
 
             <input class="formIpt" tabindex="2" title="请输入密码" id="password" name="password"  type="password" placeholder="密码"/>
         </div>
 
         <div style="text-align: center; margin: 0 auto; width: 389px; padding-top: 10px;">
             <p style="width: 50%;margin: auto">
-                <input id="mallBtn" type="button" onclick="login()" class="buttons3" value="登&nbsp;&nbsp;录"/>
+                <input id="mallBtn" type="button" onclick="submitForm1" class="buttons3" value="登&nbsp;&nbsp;录"/>
             </p>
 
         </div>

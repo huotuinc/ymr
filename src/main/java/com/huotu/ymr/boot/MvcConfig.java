@@ -14,8 +14,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.security.config.authentication.CachingUserDetailsService;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -37,7 +35,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan(value = {"com.huotu.ymr.service.impl,com.huotu.ymr.controller"})
-@Import({SecurityConfig.class, CommonClientSpringConfig.class})
+@Import({ CommonClientSpringConfig.class})//todo 安全配置
 
 public class MvcConfig extends WebMvcConfigurerAdapter {
 
