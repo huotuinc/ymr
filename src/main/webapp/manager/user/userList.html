@@ -94,7 +94,7 @@
     </style>
 </head>
 <body marginwidth="0" marginheight="0">
-<form method="get" action="getYmrShareList" id="form1" th:object="${shareSearchModel}">
+<form method="get" action="getUserList" id="form1" th:object="${allUserList}">
     <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
     <input hidden="hidden" id="ownerType" name="ownerType" value="1"/>
     <div class="container">
@@ -129,12 +129,12 @@
                         <br/>
                         <br/>
 
-                        <label class="first ">等级：</label>
+                        <label class="first ">状态：</label>
                         <select name="shareType" id="shareType">
                             <option value="-1" selected="selected">==所有==</option>
-                            <option value="0" th:selected="*{shareType==0}">一级</option>
-                            <option value="1" th:selected="*{shareType==1}">二级</option>
-                            <option value="2" th:selected="*{shareType==2}">三级</option>
+                            <option value="0" th:selected="*{shareType==0}">正常</option>
+                            <option value="1" th:selected="*{shareType==1}">禁言</option>
+                            <option value="2" th:selected="*{shareType==2}">冻结</option>
                         </select>
                         &nbsp;
                         <label class="first ">排序：</label>
@@ -160,19 +160,19 @@
                         <br/>
                         <br/>
 
-                        <label class="first ">发布时间：</label>
+                        <!--<label class="first ">发布时间：</label>-->
 
-                        <input name="startTime" type="text" id="startTime" placeholder=" [开始日期]"
-                               th:value="*{startTime}"
-                               class="input-normal Wdate"
-                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>
-                        <input name="endTime" type="text" id="endTime" placeholder=" [结束日期]"
-                               th:value="*{endTime}"
-                               class="input-normal Wdate"
-                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'startTime\')}'})"/>
+                        <!--<input name="startTime" type="text" id="startTime" placeholder=" [开始日期]"-->
+                               <!--th:value="*{startTime}"-->
+                               <!--class="input-normal Wdate"-->
+                               <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>-->
+                        <!--<input name="endTime" type="text" id="endTime" placeholder=" [结束日期]"-->
+                               <!--th:value="*{endTime}"-->
+                               <!--class="input-normal Wdate"-->
+                               <!--onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'startTime\')}'})"/>-->
 
-                        <br/>
-                        <br/>
+                        <!--<br/>-->
+                        <!--<br/>-->
                         <div style="display: none;">
                             <input type="submit" name="btnSearch" value="" id="btnSearch"/>
                             <input type="submit" name="btnSearchAll" value="" id="btnSearchAll"/>
@@ -229,6 +229,29 @@
             <div class="cnt-wp">
 
                 <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
+                    <div class="om-tabs-headers om-helper-reset om-helper-clearfix om-widget-header om-corner-all header-no-border"
+                         style="height: 28px;">
+                        <ul style="height: 28px; line-height: 28px;">
+                            <span class="left-placeholder"></span>
+                            <li class="om-state-default om-corner-top  " id="ddgl1">
+                                <span class="lileft"></span><a href="javascript:showList(0);" class="om-tabs-inner" style="width: auto; height: 27px;">全部</a><span class="liright"></span>
+                            </li>
+                            <li class="om-state-default om-corner-top " id="ddgl2"><span class="lileft"></span><a
+                                    href="javascript:showList(1);" class="om-tabs-inner"
+                                    style="width: auto; height: 27px;">正常</a><span class="liright"></span></li>
+
+                            <li class="om-state-default om-corner-top" id="ddgl3"><span class="lileft">
+                            </span><a
+                                    href="javascript:showList(2);" class="om-tabs-inner"
+                                    style="width: auto; height: 27px;">禁言</a><span class="liright"></span></li>
+
+                            <li class="om-state-default om-corner-top" id="ddgl4"><span class="lileft"></span><a
+                                    href="javascript:showList(3);" class="om-tabs-inner"
+                                    style="width: auto; height: 27px;">冻结</a><span class="liright"></span></li>
+
+                            <span class="right-placeholder"></span>
+                        </ul>
+                    </div>
                     <div class="om-tabs-panels om-widget-content om-corner-bottom">
 
                         <div class="om-widget om-panel ">
@@ -250,7 +273,7 @@
                                             <th scope="col">等级
                                             </th>
 
-                                            <th scope="col">注册时间
+                                            <th scope="col">积分
                                             </th>
 
                                             <th scope="col">操作
@@ -275,6 +298,7 @@
                                             </td>
 
                                             <td class="txt80 c" th:text="${users.level}">
+                                                一级
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
                                             <td class="txt20 c">

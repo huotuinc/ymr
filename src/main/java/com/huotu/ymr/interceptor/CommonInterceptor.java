@@ -11,6 +11,7 @@ package com.huotu.ymr.interceptor;
 
 
 import com.alibaba.fastjson.JSON;
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.PublicParameterHolder;
 import com.huotu.ymr.common.SysRegex;
 import com.huotu.ymr.entity.User;
@@ -21,6 +22,7 @@ import com.huotu.ymr.model.AppUserInfoModel;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.DataCenterService;
+import com.huotu.ymr.service.UserService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,11 @@ public class CommonInterceptor implements HandlerInterceptor {
     @Autowired
     DataCenterService dataCenterService;
 
+    @Autowired
+    private UserService userService;
+
+
+
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
 
@@ -88,6 +95,25 @@ public class CommonInterceptor implements HandlerInterceptor {
         }
 
         AppPublicModel appPublicModel = initPublicParam(request);
+        User user=userService.getUser(appPublicModel.getCurrentUser().getUserId());
+        if(user.getUserStatus()== CommonEnum.UserStatus.freeze){
+            PhysicalApiResult result = new PhysicalApiResult();
+            result.setSystemResultCode(1);
+            result.setResultCode(2101);
+            result.setResultDescription("您已被冻结，请联系客服:"+commonConfigService.getCustomerServicePhone());
+            PrintWriter out = null;
+            try {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json; charset=utf-8");
+                out = response.getWriter();
+                out.append(JSON.toJSONString(result));
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+            }
+            return false;
+        }
         PublicParameterHolder.put(appPublicModel);
 
         return true;
