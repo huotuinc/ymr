@@ -70,6 +70,7 @@ public class ShareController implements ShareSystem {
     @Autowired
     private ShareRunningRepository shareRunningRepository;
 
+
     @RequestMapping("/searchShareList")
     @Override
     public ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId,
@@ -105,10 +106,21 @@ public class ShareController implements ShareSystem {
         if(title==null||content==null||imgUrl==null||userId==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        MallUser user=mallUserRepository.findOne(userId);// todo 最后通过数据中心返回用户信息
+        User user=userRepository.getOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+        if(user.getUserStatus()== CommonEnum.UserStatus.freeze){
+            return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_FREEZE);
+        }
+        if(user.getUserStatus()== CommonEnum.UserStatus.notalk){
+            return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_NOTALK);
+        }
+
+        MallUser malluser=mallUserRepository.findOne(userId);// todo 最后通过数据中心返回用户信息
         Share share=new Share();
         share.setOwnerId(userId);
-        share.setName(user.getWxNickName());
+        share.setName(malluser.getWxNickName());
         share.setOwnerType(CommonEnum.UserType.user);
         share.setTitle(title);
         share.setShareType(CommonEnum.ShareType.userShare);
@@ -166,12 +178,26 @@ public class ShareController implements ShareSystem {
         if(Objects.isNull(share)){
             throw new ShareNotExitsException();
         }
+        //检查用户是否转发过文章
+        List<ShareRunning> shareRunnings=shareRunningRepository.findByUserIdAndShare(userId,share);
+        //用户加积分
+
+        if(shareRunnings.isEmpty()){
+            Integer award=Integer.parseInt(configRepository.findOne(ConfigKey.USER_TRANSMIT).getValue());
+            user.setScore(user.getScore()+award);
+            user.setContinuedScore(user.getContinuedScore()+award);
+            userRepository.save(user);
+        }
 
         ShareRunning shareRunning=new ShareRunning();
         shareRunning.setUserId(userId);
         shareRunning.setShare(share);
         shareRunning.setTime(new Date());
-        shareRunning.setIntegral(share.getRelayReward());
+        if(shareRunnings.isEmpty()){
+            shareRunning.setIntegral(share.getRelayReward());
+        }else {
+            shareRunning.setIntegral(0);
+        }
         shareRunningRepository.save(shareRunning);
         share.setRelayQuantity(share.getRelayQuantity()+1);
         shareService.saveShare(share);
@@ -316,6 +342,12 @@ public class ShareController implements ShareSystem {
         if(Objects.isNull(user)){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
+        if(user.getUserStatus()== CommonEnum.UserStatus.freeze){
+            return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_FREEZE);
+        }
+        if(user.getUserStatus()== CommonEnum.UserStatus.notalk){
+            return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_NOTALK);
+        }
         ShareComment shareComment=shareCommentService.findOneShareComment(parentId);
         if(Objects.isNull(shareComment)){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_COMMENT_NOT_FOUND);
@@ -376,6 +408,12 @@ public class ShareController implements ShareSystem {
             if (Objects.isNull(user)) {
                 return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
             }
+        }
+        if(user.getUserStatus()== CommonEnum.UserStatus.freeze){
+            return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_FREEZE);
+        }
+        if(user.getUserStatus()== CommonEnum.UserStatus.notalk){
+            return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_NOTALK);
         }
         Share share=shareService.findOneShare(shareId);
         if(Objects.isNull(share)){

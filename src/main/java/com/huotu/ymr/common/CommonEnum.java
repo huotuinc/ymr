@@ -20,6 +20,16 @@ public interface CommonEnum {
          */
         ERROR_USER_NOT_FOUND(2001,"用户不存在"),
 
+        /**
+         * USER_BE_FREEZE(2101,"用户已被冻结，请联系客服")
+         */
+        USER_BE_FREEZE(2101,"用户已被冻结，无法进行任何操作，请联系客服"),
+
+        /**
+         * USER_BE_NOTALK(2102,"您已被禁言，无法发表任何言论")
+         */
+        USER_BE_NOTALK(2102,"您已被禁言，无法发表任何言论"),
+
         SYSTEM_BAD_REQUEST_50601(50601, "系统请求失败,code 50601"),//sign校验失败
         /**
          * ERROR_USER_LOGIN_FAIL(56000, "用户登录失败")
@@ -330,6 +340,53 @@ public interface CommonEnum {
             this.name = name;
         }
     }
+
+
+
+    /**
+     * 用户状态
+     */
+    enum UserStatus implements ICommonEnum {
+        /**
+         * normal(0, "正常")
+         */
+        normal(0, "正常"),
+        /**
+         * notalk(1, "禁言")
+         */
+        notalk(1, "禁言"),
+        /**
+         * freeze(2, "冻结")
+         */
+        freeze(2, "冻结");
+        private int value;
+
+        private String name;
+
+        UserStatus(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
 
     /**
      * 0 无更新 1增量更新 2 整包更新 3 强制增量更新 4 强制整包更新

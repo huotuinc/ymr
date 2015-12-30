@@ -1,5 +1,6 @@
 package com.huotu.ymr.repository;
 
+import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareRunning;
 import org.luffy.lib.libspring.data.ClassicsRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,7 @@ public interface ShareRunningRepository extends JpaRepository<ShareRunning, Long
 
     @Query("select sr from ShareRunning as sr where sr.share.ownerId=?1 and sr.share.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user order by sr.id desc ")
     List<ShareRunning> findByUserId(Long userId);
+
+    List<ShareRunning> findByUserIdAndShare(Long userId,Share share);
 
 }

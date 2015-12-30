@@ -139,7 +139,7 @@
                         &nbsp;
                         <label class="first ">排序：</label>
                         <select name="sort" id="sort">
-                            <option value="0" selected="selected">注册时间</option>
+                            <option value="0" selected="selected">序号</option>
                             <option value="1" th:selected="*{sort==1}">按浏览量</option>
                             <option value="2" th:selected="*{sort==2}">按转发量</option>
                             <option value="3" th:selected="*{sort==3}">按点赞量</option>
@@ -190,6 +190,27 @@
         </div>
         <div class="blank10">
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <div class="block">
             <div class="h">
                 <span class="icon-sprite icon-list"></span>
@@ -222,13 +243,11 @@
 
                                             <th scope="col">用户名
                                             </th>
+
                                             <th scope="col">电话
                                             </th>
 
                                             <th scope="col">等级
-                                            </th>
-
-                                            <th scope="col">拥有积分
                                             </th>
 
                                             <th scope="col">注册时间
@@ -240,52 +259,38 @@
                                             <th scope="col">查看更多
                                             </th>
                                         </tr>
-                                        <!--<tr style="background: #FFC; text-align: center; display: none;"-->
-                                        <!--id="trSelectNote">-->
-                                        <!--<td colspan="11">您当前选定了<span id="spSelectedNum">20条</span>记录，<a-->
-                                        <!--href="javascript:void(0);" id="btnCancelSelect">点此取消选定</a>。<a-->
-                                        <!--href="javascript:void(0);" id="btnCheckAll">点此选定全部</a> 的<span-->
-                                        <!--id="spAllSelectedNum">25</span>条记录-->
-                                        <!--</td>-->
-                                        <!--</tr>-->
                                         <tbody th:remove="all-but-first" id="o1">
 
-                                        <tr th:each="shares:${allShareList}" class="even">
-                                            <td class="txt20 c" style="width: 15px;" th:text="${sharesStat.count}">
+                                        <tr th:each="users:${allUserList}" class="even">
+                                            <td class="txt20 c" style="width: 15px;" th:text="${usersStat.count}">
                                                 1
                                             </td>
 
                                             <td class="txt40 c">
-                                                <a th:text="${shares.shareTitle}" th:href="@{lookShareInfo(shareId=${shares.id})}">2015092173663935&nbsp;</a>
+                                                <a th:text="${users.name}" th:href="@{lookUserInfo(userId=${users.id})}">2015092173663935&nbsp;</a>
                                             </td>
 
-                                            <td class="txt80 c" th:text="${shares.userType}">
+                                            <td class="txt80 c" th:text="${users.mobile}">
                                                 18012345678
                                             </td>
 
-                                            <td class="txt80 c" th:text="${shares.userType}">
-                                                2015/9/21 20:18:01
-                                            </td>
-
-                                            <td class="txt80 c" th:text="${#calendars.format(shares.time,'yyyy-MM-dd HH:mm:ss')}">
+                                            <td class="txt80 c" th:text="${users.level}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
                                             <td class="txt20 c">
-                                                <span th:text="${shares.view}">100</span>
+                                                <span th:text="${users.score}">100</span>
                                             </td>
-                                            <td class="txt40 c" th:switch="${shares.checkType}">
-                                                <span th:case="'审核中'">
-                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">通过</a>
-                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">不通过</a>
-                                                </span>
-                                                <span th:case="*" th:text="${shares.checkType}"></span>
+                                            <td class="txt40 c">
+                                                <div>
+                                                    <a th:href="'#'" onclick="setUser(this)" th:text="${users.status}==2?'解冻':'冻结'"  th:attr="shareId=''+${users.id}">冻结</a>
+                                                    <a th:href="'#'" onclick="setUser(this)" th:text="${users.status}==1?'解禁':'禁言'"  th:attr="shareId=''+${users.id}">冻结</a>
+                                                    <a th:href="@{upgradeLevel(userId=${users.id})}" th:text="'升等'">升等</a>
+
+                                                </div>
                                             </td>
                                             <td class="txt40 c tail">
                                                 <div>
-                                                    <a th:href="'#'" onclick="setShare(this)" th:text="${shares.top}?'取消':'置顶'"  th:attr="shareId=''+${shares.id}">置顶</a>
-                                                    <a th:href="@{modifyShare(shareId=${shares.id})}" th:text="'修改'">修改</a>
-                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">移至草稿箱</a>
-                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">删除</a>
+                                                    <a th:href="@{lookUserInfo(userId=${users.id})}" th:text="'查看'">查看</a>
 
                                                 </div>
                                             </td>
@@ -320,57 +325,57 @@
                 </div>
             </div>
         </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
 </form>
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
-    function setShare(obj){
+    function setUser(obj){
         var shareId = $(obj).attr("shareId");
         var text=$(obj).html();
         var type;
         switch (text){
-            case '置顶':
-                type=0;
-                ajaxSetUpload(shareId,type,obj);
-                return;
-            case '通过':
+            case '禁言':
                 type=1;
                 ajaxSetUpload(shareId,type,obj);
                 return;
-            case '取消':
+            case '冻结':
                 type=2;
                 ajaxSetUpload(shareId,type,obj);
                 return;
-            case '不通过':
-                type=3;
+            case '解冻':
+                type=0;
                 ajaxSetUpload(shareId,type,obj);
                 return;
-            case '删除':
-                jBox.confirm("友情提示", "即将删除，确定继续吗？",function(v,h,f){
-                    if (v == 'ok')
-                        ajaxSetUpload(shareId,4,obj);
-                });
-                break;
-            case '移至草稿箱':
-                jBox.confirm("友情提示", "即将移动到草稿箱，确定继续吗？",function(v,h,f){
-                    if (v == 'ok')
-                        ajaxSetUpload(shareId,4,obj);
-                });
-                break;
+            case '解禁':
+                type=0;
+                ajaxSetUpload(shareId,type,obj);
+                return;
+
         }
     }
 
     function ajaxSetUpload(shareId,type,obj){
         $.ajax({
             type:'POST',
-            url: 'setShare',
+            url: 'setUser',
             dataType: 'json',
             data: {shareId:shareId,type:type},
             success:function(result){
                 if(result.code==1){
-                    if(type!=4&&type!=5){
-                        $(obj).html(result.message);
-                    }
+                    $(obj).html(result.message);
                     jBox.tip("修改成功");
                     window.location.reload();
                 }else {

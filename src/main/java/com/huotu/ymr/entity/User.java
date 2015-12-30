@@ -41,6 +41,12 @@ public class User {
     private Integer continuedScore=0;
 
     /**
+     * 用户状态
+     */
+    private CommonEnum.UserStatus userStatus;
+
+
+    /**
      * 用户token身份标示
      * 32位的UUID
      */
