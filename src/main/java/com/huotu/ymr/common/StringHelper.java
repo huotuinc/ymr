@@ -52,8 +52,8 @@ public class StringHelper extends com.huotu.common.base.StringHelper {
 
     /**
      * 获得网页文字内容
-     * @param html
-     * @param length
+     * @param html html内容
+     * @param length 文字长度
      * @return
      */
     public String getText(String html, Integer length) {
