@@ -51,13 +51,13 @@ public class StringHelper extends com.huotu.common.base.StringHelper {
 
 
     /**
-     * 获得简介
-     * @param text
+     * 获得网页文字内容
+     * @param html
      * @param length
      * @return
      */
-    public String getSummary(String text, Integer length) {
-        Source source = new Source(text);
+    public String getText(String html, Integer length) {
+        Source source = new Source(html);
         String result = source.getTextExtractor().toString();
         if (!StringUtils.isEmpty(result) && result.length() > length) {
             return result.substring(0, length);
