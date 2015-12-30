@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 点赞表
@@ -26,7 +27,7 @@ public class CommentPraise {
     private  Share share;
 
     /**
-     * 文章(帖子)
+     * 评论
      */
     @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.REFRESH})
     private ShareComment comment;
@@ -38,8 +39,10 @@ public class CommentPraise {
     @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     private User user;
 
+
     /**
-     * 状态 -1：为取消点赞，1：为点赞
+     * 转发时间
      */
-    private Integer type;
+    @Temporal(value = TemporalType.TIMESTAMP)
+    private Date time;
 }

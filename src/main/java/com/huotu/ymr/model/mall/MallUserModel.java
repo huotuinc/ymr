@@ -24,7 +24,7 @@ public class MallUserModel {
     private String headUrl;
 
     /**
-     * 用户昵称
+     * 微信昵称
      */
     private String nickName;
     /**

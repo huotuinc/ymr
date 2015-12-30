@@ -704,26 +704,46 @@ public class CrowdFundingManagerController {
     @ResponseBody
     public Msg successCrowdFunding(Long userId,Integer booking) throws Exception {
 
-        if(booking==0){
-            CrowdFundingPublic crowdFundingPublic=crowdFundingPulicRepository.findOne(userId);
-            CrowdFunding crowdFunding=crowdFundingPublic.getCrowdFunding();
-            crowdFunding.setCurrentBooking(crowdFunding.getCurrentBooking()+1);
-            crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny()+crowdFundingPublic.getMoney());
-            crowdFundingPublic.setStatus(1);
-            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
-            crowdFundingPublic=crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);
-        }else if(booking==1){
-            CrowdFundingBooking crowdFundingBooking=crowdFundingBookingRepository.findOne(userId);
-            CrowdFunding crowdFunding=crowdFundingBooking.getCrowdFunding();
-            crowdFunding.setCurrentBooking(crowdFunding.getCurrentBooking()+1);
-            crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny()+crowdFundingBooking.getMoney());
-            crowdFundingBooking.setStatus(1);
-            crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
-            crowdFundingBooking=crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking);
-        }
         Msg msg = new Msg();
-        msg.setCode(200);
-        msg.setMsg("success");
+
+        if(booking==0){ //非合作者
+            CrowdFundingPublic crowdFundingPublic1 = crowdFundingPulicRepository.findOne(userId);
+            CrowdFunding crowdFunding1=crowdFundingRepository.findOne(crowdFundingPublic1.getCrowdFunding().getId());
+
+            if(crowdFunding1.getCurrentMoeny()>=crowdFunding1.getToMoeny()) { //todo 考虑一下高并发量？
+                msg.setCode(501);
+                msg.setMsg("预约人数已满，请点击失败取消预约");//todo 提示已经满了，不能继续确认成功
+            }else {
+                CrowdFundingPublic crowdFundingPublic = crowdFundingPulicRepository.findOne(userId);
+                CrowdFunding crowdFunding = crowdFundingPublic.getCrowdFunding();
+                crowdFunding.setCurrentBooking(crowdFunding.getCurrentBooking() + 1);
+                crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny() + crowdFundingPublic.getMoney());
+                crowdFundingPublic.setStatus(1);
+                crowdFunding = crowdFundingRepository.saveAndFlush(crowdFunding);
+                crowdFundingPublic = crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);
+                msg.setCode(200);
+                msg.setMsg("success");
+            }
+        }else if(booking==1){ //合作者
+            CrowdFundingBooking crowdFundingBooking1 = crowdFundingBookingRepository.findOne(userId);
+            CrowdFunding crowdFunding1=crowdFundingRepository.findOne(crowdFundingBooking1.getCrowdFunding().getId());
+
+            if(crowdFunding1.getCurrentMoeny()>=crowdFunding1.getToMoeny()) { //todo 考虑一下高并发量？
+                msg.setCode(501);
+                msg.setMsg("预约人数已满，请点击失败取消预约");//todo 提示已经满了，不能继续确认成功
+            }else {
+                CrowdFundingBooking crowdFundingBooking = crowdFundingBookingRepository.findOne(userId);
+                CrowdFunding crowdFunding = crowdFundingBooking.getCrowdFunding();
+                crowdFunding.setCurrentBooking(crowdFunding.getCurrentBooking() + 1);
+                crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny() + crowdFundingBooking.getMoney());
+                crowdFundingBooking.setStatus(1);
+                crowdFunding = crowdFundingRepository.saveAndFlush(crowdFunding);
+                crowdFundingBooking = crowdFundingBookingRepository.saveAndFlush(crowdFundingBooking);
+                msg.setCode(200);
+                msg.setMsg("success");
+            }
+        }
+
         return msg;
     }
 

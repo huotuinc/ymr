@@ -1,5 +1,8 @@
 package com.huotu.ymr.controller.web;
 
+import com.huotu.ymr.service.LoginService;
+import com.huotu.ymr.service.ManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,13 @@ import java.util.Map;
 @Controller
 @RequestMapping("/manager")
 public class HomeController {
+
+    @Autowired
+    LoginService loginService;
+
+    @Autowired
+    ManagerService managerService;
+
     @RequestMapping("/home")
     public String home(Locale locale, Model model) throws Exception {
         model.addAttribute("a", "ni hao");
@@ -36,4 +46,23 @@ public class HomeController {
         model.addAttribute("tt","123");
         return "test";
     }
+
+    /**
+     * 用户成功
+     * @return
+     */
+    @RequestMapping(value = "/loginSuccess")
+    public String loginSuccess() {
+        return "redirect:getYmrShareList";
+    }
+    /**
+     * 用户登录失败
+     * @return
+     */
+    @RequestMapping(value = "/loginFailed")
+    public String loginFailed() {
+        return "manager/login";
+    }
+
+
 }

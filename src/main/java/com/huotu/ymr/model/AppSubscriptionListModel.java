@@ -1,5 +1,6 @@
 package com.huotu.ymr.model;
 
+import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,20 @@ public class AppSubscriptionListModel {
      * 姓名
      */
     private String name;
+
+    /**
+    * 用户等级
+     * * /**
+     * one(0, "LV1")
+     */
+    /**
+     * two(1, "LV2")
+     */
+    /**
+     * three(2, "LV3")
+     */
+
+    private CommonEnum.UserLevel level;
     /**
      * 时间
      */

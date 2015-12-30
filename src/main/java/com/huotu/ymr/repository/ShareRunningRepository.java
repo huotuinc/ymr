@@ -12,7 +12,10 @@ import java.util.List;
  * Created by xhk on 2015/12/10.
  */
 public interface ShareRunningRepository extends JpaRepository<ShareRunning, Long> ,ClassicsRepository<ShareRunning>,JpaSpecificationExecutor<ShareRunning> {
-    @Query("select sr from ShareRunning as sr where sr.userId=?1 and sr.id<?2 order by sr.id desc ")
+    @Query("select sr from ShareRunning as sr where sr.share.ownerId=?1 and sr.share.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user and sr.id<?2 order by sr.id desc ")
     List<ShareRunning> findByUserId(Long userId,Long lastId);
+
+    @Query("select sr from ShareRunning as sr where sr.share.ownerId=?1 and sr.share.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user order by sr.id desc ")
+    List<ShareRunning> findByUserId(Long userId);
 
 }

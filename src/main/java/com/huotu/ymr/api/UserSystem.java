@@ -199,7 +199,7 @@ public interface UserSystem {
 
     /**
      *
-     * 获取我点赞过的文章
+     * 获取别人对我文章点赞的列表
      * @param list      文章列表
      * @param userId    用户ID
      * @param lastId    最后一条点赞ID
@@ -210,7 +210,7 @@ public interface UserSystem {
     ApiResult getPraiseList(Output<AppUserSharePraiseModel[]> list,Long userId,Long lastId) throws Exception;
 
     /**
-     * 获取我评论过的文章
+     * 获取别人对我文章的评论列表
      * @param list      文章列表
      * @param userId    用户ID
      * @param lastId    最后一条评论ID
@@ -228,7 +228,22 @@ public interface UserSystem {
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult getUserShareList(Output<AppUserShareRunningModel[]>list,Long userId,Long lastId) throws Exception;
+    ApiResult getUserShareList(Output<AppUserShareModel[]>list,Long userId,Long lastId) throws Exception;
+
+
+    /**
+     * 获取别人转发我的文章
+     * @param list
+     * @param userId
+     * @param lastId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.GET)
+    ApiResult getBeForwardedList(Output<AppUserShareRunningModel[]>list,Long userId,Long lastId) throws Exception;
+
+
+
 
     /**
      * <p>无需登录</p>

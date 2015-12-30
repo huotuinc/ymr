@@ -109,9 +109,13 @@ public class CrowdFunding {
     private boolean pushToShare = false;
 
     /**
-     * 目前众筹人数
+     * 目前成功的众筹人数
      */
     private Long currentBooking;
+    /**
+     * 目前众筹总人数
+     */
+    private Long totalBooking;
 
     /**
      * 浏览量

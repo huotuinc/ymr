@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by lgh on 2015/11/28.
@@ -22,6 +23,14 @@ public class AppCrowdFundingModel {
      */
     private CommonEnum.CrowdFundingType type;
 
+    /**
+     * 众筹状态
+     * 未开始：0
+     * 成功：1
+     * 失败：2
+     * 进行中：3
+     */
+    private CommonEnum.CrowdStatus partnerStatue;
     /**
      * 项目标题
      */
@@ -66,7 +75,16 @@ public class AppCrowdFundingModel {
      */
     private Long toBooking;
     /**
-     * 目前众筹人数
+     * 目前成功众筹人数
      */
     private Long currentBooking;
+    /**
+     * 目前众筹总人数
+     */
+    private Long totalBooking;
+    /**
+     * 项目参与者的头像路径
+     * 现默认10个
+     */
+    private List<String>  peopleHeadUrl;
 }

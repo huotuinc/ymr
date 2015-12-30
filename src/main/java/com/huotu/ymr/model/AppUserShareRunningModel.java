@@ -7,8 +7,8 @@ import lombok.Setter;
 import java.util.Date;
 
 /**
- * 爱分享列表
- * Created by lgh on 2015/11/27.
+ * 文章转发
+ * Created by slt on 2015/11/27.
  */
 @Getter
 @Setter
@@ -18,6 +18,22 @@ public class AppUserShareRunningModel {
      * 文章ID
      */
     private Long pId;
+
+    /**
+     * 用户的ID
+     */
+    private Long userId;
+
+    /**
+     * 转发者姓名
+     */
+    private String name;
+
+    /**
+     * 转发者头像
+     */
+    private String headUrl;
+
     /**
      * 标题
      */
@@ -43,8 +59,5 @@ public class AppUserShareRunningModel {
      */
     private Date time;
 
-    /**
-     * 获得的积分
-     */
-    private Integer integral;
+
 }

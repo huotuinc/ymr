@@ -34,18 +34,25 @@ public class PraiseServiceImpl implements PraiseService {
     }
 
     @Override
+    public List<Praise> findBePraisedList(User user, Long lastId) throws Exception {
+        if(lastId==0){
+            return praiseRepository.getBePraisedShares(user.getId());
+        }
+        return praiseRepository.getBePraisedShares(user.getId(),lastId);
+    }
+
+    @Override
     public AppUserSharePraiseModel getpraiseToModel(Praise praise) throws Exception {
         AppUserSharePraiseModel appUserSharePraiseModel=new AppUserSharePraiseModel();
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(praise.getUser().getId());
         appUserSharePraiseModel.setTitle(praise.getShare().getTitle());
-        appUserSharePraiseModel.setPId(praise.getShare().getId());
+        appUserSharePraiseModel.setSId(praise.getShare().getId());
+        appUserSharePraiseModel.setPId(praise.getId());
         appUserSharePraiseModel.setUserHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());
         appUserSharePraiseModel.setShareType(praise.getShare().getShareType());
         appUserSharePraiseModel.setImg(staticResourceService.getResource(praise.getShare().getImg()).toString());
         appUserSharePraiseModel.setIntro(praise.getShare().getIntro());
-        appUserSharePraiseModel.setTop(praise.getShare().getTop());
-        appUserSharePraiseModel.setBoutique(praise.getShare().getBoutique());
-        appUserSharePraiseModel.setTime(praise.getShare().getTime());
+        appUserSharePraiseModel.setTime(praise.getTime());
         return appUserSharePraiseModel;
 
     }

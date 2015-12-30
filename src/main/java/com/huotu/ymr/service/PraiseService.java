@@ -20,6 +20,15 @@ public interface PraiseService {
      */
     List<Praise> findPraiseList(User user, Long lastId) throws Exception;
 
+    /**
+     * 获取用户被点赞的记录
+     * @param user
+     * @param lastId
+     * @return
+     * @throws Exception
+     */
+    List<Praise> findBePraisedList(User user,Long lastId) throws Exception;
+
 
     AppUserSharePraiseModel getpraiseToModel(Praise praise) throws Exception;
 }

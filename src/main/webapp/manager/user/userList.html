@@ -1,10 +1,449 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8"/>
-    <title></title>
-</head>
-<body>
+<html xmlns:th="http://www.thymeleaf.org">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <title>
+        爱分享用户列表
+    </title>
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.content.css}" />
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.8.3.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.8.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
+            th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
+    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
+            th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
+            th:src="@{/resource/3rdParty/js/admin.js}"></script>
+    <link href="../../resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css}"/>
+    <script src="../../resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js"
+            th:src="@{/resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js}"></script>
+    <link href="../../resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"
+          th:href="@{/resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css}"/>
+    <script src="../../resource/3rdParty/Knockout/knockout-2.3.0.js"
+            th:src="@{/resource/3rdParty/Knockout/knockout-2.3.0.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
+            th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var _oldCass = ''
+        $(function () {
+            var authority = "";
+            if (authority != "") {
+                $(".aucontrol").hide();
+            }
 
+            $('tr').mouseover(function () {
+                _oldCass = this.className;
+                this.className = 'over';
+            }).mouseout(function () {
+                this.className = _oldCass;
+            });
+
+        });
+
+        function showList(statu) {
+            if (statu == 0) {
+                $("#shareType").attr("value", -1);
+                $('#form1').submit();
+            } else if (statu == 1) {
+                $("#shareType").attr("value", 0);
+                $('#form1').submit();
+                //$('.aparent3').parent().toggleClass('om-state-default om-corner-top  om-tabs-activated om-state-active');
+            } else if (statu == 2) {
+                $("#shareType").attr("value", 1);
+                $('#form1').submit();
+            } else if (statu == 3) {
+                $("#shareType").attr("value", 2);
+                $('#form1').submit();
+            }
+        }
+        function searchShares() {
+            $('#btnSearch').click();
+        }
+
+        function searchShareAll() {
+            $('#btnSearchAll').click();
+        }
+        /*]]>*/
+    </script>
+    <style type="text/css">
+        .over {
+            background-color: #00ff21;
+        }
+
+        .p_prt, .p_prted {
+            cursor: pointer;
+            width: 17px;
+            height: 18px;
+            display: inline-block;
+            display: -moz-inline-stack;
+            line-height: 18px;
+            vertical-align: top;
+            text-align: left;
+            margin: 2px 0 0 0;
+            color: #000;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body marginwidth="0" marginheight="0">
+<form method="get" action="getYmrShareList" id="form1" th:object="${shareSearchModel}">
+    <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
+    <input hidden="hidden" id="ownerType" name="ownerType" value="1"/>
+    <div class="container">
+        <div class="blank10">
+        </div>
+        <div class="search block">
+            <div class="h">
+                <span class="icon-sprite icon-magnifier"></span>
+
+                <h3>用户筛选</h3>
+
+            </div>
+            <div class="tl corner">
+            </div>
+            <div class="tr corner">
+            </div>
+            <div class="bl corner">
+            </div>
+            <div class="br corner">
+            </div>
+            <div class="cnt-wp">
+                <div class="cnt">
+
+                    <div class="search-bar">
+                        <label class="first ">用户名：</label>
+                        <input name="title" type="text" th:value="*{title}" id="title" class="input-small" style="width: 120px;"/>
+                        <br/>
+                        <br/>
+
+                        <label class="first ">电话：</label>
+                        <input name="phone" type="text" th:value="*{phone}" id="phone" class="input-small" style="width: 120px;"/>
+                        <br/>
+                        <br/>
+
+                        <label class="first ">等级：</label>
+                        <select name="shareType" id="shareType">
+                            <option value="-1" selected="selected">==所有==</option>
+                            <option value="0" th:selected="*{shareType==0}">一级</option>
+                            <option value="1" th:selected="*{shareType==1}">二级</option>
+                            <option value="2" th:selected="*{shareType==2}">三级</option>
+                        </select>
+                        &nbsp;
+                        <label class="first ">排序：</label>
+                        <select name="sort" id="sort">
+                            <option value="0" selected="selected">注册时间</option>
+                            <option value="1" th:selected="*{sort==1}">按浏览量</option>
+                            <option value="2" th:selected="*{sort==2}">按转发量</option>
+                            <option value="3" th:selected="*{sort==3}">按点赞量</option>
+                            <option value="4" th:selected="*{sort==4}">按评论量</option>
+                        </select>
+                        <style type="text/css">
+                            #raSortType label {
+                                padding-left: 0px;
+                            }
+                        </style>
+                        <span id="raSortType">
+                            <input id="raSortType_0" type="radio" name="raSortType" value="0" checked="checked" th:checked="*{raSortType==0}"/>
+                            <label for="raSortType_0">倒序</label>
+                            <input id="raSortType_1" type="radio" name="raSortType" value="1" th:checked="*{raSortType==1}"/>
+                            <label for="raSortType_1">顺序</label>
+                        </span>
+
+                        <br/>
+                        <br/>
+
+                        <label class="first ">发布时间：</label>
+
+                        <input name="startTime" type="text" id="startTime" placeholder=" [开始日期]"
+                               th:value="*{startTime}"
+                               class="input-normal Wdate"
+                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>
+                        <input name="endTime" type="text" id="endTime" placeholder=" [结束日期]"
+                               th:value="*{endTime}"
+                               class="input-normal Wdate"
+                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'startTime\')}'})"/>
+
+                        <br/>
+                        <br/>
+                        <div style="display: none;">
+                            <input type="submit" name="btnSearch" value="" id="btnSearch"/>
+                            <input type="submit" name="btnSearchAll" value="" id="btnSearchAll"/>
+                        </div>
+                        <label><a class="btn-lit btn-middle" id="search" href="javascript:searchShares();"
+                                  style="margin-bottom: 3px;"><span>搜索</span></a></label>
+                        <label><a class="btn-lit btn-middle" id="searchAll" href="javascript:searchShareAll();"
+                                  style="margin-bottom: 3px;"><span>显示全部</span></a></label>
+
+                        <br/>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="blank10">
+        </div>
+        <div class="block">
+            <div class="h">
+                <span class="icon-sprite icon-list"></span>
+
+                <h3 style="float: left; width: 144px;">用户管理 </h3>
+
+            </div>
+            <div class="tl corner">
+            </div>
+            <div class="tr corner">
+            </div>
+            <div class="bl corner">
+            </div>
+            <div class="br corner">
+            </div>
+            <div class="cnt-wp">
+
+                <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
+                    <div class="om-tabs-panels om-widget-content om-corner-bottom">
+
+                        <div class="om-widget om-panel ">
+                            <div id="Div2"
+                                 class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                                <div class="cnt">
+                                    <table class="data-table even1" width="100%" border="0"
+                                           cellspacing="0"
+                                           cellpadding="0">
+                                        <tr>
+                                            <th scope="col"></th>
+
+                                            <th scope="col">用户名
+                                            </th>
+                                            <th scope="col">电话
+                                            </th>
+
+                                            <th scope="col">等级
+                                            </th>
+
+                                            <th scope="col">拥有积分
+                                            </th>
+
+                                            <th scope="col">注册时间
+                                            </th>
+
+                                            <th scope="col">操作
+                                            </th>
+
+                                            <th scope="col">查看更多
+                                            </th>
+                                        </tr>
+                                        <!--<tr style="background: #FFC; text-align: center; display: none;"-->
+                                        <!--id="trSelectNote">-->
+                                        <!--<td colspan="11">您当前选定了<span id="spSelectedNum">20条</span>记录，<a-->
+                                        <!--href="javascript:void(0);" id="btnCancelSelect">点此取消选定</a>。<a-->
+                                        <!--href="javascript:void(0);" id="btnCheckAll">点此选定全部</a> 的<span-->
+                                        <!--id="spAllSelectedNum">25</span>条记录-->
+                                        <!--</td>-->
+                                        <!--</tr>-->
+                                        <tbody th:remove="all-but-first" id="o1">
+
+                                        <tr th:each="shares:${allShareList}" class="even">
+                                            <td class="txt20 c" style="width: 15px;" th:text="${sharesStat.count}">
+                                                1
+                                            </td>
+
+                                            <td class="txt40 c">
+                                                <a th:text="${shares.shareTitle}" th:href="@{lookShareInfo(shareId=${shares.id})}">2015092173663935&nbsp;</a>
+                                            </td>
+
+                                            <td class="txt80 c" th:text="${shares.userType}">
+                                                18012345678
+                                            </td>
+
+                                            <td class="txt80 c" th:text="${shares.userType}">
+                                                2015/9/21 20:18:01
+                                            </td>
+
+                                            <td class="txt80 c" th:text="${#calendars.format(shares.time,'yyyy-MM-dd HH:mm:ss')}">
+                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
+                                            </td>
+                                            <td class="txt20 c">
+                                                <span th:text="${shares.view}">100</span>
+                                            </td>
+                                            <td class="txt40 c" th:switch="${shares.checkType}">
+                                                <span th:case="'审核中'">
+                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">通过</a>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">不通过</a>
+                                                </span>
+                                                <span th:case="*" th:text="${shares.checkType}"></span>
+                                            </td>
+                                            <td class="txt40 c tail">
+                                                <div>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:text="${shares.top}?'取消':'置顶'"  th:attr="shareId=''+${shares.id}">置顶</a>
+                                                    <a th:href="@{modifyShare(shareId=${shares.id})}" th:text="'修改'">修改</a>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">移至草稿箱</a>
+                                                    <a th:href="'#'" onclick="setShare(this)" th:attr="shareId=''+${shares.id}">删除</a>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pager-bar">
+                                    <div class="msg" style="margin-left: 10px;">共
+                                        <span th:text="${totalRecords}">2</span>条记录，当前第
+                                        <span th:text="${pageNo}" id="noNumber">1</span>/共
+                                        <span  id="numberBug" th:text="${totalPages}">1</span>页，每页
+                                        <span>20</span>条记录
+                                    </div>
+                                    <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
+                                    <a class="button-white" href="javascript:queryUp(-1)">
+                                        <span>上一页</span>
+                                    </a>
+                                    <a class="button-white" href="javascript:queryVoid(1)">
+                                        <span>下一页</span>
+                                    </a>
+                                    <a class="button-white" href="javascript:queryLast()">
+                                        <span>未页</span>
+                                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第
+                                    <input id="current-index" onkeydown="J.EnterSubmit(event, Pager.Jump);" class="input-small" style="text-align:center;" type="text" value="1" th:value="${pageNo}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    function setShare(obj){
+        var shareId = $(obj).attr("shareId");
+        var text=$(obj).html();
+        var type;
+        switch (text){
+            case '置顶':
+                type=0;
+                ajaxSetUpload(shareId,type,obj);
+                return;
+            case '通过':
+                type=1;
+                ajaxSetUpload(shareId,type,obj);
+                return;
+            case '取消':
+                type=2;
+                ajaxSetUpload(shareId,type,obj);
+                return;
+            case '不通过':
+                type=3;
+                ajaxSetUpload(shareId,type,obj);
+                return;
+            case '删除':
+                jBox.confirm("友情提示", "即将删除，确定继续吗？",function(v,h,f){
+                    if (v == 'ok')
+                        ajaxSetUpload(shareId,4,obj);
+                });
+                break;
+            case '移至草稿箱':
+                jBox.confirm("友情提示", "即将移动到草稿箱，确定继续吗？",function(v,h,f){
+                    if (v == 'ok')
+                        ajaxSetUpload(shareId,4,obj);
+                });
+                break;
+        }
+    }
+
+    function ajaxSetUpload(shareId,type,obj){
+        $.ajax({
+            type:'POST',
+            url: 'setShare',
+            dataType: 'json',
+            data: {shareId:shareId,type:type},
+            success:function(result){
+                if(result.code==1){
+                    if(type!=4&&type!=5){
+                        $(obj).html(result.message);
+                    }
+                    jBox.tip("修改成功");
+                    window.location.reload();
+                }else {
+                    jBox.tip(result.message);
+                }
+            },
+            error:function(e){
+                $.jBox.tip("修改出错，请检查网络");
+            }
+        });
+
+    }
+
+
+    function searchShares() {
+        $('#form1').submit();
+    }
+    function queryVoid(no) {//下页
+        var size = 0;
+        var numberBug = Number($("#numberBug").val());//最大页数
+        size = Number($("#noNumber").val()) + Number(no);//前往的页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function queryUp(no) {//上页
+        var size = 0;
+        var numberBug = Number($("#numberBug").val());//最大页数
+        size = Number($("#noNumber").val()) + Number(no);//前往的页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        if (size < 0) {
+            size = 0;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function queryForst() {//首页
+        $("#pageNoStr").attr("value", 0);
+        $('#form1').submit();
+    }
+    function queryLast() {//尾页
+        var numberBug = Number($("#numberBug").val());//最大页数
+        $("#pageNoStr").attr("value", numberBug);
+        $('#form1').submit();
+    }
+    function goToNo() {
+        var size = Number($("#current-index").val());
+        var numberBug = Number($("#numberBug").val());//最大页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function searchShareAll() {
+        $("#shareTitle").attr("value", "");
+        $("#shareType").attr("value", -1);
+        $("#ownerType").attr("value", 1);
+        $("#sort").attr("value", 0);
+        $("#raSortType").attr("value", 0);
+        $("#startTime").attr("value", "");
+        $("#endTime").attr("value", "");
+        $("#pageNoStr").attr("value", 0);
+        $('#form1').submit();
+    }
+    function createRight() {//左页面点击事件
+        searchShareAll();
+    }
+    /*]]>*/
+</script>
 </body>
 </html>

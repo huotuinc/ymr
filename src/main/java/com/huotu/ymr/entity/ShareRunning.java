@@ -26,11 +26,6 @@ public class ShareRunning {
     private Long userId;
 
     /**
-     * 分享人名称
-     */
-    private String name;
-
-    /**
      * 文章(帖子)
      */
     @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.REFRESH})

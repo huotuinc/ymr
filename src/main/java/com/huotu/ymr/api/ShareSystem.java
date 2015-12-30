@@ -20,11 +20,12 @@ public interface ShareSystem {
      * @param list
      * @param key    搜索关键字 按标题搜索
      * @param lastId 上一页的最后一个Id
+     * @param userId 用户ID，用于判断文章是否被点赞
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId) throws Exception;
+    ApiResult searchShareList(Output<AppShareListModel[]> list, String key, Long lastId,Long userId) throws Exception;
 
     /**
      * 添加爱分享内容
@@ -48,6 +49,16 @@ public interface ShareSystem {
      */
     @RequestMapping(method = RequestMethod.GET)
     ApiResult getShareInfo(Output<AppShareInfoModel> data, Long shareId) throws Exception;
+
+    /**
+     * 转发成功之后的操作
+     * @param userId
+     * @param shareId
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    ApiResult setTransmitShare(Long userId,Long shareId) throws Exception;
 
     /**
      * 文章点赞
@@ -82,7 +93,7 @@ public interface ShareSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.GET)
-    ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId) throws Exception;
+    ApiResult searchShareCommentList(Output<AppShareCommentListModel[]> list,Long shareId,Long lastId,Long userId) throws Exception;
 
     /**
      * 添加评论
@@ -115,5 +126,8 @@ public interface ShareSystem {
      */
     @RequestMapping(method = RequestMethod.GET)
     ApiResult deleteComment(Long commentId,Long userId) throws Exception;
+
+
+
 
 }

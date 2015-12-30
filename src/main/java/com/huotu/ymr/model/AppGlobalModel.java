@@ -27,17 +27,17 @@ public class AppGlobalModel {
      */
     private String appId;
 
-    private String appKey;//todo 注释补全
+    private String appKey;//APPSECRET
 
-    private String partnerId;
+    private String partnerId; //支付对象
 
-    private String payType;
+    private String payType;//todo 注释补全 支付类型
 
-    private String payTypeName;
+    private String payTypeName;//todo 注释补全
 
-    private String notify;
+    private String notify;//回调地址
 
-    private String webPagePay;
+    private String webPagePay;//todo 注释补全
 
 
     @Autowired
@@ -52,6 +52,9 @@ public class AppGlobalModel {
 
         //todo 将其他参数也取出来
         //appId=configRepository.findOne(ConfigKey.APPID).getValue();
+        //appKey=configRepository.findOne(ConfigKey.APPSECRET).getValue();
+        //notify="http://192.168.1.41:8080/ymr/pay/callBackWeiXin";
+        //payType= CommonEnum.PurchaseSource.WEIXIN; //todo 支付类型
     }
 
     //todo run

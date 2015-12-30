@@ -1,9 +1,6 @@
 package com.huotu.ymr.repository;
 
-import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareComment;
-import com.huotu.ymr.entity.User;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +21,10 @@ public interface ShareCommentRepository extends JpaRepository<ShareComment,Long>
 
     @Query("select c from ShareComment as c where c.userId=?1 and c.id<?2 order by c.id desc ")
     List<ShareComment> findUserCommentShares(Long userId,Long lastId);
+
+    @Query("select c from ShareComment as c where c.share.ownerId=?1 and c.share.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user and c.id<?2 order by c.id desc ")
+    List<ShareComment> findUserBeCommentedShares(Long userId,Long lastId);
+
+    @Query("select c from ShareComment as c where c.share.ownerId=?1 and c.share.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user order by c.id desc ")
+    List<ShareComment> findUserBeCommentedShares(Long userId);
 }

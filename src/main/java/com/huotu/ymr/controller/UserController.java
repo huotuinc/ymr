@@ -22,10 +22,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 /**
  * 用户系统
@@ -77,6 +74,9 @@ public class UserController implements UserSystem {
 
     @Autowired
     ShareRunningRepository shareRunningRepository;
+
+    @Autowired
+    StaticResourceService staticResourceService;
 
 
     @RequestMapping("/init")
@@ -456,6 +456,7 @@ public class UserController implements UserSystem {
     @RequestMapping("/getMyCrowdFundingList")
     @Override
     public ApiResult getMyCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {
+
         return null;
     }
 
@@ -468,7 +469,7 @@ public class UserController implements UserSystem {
         if(Objects.isNull(user)){
             throw new UserNotExitsException();
         }
-        List<Praise> praises=praiseService.findPraiseList(user, lastId);
+        List<Praise> praises=praiseService.findBePraisedList(user, lastId);
         if(!praises.isEmpty()){
             AppUserSharePraiseModel[] appUserSharePraiseModels=new AppUserSharePraiseModel[praises.size()];
 
@@ -491,7 +492,7 @@ public class UserController implements UserSystem {
         if(Objects.isNull(user)){
             throw new UserNotExitsException();
         }
-        List<ShareComment> shareComments=shareCommentService.findCommentList(userId, lastId);
+        List<ShareComment> shareComments=shareCommentService.findBeCommentedList(userId, lastId);
         if(!shareComments.isEmpty()){
             AppUserShareCommentModel[] appUserShareCommentModels=new AppUserShareCommentModel[shareComments.size()];
 
@@ -507,27 +508,64 @@ public class UserController implements UserSystem {
 
     @RequestMapping("/getUserShareList")
     @Override
-    public ApiResult getUserShareList(Output<AppUserShareRunningModel[]> list,
+    public ApiResult getUserShareList(Output<AppUserShareModel[]> list,
                                       @RequestParam(required = true)Long userId,
                                       @RequestParam(required = true)Long lastId) throws Exception {
         User user=userRepository.findOne(userId);
         if(Objects.isNull(user)){
             throw new UserNotExitsException();
         }
-        List<ShareRunning> shareRunnings=shareRunningRepository.findByUserId(userId,lastId);
+        List<Share> shares=shareService.findMyIssueShareList(userId,lastId);
+        if(!shares.isEmpty()){
+            AppUserShareModel[] appUserShareModels=new AppUserShareModel[shares.size()];
+
+            for(int i=0;i<shares.size();i++){
+                AppUserShareModel appUserShareModel=new AppUserShareModel();
+                Share share=shares.get(i);
+                appUserShareModel.setPId(share.getId());
+                appUserShareModel.setTitle(share.getTitle());
+                appUserShareModel.setShareType(share.getShareType());
+                appUserShareModel.setImg(share.getImg());
+                appUserShareModel.setIntro(share.getIntro());
+                appUserShareModel.setTime(share.getTime());
+                appUserShareModel.setIntegral(share.getPostReward());
+                appUserShareModels[i]=appUserShareModel;
+            }
+            list.outputData(appUserShareModels);
+        }else {
+            list.outputData(null);
+        }
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
+    }
+    @RequestMapping("/getBeForwardedList")
+    @Override
+    public ApiResult getBeForwardedList(Output<AppUserShareRunningModel[]> list, Long userId, Long lastId) throws Exception {
+        User user=userRepository.findOne(userId);
+        if(Objects.isNull(user)){
+            throw new UserNotExitsException();
+        }
+        List<ShareRunning> shareRunnings=new ArrayList<>();
+        if(lastId==0){
+            shareRunnings=shareRunningRepository.findByUserId(userId);
+        }else {
+            shareRunnings=shareRunningRepository.findByUserId(userId,lastId);
+        }
         if(!shareRunnings.isEmpty()){
             AppUserShareRunningModel[] appUserShareRunningModels=new AppUserShareRunningModel[shareRunnings.size()];
 
             for(int i=0;i<shareRunnings.size();i++){
                 AppUserShareRunningModel appUserShareRunningModel=new AppUserShareRunningModel();
                 ShareRunning shareRunning=shareRunnings.get(i);
+                MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(shareRunning.getUserId());
                 appUserShareRunningModel.setPId(shareRunning.getShare().getId());
                 appUserShareRunningModel.setTitle(shareRunning.getShare().getTitle());
                 appUserShareRunningModel.setShareType(shareRunning.getShare().getShareType());
                 appUserShareRunningModel.setImg(shareRunning.getShare().getImg());
                 appUserShareRunningModel.setIntro(shareRunning.getShare().getIntro());
                 appUserShareRunningModel.setTime(shareRunning.getShare().getTime());
-                appUserShareRunningModel.setIntegral(shareRunning.getIntegral());
+                appUserShareRunningModel.setUserId(shareRunning.getUserId());
+                appUserShareRunningModel.setHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());
+                appUserShareRunningModel.setName(mallUserModel.getNickName());
                 appUserShareRunningModels[i]=appUserShareRunningModel;
             }
             list.outputData(appUserShareRunningModels);

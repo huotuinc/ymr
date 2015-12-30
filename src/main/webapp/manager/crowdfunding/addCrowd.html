@@ -560,17 +560,18 @@
                 $.jBox.tip("请输入人上限数");
                 return;
             }
-        }
-        if (type != 'booking') {
-            if (limitMoney.length == 0) {
-                $.jBox.tip("请输入人最大金额");
+            if (!(/^([1-9]\d*|[0]{1,1})$/.test(limitPeople))) {
+                $.jBox.tip("人上限数格式为正整数");
                 return;
             }
         }
-        if (!(/^([1-9]\d*|[0]{1,1})$/.test(limitPeople))) {
-            $.jBox.tip("人上限数格式为正整数");
-            return;
+        if (type != 'booking') {
+            if (limitMoney.length == 0) {
+                $.jBox.tip("请输入人目标金额");
+                return;
+            }
         }
+
 
         if (startMoney.length == 0) {
             $.jBox.tip("请输入预约金额");

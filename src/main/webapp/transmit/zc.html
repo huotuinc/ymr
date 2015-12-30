@@ -1,0 +1,72 @@
+﻿<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="description" content=""/>
+    <script type="text/javascript" src="../resource/3rdParty/js/jquery-1.4.2.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.7.2.min.js}"></script>
+    <link rel="stylesheet" href="../resource/css/common.css"/>
+    <link rel="stylesheet" href="../resource/css/fmwebbb.css"/>
+    <link rel="stylesheet" type="text/css" href="../resource/css/actions.css"/>
+    <link rel="stylesheet" type="text/css" href="../resource/css/search.css"/>
+    <link rel="stylesheet" type="text/css" href="../resource/css/newonedow.css"/>
+    <title>众筹详情</title>
+</head>
+
+<body class="app-edit" onload="firstLoad()">
+<div class="commfont">
+
+    <div class="boxhhh">
+        <p class="tit_rem_big" th:text="${articleModel.title}">标题标题标题标题</p>
+        <p class="tit_rem_small"><span class="ysysleft" th:text="${#calendars.format(articleModel.time,'yyyy-MM-dd HH:mm:ss')}">2015/10/10&nbsp;&nbsp;10:00</span>
+      </p>
+        <!--<p style="clear:both"></p>-->
+        <!--<p style="display:block" class="tit_rem_small"><span class="ysysmoney">起购：5万</span>-->
+        <!--<span class="ysysmoney">目标金额：<i>150万</i></span></p>-->
+        <p style="clear:both"></p>
+        <p style="width:95%; margin:0 auto; margin-top:10px;"><img th:src="@{${articleModel.img}}" src="../resource/images/sss.png"  width="100%"/></p>
+        <div id="content" class="article-content tit_rem_small">内容内容
+            </div>
+    </div>
+    <div class="wap_main">
+        <p class=" tit_rem_small" style=" margin:10px">下载美投APP客户端</p>
+        <p style="border-bottom:1px solid #ddd; margin:10px"></p>
+        <div class="m-item-down">
+            <ul>
+                <li>
+                    <a href="http://res.fanmore.cn/resource/app/fanmore.apk">
+                        <p class="down-icon"><img src="../resource/images/downAndroid.png"/></p>
+                        <h4>iOS</h4>
+                    </a>
+                </li>
+                <li>
+                    <a href="http://res.fanmore.cn/resource/app/fanmore.apk">
+                        <p class="down-icon"><img src="../resource/images/downIos.png"/></p>
+                        <h4>Android</h4>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <p style="height:10px; clear:both"></p>
+
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    //初始化进页面
+    function firstLoad() {
+        /*<![CDATA[*/
+        var content=/*[[${articleModel.content}]]*/'';
+        $("#content").html(content);
+        /*]]>*/
+
+    }
+
+</script>
+</body>
+</html>

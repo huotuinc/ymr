@@ -18,11 +18,18 @@ public class AppUserShareCommentModel {
      * 文章ID
      */
     private Long pId;
+
     /**
-     * 用户头像
+     * 评论ID
+     */
+    private Long cId;
+
+    /**
+     * 评论者用户头像
      */
     private String userHeadUrl;
-       /**
+
+    /**
      * 标题
      */
     private String title;
@@ -42,19 +49,19 @@ public class AppUserShareCommentModel {
      */
     private String intro;
 
-    /**
-     * 置顶
-     */
-    private Boolean top;
-
-    /**
-     * 是否是精品
-     */
-    private Boolean boutique;
-    /**
-     * 发帖时间
-     */
-    private Date time;
+//    /**
+//     * 置顶
+//     */
+//    private Boolean top;
+//
+//    /**
+//     * 是否是精品
+//     */
+//    private Boolean boutique;
+//    /**
+//     * 发帖时间
+//     */
+//    private Date time;
 
     /**
      * 被评论人的ID

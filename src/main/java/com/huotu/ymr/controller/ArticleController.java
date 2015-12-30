@@ -12,10 +12,12 @@ import com.huotu.ymr.model.AppCategoryModel;
 import com.huotu.ymr.repository.ArticleRepository;
 import com.huotu.ymr.repository.CategoryRepository;
 import com.huotu.ymr.service.ArticleService;
+import com.huotu.ymr.service.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +37,8 @@ public class ArticleController implements ArticleSystem {
     @Autowired
     CategoryRepository categoryRepository;
 
-
+    @Autowired
+    StaticResourceService staticResourceService;
 
     @Override
     @RequestMapping("/getCategoryList")
@@ -47,7 +50,10 @@ public class ArticleController implements ArticleSystem {
         for(Category category:categoryList) {
             AppCategoryModel appCategoryModel= new AppCategoryModel();
             appCategoryModel.setName(category.getName());
-            appCategoryModel.setPicture(category.getPicture());
+
+            URI uri=staticResourceService.getResource(category.getPicture());
+            appCategoryModel.setPicture(uri.toString()); //todo
+
             appCategoryModel.setPId(category.getId());
             appCategoryList.add(appCategoryModel);
         }
@@ -69,7 +75,8 @@ public class ArticleController implements ArticleSystem {
         for(Article article:articleList){
             AppArticleListModel appArticleListModel=new AppArticleListModel();
             appArticleListModel.setPId(article.getId());
-            appArticleListModel.setPicture(article.getPicture());//todo
+            URI uri=staticResourceService.getResource(article.getPicture());
+            appArticleListModel.setPicture(uri.toString());//todo
             appArticleListModel.setTitle(article.getTitle());
             appArticleListModel.setSummary(article.getSummary());
             appArticleListModel.setView(article.getView());
@@ -97,6 +104,7 @@ public class ArticleController implements ArticleSystem {
             article.setView(view+1);
         }
         data.outputData(articleModel);
+        article=articleRepository.saveAndFlush(article);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 }
