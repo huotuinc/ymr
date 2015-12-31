@@ -254,6 +254,21 @@
                 </li>
             </ul>
         </li>
+
+        <li class="nav-parent nav-active active" style="cursor: pointer;">
+            <a class="aparent2" href="javascript:checkDd(2)"><i class="fa fa-chevron-circle-right"></i><span>举报管理</span></a>
+            <ul class="children" style="display: block">
+                <li class="childMenus" style="cursor: pointer;" id="id0202033">
+                    <div id="msg0202033" style="display: none; position: absolute; left: 10px; padding: 10px; top: 43px; color: #fff; z-index: 9999; background: #04B299; width: 180px; height: auto; border-radius: 4px 4px 4px 4px;"></div>
+                    <a onclick="openUrl('getReportList','020203')"><i class="fa fa-caret-right"></i>举报<span onmouseover="showMsg('020203')" onmouseout="hideMsg('020203')" class="fa pull-right badge badge-success" id="warning0202033" style="display: none;background-color:red;">!
+        </span>
+                    </a>
+                    <ul class="children" style="display: none; margin-left: 20px;">
+                        {childMenus}
+                    </ul>
+                </li>
+            </ul>
+        </li>
     </ul>
 </div>
 <!-- leftpanelinner -->

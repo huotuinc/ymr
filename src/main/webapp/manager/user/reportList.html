@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <title>
+
+        举报列表
+    </title>
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.content.css}" />
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.8.3.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.8.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
+            th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
+    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
+            th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
+            th:src="@{/resource/3rdParty/js/admin.js}"></script>
+    <link href="../../resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css}"/>
+    <script src="../../resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js"
+            th:src="@{/resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js}"></script>
+    <link href="../../resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"
+          th:href="@{/resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css}"/>
+    <script src="../../resource/3rdParty/Knockout/knockout-2.3.0.js"
+            th:src="@{/resource/3rdParty/Knockout/knockout-2.3.0.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
+            th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var _oldCass = ''
+        $(function () {
+            var authority = "";
+            if (authority != "") {
+                $(".aucontrol").hide();
+            }
+
+            $('tr').mouseover(function () {
+                _oldCass = this.className;
+                this.className = 'over';
+            }).mouseout(function () {
+                this.className = _oldCass;
+            });
+
+        });
+
+        function searchOrder() {
+            $('#btnSearch').click();
+        }
+
+        function searchOrderAll() {
+            $('#btnSearchAll').click();
+        }
+        /*]]>*/
+    </script>
+    <style type="text/css">
+        .over {
+            background-color: #00ff21;
+        }
+
+        .p_prt, .p_prted {
+            cursor: pointer;
+            width: 17px;
+            height: 18px;
+            display: inline-block;
+            display: -moz-inline-stack;
+            line-height: 18px;
+            vertical-align: top;
+            text-align: left;
+            margin: 2px 0 0 0;
+            color: #000;
+            font-weight: 400;
+        }
+    </style>
+    <script type="text/javascript">
+        /*<![CDATA[*/
+        //#region 选择行助手
+        var checkBoxHelper = {};
+        checkBoxHelper.init = function () {
+            $('input[name="chkOrder"]').click(function () {
+                checkBoxHelper.checkSingle(this);
+            });
+            $('#btnCancelSelect').click(function () {
+                checkBoxHelper.clearChecked();
+            });
+
+            $('#btnCheckAll').click(function () {
+                checkBoxHelper.checkAll(true);
+            });
+
+            $("#chkPageAll").click(function () {
+                checkBoxHelper.checkPageAll(this.checked);
+            });
+
+            checkBoxHelper.checkSelectedItem();
+            checkBoxHelper._toggleSelectedNote();
+        };
+        checkBoxHelper.checkPageAll = function (flg) {//选中当前页面
+
+            $('input[name="chkOrder"]').each(function () {
+
+                if (flg && this.checked == false) {
+                    checkBoxHelper._addItem(this.value);
+                }
+                if (flg == false && this.checked) {
+                    checkBoxHelper._removeItem(this.value);
+                }
+                this.checked = flg;
+            });
+            checkBoxHelper._toggleSelectedNote();
+        };
+
+        checkBoxHelper.checkAll = function (flg) {//选中所有
+            $.ajax({
+                type: "get",
+                url: '',
+                dataType: "json",
+                success: function (result) {
+                    checkBoxHelper._updateItems(result.join('|'));
+                    checkBoxHelper._toggleSelectedNote();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    jBox.closeTip();
+                    alert('提交失败，请重试');
+                }
+            });
+
+            $('input[name="chkOrder"]').each(function () {
+                this.checked = true;
+            });
+        };
+
+        checkBoxHelper.checkSingle = function (dom) {
+            //alert(dom.checked + ',' + dom.value);
+            if (dom.checked) {
+                this._addItem(dom.value);
+            } else {
+                this._removeItem(dom.value);
+            }
+            this.onCheckSingle();
+        };
+
+        checkBoxHelper.onCheckSingle = function () {
+            this._toggleSelectedNote();
+        };
+
+        checkBoxHelper._toggleSelectedNote = function () {
+            var idList = this._getItems();
+            if (idList == '') {
+                $('#trSelectNote').hide();
+                return false;
+            }
+            var arrIds = idList.split('|');
+            if (arrIds.length > 0) {
+                $('#trSelectNote').show();
+                $('#spSelectedNum').html(arrIds.length);
+            } else {
+                $('#trSelectNote').hide();
+            }
+        };
+
+        checkBoxHelper.checkSelectedItem = function () {//选中已经选择的元素
+            var idList = this._getItems();
+            if (idList == '') return false;
+            var pageAllChecked = true;
+            $('input[name="chkOrder"]').each(function () {
+                if (('|' + idList + '|').indexOf('|' + this.value + '|') != -1) {
+                    this.checked = true;
+                } else {
+                    pageAllChecked = false;
+                }
+            });
+            if (pageAllChecked) {
+                $("#chkPageAll").attr('checked', 'checked');
+            }
+        };
+
+        checkBoxHelper.isAllChecked = function () {//是否全部选中
+
+        };
+
+        checkBoxHelper.clearChecked = function () {//清除选中
+            checkBoxHelper._clearItems();
+            $('input[name="chkOrder"]').each(function () {
+                this.checked = false;
+            });
+            $('#chkPageAll').removeAttr('checked');
+            this._toggleSelectedNote();
+        };
+
+        var CHECKKEY = "OrderToExport";
+
+        checkBoxHelper._addItem = function (id) {
+            if (!this._existItem(id)) {
+                var idList = this._getItems();
+                if (idList != '') {
+                    idList += '|' + id;
+                } else {
+                    idList = id;
+                }
+                this._updateItems(idList);
+            }
+        };
+
+        checkBoxHelper._removeItem = function (id) {
+            if (this._existItem(id)) {
+                var idList = this._getItems();
+                idList = '|' + idList + '|';
+                idList = idList.replace('|' + id + '|', '');
+                this._updateItems(idList);
+            }
+        };
+
+        checkBoxHelper._getItems = function () {
+            return unescape(J.GetCookie(CHECKKEY));
+        };
+
+        checkBoxHelper._updateItems = function (ids) {
+            ids = ids.replace(/^\|/g, "").replace(/\|$/g, "");
+            J.SetCookie(CHECKKEY, ids);
+        }
+
+        checkBoxHelper._existItem = function (id) {
+            var idList = this._getItems();
+            idList = '|' + idList + '|';
+            if (idList.indexOf('|' + id + '|') != -1) {
+                return true;
+            }
+            return false;
+        };
+
+        checkBoxHelper._clearItems = function () {
+            J.RemoveCookie(CHECKKEY);
+        };
+        //#endregion
+
+        //#region 导出助手
+        var exportHelper = {};
+        exportHelper.init = function () {
+            $('.OnlyNum').OnlyNum();
+        };
+
+
+
+
+        $(function () {
+            checkBoxHelper.init();
+            exportHelper.init();
+
+            if (0 == 0) {
+                $(".shipFunc").hide();
+            }
+        });
+
+        var viewModel;
+
+        function alterArticle(obj) {
+            var settlementNo = $(obj).attr("articlesId");
+            var url="jumpToSaveArticle?articleId="+settlementNo;
+            J.PopupIFrame(url,"文章编辑",1300,700,"ifrm","","auto","");
+        }
+        function delComment(obj) {
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    jBox.tip(v, 'info');
+                    solveSubmit(obj,0);
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定删除此评论吗？", "提示",submit);
+        }
+        function banForever(obj) {
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    jBox.tip(v, 'info');
+                    solveSubmit(obj,1);
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定永远禁言此用户吗？", "提示",submit);
+        }
+        function freezeAccount(obj) {
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    jBox.tip(v, 'info');
+                    solveSubmit(obj,2);
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定冻结用户吗？", "提示",submit);
+        }
+        var solveSubmit=function (obj,stype) {
+                    var settlementNo = $(obj).attr("reportsId");
+                    $.jBox.tip("正在修改...", "loading");
+                    $.ajax({
+                        type:"POST",
+                        url:"solveReport",
+                        data:{
+                            reportsId:settlementNo,
+                            type:stype
+                        },
+                        dataType:"json",
+                        success: function (msg) {
+                            if(msg.code == 200){
+                                $.jBox.tip(msg.msg, 'success',{closed:function(){
+                                    window.location.reload();}});
+                            }else{
+                                $.jBox.tip(msg.msg, 'error',{closed:function(){
+                                    window.location.reload();}});
+                            }
+                        }
+                    });
+                }
+        function releaseNoTalk(obj) {
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    jBox.tip(v, 'info');
+                    releaseSubmit(obj);
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定要解除禁言吗？", "提示",submit);
+        }
+        function unfreeze(obj) {
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    jBox.tip(v, 'info');
+                    releaseSubmit(obj);
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定要解除冻结吗？", "提示",submit);
+        }
+        var releaseSubmit=function (obj) {
+            var settlementNo = $(obj).attr("reportsId");
+            $.jBox.tip("正在修改...", "loading");
+            $.ajax({
+                type:"POST",
+                url:"releaseReport",
+                data:{
+                    reportsId:settlementNo
+                },
+                dataType:"json",
+                success: function (msg) {
+                    if(msg.code == 200){
+                        $.jBox.tip(msg.msg, 'success',{closed:function(){
+                            window.location.reload();}});
+                    }else{
+                        $.jBox.tip(msg.msg, 'error',{closed:function(){
+                            window.location.reload();}});
+                    }
+                }
+            });
+        }
+
+        function userDetail(obj) {
+            var reportsId = $(obj).attr("reportsId");
+            var url = "showReportDetail?reportsId=" + reportsId;
+            J.PopupIFrame(url,"举报详情",700,350,"ifrm","","auto","");
+        }
+
+        /*]]>*/
+    </script>
+</head>
+<body marginwidth="0" marginheight="0">
+<form method="get" action="getReportList" id="form1" th:object="${reportSearchModel}">
+    <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
+
+    <div class="aspNetHidden">
+        <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE"
+               value=""/>
+    </div>
+
+    <div class="aspNetHidden">
+        <input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION"
+               value=""/>
+    </div>
+    <div class="container">
+        <div class="blank10">
+        </div>
+        <div class="search block">
+            <div class="h">
+                <span class="icon-sprite icon-magnifier"></span>
+
+                <h3>举报搜索</h3>
+
+            </div>
+            <div class="tl corner">
+            </div>
+            <div class="tr corner">
+            </div>
+            <div class="bl corner">
+            </div>
+            <div class="br corner">
+            </div>
+            <div class="cnt-wp">
+                <div class="cnt">
+
+                    <div class="search-bar">
+                        <label class="first ">举报人名字：</label>
+                        <input name="articleTitle" type="text" th:value="*{name}" id="name" class="input-small" style="width: 120px;"/>
+                        <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
+                        <br/>
+                        <br/>
+
+
+                        &nbsp;
+                        <label class="first ">排序：</label>
+
+                        <select name="sort" id="sort">
+                            <option selected="selected" value="0">按举报时间</option>
+
+
+
+
+                        </select>
+                        <style type="text/css">
+                            #raSortType label {
+                                padding-left: 0px;
+                            }
+                        </style>
+                        <span id="raSortType">
+                            <input id="raSortType_0" type="radio" name="raSortType" value="0" checked="checked" th:checked="*{raSortType==0}"/>
+                            <label for="raSortType_0">倒序</label>
+                            <input id="raSortType_1" type="radio" name="raSortType" value="1" th:checked="*{raSortType==1}"/>
+                            <label for="raSortType_1">顺序</label>
+                        </span>
+
+                        <br/>
+                        <br/>
+
+
+                        <div style="display: none;">
+                            <input type="submit" name="btnSearch" value="" id="btnSearch"/>
+                            <input type="submit" name="btnSearchAll" value="" id="btnSearchAll"/>
+                        </div>
+                        <label><a class="btn-lit btn-middle" id="search" href="javascript:searchOrder();"
+                                  style="margin-bottom: 3px;"><span>搜索</span></a></label>
+                        <label><a class="btn-lit btn-middle" id="searchAll" href="javascript:searchOrderAll();"
+                                  style="margin-bottom: 3px;"><span>显示全部</span></a></label>
+
+                        <br/>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="blank10">
+        </div>
+        <div class="block">
+            <div class="h">
+                <span class="icon-sprite icon-list"></span>
+
+                <h3 style="float: left; width: 144px;">举报管理 </h3>
+
+            </div>
+            <div class="tl corner">
+            </div>
+            <div class="tr corner">
+            </div>
+            <div class="bl corner">
+            </div>
+            <div class="br corner">
+            </div>
+            <div class="cnt-wp">
+
+                <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
+
+                    <div class="om-tabs-panels om-widget-content om-corner-bottom">
+
+                        <div class="om-widget om-panel ">
+                            <div id="Div2"
+                                 class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                                <div class="cnt">
+                                    <table class="data-table even1" width="100%" border="0"
+                                           cellspacing="0"
+                                           cellpadding="0">
+                                        <tr>
+                                            <th scope="col">序号 </th>
+
+                                            <th scope="col">姓名
+                                            </th>
+                                            <th scope="col">手机
+                                            </th>
+
+                                            <th scope="col">时间
+                                            </th>
+
+                                            <th scope="col">内容
+                                            </th>
+
+
+                                            <th scope="col">操作
+                                            </th>
+                                        </tr>
+                                        <tr style="background: #FFC; text-align: center; display: none;"
+                                            id="trSelectNote">
+                                            <td colspan="11">您当前选定了<span id="spSelectedNum">20条</span>记录，<a
+                                                    href="javascript:void(0);" id="btnCancelSelect">点此取消选定</a>。<a
+                                                    href="javascript:void(0);" id="btnCheckAll">点此选定全部</a> 的<span
+                                                    id="spAllSelectedNum">25</span>条记录
+                                            </td>
+                                        </tr>
+                                        <tbody th:remove="all-but-first" id="o1">
+
+                                        <tr th:each="reports:${allReportList}" class="even">
+                                            <td class="txt20 c" style="width: 15px;" th:text="${reports.id}">
+                                                1
+                                            </td>
+                                            <td class="txt40" th:text="${reports}">
+                                                &nbsp;
+                                            </td>
+                                            <td class="txt80" th:text="${reports}">
+
+                                            </td>
+                                            <td class="txt80" th:text="${reports.time}">
+                                                <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
+                                            </td>
+                                            <td class="txt20">
+                                                <span th:text="${reports.shareComment.content}" th:attr="reportsId=${reports.id}" onclick="userDetail(this)">0</span>
+                                            </td>
+
+
+                                            <td class="txt40">
+                                                <a th:if="${reports.to.userStatus.value==0 and reports.hasSolved!=1}" th:attr="reportsId=${reports.shareComment.id}" onclick="delComment(this)"
+                                                   title="删除评论">删除评论</a>
+                                                <!--<a th:if="${settlement.customerCheckable() and settlement.checkAble()}" th:attr="settlementNo=${settlement.settlementNo}" href="#" onclick="showUpdateStatus(this)">审核</a>-->
+                                                <a th:if="${reports.to.userStatus.value==0 and reports.hasSolved!=1}" th:attr="reportsId=${reports.to.id}" onclick="banForever(this)"
+                                                   title="永远禁言">永远禁言</a>
+                                                <a th:if="${reports.to.userStatus.value==0 and reports.hasSolved!=1}" th:attr="reportsId=${reports.to.id}" onclick="freezeAccount(this)"
+                                                   title="冻结账户">冻结账户</a>
+                                                <a th:if="${reports.to.userStatus.value==0 and reports.hasSolved==1}"
+                                                   title="已经处理过">已经处理过</a>
+                                                <a th:if="${reports.to.userStatus.value==1 and reports.hasSolved!=1}" th:attr="reportsId=${reports.id}" onclick="releaseNoTalk(this)"
+                                                   title="解除禁言">解除禁言</a>
+                                                <a th:if="${reports.to.userStatus.value==2 and reports.hasSolved!=1}" th:attr="reportsId=${reports.id}" onclick="unfreeze(this)"
+                                                   title="解除冻结">解除冻结</a>
+                                            </td>
+                                            <td class="txt40 c tail">
+                                                <div th:inline="text">
+                                                     </div>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="pager-bar">
+                                    <div class="msg" style="margin-left: 10px;">共
+                                        <span th:text="${allReportList.totalElements}">0</span>条记录，当前第
+                                        <span name="noNumber" th:text="${allReportList.number+1}" id="noNumber">1</span>页/共
+                                        <span  name="numberBug" id="numberBug"  th:text="${allReportList.totalPages==0?1:allReportList.totalPages}">1</span>页，每页
+                                        <span>20</span>条记录
+                                    </div>
+                                    <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
+                                    <a class="button-white"
+                                       href="javascript:queryUp(-1)"
+                                            >
+                                        <span>上一页</span></a>
+                                    <a class="button-white"
+                                       href="javascript:queryVoid(1)"
+                                            >
+                                        <span>下一页</span></a>
+                                    <a class="button-white" href="javascript:queryLast()">
+                                        <span>未页</span>
+                                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第
+                                    <input id="current-index"
+                                           onkeydown="J.EnterSubmit(event, Pager.Jump);"
+                                           class="input-small"
+                                           style="text-align:center;" type="text"
+                                           value="1" th:value="${allReportList.number+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+
+    function searchOrder() {
+        $('#form1').submit();
+    }
+    function queryVoid(no) {//下页
+        var size = 0;
+        size = Number($("#noNumber").text()) + Number(no)-1;//前往的页数
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function queryUp(no) {//上页
+        var size = 0;
+        size = Number($("#noNumber").text()) + Number(no)-1;//前往的页数
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        if (size < 0) {
+            size = 0;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function queryForst() {//首页
+        var size = 1;
+        $("#pageNoStr").attr("value", 0);
+        $('#form1').submit();
+    }
+    function queryLast() {//尾页
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        $("#pageNoStr").attr("value", numberBug);
+        $('#form1').submit();
+    }
+    function goToNo() {
+        var size = Number($("#current-index").val())-1;
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function searchOrderAll() {
+        $("#articleTitle").attr("value", "");
+        $("#articleType").attr("value", -1);
+        $("#managerName").attr("value", "");
+        $("#sort").attr("value", 0);
+        $("#raSortType").attr("value", 0);
+        $("#startTime").attr("value", "");
+        $("#endTime").attr("value","");
+        $("#pageNoStr").attr("value", 0);
+        $('#form1').submit();
+    }
+    function createRight() {//左页面点击事件
+        searchOrderAll();
+    }
+    /*]]>*/
+</script>
+</body>
+</html>

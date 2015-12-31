@@ -2,12 +2,19 @@ package com.huotu.ymr.controller.web;
 
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.EnumHelper;
+import com.huotu.ymr.entity.Report;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.ResultModel;
+import com.huotu.ymr.model.backend.crowdFunding.Msg;
 import com.huotu.ymr.model.backend.share.BackendUserModel;
+import com.huotu.ymr.model.backend.user.ReportDetailModel;
+import com.huotu.ymr.model.searchCondition.ReportSearchModel;
 import com.huotu.ymr.model.searchCondition.UserSearchModel;
+import com.huotu.ymr.repository.ReportRepository;
+import com.huotu.ymr.repository.ShareCommentRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.DataCenterService;
+import com.huotu.ymr.service.ReportService;
 import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +50,15 @@ public class UserManagerController {
     ShareService shareService;
 
 
+
+    @Autowired
+    ReportService reportService;
+
+    @Autowired
+    ShareCommentRepository shareCommentRepository;
+
+    @Autowired
+    ReportRepository reportRepository;
 
     @RequestMapping(value = "/getUserList",method = RequestMethod.GET)
     public String getUserList(UserSearchModel userSearchModel,Model model) throws Exception {
@@ -104,7 +120,7 @@ public class UserManagerController {
             resultModel.setCode(0);
             resultModel.setMessage("没找到该用户!");
         }
-        CommonEnum.UserStatus userStatus=EnumHelper.getEnumType(CommonEnum.UserStatus.class, type);
+        CommonEnum.UserStatus userStatus= EnumHelper.getEnumType(CommonEnum.UserStatus.class, type);
         user.setUserStatus(userStatus);
         user=userRepository.save(user);
         resultModel.setCode(1);
@@ -113,6 +129,94 @@ public class UserManagerController {
     }
 
 
+
+    /**
+     * 获取举报列表
+     *
+     * @param reportSearchModel 前台传过来的参数
+     * @param model
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getReportList", method = RequestMethod.GET)
+    public String getReportList(ReportSearchModel reportSearchModel, Model model) throws Exception {
+        Page<Report> reportPages = reportService.findReportPage(reportSearchModel);
+        model.addAttribute("allReportList", reportPages);//文章列表
+        model.addAttribute("pageNoStr", reportSearchModel.getPageNoStr());//当前页数
+        return "manager/user/reportList";
+
+    }
+    /**
+     * 处理被举报用户信息
+     * @param reportsId 要处理的用户id
+     *             删除评论：0
+     *             永久禁言：1
+     *             冻结用户：2
+     * @param type  对用户的处理方式
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/solveReport",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg solveReport(Long reportsId,Integer type) throws Exception {
+        Msg msg = new Msg();
+        if(type==0){
+            //todo 用户禁言管理数据库更新
+            //ShareComment shareComment=shareCommentRepository.findOne(reportsId);//todo 删除评论
+            shareCommentRepository.delete(reportsId);
+        }else if(type==1){
+           User user=userRepository.findOne(reportsId); //todo 永久禁言
+           user.setUserStatus(CommonEnum.UserStatus.notalk);
+           user=userRepository.saveAndFlush(user);
+        }else if(type==2){
+            User user=userRepository.findOne(reportsId); //todo 冻结用户
+            user.setUserStatus(CommonEnum.UserStatus.freeze);
+            user=userRepository.saveAndFlush(user);
+        }
+        msg.setCode(200);
+        msg.setMsg("success");
+        return msg;
+    }
+
+    /**
+     * 解除被举报用户的惩处
+     * @param reportsId 要处理的用户id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/releaseReport",method = RequestMethod.POST)
+    @ResponseBody
+    public Msg releaseReport(Long reportsId) throws Exception {
+        Msg msg = new Msg();
+        Report report=reportRepository.findOne(reportsId);
+        User user=userRepository.findOne(report.getTo().getId());//todo 解除禁言
+        user.setUserStatus(CommonEnum.UserStatus.normal);
+        report.setHasSolved(1);
+        report=reportRepository.saveAndFlush(report);
+        user=userRepository.saveAndFlush(user);
+        msg.setCode(200);
+        msg.setMsg("success");
+        return msg;
+    }
+
+
+    /**
+     * 解除被举报用户的惩处
+     * @param reportsId 要处理的用户id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/showReportDetail",method = RequestMethod.GET)
+    public String showReportDetail(ReportDetailModel reportDetailModel,Long reportsId) throws Exception {
+        Report report=reportRepository.findOne(reportsId);
+        User user=userRepository.findOne(report.getTo().getId());
+
+        reportDetailModel.setTime(report.getTime());
+        reportDetailModel.setContent(report.getShareComment().getContent());
+        //reportDetailModel.setPhone();//todo 得到用户手机
+        //reportDetailModel.setUserName();//todo 得到用户名字
+        reportDetailModel.setLevel(user.getUserLevel());
+        return "manager/user/reportDetail";
+    }
 
 
 

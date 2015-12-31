@@ -63,6 +63,9 @@ public class CrowdFundingController implements CrowdFundingSystem {
     @Autowired
     CrowdFundingMoneyRangeService crowdFundingMoneyRangeService;
 
+    @Autowired
+    MyCrowdFundingFlowRepository myCrowdFundingFlowRepository;
+
     @RequestMapping("/getCrowdFundingList")
     @Override
     public ApiResult getCrowdFundingList(Output<AppCrowdFundingListModel[]> list,String key, Long lastId) throws Exception {
@@ -279,6 +282,13 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setStatus(0);
             crowdFundingPublic.setMoney(money);
             crowdFundingPublic.setOrderNo(order.getOrderNo());
+
+            MyCrowdFundingFlow myCrowdFundingFlow=new MyCrowdFundingFlow();
+            myCrowdFundingFlow.setCrowdFunding(crowdFunding);
+            myCrowdFundingFlow.setOwner(user);
+            myCrowdFundingFlow.setRole(0);
+            myCrowdFundingFlow =myCrowdFundingFlowRepository.saveAndFlush(myCrowdFundingFlow);
+
             crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人信息，存入合作发起表中
@@ -364,6 +374,13 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setName(name);
             crowdFundingPublic.setCrowdFunding(crowdFunding);
             crowdFundingPublic.setStatus(0);
+
+            MyCrowdFundingFlow myCrowdFundingFlow=new MyCrowdFundingFlow();
+            myCrowdFundingFlow.setCrowdFunding(crowdFunding);
+            myCrowdFundingFlow.setOwner(user);
+            myCrowdFundingFlow.setRole(0);
+            myCrowdFundingFlow =myCrowdFundingFlowRepository.saveAndFlush(myCrowdFundingFlow);
+
             crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             //crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取合作发起人人信息，存入合作发起表中
@@ -477,6 +494,12 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingBooking.setOwnerId(userId);
             crowdFundingBooking.setAgencyFee(money-lastMoney);
 
+            MyCrowdFundingFlow myCrowdFundingFlow=new MyCrowdFundingFlow();
+            myCrowdFundingFlow.setCrowdFunding(crowdFunding);
+            myCrowdFundingFlow.setOwner(user);
+            myCrowdFundingFlow.setRole(1);
+            myCrowdFundingFlow =myCrowdFundingFlowRepository.saveAndFlush(myCrowdFundingFlow);
+
             crowdFundingPublic.setAmount(crowdFundingPublic.getAmount()+1);
             crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
@@ -528,6 +551,13 @@ public class CrowdFundingController implements CrowdFundingSystem {
             crowdFundingPublic.setName(name);
             crowdFundingPublic.setCrowdFunding(crowdFunding);
             crowdFundingPublic.setStatus(0);
+
+            MyCrowdFundingFlow myCrowdFundingFlow=new MyCrowdFundingFlow();
+            myCrowdFundingFlow.setCrowdFunding(crowdFunding);
+            myCrowdFundingFlow.setOwner(user);
+            myCrowdFundingFlow.setRole(0);
+            myCrowdFundingFlow =myCrowdFundingFlowRepository.saveAndFlush(myCrowdFundingFlow);
+
             crowdFundingPublic.setAmount(crowdFundingPublic.getAmount()+1);
             crowdFunding.setTotalBooking(crowdFunding.getTotalBooking()+1);
 //            /crowdFundingPublic.setUserHeadUrl(user.getHeadUrl());//todo 获取认购人信息，存入认购表中

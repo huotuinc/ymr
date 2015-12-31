@@ -46,5 +46,12 @@ public class Report {
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
+    /**
+     * 是否已经处理
+     *
+     * 已经处理：1
+     * 未处理：0
+     */
+    private Integer hasSolved;
 
 }

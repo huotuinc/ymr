@@ -7,20 +7,22 @@ import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
-import com.huotu.ymr.entity.Praise;
-import com.huotu.ymr.entity.Share;
-import com.huotu.ymr.entity.User;
+import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.entity.*;
 import com.huotu.ymr.mallentity.MallMerchant;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallMerchantRepository;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.repository.PraiseRepository;
+import com.huotu.ymr.repository.ReportRepository;
+import com.huotu.ymr.repository.ShareCommentRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.ShareService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -62,6 +64,15 @@ public class UserControllerTest extends SpringBaseTest {
 
     @Autowired
     private PraiseRepository praiseRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    ShareCommentRepository shareCommentRepository;
+
+    @Autowired
+    ReportRepository reportRepository;
 
 
     @Before
@@ -143,5 +154,25 @@ public class UserControllerTest extends SpringBaseTest {
                 .param("lastId", "0").build())
                 .andReturn().getResponse().getContentAsString();
 
+    }
+    @Test
+    @Rollback(false)
+    public void saveReports(){
+        Report report=new Report();
+        ShareComment shareComment=new ShareComment();
+        shareComment.setCommentName("评论1");
+        shareComment.setContent("这是评论1！");
+        shareComment=shareCommentRepository.saveAndFlush(shareComment);
+        User user=userRepository.findOne(1234L);
+
+        for(int i=0;i<50;i++) {
+            report.setOwner(user);
+            report.setShareComment(shareComment);
+            report.setTime(new Date());
+            report.setHasSolved(0);
+            report.setTo(user);
+            report.getTo().setUserStatus(CommonEnum.UserStatus.normal);
+            report = reportRepository.saveAndFlush(report);
+        }
     }
 }

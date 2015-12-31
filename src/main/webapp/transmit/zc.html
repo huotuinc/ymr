@@ -20,16 +20,14 @@
 <div class="commfont">
 
     <div class="boxhhh">
-        <p class="tit_rem_big" th:text="${articleModel.title}">标题标题标题标题</p>
-        <p class="tit_rem_small"><span class="ysysleft" th:text="${#calendars.format(articleModel.time,'yyyy-MM-dd HH:mm:ss')}">2015/10/10&nbsp;&nbsp;10:00</span>
-      </p>
-        <!--<p style="clear:both"></p>-->
-        <!--<p style="display:block" class="tit_rem_small"><span class="ysysmoney">起购：5万</span>-->
-        <!--<span class="ysysmoney">目标金额：<i>150万</i></span></p>-->
+        <p class="tit_rem_big" th:text="${crowdModel.title}">标题标题标题标题</p>
+        <p class="tit_rem_small"><span class="ysysleft" th:text="'结束时间：'+${#calendars.format(crowdModel.endTime,'yyyy-MM-dd HH:mm:ss')}">2015/10/10&nbsp;&nbsp;10:00</span></p>
         <p style="clear:both"></p>
-        <p style="width:95%; margin:0 auto; margin-top:10px;"><img th:src="@{${articleModel.img}}" src="../resource/images/sss.png"  width="100%"/></p>
-        <div id="content" class="article-content tit_rem_small">内容内容
-            </div>
+        <p style="display:block" class="tit_rem_small"><span class="ysysmoney" th:text="'起购：'+${crowdModel.startMoeny}">起购：</span>
+        <span class="ysysmoney">目标金额：<i th:text="${crowdModel.toMoeny}"></i></span></p>
+        <p style="clear:both"></p>
+
+        <div id="content" class="article-content tit_rem_small">内容内容</div>
     </div>
     <div class="wap_main">
         <p class=" tit_rem_small" style=" margin:10px">下载美投APP客户端</p>
@@ -61,7 +59,7 @@
     //初始化进页面
     function firstLoad() {
         /*<![CDATA[*/
-        var content=/*[[${articleModel.content}]]*/'';
+        var content=/*[[${crowdModel.content}]]*/'';
         $("#content").html(content);
         /*]]>*/
 

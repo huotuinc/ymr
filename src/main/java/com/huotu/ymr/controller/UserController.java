@@ -78,6 +78,12 @@ public class UserController implements UserSystem {
     @Autowired
     StaticResourceService staticResourceService;
 
+    @Autowired
+    CrowdFundingService crowdFundingService;
+
+    @Autowired
+    MyCrowdFundingFlowService myCrowdFundingFlowService;
+
 
     @RequestMapping("/init")
     @Override
@@ -453,11 +459,35 @@ public class UserController implements UserSystem {
         return null;
     }
 
+    //待测试
     @RequestMapping("/getMyCrowdFundingList")
     @Override
     public ApiResult getMyCrowdFundingList(Output<AppCrowdFundingListModel[]> list, Long lastId) throws Exception {
-
-        return null;
+        AppUserInfoModel appUserInfoModel=PublicParameterHolder.get().getCurrentUser();
+        Long userId=appUserInfoModel.getUserId();
+        int number=10;//todo 确定一页数量
+        List<MyCrowdFundingFlow> myCrowdFundingFlows=myCrowdFundingFlowService.findMyCrowdFundingsById(lastId,userId,number);
+        List<AppCrowdFundingListModel> appCrowdFundingListModels=new ArrayList<AppCrowdFundingListModel>();
+        for(MyCrowdFundingFlow MyCrowdFundingFlow:myCrowdFundingFlows){
+            AppCrowdFundingListModel appCrowdFundingListModel=new AppCrowdFundingListModel();
+            CrowdFunding crowdFunding=MyCrowdFundingFlow.getCrowdFunding();
+            appCrowdFundingListModel.setStartTime(crowdFunding.getStartTime());
+            appCrowdFundingListModel.setToMoeny(crowdFunding.getToMoeny());
+            appCrowdFundingListModel.setType(crowdFunding.getCrowdFundingType());
+            appCrowdFundingListModel.setBooingMoeny(crowdFunding.getStartMoeny());
+            appCrowdFundingListModel.setTime(crowdFunding.getTime());
+            //appCrowdFundingListModel.setSummary(crowdFunding.getSummary()); //todo 内容变成简介
+            appCrowdFundingListModel.setPuctureUrl(crowdFunding.getPuctureUrl());
+            appCrowdFundingListModel.setCurrentBooking(crowdFunding.getCurrentBooking());
+            appCrowdFundingListModel.setCurrentMoeny(crowdFunding.getCurrentMoeny());
+            appCrowdFundingListModel.setStatus(crowdFunding.getCheckStatus());
+            appCrowdFundingListModel.setTitle(crowdFunding.getName());
+            appCrowdFundingListModel.setToBooking(crowdFunding.getToBooking());
+            appCrowdFundingListModel.setEndTime(crowdFunding.getEndTime());
+            appCrowdFundingListModels.add(appCrowdFundingListModel);
+        }
+        list.outputData(appCrowdFundingListModels.toArray(new AppCrowdFundingListModel[appCrowdFundingListModels.size()]));
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/getPraiseList")

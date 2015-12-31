@@ -1,0 +1,47 @@
+﻿<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,minimum-scale=1,user-scalable=no,maximum-scale=1,initial-scale=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="description" content=""/>
+    <script type="text/javascript" src="../resource/3rdParty/js/jquery-1.4.2.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.7.2.min.js}"></script>
+    <link rel="stylesheet" href="../resource/css/common.css"/>
+    <link rel="stylesheet" href="../resource/css/fmwebbb.css"/>
+    <link rel="stylesheet" type="text/css" href="../resource/css/actions.css"/>
+    <link rel="stylesheet" type="text/css" href="../resource/css/search.css"/>
+    <link rel="stylesheet" type="text/css" href="../resource/css/newonedow.css"/>
+    <title>众筹详情</title>
+</head>
+
+<body class="app-edit" onload="firstLoad()">
+<div class="commfont">
+
+    <div class="boxhhh">
+        <p class="tit_rem_big" th:text="${reportDetailModel.userName}">用户</p>
+        <p class="tit_rem_small"><span class="ysysleft" th:text="'举报时间：'+${#calendars.format(reportDetailModel.time,'yyyy-MM-dd HH:mm:ss')}">2015/10/10&nbsp;&nbsp;10:00</span></p>
+        <p style="clear:both"></p>
+        <p style="display:block" class="tit_rem_small"><span class="ysysmoney" th:text="'等级：'+${reportDetailModel.level.name}">起购：</span>
+        <span class="ysysmoney">手机：<i th:text="${reportDetailModel.phone}"></i></span></p>
+        <p style="clear:both"></p>
+
+        <div id="content" class="article-content tit_rem_small">评论内容</div>
+    </div>
+
+</div>
+
+<script th:inline="javascript">
+    //初始化进页面
+    function firstLoad() {
+        /*<![CDATA[*/
+        var content=/*[[${reportDetailModel.content}]]*/'';
+        $("#content").html(content);
+        /*]]>*/
+
+    }
+
+</script>
+</body>
+</html>
