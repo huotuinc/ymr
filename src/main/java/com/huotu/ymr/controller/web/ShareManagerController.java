@@ -446,6 +446,13 @@ public class ShareManagerController {
     }
 
 
+    /**
+     * 查看爱分享文章详情
+     * @param shareId   爱分享ID
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/lookShareInfo",method = RequestMethod.GET)
     public String lookShareInfo(Long shareId,Model model) throws Exception{
         if(shareId==null){

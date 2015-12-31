@@ -5,7 +5,6 @@ import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.share.BackendUserModel;
-import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.model.searchCondition.UserSearchModel;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.DataCenterService;
@@ -74,9 +73,11 @@ public class UserManagerController {
     @RequestMapping(value = "/lookUserInfo",method = RequestMethod.GET)
     public String lookUserInfo(@RequestParam(required = true)Long userId,Model model)throws Exception{
         User user=userService.getUser(userId);
-        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+//        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
         Long shares=shareService.getUserShareCount(user);
-        return null;
+        //参加众筹的次数
+        //充值记录
+        return "manager/user/DetailedUserInfo";
 
     }
 

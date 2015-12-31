@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>用户详情</title>
+    <link rel="stylesheet" href="../../resource/css/fmwebbb.css"
+          th:href="@{/resource/css/fmwebbb.css}"/>
+    <link rel="stylesheet" type="text/css" href="../../resource/css/search.css"
+          th:href="@{/resource/css/search.css}" />
+    <link rel="stylesheet" type="text/css" href="../../resource/css/newonedow.css"
+          th:href="@{/resource/css/newonedow.css}" />
+    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.content.css}"/>
+    <link href="../../resource/css/settlements.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/css/settlements.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.4.2.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.7.2.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
+            th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
+    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
+            th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
+    <link rel="stylesheet" type="text/css" href="../../resource/css/settlements.css"
+          th:href="@{/resource/css/settlements.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
+            th:src="@{/resource/3rdParty/js/admin.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
+            th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" src="../../resource/js/ajaxfileupload.js"
+            th:src="@{/resource/js/ajaxfileupload.js}"></script>
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+</head>
+
+<body onload="firstLoad()">
+    <div class="container">
+        <div class="blank10">
+        </div>
+        <div class="search block" style="display: block;">
+            <div class="h">
+      <span class="icon-sprite icon-magnifier">
+      </span>
+                <h3>用户详情</h3>
+            </div>
+            <div class="cnt-wp" style="padding: 35px 10px 10px;">
+                <div id="makeTab" class="cnt om-tabs om-widget om-widget-content om-corner-all" style="width: auto; height: auto;">
+
+                    <!-- 以下设置表单-->
+                    <div class="om-tabs-panels om-widget-content om-corner-bottom">
+                        <div class="om-widget om-panel">
+                            <div id="tab0001" class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                                <div class="division">
+                                    <div></div>
+                                    <div></div>
+                                    <table id="submitTable" cellpadding="0" cellspacing="0" width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <th>姓名:</th>
+                                            <td>
+                                                <label>slt</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>性别:</th>
+                                            <td>
+                                                <label>男</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>电话:</th>
+                                            <td>
+                                                <label>18012345678</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>等级:</th>
+                                            <td>
+                                                <label>slt</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>发布分享数:</th>
+                                            <td>
+                                                <label>男</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>参与众筹数:</th>
+                                            <td>
+                                                <label>18012345678</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>拥有积分:</th>
+                                            <td>
+                                                <label>18012345678</label>
+                                            </td>
+                                        </tr>
+                                        <!--<tr>-->
+                                            <!--<th>等级:</th>-->
+                                            <!--<td style="border-top: 1px solid #ddd;">-->
+                                                <!--<label>18012345678</label>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                        <!--<p style="clean:both;"></p>-->
+                                        <!--<tr>-->
+                                            <!--<th>封面:</th>-->
+                                            <!--<td>-->
+
+                                                <!--<div id="uploadpicCover" style="width: 80px; height: 80px; border: 1px solid #ccc; float: left; background: #efefef; line-height: 80px; text-align: center; color: #ccc;">-->
+                                                    <!--<span th:if="*{img==null}">未上传</span>-->
+                                                    <!--<img th:if="*{img!=null}"  id="share_img" th:src="*{img}" width="80px" height="80px"/>-->
+                                                <!--</div>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+
+                                        <!--<tr>-->
+                                            <!--<th>内容:</th>-->
+                                            <!--<td><textarea readonly="readonly" id="content" th:text="*{content}" name="content" class="input-normal" style=" width: 393px; height: 76px;"></textarea>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+
+                                        <!--<tr id="useLink">-->
+                                            <!--<th>外链:</th>-->
+                                            <!--<td>-->
+                                                <!--<span th:text="*{useLink}?'启用':'关闭'"></span>-->
+                                                <!--&lt;!&ndash;<input value="0" onchange="useLinkchange(this)" type="radio" name="useLink" th:checked="!*{useLink}"/>关闭&ndash;&gt;-->
+                                                <!--&lt;!&ndash;<input value="1" onchange="useLinkchange(this)" type="radio" name="useLink" th:checked="*{useLink}"/>启用外链&ndash;&gt;-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                        <!--<tr id="linkUrlTr">-->
+                                            <!--<th>外链地址</th>-->
+                                            <!--<td><span th:text="*{linkUrl}==null?'无':*{linkUrl}"></span></td>-->
+
+                                        <!--</tr>-->
+
+                                        <!--<tr id="enabledRecommendProduct">-->
+                                            <!--<th>是否开启推荐产品:</th>-->
+                                            <!--<td>-->
+                                                <!--<span th:text="*{enabledRecommendProduct}?'启用':'关闭'"></span>-->
+                                            <!--</td>-->
+                                        <!--</tr>-->
+                                        <!--<tr id="recommend">-->
+                                            <!--<th>推荐产品</th>-->
+                                            <!--<td>-->
+                                                <!--<div class="commfont">-->
+
+                                                    <!--<div class="superli clearfix editing">-->
+                                                        <!--<div class="control-group" >-->
+                                                            <!--<div class="sc-goods-list clearfix size-3 normal list">-->
+                                                                <!--<ul  th:remove="all-but-first">-->
+                                                                    <!--<li class="goods-card normal" th:each="goods:${shareProducts}">-->
+                                                                        <!--<a href="javascript: void(0);" class="link js-goods clearfix">-->
+                                                                            <!--<div class="photo-block">-->
+                                                                                <!--<img class="goods-photo js-goods-lazy" src="images/goodsa.jpg" th:src="@{goods.pictureUrl}"/>-->
+                                                                            <!--</div>-->
+                                                                            <!--<div class="info">-->
+                                                                                <!--<p class="goods-title" th:text="${goods.name}">此处显示商品名称</p>-->
+                                                                                <!--<p class="goods-price"><em th:text="'￥'+${goods.price}">￥379.00</em></p>-->
+                                                                                <!--<p class="priceyj" th:text="${goods.originalPrice}">￥500.00</p>-->
+                                                                                <!--<p class="goods-price-taobao"></p>-->
+                                                                                <!--<div class="jifendy">-->
+                                                                                        <!--<span class="jfd">-->
+                                                                                            <!--<img src="images/jifen.png"/></span>-->
+                                                                                    <!--<span class="jfbq" th:text="${goods.integral}">10积分</span></div>-->
+                                                                                <!--&lt;!&ndash;  D 此处标签已换成积分标签 &ndash;&gt;-->
+                                                                            <!--</div>-->
+                                                                        <!--</a>-->
+                                                                    <!--</li>-->
+                                                                <!--</ul>-->
+
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+
+                                                <!--</div>-->
+
+                                            <!--</td>-->
+
+                                        <!--</tr>-->
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!--是否在资讯栏目发一篇介绍范围结束-->
+
+                <!--以下是按钮-->
+                <div style="text-align: center; margin-top:12px" >
+                    <a class="btn-lit" href="javascript:history.go(-1)" style=" margin-right:10px;color:#fff">
+                        <span>返回</span>
+                    </a>
+                </div>
+                <!--按钮结束-->
+
+            </div>
+        </div>
+    </div>
+
+
+<div class="blank10"></div>
+<script>
+    //初始化进页面
+    function firstLoad() {
+        window.editor.readonly(true);
+
+    }
+</script>
+<script charset="utf-8" src="richText/kindeditor-min.js" th:src="@{/richText/kindeditor-min.js}"></script>
+<script charset="utf-8" src="richText/lang/zh_CN.js" th:src="@{/richText/lang/zh_CN.js}"></script>
+<script charset="utf-8" src="richText/init.js" th:src="@{/richText/init.js}"></script>
+</body>
+</html>

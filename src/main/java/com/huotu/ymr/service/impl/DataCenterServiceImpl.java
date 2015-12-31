@@ -61,7 +61,8 @@ public class DataCenterServiceImpl implements DataCenterService {
     @Override
     public MallUserModel getUserInfoByUserId(Long userId) throws IOException {
         User user=userRestRepository.getOneByPK(userId);
-        MallUserModel mallUserModel=userToModel(user);
+        MallUserModel mallUserModel=null;
+//        MallUserModel mallUserModel=userToModel(user);
         return mallUserModel;
     }
 
