@@ -94,7 +94,7 @@
     </style>
 </head>
 <body marginwidth="0" marginheight="0">
-<form method="get" action="getUserList" id="form1" th:object="${allUserList}">
+<form method="get" action="getUserList" id="form1" th:object="${userSearchModel}">
     <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
     <input hidden="hidden" id="ownerType" name="ownerType" value="1"/>
     <div class="container">
@@ -120,30 +120,28 @@
 
                     <div class="search-bar">
                         <label class="first ">用户名：</label>
-                        <input name="title" type="text" th:value="*{title}" id="title" class="input-small" style="width: 120px;"/>
+                        <input name="name" type="text" th:value="*{name}" id="name" class="input-small" style="width: 120px;"/>
                         <br/>
                         <br/>
 
                         <label class="first ">电话：</label>
-                        <input name="phone" type="text" th:value="*{phone}" id="phone" class="input-small" style="width: 120px;"/>
+                        <input name="mobile" type="text" th:value="*{mobile}" id="mobile" class="input-small" style="width: 120px;"/>
                         <br/>
                         <br/>
 
                         <label class="first ">状态：</label>
                         <select name="shareType" id="shareType">
                             <option value="-1" selected="selected">==所有==</option>
-                            <option value="0" th:selected="*{shareType==0}">正常</option>
-                            <option value="1" th:selected="*{shareType==1}">禁言</option>
-                            <option value="2" th:selected="*{shareType==2}">冻结</option>
+                            <!--<option value="0" th:selected="*{userStatus==0}">正常</option>-->
+                            <!--<option value="1" th:selected="*{userStatus==1}">禁言</option>-->
+                            <!--<option value="2" th:selected="*{userStatus==2}">冻结</option>-->
                         </select>
                         &nbsp;
                         <label class="first ">排序：</label>
                         <select name="sort" id="sort">
                             <option value="0" selected="selected">序号</option>
-                            <option value="1" th:selected="*{sort==1}">按浏览量</option>
-                            <option value="2" th:selected="*{sort==2}">按转发量</option>
-                            <option value="3" th:selected="*{sort==3}">按点赞量</option>
-                            <option value="4" th:selected="*{sort==4}">按评论量</option>
+                            <option value="1" th:selected="*{sort==1}">积分</option>
+                            <option value="2" th:selected="*{sort==2}">等级</option>
                         </select>
                         <style type="text/css">
                             #raSortType label {
@@ -306,8 +304,14 @@
                                             </td>
                                             <td class="txt40 c">
                                                 <div>
-                                                    <a th:href="'#'" onclick="setUser(this)" th:text="${users.status}==2?'解冻':'冻结'"  th:attr="shareId=''+${users.id}">冻结</a>
-                                                    <a th:href="'#'" onclick="setUser(this)" th:text="${users.status}==1?'解禁':'禁言'"  th:attr="shareId=''+${users.id}">冻结</a>
+                                                    <span th:switch="${users.userStatus}">
+                                                        <span th:case="0">
+                                                            <a th:href="'#'" onclick="setUser(this)" th:text="'冻结'"  th:attr="userId=''+${users.id}">冻结</a>
+                                                            <a th:href="'#'" onclick="setUser(this)" th:text="'禁言'"  th:attr="userId=''+${users.id}">冻结</a>
+                                                        </span>
+                                                        <a th:case="1" th:href="'#'" onclick="setUser(this)" th:text="'解禁'"  th:attr="userId=''+${users.id}">冻结</a>
+                                                        <a th:case="2" th:href="'#'" onclick="setUser(this)" th:text="'解冻'"  th:attr="userId=''+${users.id}">冻结</a>
+                                                    </span>
                                                     <a th:href="@{upgradeLevel(userId=${users.id})}" th:text="'升等'">升等</a>
 
                                                 </div>
@@ -367,39 +371,40 @@
 <script type="text/javascript" th:inline="javascript">
     /*<![CDATA[*/
     function setUser(obj){
-        var shareId = $(obj).attr("shareId");
+        var userId = $(obj).attr("userId");
         var text=$(obj).html();
         var type;
         switch (text){
             case '禁言':
                 type=1;
-                ajaxSetUpload(shareId,type,obj);
+                ajaxSetUpload(userId,type,obj);
                 return;
             case '冻结':
                 type=2;
-                ajaxSetUpload(shareId,type,obj);
+                ajaxSetUpload(userId,type,obj);
                 return;
             case '解冻':
                 type=0;
-                ajaxSetUpload(shareId,type,obj);
+                ajaxSetUpload(userId,type,obj);
                 return;
             case '解禁':
                 type=0;
-                ajaxSetUpload(shareId,type,obj);
+                ajaxSetUpload(userId,type,obj);
                 return;
 
         }
     }
 
-    function ajaxSetUpload(shareId,type,obj){
+    function ajaxSetUpload(userId,type,obj){
         $.ajax({
             type:'POST',
             url: 'setUser',
             dataType: 'json',
-            data: {shareId:shareId,type:type},
+            data: {userId:userId,type:type},
             success:function(result){
                 if(result.code==1){
-                    $(obj).html(result.message);
+//                    var text=$(obj).html();
+//                    $(obj).html(result.message);
                     jBox.tip("修改成功");
                     window.location.reload();
                 }else {

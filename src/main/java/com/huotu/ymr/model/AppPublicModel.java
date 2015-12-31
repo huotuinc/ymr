@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AppPublicModel {
+public class    AppPublicModel {
     private AppUserInfoModel currentUser;
     /**
      * 平台1、YMR2015AD   （android）    2、YMR2015AP   （ios)

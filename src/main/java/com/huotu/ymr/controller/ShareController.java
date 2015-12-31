@@ -181,9 +181,11 @@ public class ShareController implements ShareSystem {
         //检查用户是否转发过文章
         List<ShareRunning> shareRunnings=shareRunningRepository.findByUserIdAndShare(userId,share);
         //用户加积分
-
         if(shareRunnings.isEmpty()){
+            Integer remainScore=share.getScore()-share.getUsedScore();
             Integer award=Integer.parseInt(configRepository.findOne(ConfigKey.USER_TRANSMIT).getValue());
+//            if(remainScore<)
+
             user.setScore(user.getScore()+award);
             user.setContinuedScore(user.getContinuedScore()+award);
             userRepository.save(user);

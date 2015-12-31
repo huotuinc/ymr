@@ -56,8 +56,7 @@ public class RequestHandler {
 
 	/**
 	 * 初始构造函数。
-	 * 
-	 * @return
+	 *
 	 */
 	public RequestHandler(HttpServletRequest request,
 			HttpServletResponse response) {

@@ -527,9 +527,9 @@
             data: {shareId:shareId,type:type},
             success:function(result){
                 if(result.code==1){
-                    if(type!=4&&type!=5){
-                        $(obj).html(result.message);
-                    }
+//                    if(type!=4&&type!=5){
+//                        $(obj).html(result.message);
+//                    }
                     jBox.tip("修改成功");
                     window.location.reload();
                 }else {

@@ -116,7 +116,16 @@ public class DataCenterServiceImpl implements DataCenterService {
     }
 
     @Override
-    public Boolean modifyUserInfo() {
+    public Boolean modifyUserInfo(Long userId, String data, Integer type) throws IOException {
+        User user=userRestRepository.getOneByPK(userId);
+        switch (type){
+            case 0:
+                break;
+            case 1:
+                break;
+            case 2:
+                break;
+        }
         return null;
     }
 

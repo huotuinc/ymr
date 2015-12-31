@@ -5,8 +5,11 @@ import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.share.BackendUserModel;
+import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.model.searchCondition.UserSearchModel;
 import com.huotu.ymr.repository.UserRepository;
+import com.huotu.ymr.service.DataCenterService;
+import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +37,14 @@ public class UserManagerController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    DataCenterService dataCenterService;
+
+    @Autowired
+    ShareService shareService;
+
+
+
     @RequestMapping(value = "/getUserList",method = RequestMethod.GET)
     public String getUserList(UserSearchModel userSearchModel,Model model) throws Exception {
 //        //todo 用户权限方面的操作
@@ -47,6 +58,10 @@ public class UserManagerController {
             //从数据中心获取用户数据 todo
             backendUserModel.setId(u.getId());
             backendUserModel.setScore(u.getScore());
+            backendUserModel.setMobile("18012345678");
+            backendUserModel.setLevel("一级");
+            backendUserModel.setName("slt");
+            backendUserModel.setUserStatus(u.getUserStatus()==null?0:u.getUserStatus().getValue());
             backendUserModels.add(backendUserModel);
         }
         model.addAttribute("allUserList", backendUserModels);//用户列表model
@@ -54,6 +69,15 @@ public class UserManagerController {
         model.addAttribute("totalPages",users.getTotalPages());//总页数
         model.addAttribute("totalRecords", users.getTotalElements());//总记录数
         return "manager/user/userList";
+    }
+
+    @RequestMapping(value = "/lookUserInfo",method = RequestMethod.GET)
+    public String lookUserInfo(@RequestParam(required = true)Long userId,Model model)throws Exception{
+        User user=userService.getUser(userId);
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        Long shares=shareService.getUserShareCount(user);
+        return null;
+
     }
 
 

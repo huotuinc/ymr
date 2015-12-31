@@ -389,6 +389,47 @@ public interface CommonEnum {
 
 
     /**
+     * 评论状态
+     */
+    enum ShareCommentStatus implements ICommonEnum {
+        /**
+         * normal(0, "正常")
+         */
+        normal(0, "正常"),
+        /**
+         * delete(1, "删除")
+         */
+        delete(1, "删除");
+        private int value;
+
+        private String name;
+
+        ShareCommentStatus(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+
+
+    /**
      * 0 无更新 1增量更新 2 整包更新 3 强制增量更新 4 强制整包更新
      */
     enum VersionUpdateType implements ICommonEnum {

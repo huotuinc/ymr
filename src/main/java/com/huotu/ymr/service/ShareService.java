@@ -41,6 +41,8 @@ public interface ShareService {
 
     Page<Share> findPcShareList(ShareSearchModel shareSearchModel) throws Exception;
 
+    Long getUserShareCount(User user) throws Exception;
+
     /**
      * share实体转model
      * @param share

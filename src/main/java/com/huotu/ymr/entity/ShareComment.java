@@ -83,5 +83,10 @@ public class ShareComment implements YmrReply {
      */
     private String commentPath;
 
+    /**
+     *  评论状态
+     */
+    private CommonEnum.ShareCommentStatus status;
+
 
 }

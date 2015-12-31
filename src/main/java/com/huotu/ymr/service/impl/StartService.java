@@ -43,6 +43,7 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
             user.setUserLevel(CommonEnum.UserLevel.one);
             user.setToken(UUID.randomUUID().toString().replaceAll("-",""));
             user.setContinuedScore(0);
+            user.setUserStatus(CommonEnum.UserStatus.freeze);
             userRepository.save(user);
         }
         if(Objects.isNull(userRepository.findOne(5678L))){
@@ -51,6 +52,7 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
             user.setUserLevel(CommonEnum.UserLevel.one);
             user.setToken(UUID.randomUUID().toString().replaceAll("-",""));
             user.setContinuedScore(0);
+            user.setUserStatus(CommonEnum.UserStatus.normal);
             userRepository.save(user);
         }
         if (event.getApplicationContext().getParent() == null) {

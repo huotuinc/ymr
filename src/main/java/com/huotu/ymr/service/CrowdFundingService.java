@@ -110,7 +110,6 @@ public interface CrowdFundingService {
 
     /**
      * 后台通过项目删除该项目所有的金额范围
-     * @return
      */
     void deleteRangesByCrowdFunding(CrowdFunding crowdFunding);
 

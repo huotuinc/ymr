@@ -338,7 +338,7 @@ public class UserController implements UserSystem {
 //        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
 //        if(SysRegex.IsValidMobileNo(mallUserModel.getUserName()))
         //todo 修改绑定手机
-        dataCenterService.modifyUserInfo();
+        dataCenterService.modifyUserInfo(userId,null,2);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 

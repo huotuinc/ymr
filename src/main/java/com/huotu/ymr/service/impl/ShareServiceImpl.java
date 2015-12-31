@@ -215,6 +215,11 @@ public class ShareServiceImpl implements ShareService {
     }
 
     @Override
+    public Long getUserShareCount(User user) throws Exception {
+        return shareRepository.countByOwnerIdAndOwnerType(user.getId(), CommonEnum.UserType.user);
+    }
+
+    @Override
     public AppShareListModel shareToListModel(Share share,User user) throws Exception {
         AppShareListModel appShareListModel=new AppShareListModel();
         Praise praise=praiseRepository.findByShareAndUser(share,user);

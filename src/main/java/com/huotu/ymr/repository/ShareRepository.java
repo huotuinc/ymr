@@ -1,5 +1,6 @@
 package com.huotu.ymr.repository;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.Share;
 import org.luffy.lib.libspring.data.ClassicsRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,5 +23,7 @@ public interface ShareRepository extends JpaRepository<Share, Long>,ClassicsRepo
 
     @Query("SELECT s from Share as s where s.ownerId=?1 and s.ownerType=com.huotu.ymr.common.CommonEnum.UserType.user and s.id<?2 order by s.id desc ")
     List<Share> findMyShares(Long userId,Long lastId);
+
+    Long countByOwnerIdAndOwnerType(Long userId,CommonEnum.UserType userType);
 
 }

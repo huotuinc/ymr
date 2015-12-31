@@ -71,7 +71,7 @@ public interface DataCenterService {
      * 修改用户信息
      * @return
      */
-    Boolean modifyUserInfo();
+    Boolean modifyUserInfo(Long userId,String data,Integer type) throws IOException;
 
 
 

@@ -520,7 +520,6 @@ public class CrowdFundingManagerController {
      * @param addCrowdFundingModel 前台传过来的参数
      * @param model
      * @return
-     * @throws Exception
      */
     @RequestMapping("/jumpToAddCrowd")
     public String jumpToAddCrowd(AddCrowdFundingModel addCrowdFundingModel,Model model) {

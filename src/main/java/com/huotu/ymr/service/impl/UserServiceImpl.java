@@ -9,6 +9,7 @@ import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -77,7 +78,7 @@ public class UserServiceImpl implements UserService {
                 sort = new Sort(direction, "id");
                 break;
         }
-        return null;
+        return userRepository.findAll(new PageRequest(0,10));
 //        return  userRepository.findAll(new Specification<User>() {
 //            @Override
 //            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb){
