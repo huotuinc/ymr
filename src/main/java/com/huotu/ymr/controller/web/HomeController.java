@@ -79,7 +79,7 @@ public class HomeController {
      */
     @RequestMapping(value = "/loginSuccess")
     public String loginSuccess() {
-        return "redirect:/getYmrShareList";
+        return "redirect:getYmrShareList";
     }
     /**
      * 用户登录失败
