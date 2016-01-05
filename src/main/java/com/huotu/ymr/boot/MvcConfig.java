@@ -35,7 +35,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan(value = {"com.huotu.ymr.service.impl,com.huotu.ymr.controller"})
-@Import({CommonClientSpringConfig.class})//todo 安全配置  SecurityConfig.class,
+@Import({SecurityConfig.class,CommonClientSpringConfig.class})//todo 安全配置  SecurityConfig.class,
 
 public class MvcConfig extends WebMvcConfigurerAdapter {
 

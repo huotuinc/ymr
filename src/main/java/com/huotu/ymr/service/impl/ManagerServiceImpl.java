@@ -35,4 +35,15 @@ public class ManagerServiceImpl implements ManagerService {
             return managers.get(0);
         }
     }
+
+    @Override
+    public Manager saveManager(String username, String password) {
+        String resultPassword=DigestUtils.md5DigestAsHex(password.getBytes());
+        Manager manager=new Manager();
+        manager.setLoginName(username);
+        manager.setPassword(resultPassword);
+        manager=managerRepository.saveAndFlush(manager);
+        return manager;
+
+    }
 }

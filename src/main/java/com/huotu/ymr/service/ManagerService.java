@@ -14,4 +14,12 @@ public interface ManagerService {
      * @return
      */
     Manager checkManager(String username, String password);
+
+    /**
+     * 注册管理员表相应管理员
+     * @param username 管理员登录用户名
+     * @param password 管理员登录密码
+     * @return
+     */
+    Manager saveManager(String username, String password);
 }

@@ -796,7 +796,7 @@ public class CrowdFundingManagerController {
 
             crowdFundingPublic.setStatus(1);
             crowdFunding.setCurrentMoeny(crowdFunding.getCurrentMoeny()+crowdFundingPublic.getMoney());
-            fundService.increaseIntegral(crowdFundingPublic.getOwnerId(),crowdFundingPublic.getMoney());//todo 加积分
+            fundService.increaseIntegralByMoney(crowdFundingPublic.getOwnerId(),crowdFundingPublic.getMoney());//todo 加积分
             crowdFunding1=crowdFundingRepository.saveAndFlush(crowdFunding1);
             crowdFunding=crowdFundingRepository.saveAndFlush(crowdFunding);
             crowdFundingPublic = crowdFundingPulicRepository.saveAndFlush(crowdFundingPublic);

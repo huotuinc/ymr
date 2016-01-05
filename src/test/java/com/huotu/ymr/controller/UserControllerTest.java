@@ -13,15 +13,15 @@ import com.huotu.ymr.mallentity.MallMerchant;
 import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallMerchantRepository;
 import com.huotu.ymr.mallrepository.MallUserRepository;
-import com.huotu.ymr.repository.PraiseRepository;
-import com.huotu.ymr.repository.ReportRepository;
-import com.huotu.ymr.repository.ShareCommentRepository;
-import com.huotu.ymr.repository.UserRepository;
+import com.huotu.ymr.repository.*;
+import com.huotu.ymr.service.ManagerService;
 import com.huotu.ymr.service.ShareService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -73,6 +73,12 @@ public class UserControllerTest extends SpringBaseTest {
 
     @Autowired
     ReportRepository reportRepository;
+
+    @Autowired
+    ManagerRepository managerRepository;
+
+    @Autowired
+    ManagerService managerService;
 
 
     @Before
@@ -175,4 +181,19 @@ public class UserControllerTest extends SpringBaseTest {
             report = reportRepository.saveAndFlush(report);
         }
     }
+    @Test
+    @Rollback(false)
+    public void saveOneLogin(){
+       Manager manager=new Manager();
+        manager.setLoginName("3");
+        String password = "123456";
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(password);
+
+        manager.setPassword(hashedPassword);
+        managerRepository.saveAndFlush(manager);
+
+
+    }
+
 }

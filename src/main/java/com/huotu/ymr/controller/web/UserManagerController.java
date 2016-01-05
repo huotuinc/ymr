@@ -13,10 +13,7 @@ import com.huotu.ymr.model.searchCondition.UserSearchModel;
 import com.huotu.ymr.repository.ReportRepository;
 import com.huotu.ymr.repository.ShareCommentRepository;
 import com.huotu.ymr.repository.UserRepository;
-import com.huotu.ymr.service.DataCenterService;
-import com.huotu.ymr.service.ReportService;
-import com.huotu.ymr.service.ShareService;
-import com.huotu.ymr.service.UserService;
+import com.huotu.ymr.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -59,6 +56,9 @@ public class UserManagerController {
 
     @Autowired
     ReportRepository reportRepository;
+
+    @Autowired
+    ShareCommentService shareCommentService;
 
     @RequestMapping(value = "/getUserList",method = RequestMethod.GET)
     public String getUserList(UserSearchModel userSearchModel,Model model) throws Exception {
@@ -162,7 +162,8 @@ public class UserManagerController {
         if(type==0){
             //todo 用户禁言管理数据库更新
             //ShareComment shareComment=shareCommentRepository.findOne(reportsId);//todo 删除评论
-            shareCommentRepository.delete(reportsId);
+            shareCommentService.deleteComment(reportsId);
+//            shareCommentRepository.delete(reportsId);
         }else if(type==1){
            User user=userRepository.findOne(reportsId); //todo 永久禁言
            user.setUserStatus(CommonEnum.UserStatus.notalk);

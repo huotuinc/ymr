@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  */
 @Configuration
 @ImportResource(value = "classpath:spring-jpa-mall.xml")
-//@Import(value = CommonClientSpringConfig.class)
+@Import(value = CommonClientSpringConfig.class)
 @EnableJpaRepositories(value = {"com.huotu.ymr.mallrepository"}
         , entityManagerFactoryRef = "mallEntityManagerFactory"
         , transactionManagerRef = "mallTransactionManager"

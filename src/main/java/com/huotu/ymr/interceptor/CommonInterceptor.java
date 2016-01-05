@@ -189,7 +189,6 @@ public class CommonInterceptor implements HandlerInterceptor {
         }
 
         StringBuilder strB = new StringBuilder();
-
         resultMap.keySet().stream().filter(key -> !"sign".equals(key)).forEach(key -> strB.append(resultMap.get(key)));
 //        System.out.println(strB.toString());
         return DigestUtils.md5DigestAsHex(strB.toString().getBytes("UTF-8")).toLowerCase();

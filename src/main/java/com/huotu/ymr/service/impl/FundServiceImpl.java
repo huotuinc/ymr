@@ -1,5 +1,6 @@
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.common.thirdparty.ClientCustomSSL;
 import com.huotu.ymr.common.thirdparty.RequestHandler;
@@ -82,12 +83,29 @@ public class FundServiceImpl implements FundService{
     }
 
     @Override
-    public void increaseIntegral(Long ownerId, Double money) {
+    public void increaseIntegralByMoney(Long ownerId, Double money) {
         User user=userRepository.findOne(ownerId);
         //四舍五入
         int score=(int) (Math.rint(money*Double.parseDouble(configRepository.findOne(ConfigKey.MONEY_TO_SCORE).getValue())));
         user.setScore(user.getScore()+score);
-        user.setContinuedScore(user.getContinuedScore()+score);
+        int resultScore=user.getContinuedScore()+score;
+        //积分值到了则升等（一级升二级）
+        if(resultScore>=Integer.parseInt(configRepository.findOne(ConfigKey.UPGRADE_INTEGRAL).getValue())&&user.getUserLevel()==CommonEnum.UserLevel.one){
+            user.setUserLevel(CommonEnum.UserLevel.two);
+        }
+        user.setContinuedScore(resultScore);
         user=userRepository.saveAndFlush(user);
+    }
+
+    @Override
+    public User increaseIntegralByScore(User user, Integer score) {
+        user.setScore(user.getScore()+score);
+        int resultScore=user.getContinuedScore()+score;
+        //积分值到了则升等（一级升二级）
+        if(resultScore>=Integer.parseInt(configRepository.findOne(ConfigKey.UPGRADE_INTEGRAL).getValue())&&user.getUserLevel()==CommonEnum.UserLevel.one){
+            user.setUserLevel(CommonEnum.UserLevel.two);
+        }
+        user.setContinuedScore(resultScore);
+        return user;
     }
 }
