@@ -61,10 +61,11 @@ public class SecurityConfig {
 
         @Override
         public void configure(HttpSecurity http) throws Exception {
-            http.authorizeRequests().antMatchers(
+            http
+                    .headers().frameOptions().sameOrigin().and()
+                    .authorizeRequests().antMatchers(
                     "/app/**",
                     "/resource/**",
-                    "/manager/login",
                     "/transmit/**"
             ).permitAll().anyRequest().authenticated()
                     .and()

@@ -3,6 +3,7 @@ package com.huotu.ymr.controller.web;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.EnumHelper;
 import com.huotu.ymr.entity.Report;
+import com.huotu.ymr.entity.ShareComment;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.crowdFunding.Msg;
@@ -162,7 +163,8 @@ public class UserManagerController {
         if(type==0){
             //todo 用户禁言管理数据库更新
             //ShareComment shareComment=shareCommentRepository.findOne(reportsId);//todo 删除评论
-            shareCommentService.deleteComment(reportsId);
+            ShareComment shareComment=shareCommentRepository.findOne(reportsId);
+            shareCommentService.deleteComment(shareComment.getCommentPath());
 //            shareCommentRepository.delete(reportsId);
         }else if(type==1){
            User user=userRepository.findOne(reportsId); //todo 永久禁言

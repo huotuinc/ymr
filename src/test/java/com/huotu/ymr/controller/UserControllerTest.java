@@ -191,6 +191,7 @@ public class UserControllerTest extends SpringBaseTest {
         String hashedPassword = passwordEncoder.encode(password);
 
         manager.setPassword(hashedPassword);
+        //manager.setManagerField();
         managerRepository.saveAndFlush(manager);
 
 

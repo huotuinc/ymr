@@ -53,7 +53,7 @@ public class ArticleManagerController {
      * @param model
      * @throws Exception
      */
-    @PreAuthorize("haveAnyRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @RequestMapping(value = "/getArticleList", method = RequestMethod.GET)
     public String getArticleList(ArticleSearchModel articleSearchModel, Model model) throws Exception {
         Page<Article> articlePages = articleService.findArticlePage(articleSearchModel);
