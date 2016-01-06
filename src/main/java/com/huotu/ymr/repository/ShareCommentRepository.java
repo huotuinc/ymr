@@ -1,10 +1,13 @@
 package com.huotu.ymr.repository;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.ShareComment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,11 +16,14 @@ import java.util.List;
  */
 @Repository
 public interface ShareCommentRepository extends JpaRepository<ShareComment,Long> {
-    @Query("select c from ShareComment as c where c.share.id=?1 and c.id>?2 order by c.id")
-    List<ShareComment> findByShareOrderByTime(Long shareId,Long lastId,Pageable pageable);
+    @Query("select c from ShareComment as c where c.share.id=?1 and c.status=?2 and c.id>?3 order by c.id")
+    List<ShareComment> findByShareOrderByTime(Long shareId,CommonEnum.ShareCommentStatus status,Long lastId,Pageable pageable);
 
+
+    @Transactional
+    @Modifying
     @Query("update ShareComment as c set c.status=com.huotu.ymr.common.CommonEnum.ShareCommentStatus.delete where c.commentPath like ?1")
-    void deleteComment(String commentPath);
+    int deleteComment(String commentPath);
 
     @Query("select c from ShareComment as c where c.userId=?1 and c.id<?2 order by c.id desc ")
     List<ShareComment> findUserCommentShares(Long userId,Long lastId);

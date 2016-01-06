@@ -141,5 +141,5 @@ public class Share implements YmrComment {
     /**
      * 是否是精品
      */
-    private Boolean boutique;
+    private Boolean boutique=false;
 }

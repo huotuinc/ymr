@@ -6,9 +6,11 @@ import com.huotu.ymr.entity.Praise;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.AppShareListModel;
+import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.PraiseRepository;
 import com.huotu.ymr.repository.ShareRepository;
+import com.huotu.ymr.service.DataCenterService;
 import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.StaticResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class ShareServiceImpl implements ShareService {
 
     @Autowired
     StaticResourceService staticResourceService;
+
+    @Autowired
+    DataCenterService dataCenterService;
 
     @Autowired
     PraiseRepository praiseRepository;
@@ -221,6 +226,7 @@ public class ShareServiceImpl implements ShareService {
 
     @Override
     public AppShareListModel shareToListModel(Share share,User user) throws Exception {
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(user.getId());
         AppShareListModel appShareListModel=new AppShareListModel();
         Praise praise=praiseRepository.findByShareAndUser(share,user);
         appShareListModel.setPId(share.getId());
@@ -236,8 +242,10 @@ public class ShareServiceImpl implements ShareService {
         appShareListModel.setTime(share.getTime());
         appShareListModel.setTop(share.getTop());
         appShareListModel.setPraise(!Objects.isNull(praise));
+        appShareListModel.setTransmitUrl(staticResourceService.getResource("/transmit/shareInfo?shareId="+share.getId()).toString());
         //todo
-        appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
+        appShareListModel.setUserHeadUrl(mallUserModel.getHeadUrl());
+//        appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
         return appShareListModel;
     }
 }

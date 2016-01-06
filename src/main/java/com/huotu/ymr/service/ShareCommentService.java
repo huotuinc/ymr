@@ -26,10 +26,10 @@ public interface ShareCommentService {
 
     /**
      * 删除评论
-     * @param shareCommentId    评论的ID
+     * @param shareCommentPath    评论的路径
      * @throws Exception
      */
-    void deleteComment(Long shareCommentId) throws Exception;
+    void deleteComment(String shareCommentPath) throws Exception;
 
     /**
      * 获取该用户的评论过的文章

@@ -48,6 +48,7 @@ public class UserServiceImpl implements UserService {
         if(Objects.isNull(user)){
             user=new User();
             user.setId(userId);
+            user.setUserStatus(CommonEnum.UserStatus.normal);
             user.setUserLevel(CommonEnum.UserLevel.one);
             user.setScore(0);
             user.setContinuedScore(0);

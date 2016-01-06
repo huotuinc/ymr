@@ -125,10 +125,10 @@ public class UserController implements UserSystem {
                            String province,
                            String nickname ,
                            String openid) throws Exception {
-            AppUserInfoModel appUserInfoModel;
-            MallUserModel mallUserModel=null;
-//            MallUserModel mallUserModel = dataCenterService.getUserInfoByUniond(unionid)[0];//todo 调用数据中心
-            if(Objects.isNull(mallUserModel)){
+        AppUserInfoModel appUserInfoModel;
+        MallUserModel mallUserModel;
+        MallUserModel[] mallUserModels = dataCenterService.getUserInfoByUniond(unionid);//todo 调用数据中心
+        if(mallUserModels.length==0){
                 AppWeiXinAccreditModel appWeiXinAccreditModel=new AppWeiXinAccreditModel();
                 appWeiXinAccreditModel.setUnionid(unionid);
                 appWeiXinAccreditModel.setOpenid(openid);
@@ -147,6 +147,7 @@ public class UserController implements UserSystem {
                 mallUserModel.setSex(sex);
                 appUserInfoModel=userService.getAppUserInfoModel(user, mallUserModel);
             }else {
+                mallUserModel=mallUserModels[0];
                 User user=userService.getUser(mallUserModel.getUserId());
                 appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
             }
@@ -324,7 +325,6 @@ public class UserController implements UserSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE_ALREADY_BINDING);
         }
         //todo 开始绑定手机号
-        dataCenterService.bindingMobile();
 
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
@@ -443,6 +443,7 @@ public class UserController implements UserSystem {
             case 4:
                 //联系电话
                 String phone=(String)profileData;
+
                 break;
             case 5:
                 //定位

@@ -20,10 +20,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by Administrator on 2015/12/22.
@@ -48,9 +45,13 @@ public class DataCenterServiceImpl implements DataCenterService {
 
 
     @Override
-    public MallUserModel[] getUserInfoByUniond(String uniond) {
-
-        return null;
+    public MallUserModel[] getUserInfoByUniond(String uniond) throws IOException {
+        List<User> users=userRestRepository.findByMerchantIdAndUnionId(Long.parseLong(ymrMerchantId),uniond);
+        MallUserModel[] mallUserModels=new MallUserModel[users.size()];
+        for(int i=0;i<users.size();i++){
+            mallUserModels[i]=userToModel(users.get(i));
+        }
+        return mallUserModels;
     }
 
     @Override
@@ -61,8 +62,7 @@ public class DataCenterServiceImpl implements DataCenterService {
     @Override
     public MallUserModel getUserInfoByUserId(Long userId) throws IOException {
         User user=userRestRepository.getOneByPK(userId);
-        MallUserModel mallUserModel=null;
-//        MallUserModel mallUserModel=userToModel(user);
+        MallUserModel mallUserModel=userToModel(user);
         return mallUserModel;
     }
 
@@ -132,13 +132,23 @@ public class DataCenterServiceImpl implements DataCenterService {
 
     private MallUserModel userToModel(User user){
         MallUserModel mallUserModel=new MallUserModel();
-        mallUserModel.setHeadUrl(user.getUserImagePath());
-        mallUserModel.setIsBindMobile(SysRegex.IsValidMobileNo(user.getMobile()));
-        mallUserModel.setMerchantId(user.getMerchant().getId());
+        mallUserModel.setHeadUrl(user.getWeixinImageUrl());
+        mallUserModel.setIsBindMobile(SysRegex.IsValidMobileNo(user.getLoginName()));
+        mallUserModel.setMerchantId(Long.parseLong(ymrMerchantId));
         mallUserModel.setName(user.getRealName());
-        mallUserModel.setNickName(user.getNickName());
-        mallUserModel.setSex(1);//todo
+        mallUserModel.setNickName(user.getWxNickName());
+        switch (user.getGender().getValue()){
+            case "F":
+                mallUserModel.setSex(1);
+            case "M":
+                mallUserModel.setSex(2);
+            default:
+                mallUserModel.setSex(3);
+        }
         mallUserModel.setUserName(user.getLoginName());
+        if(!Objects.isNull(user.getId())){
+            mallUserModel.setUserId(user.getId());
+        }
         mallUserModel.setMobile(user.getMobile());
         return mallUserModel;
 

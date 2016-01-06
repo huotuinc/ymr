@@ -40,7 +40,6 @@ public class AppShareCommentListModel {
     /**
      * 评论内容
      */
-
     private String content;
 
     /**

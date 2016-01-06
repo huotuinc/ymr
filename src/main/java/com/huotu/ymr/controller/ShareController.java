@@ -8,7 +8,6 @@ import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.*;
 import com.huotu.ymr.exception.ShareNotExitsException;
 import com.huotu.ymr.exception.UserNotExitsException;
-import com.huotu.ymr.mallentity.MallUser;
 import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppShareCommentListModel;
 import com.huotu.ymr.model.AppShareInfoModel;
@@ -117,10 +116,10 @@ public class ShareController implements ShareSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_NOTALK);
         }
 
-        MallUser malluser=mallUserRepository.findOne(userId);// todo 最后通过数据中心返回用户信息
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);// todo 最后通过数据中心返回用户信息
         Share share=new Share();
         share.setOwnerId(userId);
-        share.setName(malluser.getWxNickName());
+        share.setName(mallUserModel.getNickName());
         share.setOwnerType(CommonEnum.UserType.user);
         share.setTitle(title);
         share.setShareType(CommonEnum.ShareType.userShare);
@@ -163,11 +162,13 @@ public class ShareController implements ShareSystem {
         shareInfoModel.setRelayQuantity(share.getRelayQuantity());
         shareInfoModel.setTotalIntegral(share.getScore());
         shareInfoModel.setUseIntegral(share.getUsedScore());
+        shareInfoModel.setTransmitUrl(staticResourceService.getResource("/transmit/shareInfo?shareId="+share.getId()).toString());
         data.outputData(shareInfoModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @Override
+    @RequestMapping("/setTransmitShare")
     public ApiResult setTransmitShare(@RequestParam(required = true)Long userId,
                                       @RequestParam(required = true)Long shareId) throws Exception {
         User user=userRepository.findOne(userId);
@@ -188,6 +189,7 @@ public class ShareController implements ShareSystem {
                 if(award>remainScore){//如果用户获取积分的值大于文章剩余的值
                     award=remainScore;//增加剩余的值
                 }
+
                 user.setScore(user.getScore()+award);
                 user.setContinuedScore(user.getContinuedScore()+award);
                 share.setUsedScore(share.getUsedScore()+award);
@@ -312,6 +314,7 @@ public class ShareController implements ShareSystem {
                             if(parentId.equals(shareComment.getId())){
                                 AppShareReplyModel appShareReplyModel=new AppShareReplyModel();
                                 appShareReplyModel.setRid(reply.getId());
+                                appShareReplyModel.setReplyId(reply.getUserId());
                                 appShareReplyModel.setReplyName(reply.getCommentName());
                                 appShareReplyModel.setToReplyName(reply.getParentName());
                                 appShareReplyModel.setContent(reply.getContent());
@@ -340,11 +343,11 @@ public class ShareController implements ShareSystem {
         if(userId==null||parentId==null||content==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        MallUser mallUser=mallUserRepository.findOne(userId);
-        if(Objects.isNull(mallUser)){
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        if(Objects.isNull(mallUserModel)){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
-        User user=userRepository.findOne(mallUser.getId());
+        User user=userRepository.findOne(userId);
         if(Objects.isNull(user)){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
@@ -360,12 +363,14 @@ public class ShareController implements ShareSystem {
         }
         ShareComment reply=new ShareComment();
         reply.setShare(shareComment.getShare());
-        reply.setUserId(mallUser.getId());
-        reply.setCommentName(mallUser.getWxNickName());
-//        reply.setLevel(user.getUserLevel());
+        reply.setUserId(userId);
+        reply.setCommentName(mallUserModel.getNickName());
+        reply.setLevel(user.getUserLevel());
+        reply.setHeadUrl(mallUserModel.getHeadUrl());
 //        reply.setHeadUrl(commonConfigService.getResoureServerUrl()+mallUser.getWxHeadUrl());//todo
         reply.setContent(content);
         reply.setTime(new Date());
+        reply.setStatus(CommonEnum.ShareCommentStatus.normal);
         reply.setParentId(shareComment.getId());
         reply.setParentName(shareComment.getCommentName());
         reply=shareCommentService.saveShareComment(reply);
@@ -376,6 +381,7 @@ public class ShareController implements ShareSystem {
     }
 
     @Override
+    @RequestMapping(value = "/deleteComment")
     public ApiResult deleteComment(Long commentId, Long userId) throws Exception {
         if(commentId==null||userId==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
@@ -389,7 +395,7 @@ public class ShareController implements ShareSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
         if(userId.equals(comment.getUserId())){
-            shareCommentService.deleteComment(commentId);
+            shareCommentService.deleteComment(comment.getCommentPath());
         }
 
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
@@ -401,19 +407,14 @@ public class ShareController implements ShareSystem {
         if(userId==null||shareId==null||content==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        User user=new User();
-        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development")){
-             user = userRepository.findOne(1234L);
+        User user=userRepository.findOne(userId);
+        MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(userId);
+        if (Objects.isNull(mallUserModel)) {
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
-        if (environment.acceptsProfiles("prod")) {
-            MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(userId);
-            if (Objects.isNull(mallUserModel)) {
-                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
-            }
-             user = userRepository.findOne(mallUserModel.getUserId());
-            if (Objects.isNull(user)) {
-                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
-            }
+        user = userRepository.findOne(mallUserModel.getUserId());
+        if (Objects.isNull(user)) {
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
         if(user.getUserStatus()== CommonEnum.UserStatus.freeze){
             return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_FREEZE);
@@ -428,17 +429,13 @@ public class ShareController implements ShareSystem {
         }
         ShareComment shareComment=new ShareComment();
         shareComment.setShare(share);
-        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development")){
-            shareComment.setUserId(1234L);
-            shareComment.setCommentName("小开开");
-            shareComment.setLevel(user.getUserLevel());
-            shareComment.setHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");
-        }
-//        shareComment.setUserId(mallUserModel.getUserId());
-//        shareComment.setCommentName(mallUserModel.getNickName());
-//        shareComment.setLevel(user.getUserLevel());
+        shareComment.setUserId(mallUserModel.getUserId());
+        shareComment.setCommentName(mallUserModel.getNickName());
+        shareComment.setLevel(user.getUserLevel());
+        shareComment.setHeadUrl(mallUserModel.getHeadUrl());
 //        shareComment.setHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());//todo
         shareComment.setContent(content);
+        shareComment.setStatus(CommonEnum.ShareCommentStatus.normal);
         shareComment.setTime(new Date());
         shareComment.setParentId(0L);
         shareComment.setParentName("");

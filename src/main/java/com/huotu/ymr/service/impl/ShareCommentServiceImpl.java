@@ -1,5 +1,6 @@
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.ShareComment;
 import com.huotu.ymr.model.AppUserShareCommentModel;
 import com.huotu.ymr.model.mall.MallUserModel;
@@ -30,7 +31,7 @@ public class ShareCommentServiceImpl implements ShareCommentService {
 
     @Override
     public List<ShareComment> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception {
-        List<ShareComment> list= shareCommentRepository.findByShareOrderByTime(shareId, lastId, new PageRequest(0,pageSize));
+        List<ShareComment> list= shareCommentRepository.findByShareOrderByTime(shareId, CommonEnum.ShareCommentStatus.normal, lastId, new PageRequest(0,pageSize));
         return list;
     }
 
@@ -45,8 +46,8 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     }
 
     @Override
-    public void deleteComment(Long shareCommentId) throws Exception {
-        shareCommentRepository.deleteComment("|"+shareCommentId+"|");
+    public void deleteComment(String shareCommentPath) throws Exception {
+        shareCommentRepository.deleteComment(shareCommentPath+"%");
     }
 
     @Override

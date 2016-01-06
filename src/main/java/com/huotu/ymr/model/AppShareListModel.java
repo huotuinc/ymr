@@ -92,5 +92,10 @@ public class AppShareListModel {
      */
     private List<String> headUrls;
 
+    /**
+     * 转发出去的URL
+     */
+    private String transmitUrl;
+
 
 }

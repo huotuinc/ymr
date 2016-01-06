@@ -18,7 +18,7 @@ public interface DataCenterService {
      * 获取用户信息(根据uniond)
      * @return
      */
-    MallUserModel[] getUserInfoByUniond(String uniond);
+    MallUserModel[] getUserInfoByUniond(String uniond) throws IOException;
 
     /**
      * 获取用户信息(根据手机号)

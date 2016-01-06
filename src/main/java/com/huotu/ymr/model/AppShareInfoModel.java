@@ -56,4 +56,9 @@ public class AppShareInfoModel {
      */
     private Integer useIntegral;
 
+    /**
+     * 转发出去的URL
+     */
+    private String transmitUrl;
+
 }
