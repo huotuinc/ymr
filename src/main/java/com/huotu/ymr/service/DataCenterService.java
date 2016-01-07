@@ -41,7 +41,7 @@ public interface DataCenterService {
      *  获取商品分类
      * @return
      */
-    List<CategoryModel> getCategory();
+    List<CategoryModel[]> getCategory(Long merchantId) throws IOException;
 
     /**
      * 根据分类获取商品
@@ -51,27 +51,24 @@ public interface DataCenterService {
 
     /**
      * 绑定手机号
-     * @return
      */
-    MallGoodModel bindingMobile();
+    void bindingMobile(Long userId,String mobile) throws IOException;
 
     /**
      * 修改手机号
-     * @return
      */
-    MallGoodModel ModifyMobile();
+    void  ModifyMobile(Long userId,String mobile) throws IOException;
 
     /**
      * 充值小金库
-     * @return
      */
     Boolean rechargeCoffers();
 
     /**
      * 修改用户信息
-     * @return
+     * 上传类型：0：图片，1：昵称，2：姓名，3：性别，4：联系电话(绑定手机)
      */
-    Boolean modifyUserInfo(Long userId,String data,Integer type) throws IOException;
+    void modifyUserInfo(Long userId,String data,Integer type) throws IOException;
 
 
 

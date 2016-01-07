@@ -9,10 +9,15 @@
 
 package com.huotu.ymr.interceptor;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 更低级别的api响应
  * @author CJ
  */
+@Getter
+@Setter
 public class PhysicalApiResult {
 
     /**
@@ -42,43 +47,4 @@ public class PhysicalApiResult {
     private Object resultData;
 
 
-    public int getResultCode() {
-        return resultCode;
-    }
-
-    public void setResultCode(int resultCode) {
-        this.resultCode = resultCode;
-    }
-
-    public Object getResultData() {
-        return resultData;
-    }
-
-    public void setResultData(Object resultData) {
-        this.resultData = resultData;
-    }
-
-    public String getResultDescription() {
-        return resultDescription;
-    }
-
-    public void setResultDescription(String resultDescription) {
-        this.resultDescription = resultDescription;
-    }
-
-    public int getSystemResultCode() {
-        return systemResultCode;
-    }
-
-    public void setSystemResultCode(int systemResultCode) {
-        this.systemResultCode = systemResultCode;
-    }
-
-    public String getSystemResultDescription() {
-        return systemResultDescription;
-    }
-
-    public void setSystemResultDescription(String systemResultDescription) {
-        this.systemResultDescription = systemResultDescription;
-    }
 }

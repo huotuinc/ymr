@@ -13,17 +13,6 @@ package com.huotu.ymr.common;
 import net.htmlparser.jericho.Source;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.beans.BeanInfo;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Method;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Random;
 
 public class StringHelper extends com.huotu.common.base.StringHelper {
@@ -56,7 +45,7 @@ public class StringHelper extends com.huotu.common.base.StringHelper {
      * @param length 文字长度
      * @return
      */
-    public String getText(String html, Integer length) {
+    public static String getText(String html, Integer length) {
         Source source = new Source(html);
         String result = source.getTextExtractor().toString();
         if (!StringUtils.isEmpty(result) && result.length() > length) {

@@ -70,7 +70,7 @@ public class ShareCommentServiceImpl implements ShareCommentService {
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(shareComment.getUserId());
         appUserShareCommentModel.setPId(shareComment.getShare().getId());
         appUserShareCommentModel.setCId(shareComment.getId());
-        appUserShareCommentModel.setUserHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());
+        appUserShareCommentModel.setUserHeadUrl(mallUserModel.getHeadUrl());
         appUserShareCommentModel.setTitle(shareComment.getShare().getTitle());
         appUserShareCommentModel.setShareType(shareComment.getShare().getShareType());
         appUserShareCommentModel.setImg(shareComment.getShare().getImg());

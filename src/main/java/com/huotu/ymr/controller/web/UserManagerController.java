@@ -222,6 +222,34 @@ public class UserManagerController {
     }
 
 
+    /**
+     * 获取商家的商品分类
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getCatList",method = RequestMethod.GET)
+    public ResultModel getCatList() throws Exception{
+//        List<Cat>
+        ResultModel resultModel=new ResultModel();
+        return resultModel;
+
+    }
+
+
+    /**
+     * 获取商家的商品
+     * @param catId     商品所属分类
+     * @param pageNo    分页
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getGoodsList",method = RequestMethod.GET)
+    public ResultModel getGoodsList(Long catId,Long pageNo) throws Exception{
+        ResultModel resultModel=new ResultModel();
+        return resultModel;
+    }
+
+
 
 
 }

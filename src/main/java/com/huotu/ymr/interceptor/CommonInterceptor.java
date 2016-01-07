@@ -51,9 +51,6 @@ public class CommonInterceptor implements HandlerInterceptor {
     private UserRepository userRepository;
 
     @Autowired
-    private MallUserRepository mallUserRepository;
-
-    @Autowired
     DataCenterService dataCenterService;
 
     @Autowired
@@ -62,13 +59,6 @@ public class CommonInterceptor implements HandlerInterceptor {
 
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-
-//        logger.debug("==============执行顺序: 0、preHandle================");
-
-//        if(true){
-//            return true;
-//        }
         String sign = request.getParameter("sign");
 
         //logger.info("sign:" + getSign(request));
@@ -136,18 +126,6 @@ public class CommonInterceptor implements HandlerInterceptor {
                 appUserInfoModel.setToken(token);
 
                 MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(user.getId());
-//                MallUser mallUser = mallUserRepository.findOne(user.getId());
-//                if (mallUser != null) {
-//                    appUserInfoModel.setName(mallUser.getRealName());
-//                    appUserInfoModel.setNickName(mallUser.getWxNickName());
-//                    appUserInfoModel.setHeadUrl(mallUser.getWxHeadUrl());
-//                    appUserInfoModel.setSex(1);
-//                    appUserInfoModel.setMerchantId(mallUser.getMerchant().getId());
-//                    appUserInfoModel.setIsBindMobile(SysRegex.IsValidMobileNo(mallUser.getUsername()));
-//                    appUserInfoModel.setUserName(mallUser.getUsername());
-//                    appUserInfoModel.setMobile(mallUser.getMobile());
-//                    model.setCurrentUser(appUserInfoModel);
-//                }
                 if (mallUserModel != null) {
                     appUserInfoModel.setName(mallUserModel.getName());
                     appUserInfoModel.setNickName(mallUserModel.getNickName());

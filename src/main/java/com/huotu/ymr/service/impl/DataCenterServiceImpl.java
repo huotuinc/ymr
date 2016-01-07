@@ -1,9 +1,13 @@
 package com.huotu.ymr.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.huotu.common.base.HttpHelper;
+import com.huotu.huobanplus.common.Gender;
+import com.huotu.huobanplus.common.entity.Category;
 import com.huotu.huobanplus.common.entity.User;
+import com.huotu.huobanplus.sdk.common.repository.CategoryRestRepository;
+import com.huotu.huobanplus.sdk.common.repository.GoodsRestRepository;
 import com.huotu.huobanplus.sdk.common.repository.UserRestRepository;
+import com.huotu.ymr.common.HttpHelper;
 import com.huotu.ymr.common.SysRegex;
 import com.huotu.ymr.model.AppWeiXinAccreditModel;
 import com.huotu.ymr.model.mall.CategoryModel;
@@ -14,12 +18,14 @@ import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.DataCenterService;
 import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -29,6 +35,12 @@ import java.util.*;
 public class DataCenterServiceImpl implements DataCenterService {
     @Autowired
     private UserRestRepository userRestRepository;
+
+    @Autowired
+    private GoodsRestRepository goodsRestRepository;
+
+    @Autowired
+    private CategoryRestRepository categoryRestRepository;
 
     @Autowired
     CommonConfigService commonConfigService;
@@ -82,7 +94,7 @@ public class DataCenterServiceImpl implements DataCenterService {
         map.put("headimgurl",appWeiXinAccreditModel.getHeadimgurl());
         map.put("unionid",appWeiXinAccreditModel.getUnionid());
         map.put("sign", getSign(map));
-        String response = HttpHelper.postRequest(url, map);
+        String response= HttpHelper.postRequest(url,map);
         MallApiResultModel resultModel = JSON.parseObject(response, MallApiResultModel.class);
         if (resultModel.getCode() == 200 && !StringUtils.isEmpty(resultModel.getData().toString())) {
             return Long.parseLong(JsonPath.read(resultModel.getData().toString(), "$.userid").toString());
@@ -92,7 +104,43 @@ public class DataCenterServiceImpl implements DataCenterService {
 
 
     @Override
-    public List<CategoryModel> getCategory() {
+    public List<CategoryModel[]> getCategory(Long merchantId) throws IOException {
+        List<Category> categories=categoryRestRepository.findByTitleAndCategory(Long.parseLong(ymrMerchantId), new PageRequest(0, Integer.MAX_VALUE)).getContent();
+        if(!Objects.isNull(categories)&&!categories.isEmpty()){
+            List<CategoryModel>categoryModels=new ArrayList<>();
+            for(int i=0;i<categories.size();i++){
+                Category category=categories.get(i);
+                if(category.getParentId()==0){
+                    CategoryModel categoryModel=new CategoryModel();
+                    categoryModel.setId(category.getId());
+                    categoryModel.setTitle(category.getTitle());
+
+                    //获取二级分类
+//                    for(int j=0;j<categories.size();j++){
+//                        if(category.){
+//                    }
+
+                    categoryModels.add(categoryModel);
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+        }
+
         return null;
     }
 
@@ -102,13 +150,13 @@ public class DataCenterServiceImpl implements DataCenterService {
     }
 
     @Override
-    public MallGoodModel bindingMobile() {
-        return null;
+    public void bindingMobile(Long userId,String mobile) throws IOException {
+        userRestRepository.getOneByPK(userId).setLoginName(mobile);
     }
 
     @Override
-    public MallGoodModel ModifyMobile() {
-        return null;
+    public void ModifyMobile(Long userId,String mobile) throws IOException{
+        userRestRepository.getOneByPK(userId).setLoginName(mobile);
     }
 
     @Override
@@ -117,7 +165,7 @@ public class DataCenterServiceImpl implements DataCenterService {
     }
 
     @Override
-    public Boolean modifyUserInfo(Long userId, String data, Integer type) throws IOException {
+    public void modifyUserInfo(Long userId, String data, Integer type) throws IOException {
         User user=userRestRepository.getOneByPK(userId);
         switch (type){
             case 0:
@@ -125,9 +173,17 @@ public class DataCenterServiceImpl implements DataCenterService {
             case 1:
                 break;
             case 2:
+                user.setRealName(data);
+                break;
+            case 3:
+                user.setGender(Gender.valueOf(data));
+                break;
+            case 4:
+                user.setLoginName(data);
+                break;
+            default:
                 break;
         }
-        return null;
     }
 
     private MallUserModel userToModel(User user){
@@ -140,8 +196,10 @@ public class DataCenterServiceImpl implements DataCenterService {
         switch (user.getGender().getValue()){
             case "F":
                 mallUserModel.setSex(1);
+                break;
             case "M":
                 mallUserModel.setSex(2);
+                break;
             default:
                 mallUserModel.setSex(3);
         }
@@ -149,17 +207,33 @@ public class DataCenterServiceImpl implements DataCenterService {
         if(!Objects.isNull(user.getId())){
             mallUserModel.setUserId(user.getId());
         }
-        mallUserModel.setMobile(user.getMobile());
+        mallUserModel.setMobile(SysRegex.IsValidMobileNo(user.getLoginName())?user.getLoginName():"");
         return mallUserModel;
 
     }
-    private String getSign(Map<String, String> map) {
-        String result = "";
-        for (String key : map.keySet()) {
-            if(!StringUtils.isEmpty(map.get(key)))
-                result += key + "=" + map.get(key) + "&";
+    private String getSign(Map<String, String> map) throws UnsupportedEncodingException {
+        Map<String, String> resultMap = new TreeMap<String, String>();
+        for (Object key : map.keySet()) {
+            resultMap.put(key.toString(), map.get(key));
+//            log.debug(key + " " + resultMap.get(key));
         }
-        String before=result.substring(0, result.length() - 1) + appsecret;
-        return DigestUtils.md5DigestAsHex((result.substring(0, result.length() - 1) + appsecret).getBytes());
+
+
+        StringBuilder strB = new StringBuilder();
+        for (String key : resultMap.keySet()) {
+            if (!"sign".equals(key) && !StringUtils.isEmpty(resultMap.get(key))) {
+                strB.append("&" + key + "=" + resultMap.get(key));
+            }
+        }
+
+        String toSign = (strB.toString().length() > 0 ? strB.toString().substring(1) : "") + commonConfigService.getAppsecret();
+        return DigestUtils.md5DigestAsHex(toSign.getBytes("UTF-8")).toLowerCase();
+//        String result = "";
+//        for (String key : map.keySet()) {
+//            if(!StringUtils.isEmpty(map.get(key)))
+//                result += key + "=" + map.get(key) + "&";
+//        }
+//        String before=result.substring(0, result.length() - 1) + appsecret;
+//        return DigestUtils.md5DigestAsHex((result.substring(0, result.length() - 1) + appsecret).getBytes());
     }
 }

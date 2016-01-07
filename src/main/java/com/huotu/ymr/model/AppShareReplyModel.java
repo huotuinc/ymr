@@ -26,6 +26,11 @@ public class AppShareReplyModel {
     private Long replyId;
 
     /**
+     * 回复人ID
+     */
+    private Long userId;
+
+    /**
      * 被回复人姓名
      */
     private String toReplyName;

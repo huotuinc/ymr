@@ -27,6 +27,7 @@ public class MessageToUser {
     private User user;
 
     private boolean readed;
+
     private boolean deleted;
     @Temporal(TemporalType.TIMESTAMP)
     private Date receivedTime;

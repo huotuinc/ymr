@@ -13,6 +13,7 @@ import com.huotu.ymr.model.*;
 import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.*;
 import com.huotu.ymr.service.*;
+import com.huotu.ymr.service.impl.YimeiVerificationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,23 +85,24 @@ public class UserController implements UserSystem {
     @Autowired
     MyCrowdFundingFlowService myCrowdFundingFlowService;
 
+    @Autowired
+    YimeiVerificationService yimeiVerificationService;
+
 
     @RequestMapping("/init")
     @Override
      public ApiResult init(Output<AppGlobalModel> global, Output<AppUserInfoModel> user, Output<AppUpdateModel> update) throws Exception {
+
         global.outputData(appGlobalModel);
 
         AppPublicModel pms = PublicParameterHolder.get();
 
         update.outputData(versionChecking(pms.getOperation(), pms.getVersion(), pms.getImei()));
 
-
         AppUserInfoModel appUserInfoModel = pms.getCurrentUser();
+
         user.outputData(appUserInfoModel);
-//        if (appUserInfoModel == null) {
-//            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_LOGIN_FAIL);
-//        }
-        user.outputData(appUserInfoModel);
+
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
@@ -309,15 +311,16 @@ public class UserController implements UserSystem {
 
     @RequestMapping("/bindMobile")
     @Override
-    public ApiResult bindMobile(String code, String phone,Long currentDate,Long userId) throws Exception {
+    public ApiResult bindMobile(Output<AppUserInfoModel> data,String code, String phone,Long currentDate,Long userId) throws Exception {
         if(StringUtils.isEmpty(code)||StringUtils.isEmpty(phone)||userId==null||currentDate==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        List<VerificationCode> codeList = verificationCodeRepository.findByMobileAndTypeAndSendTimeGreaterThan(
-                phone, CommonEnum.VerificationType.bind, new Date(currentDate - 60 * 1000));
-        for (VerificationCode verificationCode : codeList) {
-            if (!verificationCode.getCode().equals(code))
-                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
+        boolean isTrue=yimeiVerificationService.verifyCode(phone,
+                VerificationService.VerificationProject.fanmore,code,
+                new Date(currentDate - 60 * 1000),
+                CommonEnum.VerificationType.bind);
+        if(!isTrue){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
         }
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
         //检查是否已经绑定了手机号
@@ -325,26 +328,36 @@ public class UserController implements UserSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE_ALREADY_BINDING);
         }
         //todo 开始绑定手机号
+        dataCenterService.modifyUserInfo(userId, phone, 4);
+        User user=userService.getUser(userId);
+        mallUserModel.setMobile(phone);
+        mallUserModel.setUserName(phone);
+        AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
+        data.outputData(appUserInfoModel);
 
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
     @RequestMapping("/modifyMobile")
     @Override
-    public ApiResult modifyMobile(String code, String phone,Long currentDate,Long userId) throws Exception {
+    public ApiResult modifyMobile(Output<AppUserInfoModel> data,String code, String phone,Long currentDate,Long userId) throws Exception {
         if(StringUtils.isEmpty(code)||StringUtils.isEmpty(phone)||userId==null||currentDate==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        List<VerificationCode> codeList = verificationCodeRepository.findByMobileAndTypeAndSendTimeGreaterThan(
-                phone, CommonEnum.VerificationType.bind, new Date(currentDate - 60 * 1000));
-        for (VerificationCode verificationCode : codeList) {
-            if (!verificationCode.getCode().equals(code))
-                return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
+
+        boolean isTrue=yimeiVerificationService.verifyCode(phone,
+                VerificationService.VerificationProject.fanmore,code,
+                new Date(currentDate - 60 * 1000),
+                CommonEnum.VerificationType.bind);
+        if(!isTrue){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
         }
-//        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
-//        if(SysRegex.IsValidMobileNo(mallUserModel.getUserName()))
         //todo 修改绑定手机
-        dataCenterService.modifyUserInfo(userId,null,2);
+        dataCenterService.modifyUserInfo(userId,phone,4);
+        User user=userService.getUser(userId);
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
+        data.outputData(appUserInfoModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
 
@@ -407,6 +420,7 @@ public class UserController implements UserSystem {
     @RequestMapping("/put")
     @Override
     public ApiResult put(Output<String> orderNo, Double money) throws Exception {
+
         return null;
     }
 
@@ -420,37 +434,45 @@ public class UserController implements UserSystem {
         if(Objects.isNull(user)){
             throw new UserNotExitsException();
         }
-        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
-        if(Objects.isNull(user.getId())){
-            throw new UserNotExitsException();
-        }
         switch (profileType){
             case 0:
                 //上传头像
                 break;
             case 1:
                 //昵称修改
-                String nickName=(String)profileData;
                 break;
             case 2:
                 //姓名修改
                 String realName=(String)profileData;
+                dataCenterService.modifyUserInfo(userId,realName,2);
                 break;
             case 3:
                 //性别修改
                 String sex=(String)profileData;
+                String sexStr;
+                if("1".equals(sex)){
+                    sexStr="MAN";
+                }else if ("2".equals(sex)){
+                    sexStr="WOMEN";
+                }else {
+                    sexStr="UNKNOWN";
+                }
+                dataCenterService.modifyUserInfo(userId,sexStr,3);
                 break;
             case 4:
                 //联系电话
                 String phone=(String)profileData;
-
+                dataCenterService.modifyUserInfo(userId,phone,4);
                 break;
             case 5:
                 //定位
                 break;
         }
 
-        return null;
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
+        data.outputData(appUserInfoModel);
+        return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
 
     }
 
@@ -554,6 +576,7 @@ public class UserController implements UserSystem {
                 AppUserShareModel appUserShareModel=new AppUserShareModel();
                 Share share=shares.get(i);
                 appUserShareModel.setPId(share.getId());
+                appUserShareModel.setCheckType(share.getCheckStatus());
                 appUserShareModel.setTitle(share.getTitle());
                 appUserShareModel.setShareType(share.getShareType());
                 appUserShareModel.setImg(share.getImg());
@@ -595,7 +618,7 @@ public class UserController implements UserSystem {
                 appUserShareRunningModel.setIntro(shareRunning.getShare().getIntro());
                 appUserShareRunningModel.setTime(shareRunning.getShare().getTime());
                 appUserShareRunningModel.setUserId(shareRunning.getUserId());
-                appUserShareRunningModel.setHeadUrl(staticResourceService.getResource(mallUserModel.getHeadUrl()).toString());
+                appUserShareRunningModel.setHeadUrl(mallUserModel.getHeadUrl());
                 appUserShareRunningModel.setName(mallUserModel.getNickName());
                 appUserShareRunningModels[i]=appUserShareRunningModel;
             }

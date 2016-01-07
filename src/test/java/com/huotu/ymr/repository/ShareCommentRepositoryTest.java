@@ -1,8 +1,12 @@
 package com.huotu.ymr.repository;
 
+import com.huotu.huobanplus.common.entity.Category;
+import com.huotu.huobanplus.sdk.common.repository.CategoryRestRepository;
+import com.huotu.huobanplus.sdk.common.repository.GoodsRestRepository;
 import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
+import com.huotu.ymr.common.HttpHelper;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.model.AppWeiXinAccreditModel;
 import com.huotu.ymr.model.mall.MallUserModel;
@@ -10,11 +14,15 @@ import com.huotu.ymr.service.DataCenterService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import javax.transaction.Transactional;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Created by Administrator on 2015/12/3.
@@ -31,6 +39,12 @@ public class ShareCommentRepositoryTest {
 
     @Autowired
     DataCenterService dataCenterService;
+
+    @Autowired
+    CategoryRestRepository categoryRestRepository;
+
+    @Autowired
+    GoodsRestRepository goodsRestRepository;
 
     @Test
     public void testFindByParentId() throws Exception {
@@ -78,5 +92,19 @@ public class ShareCommentRepositoryTest {
     @Test
     public void getUserInfoTest()throws Exception{
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(6645L);
+    }
+
+    @Test
+    public void getCatListTest()throws Exception{
+        Page<Category> categories= categoryRestRepository.findByTitleAndCategory(4471L, new PageRequest(0, 1000));
+    }
+
+    @Test
+    public void postTest()throws Exception{
+        String url ="http://localhost:8080/ymr/manager/testPost";
+        Map<String, String> map = new TreeMap<>();
+        map.put("nickname","史利挺");
+        String response= HttpHelper.postRequest(url,map);
+
     }
 }

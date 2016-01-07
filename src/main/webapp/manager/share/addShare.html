@@ -199,6 +199,15 @@
                         </div>
                     </div>
 
+
+
+
+
+
+
+
+
+
                     <!-- 添加商品弹窗 -->
                     <div id="asaimsg" class="AsaiDivShow" style="display: none">
                         <input type="hidden" id="eventLogger" />
@@ -215,25 +224,53 @@
                                cellpadding="0">
                             <thead>
                             <tr class="even">
-                                <th></th>
                                 <th scope="col">商品名称</th>
                                 <th scope="col">商品价格（元）</th>
                                 <th scope="col">操作</th>
                             </tr>
                             </thead>
-                            <tbody th:remove="all-but-first" id="goodListByNameAndCategory">
-                            <tr th:each="g:${goodsList}">
-                                <td class="txt40 c" th:text="${g.id}"></td>
-                                <td class="txt40 c" th:text="${g.title}">瓜子</td>
-                                <td class="txt40 c" th:text="${g.price}">120</td>
-                                <td class="txt40 c"><a href="javascript:void(0)"
-                                                       onclick="choiceGoods(this)">选择</a></td>
+                            <tbody id="goodListByNameAndCategory">
+                            <tr>
+                                <td class="txt55 c">瓜子</td>
+                                <td class="txt21 c">120</td>
+                                <td class="txt21 c"><a href="javascript:void(0)" onclick="choiceGoods(this)">选择</a></td>
                             </tr>
+
+
 
                             </tbody>
                         </table>
+                        <div class="pager-bar">
+                            <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
+                            <a class="button-white" href="javascript:queryUp(-1)">
+                                <span>上一页</span>
+                            </a>
+                            <a class="button-white" href="javascript:queryVoid(1)">
+                                <span>下一页</span>
+                            </a>
+                            <a class="button-white" href="javascript:queryLast()">
+                                <span>未页</span>
+                            </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第
+                            <input id="current-index" onkeydown="J.EnterSubmit(event, Pager.Jump);" class="input-small" style="text-align:center;" type="text" value="1"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                            <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
+                        </div>
+
+
+
                     </div>
                     <!-- 弹窗结束 -->
+
+
+
+
+
+
+
+
+
+
+
+
 
                 </div>
 
@@ -305,6 +342,27 @@
 
     function recommendGoods(){
         //ajax请求商品列表
+        $.ajax({
+            type:'GET',
+            url: 'setShare',
+            dataType: 'json',
+            data: {shareId:shareId,type:type},
+            success:function(result){
+                if(result.code==1){
+
+                    jBox.tip("修改成功");
+                    window.location.reload();
+                }else {
+                    jBox.tip(result.message);
+                }
+            },
+            error:function(e){
+                $.jBox.tip("修改出错，请检查网络");
+            }
+        });
+
+
+
         $("#asaimsg").show();
 //        $.jBox("iframe:goodsList", {
 //            title: "选择商品",

@@ -9,7 +9,6 @@
 
 package com.huotu.ymr.common;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -24,49 +23,42 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
  * Created by Administrator on 2015/9/17.
  */
 public class HttpHelper {
-    /**
-     * http post请求
-     *
-     * @param url   请求的URL
-     * @param data  参数
-     * @return
-     * @throws IOException
-     */
+    public HttpHelper() {
+    }
+
     public static String postRequest(String url, Map<String, String> data) throws IOException {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(url);
         BasicNameValuePair[] basicNameValuePairs = new BasicNameValuePair[data.size()];
         int i = 0;
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            basicNameValuePairs[i] = new BasicNameValuePair(entry.getKey(), entry.getValue());
-            i++;
+
+        for(Iterator resultData = data.entrySet().iterator(); resultData.hasNext(); ++i) {
+            Map.Entry inputStream = (Map.Entry)resultData.next();
+            basicNameValuePairs[i] = new BasicNameValuePair((String)inputStream.getKey(), (String)inputStream.getValue());
         }
+
         post.setEntity(
-                EntityBuilder.create()
-                        .setContentEncoding("UTF-8")
-                        .setContentType(ContentType.APPLICATION_FORM_URLENCODED)
-                        .setParameters(basicNameValuePairs)
-                        .build()
-        );
-        HttpResponse resultData = httpClient.execute(post);
-
-        InputStream inputStream = resultData.getEntity().getContent();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
-
+                EntityBuilder.create().setContentEncoding("UTF-8")
+                .setContentType(ContentType.create("application/x-www-form-urlencoded", "UTF-8"))
+                .setParameters(basicNameValuePairs).build());
+        CloseableHttpResponse var11 = httpClient.execute(post);
+        InputStream var12 = var11.getEntity().getContent();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(var12, "UTF-8"));
         StringBuffer stringBuffer = new StringBuffer();
         String line = null;
-        while ((line = reader.readLine()) != null) {
+
+        while((line = reader.readLine()) != null) {
             stringBuffer.append(line);
         }
-        return stringBuffer.toString();
 
+        return stringBuffer.toString();
     }
 
     public static String getRequest(String url) throws IOException {
@@ -75,14 +67,14 @@ public class HttpHelper {
         CloseableHttpResponse response = httpClient.execute(httpGet);
         InputStream inputStream = response.getEntity().getContent();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-
         StringBuffer stringBuffer = new StringBuffer();
         String line = null;
-        while ((line = reader.readLine()) != null) {
+
+        while((line = reader.readLine()) != null) {
             stringBuffer.append(line);
         }
+
         return stringBuffer.toString();
     }
-
 
 }

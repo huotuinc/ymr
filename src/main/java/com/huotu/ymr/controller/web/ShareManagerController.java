@@ -2,6 +2,7 @@ package com.huotu.ymr.controller.web;
 
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
+import com.huotu.ymr.common.StringHelper;
 import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareGoods;
@@ -47,6 +48,12 @@ public class ShareManagerController {
     ShareGoodsRepository shareGoodsRepository;
 
 
+    /**
+     * 进入爱分享底部推广内容页面
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/showBottomGeneralize",method = RequestMethod.GET)
     public String showBottomGeneralize(Model model) throws Exception{
         Config bottom=configRepository.findOne(ConfigKey.BOTTOM_GENERALIZE);
@@ -61,6 +68,12 @@ public class ShareManagerController {
 
     }
 
+    /**
+     * 进入积分设置页面
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/showIntegralConfig",method = RequestMethod.GET)
     public String showIntegralConfig(Model model) throws Exception{
         model.addAttribute("userGT",configRepository.findOne(ConfigKey.USER_TRANSMIT).getValue());
@@ -70,6 +83,15 @@ public class ShareManagerController {
         return "manager/share/integralConfig";
     }
 
+    /**
+     * 保存积分设置
+     * @param score
+     * @param relayReward
+     * @param type
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/saveUserIntegralConfig",method = RequestMethod.POST)
     public String saveUserIntegralConfig(Integer score,Integer relayReward,Integer type,Model model) throws Exception{
         if(score==null||relayReward==null||type==null){
@@ -91,6 +113,14 @@ public class ShareManagerController {
         configRepository.save(TT);
         return "redirect:/manager/showIntegralConfig";
     }
+
+    /**
+     * 保存底部推广
+     * @param content
+     * @param model
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/saveBottomConfig",method = RequestMethod.POST)
     public String saveBottomConfig(String content,Model model) throws Exception{
         Config bottom=configRepository.findOne(ConfigKey.BOTTOM_GENERALIZE);
@@ -352,7 +382,7 @@ public class ShareManagerController {
             share.setName("官方");
             share.setOwnerType(CommonEnum.UserType.official);
 
-            share.setIntro("");//todo 简介从内容中获取
+            share.setIntro(StringHelper.getText(share.getContent(),100));//todo 简介从内容中获取
             share.setTime(new Date());
             share.setPostReward(0);
             share.setReason("");

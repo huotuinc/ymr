@@ -66,6 +66,7 @@ public class SecurityConfig {
                     .authorizeRequests().antMatchers(
                     "/app/**",
                     "/resource/**",
+                    "/_resource/**",
                     "/transmit/**"
             ).permitAll().anyRequest().authenticated()
                     .and()

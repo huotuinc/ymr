@@ -163,4 +163,10 @@ public class ArticleManagerController {
     }
 
 
+    @RequestMapping(value = "/testPost",method = RequestMethod.POST)
+    public void testPost(String nickname){
+        String str=nickname;
+    }
+
+
 }

@@ -22,4 +22,6 @@ public class ResultModel {
 	private String message;
 
 	private String url;
+
+	private Object data;
 }

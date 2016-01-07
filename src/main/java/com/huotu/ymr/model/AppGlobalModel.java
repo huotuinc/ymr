@@ -1,6 +1,5 @@
 package com.huotu.ymr.model;
 
-import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.service.CommonConfigService;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,8 +42,6 @@ public class AppGlobalModel {
     @Autowired
     private CommonConfigService commonConfigService;
 
-    @Autowired
-    private ConfigRepository configRepository;
 
     //todo run
     @Autowired

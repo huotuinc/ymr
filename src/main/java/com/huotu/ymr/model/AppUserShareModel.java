@@ -49,5 +49,10 @@ public class AppUserShareModel {
      */
     private Integer integral;
 
+    /**
+     * 审核状态
+     */
+    private CommonEnum.CheckType checkType;
+
 
 }

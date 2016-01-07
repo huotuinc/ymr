@@ -110,7 +110,7 @@ public interface UserSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult bindMobile(String code, String phone,Long currentDate,Long userId) throws Exception;
+    ApiResult bindMobile(Output<AppUserInfoModel> data,String code, String phone,Long currentDate,Long userId) throws Exception;
 
     /**
      * 修改手机号
@@ -121,7 +121,7 @@ public interface UserSystem {
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult modifyMobile(String code, String phone,Long currentDate,Long userId) throws Exception;
+    ApiResult modifyMobile(Output<AppUserInfoModel> data,String code, String phone,Long currentDate,Long userId) throws Exception;
 
     /**
      * 积分充值到小金库

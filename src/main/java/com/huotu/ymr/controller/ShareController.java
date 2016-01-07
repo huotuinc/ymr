@@ -5,6 +5,7 @@ import com.huotu.common.api.Output;
 import com.huotu.ymr.api.ShareSystem;
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
+import com.huotu.ymr.common.StringHelper;
 import com.huotu.ymr.entity.*;
 import com.huotu.ymr.exception.ShareNotExitsException;
 import com.huotu.ymr.exception.UserNotExitsException;
@@ -125,7 +126,7 @@ public class ShareController implements ShareSystem {
         share.setShareType(CommonEnum.ShareType.userShare);
         share.setImg(imgUrl);
         share.setContent(content);
-        share.setIntro("");
+        share.setIntro(StringHelper.getText(content,100));
         share.setTop(false);
         share.setTime(new Date());
         share.setPostReward(Integer.parseInt(userPT.getValue()));
@@ -299,7 +300,7 @@ public class ShareController implements ShareSystem {
                     appShareCommentListModel.setPid(shareComment.getId());
                     appShareCommentListModel.setName(shareComment.getCommentName());
                     appShareCommentListModel.setLevel(shareComment.getLevel());
-                    appShareCommentListModel.setUserHeadUrl(staticResourceService.getResource(shareComment.getHeadUrl()).toString());
+                    appShareCommentListModel.setUserHeadUrl(shareComment.getHeadUrl());
                     appShareCommentListModel.setContent(shareComment.getContent());
                     appShareCommentListModel.setTime(shareComment.getTime());
                     appShareCommentListModel.setCommentQuantity(shareComment.getCommentQuantity());
@@ -315,6 +316,7 @@ public class ShareController implements ShareSystem {
                                 AppShareReplyModel appShareReplyModel=new AppShareReplyModel();
                                 appShareReplyModel.setRid(reply.getId());
                                 appShareReplyModel.setReplyId(reply.getUserId());
+                                appShareReplyModel.setUserId(reply.getUserId());
                                 appShareReplyModel.setReplyName(reply.getCommentName());
                                 appShareReplyModel.setToReplyName(reply.getParentName());
                                 appShareReplyModel.setContent(reply.getContent());
