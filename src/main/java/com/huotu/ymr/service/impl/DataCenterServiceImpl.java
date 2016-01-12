@@ -58,7 +58,13 @@ public class DataCenterServiceImpl implements DataCenterService {
 
     @Override
     public MallUserModel[] getUserInfoByUniond(String uniond) throws IOException {
-        List<User> users=userRestRepository.findByMerchantIdAndUnionId(Long.parseLong(ymrMerchantId),uniond);
+        List<User> users;
+        try{
+             users=userRestRepository.findByMerchantIdAndUnionId(Long.parseLong(ymrMerchantId),uniond);
+        }catch (Exception ex){
+            return new MallUserModel[0];
+        }
+
         MallUserModel[] mallUserModels=new MallUserModel[users.size()];
         for(int i=0;i<users.size();i++){
             mallUserModels[i]=userToModel(users.get(i));
@@ -73,7 +79,13 @@ public class DataCenterServiceImpl implements DataCenterService {
 
     @Override
     public MallUserModel getUserInfoByUserId(Long userId) throws IOException {
-        User user=userRestRepository.getOneByPK(userId);
+        User user;
+        try {
+            user=userRestRepository.getOneByPK(userId);
+
+        }catch (Exception ex){
+            return null;
+        }
         MallUserModel mallUserModel=userToModel(user);
         return mallUserModel;
     }
@@ -104,8 +116,15 @@ public class DataCenterServiceImpl implements DataCenterService {
 
 
     @Override
-    public List<CategoryModel[]> getCategory(Long merchantId) throws IOException {
-        List<Category> categories=categoryRestRepository.findByTitleAndCategory(Long.parseLong(ymrMerchantId), new PageRequest(0, Integer.MAX_VALUE)).getContent();
+    public List<CategoryModel> getCategory(Long merchantId) throws IOException {
+        List<Category> categories;
+        try{
+             categories=categoryRestRepository.findByTitleAndCategory(Long.parseLong(ymrMerchantId), new PageRequest(0, Integer.MAX_VALUE)).getContent();
+        }catch (Exception ex){
+            return null;
+        }
+
+        //Â¶ÇÊûúÊúâÂàÜÁ±ªÊï∞ÊçÆ
         if(!Objects.isNull(categories)&&!categories.isEmpty()){
             List<CategoryModel>categoryModels=new ArrayList<>();
             for(int i=0;i<categories.size();i++){
@@ -115,30 +134,23 @@ public class DataCenterServiceImpl implements DataCenterService {
                     categoryModel.setId(category.getId());
                     categoryModel.setTitle(category.getTitle());
 
-                    //ªÒ»°∂˛º∂∑÷¿‡
-//                    for(int j=0;j<categories.size();j++){
-//                        if(category.){
-//                    }
 
+                    List<CategoryModel> secondCates=new ArrayList<>();
+                    //todo Ëé∑Âèñ‰∫åÁ∫ßÂàÜÁ±ª
+                    for(int j=0;j<categories.size();j++){
+                        Category secondCat=categories.get(j);
+                        if(category.getId().equals(secondCat.getParentId())&&secondCat.getCatPath().length()==5){
+                            CategoryModel secCatModel=new CategoryModel();
+                            secCatModel.setId(secondCat.getId());
+                            secCatModel.setTitle(secondCat.getTitle());
+                            secondCates.add(secCatModel);
+                        }
+                    }
+                    categoryModel.setSecondCategory(secondCates);
                     categoryModels.add(categoryModel);
-
                 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             }
+            return categoryModels;
         }
 
         return null;

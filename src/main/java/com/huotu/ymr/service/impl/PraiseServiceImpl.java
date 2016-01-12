@@ -48,6 +48,7 @@ public class PraiseServiceImpl implements PraiseService {
         appUserSharePraiseModel.setTitle(praise.getShare().getTitle());
         appUserSharePraiseModel.setSId(praise.getShare().getId());
         appUserSharePraiseModel.setPId(praise.getId());
+        appUserSharePraiseModel.setUserName(mallUserModel.getNickName());
         appUserSharePraiseModel.setUserHeadUrl(mallUserModel.getHeadUrl());
         appUserSharePraiseModel.setShareType(praise.getShare().getShareType());
         appUserSharePraiseModel.setImg(staticResourceService.getResource(praise.getShare().getImg()).toString());

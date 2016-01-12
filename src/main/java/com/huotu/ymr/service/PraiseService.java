@@ -30,5 +30,11 @@ public interface PraiseService {
     List<Praise> findBePraisedList(User user,Long lastId) throws Exception;
 
 
+    /**
+     * 将点赞实体转换为model
+     * @param praise
+     * @return
+     * @throws Exception
+     */
     AppUserSharePraiseModel getpraiseToModel(Praise praise) throws Exception;
 }

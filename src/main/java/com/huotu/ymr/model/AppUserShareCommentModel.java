@@ -25,6 +25,11 @@ public class AppUserShareCommentModel {
     private Long cId;
 
     /**
+     * 评论者名称
+     */
+    private String userName;
+
+    /**
      * 评论者用户头像
      */
     private String userHeadUrl;

@@ -226,7 +226,6 @@ public class ShareServiceImpl implements ShareService {
 
     @Override
     public AppShareListModel shareToListModel(Share share,User user) throws Exception {
-        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(user.getId());
         AppShareListModel appShareListModel=new AppShareListModel();
         Praise praise=praiseRepository.findByShareAndUser(share,user);
         appShareListModel.setPId(share.getId());
@@ -244,8 +243,13 @@ public class ShareServiceImpl implements ShareService {
         appShareListModel.setPraise(!Objects.isNull(praise));
         appShareListModel.setTransmitUrl(staticResourceService.getResource("/transmit/shareInfo?shareId="+share.getId()).toString());
         //todo
-        appShareListModel.setUserHeadUrl(mallUserModel.getHeadUrl());
-//        appShareListModel.setUserHeadUrl("http://cdn.duitang.com/uploads/item/201402/11/20140211190918_VcMBs.thumb.224_0.jpeg");//todo
+        if(share.getOwnerType().equals(CommonEnum.UserType.user)){
+            MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(share.getOwnerId());
+            appShareListModel.setUserHeadUrl(mallUserModel.getHeadUrl());
+        }
+        if(share.getOwnerType().equals(CommonEnum.UserType.official)){
+            appShareListModel.setUserHeadUrl(staticResourceService.getResource(StaticResourceService.YMR_IMG).toString());
+        }
         return appShareListModel;
     }
 }

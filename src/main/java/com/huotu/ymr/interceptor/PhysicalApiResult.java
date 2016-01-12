@@ -24,7 +24,7 @@ public class PhysicalApiResult {
      *
      系统状态返回：1，成功;0，失败
      */
-    private int systemResultCode;
+    private Integer systemResultCode;
     /**
      *
      成功/失败描述
@@ -34,7 +34,7 @@ public class PhysicalApiResult {
      *
      逻辑状态返回 ：1成功,0 失败
      */
-    private int resultCode;
+    private Integer resultCode;
 
     /**
      * 逻辑状态描述

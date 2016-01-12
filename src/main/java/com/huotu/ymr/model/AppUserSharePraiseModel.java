@@ -25,6 +25,11 @@ public class AppUserSharePraiseModel {
     private Long sId;
 
     /**
+     * 点赞者名称
+     */
+    private String userName;
+
+    /**
      * 点赞者头像
      */
     private String userHeadUrl;

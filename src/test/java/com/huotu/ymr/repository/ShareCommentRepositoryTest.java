@@ -91,7 +91,7 @@ public class ShareCommentRepositoryTest {
     }
     @Test
     public void getUserInfoTest()throws Exception{
-        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(6645L);
+        MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(3L);
     }
 
     @Test

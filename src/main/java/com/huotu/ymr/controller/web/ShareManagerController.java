@@ -8,9 +8,11 @@ import com.huotu.ymr.entity.Share;
 import com.huotu.ymr.entity.ShareGoods;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.share.BackendShareModel;
+import com.huotu.ymr.model.mall.CategoryModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.repository.ShareGoodsRepository;
+import com.huotu.ymr.service.DataCenterService;
 import com.huotu.ymr.service.ShareService;
 import com.huotu.ymr.service.StaticResourceService;
 import com.sun.jndi.toolkit.url.Uri;
@@ -46,6 +48,9 @@ public class ShareManagerController {
 
     @Autowired
     ShareGoodsRepository shareGoodsRepository;
+
+    @Autowired
+    DataCenterService dataCenterService;
 
 
     /**
@@ -253,9 +258,11 @@ public class ShareManagerController {
      * @throws Exception
      */
     @RequestMapping(value = "/sortsList",method = RequestMethod.GET)
-    public ResultModel sortsList()throws Exception{
+    public ResultModel sortsList(Long merchantId)throws Exception{
         ResultModel resultModel=new ResultModel();
         //获取分类列表
+        List<CategoryModel> categoryModels=dataCenterService.getCategory(merchantId);
+
 
         return  resultModel;
     }

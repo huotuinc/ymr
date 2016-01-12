@@ -45,6 +45,24 @@ public class User {
      */
     private CommonEnum.UserStatus userStatus;
 
+    /**
+     * app登录用户的角色
+     */
+    private CommonEnum.AppUserType appUserType;
+
+    /**
+     * 权限 todo 第二个版本使用
+     */
+    private String permission;
+
+
+    /**
+     * 用于推送的token
+     */
+    @Column(length = 64)
+    private String pushingToken;
+
+
 
     /**
      * 用户token身份标示

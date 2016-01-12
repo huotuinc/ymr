@@ -27,7 +27,9 @@ public interface DataCenterService {
     MallUserModel getUserInfoByMobile(String mobile);
     /**
      * 获取用户信息(根据userId)
-     * @return
+     * @param userId ?
+     * @return ?
+     * @throws IOException ?
      */
     MallUserModel getUserInfoByUserId(Long userId) throws IOException;
 
@@ -41,7 +43,7 @@ public interface DataCenterService {
      *  获取商品分类
      * @return
      */
-    List<CategoryModel[]> getCategory(Long merchantId) throws IOException;
+    List<CategoryModel> getCategory(Long merchantId) throws IOException;
 
     /**
      * 根据分类获取商品

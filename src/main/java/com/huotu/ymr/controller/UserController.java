@@ -579,7 +579,7 @@ public class UserController implements UserSystem {
                 appUserShareModel.setCheckType(share.getCheckStatus());
                 appUserShareModel.setTitle(share.getTitle());
                 appUserShareModel.setShareType(share.getShareType());
-                appUserShareModel.setImg(share.getImg());
+                appUserShareModel.setImg(staticResourceService.getResource(share.getImg()).toString());
                 appUserShareModel.setIntro(share.getIntro());
                 appUserShareModel.setTime(share.getTime());
                 appUserShareModel.setIntegral(share.getPostReward());
@@ -614,7 +614,7 @@ public class UserController implements UserSystem {
                 appUserShareRunningModel.setPId(shareRunning.getShare().getId());
                 appUserShareRunningModel.setTitle(shareRunning.getShare().getTitle());
                 appUserShareRunningModel.setShareType(shareRunning.getShare().getShareType());
-                appUserShareRunningModel.setImg(shareRunning.getShare().getImg());
+                appUserShareRunningModel.setImg(staticResourceService.getResource(shareRunning.getShare().getImg()).toString());
                 appUserShareRunningModel.setIntro(shareRunning.getShare().getIntro());
                 appUserShareRunningModel.setTime(shareRunning.getShare().getTime());
                 appUserShareRunningModel.setUserId(shareRunning.getUserId());

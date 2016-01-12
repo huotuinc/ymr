@@ -36,7 +36,10 @@ public interface StaticResourceService {
      * 爱分享图片
      */
     String SHSRES_IMG="_resource/image/shares/";
+
     String CEL_IMG="_resource/cels/";
+
+    String YMR_IMG="_resource/image/ymr/";
 
     /**
      * 上传资源

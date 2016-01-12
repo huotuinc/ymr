@@ -12,6 +12,11 @@ import java.util.Date;
 @Setter
 public class AppShareInfoModel {
     /**
+     * 爱分享文章ID
+     */
+    private Long sId;
+
+    /**
      * 标题
      */
     private String title;

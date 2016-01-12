@@ -71,18 +71,18 @@ public class ShareCommentServiceImpl implements ShareCommentService {
         appUserShareCommentModel.setPId(shareComment.getShare().getId());
         appUserShareCommentModel.setCId(shareComment.getId());
         appUserShareCommentModel.setUserHeadUrl(mallUserModel.getHeadUrl());
+        appUserShareCommentModel.setUserName(mallUserModel.getNickName());
         appUserShareCommentModel.setTitle(shareComment.getShare().getTitle());
         appUserShareCommentModel.setShareType(shareComment.getShare().getShareType());
-        appUserShareCommentModel.setImg(shareComment.getShare().getImg());
+        appUserShareCommentModel.setImg(staticResourceService.getResource(shareComment.getShare().getImg()).toString());
         appUserShareCommentModel.setIntro(shareComment.getShare().getIntro());
 //        appUserShareCommentModel.setTop(shareComment.getShare().getTop());
 //        appUserShareCommentModel.setBoutique(shareComment.getShare().getBoutique());
 //        appUserShareCommentModel.setTime(shareComment.getShare().getTime());
         appUserShareCommentModel.setCommentUserId(shareComment.getParentId());
-        appUserShareCommentModel.setCommentName(shareComment.getParentName());
+        appUserShareCommentModel.setCommentName(shareComment.getCommentName());
         appUserShareCommentModel.setCommentTime(shareComment.getTime());
         appUserShareCommentModel.setCommentComment(shareComment.getContent());
-
         return appUserShareCommentModel;
 
     }

@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Created by luffy on 2015/6/10.
+ * Created by slt on 2015/6/10.
  * Modify by cwb on 2015/7/15
- * 可登录用户
+ * 后台可登录用户
  *
  * @author luffy luffy.ja at gmail.com
  */

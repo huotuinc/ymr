@@ -11,8 +11,11 @@ package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.Config;
+import com.huotu.ymr.entity.Manager;
 import com.huotu.ymr.repository.ConfigRepository;
+import com.huotu.ymr.repository.ManagerRepository;
 import com.huotu.ymr.repository.UserRepository;
+import com.huotu.ymr.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -30,58 +33,57 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
     ConfigRepository configRepository;
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ManagerRepository managerRepository;
+
+    @Autowired
+    LoginService loginService;
     @Override
     @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (event.getApplicationContext().getParent() == null) {
-            Config configGT =configRepository.findOne(ConfigKey.GLOBAL_TRANSMIT);
-            Config configTT =configRepository.findOne(ConfigKey.GLOBAL_TOTAL);
-            Config bottom=configRepository.findOne(ConfigKey.BOTTOM_GENERALIZE);
-            Config userGT=configRepository.findOne(ConfigKey.USER_TRANSMIT);
-            Config userTT=configRepository.findOne(ConfigKey.USER_TOTAL);
-            Config userPT=configRepository.findOne(ConfigKey.USER_POST);
-            Config upT=configRepository.findOne(ConfigKey.UPGRADE_INTEGRAL);
-            if(configGT==null){
-                configGT=new Config();
+            if (managerRepository.count()==0){
+                Manager manager = new Manager();
+                manager.setLoginName("admin");
+                loginService.newLogin(manager,"admin");
+            }
+            if(configRepository.count()==0){
+                Config  configGT=new Config();
                 configGT.setKey(ConfigKey.GLOBAL_TRANSMIT);
                 configGT.setValue("0");
                 configRepository.save(configGT);
-            }
-            if(configTT==null){
-                configTT=new Config();
+
+                Config configTT=new Config();
                 configTT.setKey(ConfigKey.GLOBAL_TOTAL);
                 configTT.setValue("-1");
                 configRepository.save(configTT);
-            }
-            if(bottom==null){
-                bottom=new Config();
+
+                Config bottom=new Config();
                 bottom.setKey(ConfigKey.BOTTOM_GENERALIZE);
                 bottom.setValue("");
                 configRepository.save(bottom);
-            }
-            if(userPT==null){
-                userPT=new Config();
+
+                Config userPT=new Config();
                 userPT.setKey(ConfigKey.USER_POST);
                 userPT.setValue("0");
                 configRepository.save(userPT);
-            }
-            if(userGT==null){
-                userGT=new Config();
+
+                Config userGT=new Config();
                 userGT.setKey(ConfigKey.USER_TRANSMIT);
                 userGT.setValue("0");
                 configRepository.save(userGT);
-            }
-            if(userTT==null){
-                userTT=new Config();
+
+                Config userTT=new Config();
                 userTT.setKey(ConfigKey.USER_TOTAL);
                 userTT.setValue("0");
                 configRepository.save(userTT);
-            }
-            if(upT==null){
-                upT=new Config();
+
+                Config upT=new Config();
                 upT.setKey(ConfigKey.UPGRADE_INTEGRAL);
                 upT.setValue("-1");
                 configRepository.save(upT);
+
             }
         }
     }

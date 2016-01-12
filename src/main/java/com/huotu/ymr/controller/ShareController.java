@@ -156,6 +156,7 @@ public class ShareController implements ShareSystem {
         AppShareInfoModel shareInfoModel=new AppShareInfoModel();
         shareInfoModel.setTitle(share.getTitle());
         shareInfoModel.setTime(share.getTime());
+        shareInfoModel.setSId(share.getId());
         shareInfoModel.setImg(staticResourceService.getResource(share.getImg()).toString());
         shareInfoModel.setContent(share.getContent());
         shareInfoModel.setPraiseQuantity(share.getPraiseQuantity());
@@ -237,6 +238,7 @@ public class ShareController implements ShareSystem {
             praise=new Praise();
             praise.setShare(share);
             praise.setUser(user);
+            praise.setTime(new Date());
             praiseRepository.save(praise);
             //帖子点赞量修改
             share.setPraiseQuantity(share.getPraiseQuantity()+1);
