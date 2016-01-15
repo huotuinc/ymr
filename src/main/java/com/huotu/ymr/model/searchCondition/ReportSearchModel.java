@@ -14,9 +14,9 @@ public class ReportSearchModel {
 
 
     /**
-     * 被举报人姓名
+     * 被举报内容
      */
-    private String name;
+    private String content;
 
     /**
      * 排序字段 0：发帖时间，1：浏览量，2：转发量
@@ -31,6 +31,7 @@ public class ReportSearchModel {
      * 指定查询页码
      */
     private Integer pageNoStr = 0;
+
 
 
 

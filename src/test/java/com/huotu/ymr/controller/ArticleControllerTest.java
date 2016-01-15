@@ -18,6 +18,7 @@ import com.huotu.ymr.repository.ArticleRepository;
 import com.huotu.ymr.repository.CategoryRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.ArticleService;
+import com.huotu.ymr.service.StaticResourceService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +31,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -59,6 +68,8 @@ public class ArticleControllerTest extends SpringBaseTest {
     @Autowired
     private MallMerchantRepository mockMallMerchantRepository;
 
+    @Autowired
+    StaticResourceService staticResourceService;
 
     @Autowired
     ArticleService articleService;
@@ -87,32 +98,57 @@ public class ArticleControllerTest extends SpringBaseTest {
 
 
     //存储文章类别方法
-    public List<Category> saveCategories() {
+    public List<Category> saveCategories() throws IOException, URISyntaxException {
         List<Category> categories = new ArrayList<Category>();
         //先进行文章类别的存贮
         Category category = new Category();
-        category.setPicture("d://a.png");
+
+        String fileName = StaticResourceService.YMR_IMG + UUID.randomUUID().toString() + ".jpg";
+        File file=new File("C:\\Users\\Administrator\\Desktop\\1.jpg");
+        BufferedImage bufferedImage= ImageIO.read(file);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage,"jpg",baos);
+        staticResourceService.uploadResource(fileName, new ByteArrayInputStream(baos.toByteArray()));
+        category.setPicture(fileName);
         category.setName("公司介绍");
         category.setSort(1);
         category = categoryRepository.saveAndFlush(category);
         categories.add(category);
 
         Category category1 = new Category();
-        category1.setPicture("d://b.png");
+        String fileName1 = StaticResourceService.YMR_IMG + UUID.randomUUID().toString() + ".jpg";
+        File file1=new File("C:\\Users\\Administrator\\Desktop\\2.jpg");
+        BufferedImage bufferedImage1= ImageIO.read(file1);
+        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage1,"jpg",baos1);
+        staticResourceService.uploadResource(fileName1, new ByteArrayInputStream(baos1.toByteArray()));
+        category1.setPicture(fileName1);
         category1.setName("自传故事");
         category1.setSort(2);
         category1 = categoryRepository.saveAndFlush(category1);
         categories.add(category1);
 
         Category category2 = new Category();
-        category2.setPicture("d://c.png");
+        String fileName2 = StaticResourceService.YMR_IMG + UUID.randomUUID().toString() + ".jpg";
+        File file2=new File("C:\\Users\\Administrator\\Desktop\\3.jpg");
+        BufferedImage bufferedImage2= ImageIO.read(file2);
+        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage2,"jpg",baos2);
+        staticResourceService.uploadResource(fileName2, new ByteArrayInputStream(baos2.toByteArray()));
+        category2.setPicture(fileName2);
         category2.setName("学院介绍");
         category2.setSort(3);
         category2 = categoryRepository.saveAndFlush(category2);
         categories.add(category2);
 
         Category category3 = new Category();
-        category3.setPicture("d://d.png");
+        String fileName3 = StaticResourceService.YMR_IMG + UUID.randomUUID().toString() + ".jpg";
+        File file3=new File("C:\\Users\\Administrator\\Desktop\\4.jpg");
+        BufferedImage bufferedImage3= ImageIO.read(file3);
+        ByteArrayOutputStream baos3 = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage3,"jpg",baos3);
+        staticResourceService.uploadResource(fileName3, new ByteArrayInputStream(baos3.toByteArray()));
+        category3.setPicture(fileName3);
         category3.setName("美容知识");
         category3.setSort(4);
         category3 = categoryRepository.saveAndFlush(category3);
@@ -141,6 +177,7 @@ public class ArticleControllerTest extends SpringBaseTest {
         List<HashMap> list1 = JsonPath.read(result, "$.resultData.list");
         for (int i = 0; i < list1.size(); i++) {
             Assert.assertEquals("进行文章类别的名字断言", categories.get(i).getName(), list1.get(i).get("name"));
+           URI uri= staticResourceService.getResource(categories.get(i).getPicture());
             Assert.assertEquals("进行文章类别的图片路径断言", categories.get(i).getPicture(), list1.get(i).get("picture"));
         }
     }

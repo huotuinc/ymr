@@ -169,16 +169,17 @@ public class UserControllerTest extends SpringBaseTest {
         shareComment.setCommentName("评论1");
         shareComment.setContent("这是评论1！");
         shareComment=shareCommentRepository.saveAndFlush(shareComment);
-        User user=userRepository.findOne(1234L);
+        User user=userRepository.findOne(1043429L);
 
         for(int i=0;i<50;i++) {
-            report.setOwner(user);
-            report.setShareComment(shareComment);
-            report.setTime(new Date());
-            report.setHasSolved(0);
-            report.setTo(user);
-            report.getTo().setUserStatus(CommonEnum.UserStatus.normal);
-            report = reportRepository.saveAndFlush(report);
+            Report report1=new Report();
+            report1.setOwner(user);
+            report1.setShareComment(shareComment);
+            report1.setTime(new Date());
+            report1.setHasSolved(0);
+            report1.setTo(user);
+            report1.getTo().setUserStatus(CommonEnum.UserStatus.normal);
+            report1 = reportRepository.saveAndFlush(report1);
         }
     }
     @Test

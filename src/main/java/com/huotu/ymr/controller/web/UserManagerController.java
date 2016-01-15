@@ -9,6 +9,8 @@ import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.crowdFunding.Msg;
 import com.huotu.ymr.model.backend.share.BackendUserModel;
 import com.huotu.ymr.model.backend.user.ReportDetailModel;
+import com.huotu.ymr.model.backend.user.ReportShowModel;
+import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.model.searchCondition.ReportSearchModel;
 import com.huotu.ymr.model.searchCondition.UserSearchModel;
 import com.huotu.ymr.repository.ReportRepository;
@@ -48,7 +50,6 @@ public class UserManagerController {
     ShareService shareService;
 
 
-
     @Autowired
     ReportService reportService;
 
@@ -60,6 +61,7 @@ public class UserManagerController {
 
     @Autowired
     ShareCommentService shareCommentService;
+
 
     @RequestMapping(value = "/getUserList",method = RequestMethod.GET)
     public String getUserList(UserSearchModel userSearchModel,Model model) throws Exception {
@@ -100,10 +102,6 @@ public class UserManagerController {
 
 
 
-
-
-
-
     /**
      * 用户的操作，0：正常，1：禁言，2：冻结
      * @param userId    用户ID
@@ -141,7 +139,23 @@ public class UserManagerController {
     @RequestMapping(value = "/getReportList", method = RequestMethod.GET)
     public String getReportList(ReportSearchModel reportSearchModel, Model model) throws Exception {
         Page<Report> reportPages = reportService.findReportPage(reportSearchModel);
-        model.addAttribute("allReportList", reportPages);//文章列表
+        List<ReportShowModel> reportShowModels=new ArrayList<ReportShowModel>();
+        for(Report report:reportPages){
+            ReportShowModel reportShowModel=new ReportShowModel();
+            MallUserModel mallUserModel =dataCenterService.getUserInfoByUserId(report.getTo().getId());//todo 得到数据中心的用户
+            reportShowModel.setHasSolved(report.getHasSolved());
+            reportShowModel.setId(report.getId());
+            reportShowModel.setPhone(mallUserModel.getMobile());
+            reportShowModel.setShareComment(report.getShareComment());
+            reportShowModel.setTime(report.getTime());
+            reportShowModel.setTo(report.getTo());
+            reportShowModel.setWXName(mallUserModel.getNickName());
+            reportShowModels.add(reportShowModel);
+        }
+        model.addAttribute("allReportList", reportShowModels);//文章列表
+        model.addAttribute("totalPages",reportPages.getTotalPages());
+        model.addAttribute("number",reportPages.getNumber());
+        model.addAttribute("totalElements",reportPages.getTotalElements());
         model.addAttribute("pageNoStr", reportSearchModel.getPageNoStr());//当前页数
         return "manager/user/reportList";
 

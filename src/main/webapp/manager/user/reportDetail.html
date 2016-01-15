@@ -23,8 +23,8 @@
         <p class="tit_rem_big" th:text="${reportDetailModel.userName}">用户</p>
         <p class="tit_rem_small"><span class="ysysleft" th:text="'举报时间：'+${#calendars.format(reportDetailModel.time,'yyyy-MM-dd HH:mm:ss')}">2015/10/10&nbsp;&nbsp;10:00</span></p>
         <p style="clear:both"></p>
-        <p style="display:block" class="tit_rem_small"><span class="ysysmoney" th:text="'等级：'+${reportDetailModel.level.name}">起购：</span>
-        <span class="ysysmoney">手机：<i th:text="${reportDetailModel.phone}"></i></span></p>
+        <p style="display:block" class="tit_rem_small"><span class="ysysmoney" th:text="'等级：'+${reportDetailModel.level.name}">lv：</span>
+        </p>
         <p style="clear:both"></p>
 
         <div id="content" class="article-content tit_rem_small">评论内容</div>

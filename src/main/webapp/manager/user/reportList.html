@@ -412,8 +412,8 @@
                 <div class="cnt">
 
                     <div class="search-bar">
-                        <label class="first ">举报人名字：</label>
-                        <input name="articleTitle" type="text" th:value="*{name}" id="name" class="input-small" style="width: 120px;"/>
+                        <label class="first ">被举报内容：</label>
+                        <input name="content" type="text" th:value="*{content}" id="content" class="input-small" style="width: 120px;"/>
                         <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
                         <br/>
                         <br/>
@@ -493,7 +493,7 @@
                                         <tr>
                                             <th scope="col">序号 </th>
 
-                                            <th scope="col">姓名
+                                            <th scope="col">昵称
                                             </th>
                                             <th scope="col">手机
                                             </th>
@@ -522,17 +522,17 @@
                                             <td class="txt20 c" style="width: 15px;" th:text="${reports.id}">
                                                 1
                                             </td>
-                                            <td class="txt40" th:text="${reports}">
+                                            <td class="txt40" th:text="${reports.wXName}">
                                                 &nbsp;
                                             </td>
-                                            <td class="txt80" th:text="${reports}">
+                                            <td class="txt80" th:text="${reports.phone}">
 
                                             </td>
                                             <td class="txt80" th:text="${reports.time}">
                                                 <!--<span style='text-align:center;color:#ccc;padding-left:20px;' hot:date="${orders.payTime}">——无——</span>-->
                                             </td>
                                             <td class="txt20">
-                                                <span th:text="${reports.shareComment.content}" th:attr="reportsId=${reports.id}" onclick="userDetail(this)">0</span>
+                                                <span th:text="${reports.ShareComment.content}" th:attr="reportsId=${reports.id}" onclick="userDetail(this)">0</span>
                                             </td>
 
 
@@ -562,9 +562,9 @@
                                 </div>
                                 <div class="pager-bar">
                                     <div class="msg" style="margin-left: 10px;">共
-                                        <span th:text="${allReportList.totalElements}">0</span>条记录，当前第
-                                        <span name="noNumber" th:text="${allReportList.number+1}" id="noNumber">1</span>页/共
-                                        <span  name="numberBug" id="numberBug"  th:text="${allReportList.totalPages==0?1:allReportList.totalPages}">1</span>页，每页
+                                        <span th:text="${totalElements}">0</span>条记录，当前第
+                                        <span name="noNumber" th:text="${number+1}" id="noNumber">1</span>页/共
+                                        <span  name="numberBug" id="numberBug"  th:text="${totalPages==0?1:totalPages}">1</span>页，每页
                                         <span>20</span>条记录
                                     </div>
                                     <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
@@ -583,7 +583,7 @@
                                            onkeydown="J.EnterSubmit(event, Pager.Jump);"
                                            class="input-small"
                                            style="text-align:center;" type="text"
-                                           value="1" th:value="${allReportList.number+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                                           value="1" th:value="${number+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
                                     <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
                                 </div>
                             </div>
@@ -644,7 +644,7 @@
         $('#form1').submit();
     }
     function searchOrderAll() {
-        $("#articleTitle").attr("value", "");
+        $("#content").attr("value", "");
         $("#articleType").attr("value", -1);
         $("#managerName").attr("value", "");
         $("#sort").attr("value", 0);
