@@ -217,8 +217,13 @@
                                onclick="document.getElementById('asaimsg').style.display='none';document.getElementById('asaimsgbg').style.display='none'"><FONT
                                     style="color: #111; font-size: 20px;">×</FONT></a>
                         </P>
-                        分类筛选:<select id="categoryList" style="width: 200px;"></select>
-                        关键字：<input type="text" id="searchName"/><a class="btn-lit btn-middle" id="search" href="javascript:void(0)" style="margin-bottom: 3px;"><span style="color: #fff">搜索</span></a>
+
+                        分类筛选:<select id="categoryList" style="width: 200px;">
+                                    <option th:remove="all" value="999">女装</option>
+                                </select>
+                        关键字：<input type="text" id="searchName"/><a class="btn-lit btn-middle" id="search" href="javascript:getGoodsList()" style="margin-bottom: 3px;"><span style="color: #fff">搜索</span></a>
+
+
                         <div id="goodsListByNameAndCategory"></div>
                         <table class="data-table even1" width="80%" border="0" cellspacing="0"
                                cellpadding="0">
@@ -315,6 +320,7 @@
 
 
 <script type="text/javascript" th:inline="javascript">
+    var goods;
     //封面图片上传
     function uploadImage() {
         $.ajaxFileUpload({
@@ -340,28 +346,78 @@
     }
 
 
-    function recommendGoods(){
-        //ajax请求商品列表
-        $.ajax({
-            type:'GET',
-            url: 'setShare',
-            dataType: 'json',
-            data: {shareId:shareId,type:type},
-            success:function(result){
-                if(result.code==1){
 
-                    jBox.tip("修改成功");
-                    window.location.reload();
-                }else {
-                    jBox.tip(result.message);
+    function getGoodsList(){
+            //ajax请求商品列表
+        var obj={name:"",catPath:"",pageNoStr:0};
+            $.ajax({
+                type:'GET',
+                url: 'goodsList',
+                dataType: 'json',
+                data: {goodSearchModel:obj},
+                success:function(result){
+                    if(result.code==1){
+                        jBox.tip("获取商品成功");
+                        goods=result.data;
+                        $.each(goods,function(){
+                            var goodsTitle=this.title;
+                            var goodsPrice=this.price;
+                            $("#goodListByNameAndCategory").append('' +
+                                    '<tr> ' +
+                                        '<td class="txt55 c">'+goodsTitle+'</td> ' +
+                                        '<td class="txt21 c">'+goodsPrice+'</td>' +
+                                        '<td class="txt21 c">' +
+                                            '<a href="javascript:void(0)" onclick="choiceGoods(this)">选择</a>' +
+                                        '</td> ' +
+                                    '</tr>');
+                        })
+
+
+                    }else {
+                        jBox.tip(result.message);
+                    }
+                },
+                error:function(e){
+                    $.jBox.tip("获取商品出错，请检查网络");
                 }
-            },
-            error:function(e){
-                $.jBox.tip("修改出错，请检查网络");
-            }
-        });
+            });
+    }
 
 
+
+    function recommendGoods(){
+        /*<![CDATA[*/
+        if($("#categoryList option").size()==0){
+            //ajax请求分类列表
+            $.ajax({
+                type:'GET',
+                url: 'sortsList',
+                dataType: 'json',
+                data: {},
+                success:function(result){
+                    if(result.code==1){
+                        jBox.tip("获取分类成功");
+                        $.each(result.data,function(){
+                            var catId=this.id;
+                            var catTitle=this.title;
+                            var catPath=this.catPath;
+                            var catDepth=this.depth;
+                            for(var i=0;i<catDepth;i++){
+                                catTitle="-"+catTitle;
+                            }
+
+                            $("#categoryList").append('<option value='+catPath+'>'+catTitle+'</option>');
+                        })
+                    }else {
+                        jBox.tip(result.message);
+                    }
+                },
+                error:function(e){
+                    $.jBox.tip("获取商品出错，请检查网络");
+                }
+            });
+
+        }
 
         $("#asaimsg").show();
 //        $.jBox("iframe:goodsList", {
@@ -370,6 +426,7 @@
 //            height: 600,
 //            buttons: { '关闭': true }
 //        });
+        /*]]>*/
     }
 
 

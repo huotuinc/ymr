@@ -1,6 +1,8 @@
 package com.huotu.ymr.service.impl;
 
+import com.huotu.huobanplus.sdk.common.repository.UserRestRepository;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.PublicParameterHolder;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.AppUserInfoModel;
 import com.huotu.ymr.model.mall.MallUserModel;
@@ -9,11 +11,10 @@ import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -24,6 +25,9 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    UserRestRepository userRestRepository;
     @Override
     public AppUserInfoModel getAppUserInfoModel(User user, MallUserModel mallUserModel) throws Exception {
         AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
@@ -57,29 +61,34 @@ public class UserServiceImpl implements UserService {
         //创建一个新的token
         String token= UUID.randomUUID().toString().replaceAll("-","");
         user.setToken(token);
+        //将设备号当作用户的推送别名
+        user.setPushingToken(PublicParameterHolder.get().getImei());
         userRepository.save(user);
         return user;
     }
 
     @Override
     public Page<User> findPcUserList(UserSearchModel userSearchModel) {
-        //排序
-        Sort sort;
-        Sort.Direction direction = userSearchModel.getRaSortType() == 0 ? Sort.Direction.DESC : Sort.Direction.ASC;
-        switch (userSearchModel.getSort()) {
-            case 1:
-                //积分
-                sort = new Sort(direction, "score");
-                break;
-            case 2:
-                //等级
-                sort = new Sort(direction, "userLevel");
-                break;
-            default:
-                sort = new Sort(direction, "id");
-                break;
-        }
-        return userRepository.findAll(new PageRequest(0,10));
+        return null;
+//        if(StringUtils.isEmpty(userSearchModel.getName()))
+//        //排序
+//        Sort sort;
+//        Sort.Direction direction = userSearchModel.getRaSortType() == 0 ? Sort.Direction.DESC : Sort.Direction.ASC;
+//        switch (userSearchModel.getSort()) {
+//            case 1:
+//                //积分
+//                sort = new Sort(direction, "score");
+//                break;
+//            case 2:
+//                //等级
+//                sort = new Sort(direction, "userLevel");
+//                break;
+//            default:
+//                sort = new Sort(direction, "id");
+//                break;
+//        }
+//        userRestRepository.
+//        return userRepository.findAll(new PageRequest(0,10));
 //        return  userRepository.findAll(new Specification<User>() {
 //            @Override
 //            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> query, CriteriaBuilder cb){
@@ -120,5 +129,10 @@ public class UserServiceImpl implements UserService {
 //                return predicate;
 //            }
 //        },new PageRequest(shareSearchModel.getPageNoStr(), 20,sort));
+    }
+
+    @Override
+    public Set<String> findAllPushToken() {
+        return userRepository.findAllPushToken();
     }
 }

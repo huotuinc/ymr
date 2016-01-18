@@ -146,6 +146,9 @@ public class UserController implements UserSystem {
                 }
                 User user=userService.getUser(userId);
                 mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+                if(Objects.isNull(mallUserModel)){
+                    throw new UserNotExitsException();
+                }
                 mallUserModel.setSex(sex);
                 appUserInfoModel=userService.getAppUserInfoModel(user, mallUserModel);
             }else {
@@ -165,6 +168,9 @@ public class UserController implements UserSystem {
             ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
         MallUserModel[] mallUserModels=dataCenterService.getUserInfoByUniond(unionId);//todo
+        if(Objects.isNull(mallUserModels)){
+            throw new UserNotExitsException();
+        }
         AppUserInfoModel[] appUserInfoModels=new AppUserInfoModel[mallUserModels.length];
         for(int i=0;i<mallUserModels.length;i++){
             User user=userService.getUser(mallUserModels[i].getUserId());
@@ -323,6 +329,9 @@ public class UserController implements UserSystem {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_WRONG_CODE);
         }
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        if(Objects.isNull(mallUserModel)){
+            throw new UserNotExitsException();
+        }
         //检查是否已经绑定了手机号
         if(mallUserModel.getIsBindMobile()){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_MOBILE_ALREADY_BINDING);
@@ -356,6 +365,9 @@ public class UserController implements UserSystem {
         dataCenterService.modifyUserInfo(userId,phone,4);
         User user=userService.getUser(userId);
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        if(Objects.isNull(mallUserModel)){
+            throw new UserNotExitsException();
+        }
         AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
         data.outputData(appUserInfoModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
@@ -470,6 +482,9 @@ public class UserController implements UserSystem {
         }
 
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
+        if(Objects.isNull(mallUserModel)){
+            throw new UserNotExitsException();
+        }
         AppUserInfoModel appUserInfoModel=userService.getAppUserInfoModel(user,mallUserModel);
         data.outputData(appUserInfoModel);
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);

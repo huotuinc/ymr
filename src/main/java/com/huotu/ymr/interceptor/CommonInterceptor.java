@@ -13,7 +13,6 @@ package com.huotu.ymr.interceptor;
 import com.alibaba.fastjson.JSON;
 import com.huotu.ymr.common.PublicParameterHolder;
 import com.huotu.ymr.entity.User;
-import com.huotu.ymr.mallrepository.MallUserRepository;
 import com.huotu.ymr.model.AppPublicModel;
 import com.huotu.ymr.model.AppUserInfoModel;
 import com.huotu.ymr.model.mall.MallUserModel;
@@ -57,11 +56,18 @@ public class CommonInterceptor implements HandlerInterceptor {
     private UserService userService;
 
 
-
+    /**
+     * 该方法只有返回true，后面的Controller才会被继续执行
+     * 逻辑处理：首先验证签名是否有效如果未通过签名验证则返回app错误信息。
+     *          签名验证通过之后更新AppPublicModel的信息
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String sign = request.getParameter("sign");
-
-        //logger.info("sign:" + getSign(request));
         if (sign == null || !sign.equals(getSign(request))) {
             PhysicalApiResult result = new PhysicalApiResult();
             result.setSystemResultCode(1);
@@ -83,25 +89,7 @@ public class CommonInterceptor implements HandlerInterceptor {
         }
 
         AppPublicModel appPublicModel = initPublicParam(request);
-//        User user=userService.getUser(appPublicModel.getCurrentUser().getUserId());
-//        if(user.getUserStatus()== CommonEnum.UserStatus.freeze){
-//            PhysicalApiResult result = new PhysicalApiResult();
-//            result.setSystemResultCode(1);
-//            result.setResultCode(2101);
-//            result.setResultDescription("您已被冻结，请联系客服:"+commonConfigService.getCustomerServicePhone());
-//            PrintWriter out = null;
-//            try {
-//                response.setCharacterEncoding("UTF-8");
-//                response.setContentType("application/json; charset=utf-8");
-//                out = response.getWriter();
-//                out.append(JSON.toJSONString(result));
-//            } finally {
-//                if (out != null) {
-//                    out.close();
-//                }
-//            }
-//            return false;
-//        }
+
         PublicParameterHolder.put(appPublicModel);
 
         return true;
@@ -117,6 +105,7 @@ public class CommonInterceptor implements HandlerInterceptor {
         String imei = StringUtils.isEmpty(request.getParameter("imei")) ? "" : request.getParameter("imei");
         String token = StringUtils.isEmpty(request.getParameter("token")) ? "" : request.getParameter("token");
         if (!StringUtils.isEmpty(token)) {
+            //根据token查找User
             User user = userRepository.findByToken(token);
             if (user != null) {
                 AppUserInfoModel appUserInfoModel = new AppUserInfoModel();
@@ -124,7 +113,7 @@ public class CommonInterceptor implements HandlerInterceptor {
                 appUserInfoModel.setUserLevel(user.getUserLevel());
                 appUserInfoModel.setScore(user.getScore());
                 appUserInfoModel.setToken(token);
-
+                //根据UserId去数据中心获取该用户的其他相关信息，包括微信头像，昵称等
                 MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(user.getId());
                 if (mallUserModel != null) {
                     appUserInfoModel.setName(mallUserModel.getName());
@@ -139,7 +128,6 @@ public class CommonInterceptor implements HandlerInterceptor {
                 }
             }
         }
-
         model.setSign(sign);
         model.setTimestamp(timestamp);
         model.setVersion(version);

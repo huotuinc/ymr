@@ -47,7 +47,7 @@
         <dependency>
             <groupId>cn.jpush.api</groupId>
             <artifactId>jpush-client</artifactId>
-            <version>3.1.3</version>
+            <version>3.2.8</version>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-log4j12</artifactId>
@@ -64,7 +64,22 @@
             </exclusions>
         </dependency>
         <!--极光推送-->
-
+        <!--IOS推送-->
+        <!--<dependency>-->
+            <!--<groupId>com.notnoop.apns</groupId>-->
+            <!--<artifactId>apns</artifactId>-->
+            <!--<version>1.0.0.Beta6</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>slf4j-api</artifactId>-->
+                    <!--<groupId>org.slf4j</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>jackson-databind</artifactId>-->
+                    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
         <!--VFS-->
         <dependency>
@@ -101,11 +116,13 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.0-b01</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.huotu.common</groupId>
@@ -134,12 +151,14 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>dom4j</groupId>

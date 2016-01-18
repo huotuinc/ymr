@@ -3,6 +3,7 @@ package com.huotu.ymr.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.huotu.huobanplus.common.Gender;
 import com.huotu.huobanplus.common.entity.Category;
+import com.huotu.huobanplus.common.entity.Goods;
 import com.huotu.huobanplus.common.entity.User;
 import com.huotu.huobanplus.sdk.common.repository.CategoryRestRepository;
 import com.huotu.huobanplus.sdk.common.repository.GoodsRestRepository;
@@ -18,6 +19,7 @@ import com.huotu.ymr.service.CommonConfigService;
 import com.huotu.ymr.service.DataCenterService;
 import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
@@ -38,6 +40,7 @@ public class DataCenterServiceImpl implements DataCenterService {
 
     @Autowired
     private GoodsRestRepository goodsRestRepository;
+
 
     @Autowired
     private CategoryRestRepository categoryRestRepository;
@@ -114,12 +117,46 @@ public class DataCenterServiceImpl implements DataCenterService {
         return null;
     }
 
+    @Override
+    public Long createUser(String mobile, String code) throws IOException {
+        String url = commonConfigService.getMallApiServerUrl() + "/Account/loginAuthorize";
+        Map<String, String> map = new TreeMap<>();
+        map.put("timestamp", String.valueOf(new Date().getTime()));
+        map.put("appid", appid);
+        map.put("customerid",ymrMerchantId);
+        map.put("mobile",mobile);
+        map.put("code",code);
+        map.put("secure","");
+        map.put("sign", getSign(map));
+        String response= HttpHelper.postRequest(url,map);
+        MallApiResultModel resultModel = JSON.parseObject(response, MallApiResultModel.class);
+        if (resultModel.getCode() == 200 && !StringUtils.isEmpty(resultModel.getData().toString())) {
+            return Long.parseLong(JsonPath.read(resultModel.getData().toString(), "$.userid").toString());
+        }
+        return null;
+    }
 
     @Override
-    public List<CategoryModel> getCategory(Long merchantId) throws IOException {
+    public void sendMallCode(String mobile, int second) throws IOException {
+        String url = commonConfigService.getMallApiServerUrl() + "/Account/sendCode";
+        Map<String, String> map = new TreeMap<>();
+        map.put("timestamp", String.valueOf(new Date().getTime()));
+        map.put("appid", appid);
+        map.put("customerid",ymrMerchantId);
+        map.put("mobile",mobile);
+        map.put("second",second+"");
+        map.put("sign", getSign(map));
+        String response= HttpHelper.postRequest(url,map);
+        MallApiResultModel resultModel = JSON.parseObject(response, MallApiResultModel.class);
+    }
+
+
+    @Override
+    public List<CategoryModel> getCategory() throws IOException {
         List<Category> categories;
         try{
              categories=categoryRestRepository.findByTitleAndCategory(Long.parseLong(ymrMerchantId), new PageRequest(0, Integer.MAX_VALUE)).getContent();
+
         }catch (Exception ex){
             return null;
         }
@@ -129,26 +166,39 @@ public class DataCenterServiceImpl implements DataCenterService {
             List<CategoryModel>categoryModels=new ArrayList<>();
             for(int i=0;i<categories.size();i++){
                 Category category=categories.get(i);
-                if(category.getParentId()==0){
-                    CategoryModel categoryModel=new CategoryModel();
-                    categoryModel.setId(category.getId());
-                    categoryModel.setTitle(category.getTitle());
+                Long id=category.getId();
+                CategoryModel categoryModel=new CategoryModel();
+                //将分类路径拆分成id数组
+                String[] ids=category.getCatPath().split("\\|");
+                categoryModel.setId(id);
+//                String spaces=String.valueOf(ids.length==2?1:ids.length*3);
+//                String title=String.format("%"+spaces+"s",category.getTitle());
+                categoryModel.setTitle(category.getTitle());
+                categoryModel.setCatPath(category.getCatPath());
+                categoryModel.setDepth(ids.length-2);
+                categoryModels.add(categoryModel);
 
-
-                    List<CategoryModel> secondCates=new ArrayList<>();
-                    //todo 获取二级分类
-                    for(int j=0;j<categories.size();j++){
-                        Category secondCat=categories.get(j);
-                        if(category.getId().equals(secondCat.getParentId())&&secondCat.getCatPath().length()==5){
-                            CategoryModel secCatModel=new CategoryModel();
-                            secCatModel.setId(secondCat.getId());
-                            secCatModel.setTitle(secondCat.getTitle());
-                            secondCates.add(secCatModel);
-                        }
-                    }
-                    categoryModel.setSecondCategory(secondCates);
-                    categoryModels.add(categoryModel);
-                }
+                //根据路径获取ID
+//                if(category.getParentId()==0){
+//                    CategoryModel categoryModel=new CategoryModel();
+//                    categoryModel.setId(id);
+//                    categoryModel.setTitle(category.getTitle());
+//                    List<CategoryModel> secondCates=new ArrayList<>();
+//                    //todo 获取二级分类
+//                    for(int j=0;j<categories.size();j++){
+//                        Category secondCat=categories.get(j);
+//                        Long sid=secondCat.getId();
+//                        Long parentId=secondCat.getParentId();
+//                        if(id.equals(parentId)){
+//                            CategoryModel secCatModel=new CategoryModel();
+//                            secCatModel.setId(sid);
+//                            secCatModel.setTitle(secondCat.getTitle());
+//                            secondCates.add(secCatModel);
+//                        }
+//                    }
+//                    categoryModel.setSecondCategory(secondCates);
+//                    categoryModels.add(categoryModel);
+//                }
             }
             return categoryModels;
         }
@@ -157,8 +207,23 @@ public class DataCenterServiceImpl implements DataCenterService {
     }
 
     @Override
-    public MallGoodModel[] getMallGood() {
-        return new MallGoodModel[0];
+    public List<MallGoodModel> getMallGood(String catPath,String title,Integer pageNo) throws IOException {
+        Page<Goods> goodses=goodsRestRepository.findByTitleAndCategoryAndScenes(title, catPath, Long.parseLong(ymrMerchantId), 0, new PageRequest(pageNo, 10));
+        List<MallGoodModel> mallGoodModels=new ArrayList<>();
+        if(Objects.isNull(goodses)){
+            for(Goods g:goodses){
+                MallGoodModel mallGoodModel=new MallGoodModel();
+                mallGoodModel.setId(g.getId());
+                mallGoodModel.setTitle(g.getTitle());
+                mallGoodModel.setImg(g.getSmallPic());
+                mallGoodModel.setOriginalPrice(g.getPrice());
+                mallGoodModel.setPrice(g.getPrice());
+                mallGoodModel.setIntegral(0);//todo
+                mallGoodModels.add(mallGoodModel);
+            }
+            return mallGoodModels;
+        }
+        return null;
     }
 
     @Override

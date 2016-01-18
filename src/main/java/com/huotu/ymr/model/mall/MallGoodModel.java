@@ -10,43 +10,32 @@ import lombok.Setter;
 @Setter
 public class MallGoodModel {
     /**
-     * 用户Id
+     * 商品ID
      */
-    private Long userId;
-    /**
-     * 用户名 (手机号或随机码)
-     */
-    private String userName;
+    private Long id;
 
     /**
-     * 用户头像
+     * 商品名
      */
-    private String headUrl;
+    private String title;
 
     /**
-     * 用户昵称
+     * 价格
      */
-    private String nickName;
-    /**
-     * 所属商家Id
-     */
-    private Long merchantId;
-    /**
-     * 姓名
-     */
-    private String name;
+    private Double price;
 
     /**
-     * 性别
+     * 原价
      */
-    private String sex;
-    /**
-     * 手机号
-     */
-    private String mobile;
-    /**
-     * 是否绑定手机号
-     */
-    private Boolean isBindMobile;
+    private Double originalPrice;
 
+    /**
+     * 图片
+     */
+    private String img;
+
+    /**
+     * 可获取的积分
+     */
+    private Integer integral;
 }

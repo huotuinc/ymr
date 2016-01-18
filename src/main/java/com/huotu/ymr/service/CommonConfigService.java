@@ -67,4 +67,16 @@ public interface CommonConfigService {
      */
     String getAppsecret();
 
+    /**
+     * 获取用于推送的masterSecret
+     * @return
+     */
+    String getMASTERSECRET();
+
+    /**
+     * 获取用于推送AppKey
+     * @return
+     */
+    String getAPPKEY();
+
 }

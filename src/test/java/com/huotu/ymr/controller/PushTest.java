@@ -1,8 +1,6 @@
 package com.huotu.ymr.controller;
 
 import cn.jpush.api.JPushClient;
-import cn.jpush.api.common.APIConnectionException;
-import cn.jpush.api.common.APIRequestException;
 import cn.jpush.api.push.PushResult;
 import cn.jpush.api.push.model.Message;
 import cn.jpush.api.push.model.Options;
@@ -17,8 +15,10 @@ import com.huotu.ymr.base.SpringBaseTest;
 import com.huotu.ymr.boot.BootConfig;
 import com.huotu.ymr.boot.MallBootConfig;
 import com.huotu.ymr.boot.MvcConfig;
+import com.huotu.ymr.service.DataCenterService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,6 +35,9 @@ import javax.transaction.Transactional;
 @Transactional
 @ActiveProfiles("test")
 public class PushTest extends SpringBaseTest {
+
+    @Autowired
+    DataCenterService dataCenterService;
     String MASTERSECRET = "85ed60eced5cfd1f64fe4203";
     String APPKEY = "a237b5c86ab65f7fa6260bcf";
 
@@ -46,7 +49,7 @@ public class PushTest extends SpringBaseTest {
 
     public  static JPushClient jpushClient=null;
 
-    public static void testSendPush(String appKey ,String masterSecret) throws APIConnectionException, APIRequestException {
+    public static void testSendPush(String appKey ,String masterSecret) throws Exception {
 
 
 
@@ -57,9 +60,11 @@ public class PushTest extends SpringBaseTest {
 
 
         // For push, all you need do is to build PushPayload object.
-        //PushPayload payload = buildPushObject_all_all_alert();
+//        PushPayload payload = buildPushObject_all_all_alert();
         //生成推送的内容，这里我们先测试全部推送
-        PushPayload payload=buildPushObject_all_alias_alert();
+//        PushPayload payload=buildPushObject_all_alias_alert();
+        PushPayload payload=null;
+
 
 
         try {
@@ -68,9 +73,7 @@ public class PushTest extends SpringBaseTest {
             System.out.println(result+"................................");
 
 
-        } catch (APIConnectionException e) {
-
-        } catch (APIRequestException e) {
+        } catch (Exception e) {
         }
     }
 
@@ -81,7 +84,8 @@ public class PushTest extends SpringBaseTest {
     public static PushPayload buildPushObject_all_alias_alert() {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())//设置接受的平台
-                .setAudience(Audience.all())//Audience设置为all，说明采用广播方式推送，所有用户都可以接收到
+                .setAudience(Audience.alias())
+//                .setAudience(Audience.all())//Audience设置为all，说明采用广播方式推送，所有用户都可以接收到
                 .setNotification(Notification.alert(ALERT))
                 .build();
     }
@@ -144,10 +148,18 @@ public class PushTest extends SpringBaseTest {
 
 
     @Test
-    public void test() throws APIConnectionException, APIRequestException {
+    public void test()throws Exception{
 
           final String appKey ="a36e00d3397bf5e69049ed41";
           final String masterSecret = "7a5a5698f4e5e32dfeac09ee";
         PushTest.testSendPush(appKey,masterSecret);
+    }
+
+    @Test
+    public void pushTest()throws Exception{
+        dataCenterService.sendMallCode("18067253205",60);
+
+
+
     }
 }

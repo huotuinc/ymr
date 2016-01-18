@@ -2,6 +2,7 @@ package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.entity.Praise;
 import com.huotu.ymr.entity.User;
+import com.huotu.ymr.exception.UserNotExitsException;
 import com.huotu.ymr.model.AppUserSharePraiseModel;
 import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.PraiseRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 评论服务
@@ -45,6 +47,9 @@ public class PraiseServiceImpl implements PraiseService {
     public AppUserSharePraiseModel getpraiseToModel(Praise praise) throws Exception {
         AppUserSharePraiseModel appUserSharePraiseModel=new AppUserSharePraiseModel();
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(praise.getUser().getId());
+        if(Objects.isNull(mallUserModel)){
+            throw new UserNotExitsException();
+        }
         appUserSharePraiseModel.setTitle(praise.getShare().getTitle());
         appUserSharePraiseModel.setSId(praise.getShare().getId());
         appUserSharePraiseModel.setPId(praise.getId());

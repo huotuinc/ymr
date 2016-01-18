@@ -3,8 +3,6 @@ package com.huotu.ymr.model.mall;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * Created by Administrator on 2015/12/23.
  */
@@ -21,7 +19,12 @@ public class CategoryModel {
      */
     private String title;
     /**
-     * 二级分类
+     * 路径
      */
-    private List<CategoryModel> secondCategory;
+    private String catPath;
+
+    /**
+     * 路径深度
+     */
+    private Integer depth;
 }

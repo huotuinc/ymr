@@ -71,5 +71,15 @@ public class CommonConfigServiceImpl implements CommonConfigService {
         return env.getProperty("com.huotu.huobanplus.mall.api.appsecrect", "9389e8a5c32eefa3134340640fb4ceaa");
     }
 
+    @Override
+    public String getMASTERSECRET() {
+        return env.getProperty("ymr.mastersecret", "7a5a5698f4e5e32dfeac09ee");
+    }
+
+    @Override
+    public String getAPPKEY() {
+        return env.getProperty("ymr.appkey", "a36e00d3397bf5e69049ed41");
+    }
+
 
 }

@@ -9,16 +9,21 @@
 
 package com.huotu.ymr.service.impl;
 
+import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.ConfigKey;
 import com.huotu.ymr.entity.Config;
 import com.huotu.ymr.entity.Manager;
+import com.huotu.ymr.entity.PushingMessage;
+import com.huotu.ymr.model.AppOS;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.repository.ManagerRepository;
+import com.huotu.ymr.repository.PushingMessageRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,6 +38,12 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
     ConfigRepository configRepository;
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    PushingMessageRepository pushingMessageRepository;
+
+    @Autowired
+    private Environment env;
 
     @Autowired
     ManagerRepository managerRepository;
@@ -84,6 +95,17 @@ public class StartService implements ApplicationListener<ContextRefreshedEvent> 
                 upT.setValue("-1");
                 configRepository.save(upT);
 
+            }
+
+
+            if(env.acceptsProfiles("test")){
+                if(pushingMessageRepository.count()==0){
+                    PushingMessage pushingMessage=new PushingMessage();
+                    pushingMessage.setTitle("slt向大家问好");
+                    pushingMessage.setType(CommonEnum.PushMessageType.RemindMessage);
+                    pushingMessage.setOs(AppOS.Android);
+                    pushingMessageRepository.save(pushingMessage);
+                }
             }
         }
     }

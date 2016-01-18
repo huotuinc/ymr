@@ -718,6 +718,53 @@ public interface CommonEnum {
     }
 
 
+    /**
+     * 推送消息类型
+     */
+    enum PushMessageType implements ICommonEnum {
+        /**
+         * 1:版本更新
+         * <p>携带数据为版本更新摘要</p>
+         */
+        Version(0, "版本更新"),
+        /**
+         * 2:消息提醒
+         * <p>提示阅读消息，携带数据为空</p>
+         */
+        RemindMessage(1, "消息提醒"),
+        /**
+         * 3:通知
+         * <p>携带数据为纯文本消息</p>
+         */
+        Notify(2, "通知");
+
+        private int value;
+
+        public int getValue() {
+            return value;
+        }
+
+        public void setValue(int value) {
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        PushMessageType(int value, String name) {
+            this.value = value;
+            this.name = name;
+        }
+
+    }
+
 
     enum LevelFlowType implements ICommonEnum {
         /**

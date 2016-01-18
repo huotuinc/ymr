@@ -27,29 +27,50 @@ public interface DataCenterService {
     MallUserModel getUserInfoByMobile(String mobile);
     /**
      * 获取用户信息(根据userId)
-     * @param userId ?
-     * @return ?
-     * @throws IOException ?
+     * @param userId 用户ID
+     * @return User的model信息
+     * @throws IOException 当http连接出现问题时抛出异常
      */
     MallUserModel getUserInfoByUserId(Long userId) throws IOException;
 
+
     /**
-     * 创建一个用户
-     * @return
+     * 根据微信授权信息去商城创建用户
+     * @param appWeiXinAccreditModel    用户授权信息
+     * @return                          UserId
+     * @throws IOException 当http连接出现问题时抛出异常
      */
     Long createUser(AppWeiXinAccreditModel appWeiXinAccreditModel) throws IOException;
+
+    /**
+     * 根据手机号去商城创建用户
+     * @param mobile        手机号
+     * @param code          验证码
+     * @return
+     * @throws IOException
+     */
+    Long createUser(String mobile,String code) throws IOException;
+
+
+    /**
+     * 发送验证码
+     * @param mobile    手机号
+     * @param second    发送间隔秒数
+     * @throws IOException
+     */
+    void sendMallCode(String mobile,int second) throws IOException;
 
     /**
      *  获取商品分类
      * @return
      */
-    List<CategoryModel> getCategory(Long merchantId) throws IOException;
+    List<CategoryModel> getCategory() throws IOException;
 
     /**
      * 根据分类获取商品
      * @return
      */
-    MallGoodModel[] getMallGood();
+    List<MallGoodModel> getMallGood(String catPath,String title,Integer pageNo) throws IOException;
 
     /**
      * 绑定手机号

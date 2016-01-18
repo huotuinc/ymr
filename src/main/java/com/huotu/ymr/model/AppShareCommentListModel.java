@@ -18,6 +18,12 @@ public class AppShareCommentListModel {
      * 评论ID
      */
     private Long pid;
+
+    /**
+     * 评论人ID
+     */
+    private Long commentUserId;
+
     /**
      * 评论人
      */

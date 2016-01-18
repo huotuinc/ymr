@@ -245,10 +245,12 @@ public class ShareServiceImpl implements ShareService {
         //todo
         if(share.getOwnerType().equals(CommonEnum.UserType.user)){
             MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(share.getOwnerId());
-            appShareListModel.setUserHeadUrl(mallUserModel.getHeadUrl());
+            if(!Objects.isNull(mallUserModel)){
+                appShareListModel.setUserHeadUrl(mallUserModel.getHeadUrl());
+            }
         }
         if(share.getOwnerType().equals(CommonEnum.UserType.official)){
-            appShareListModel.setUserHeadUrl(staticResourceService.getResource(StaticResourceService.YMR_IMG).toString());
+            appShareListModel.setUserHeadUrl(staticResourceService.getResource(StaticResourceService.YMR_IMG+"ymrlogo.png").toString());
         }
         return appShareListModel;
     }

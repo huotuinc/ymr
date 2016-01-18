@@ -109,13 +109,14 @@ public interface ShareSystem {
     /**
      * 添加回复
      * @param userId    用户ID
-     * @param parentId  被评论的ID
+     * @param commentId 评论的ID
+     * @param parentId  被评论的 评论ID
      * @param content   回复内容
      * @return
      * @throws Exception
      */
     @RequestMapping(method = RequestMethod.POST)
-    ApiResult addReply(Long userId,Long parentId,String content) throws Exception;
+    ApiResult addReply(Long userId,Long parentId,Long commentId,String content) throws Exception;
 
     /**
      * 删除评论

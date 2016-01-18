@@ -6,6 +6,8 @@ import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.model.searchCondition.UserSearchModel;
 import org.springframework.data.domain.Page;
 
+import java.util.Set;
+
 /**
  * 用户管理
  * Created by slt on 2015/12/2.
@@ -34,6 +36,13 @@ public interface UserService {
      * @return
      */
     Page<User> findPcUserList(UserSearchModel userSearchModel);
+
+
+    /**
+     * 获取所有用户的pushToken
+     * @return
+     */
+    Set<String> findAllPushToken();
 
 
 }

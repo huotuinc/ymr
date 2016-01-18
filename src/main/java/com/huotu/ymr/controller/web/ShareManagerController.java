@@ -9,6 +9,8 @@ import com.huotu.ymr.entity.ShareGoods;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.share.BackendShareModel;
 import com.huotu.ymr.model.mall.CategoryModel;
+import com.huotu.ymr.model.mall.MallGoodModel;
+import com.huotu.ymr.model.searchCondition.GoodSearchModel;
 import com.huotu.ymr.model.searchCondition.ShareSearchModel;
 import com.huotu.ymr.repository.ConfigRepository;
 import com.huotu.ymr.repository.ShareGoodsRepository;
@@ -258,50 +260,33 @@ public class ShareManagerController {
      * @throws Exception
      */
     @RequestMapping(value = "/sortsList",method = RequestMethod.GET)
-    public ResultModel sortsList(Long merchantId)throws Exception{
+    @ResponseBody
+    public ResultModel sortsList()throws Exception{
         ResultModel resultModel=new ResultModel();
         //获取分类列表
-        List<CategoryModel> categoryModels=dataCenterService.getCategory(merchantId);
-
-
+        List<CategoryModel> categoryModels=dataCenterService.getCategory();
+        resultModel.setCode(1);
+        resultModel.setData(categoryModels);
         return  resultModel;
     }
 
+
     /**
-     * 商品列表
-     * @param shareSearchModel
-     * @param goods
+     * 获取商品列表
+     * @param goodSearchModel
      * @param model
      * @return
      * @throws Exception
      */
     @RequestMapping(value = "/goodsList",method = RequestMethod.GET)
-    public String goodsList(ShareSearchModel shareSearchModel,String goods,Model model) throws Exception {
-        //todo 用户权限方面的操作
-        if (shareSearchModel.getPageNoStr() < 0) {
-            shareSearchModel.setPageNoStr(0);
-        }
-        Page<Share> shares=shareService.findPcShareList(shareSearchModel);
-        List<BackendShareModel> backendShareModels=new ArrayList<>();
-        for(Share s:shares){
-            BackendShareModel backendShareModel=new BackendShareModel();
-            backendShareModel.setShareTitle(s.getTitle());
-            backendShareModel.setId(s.getId());
-            backendShareModel.setTop(s.getTop());
-            backendShareModel.setTime(s.getTime());
-            backendShareModel.setUserType(s.getOwnerType().getName());
-            backendShareModel.setPraiseQuantity(s.getPraiseQuantity());
-            backendShareModel.setRelayQuantity(s.getRelayQuantity());
-            backendShareModel.setView(s.getView());
-            backendShareModel.setCheckType(s.getCheckStatus().getName());
-            backendShareModels.add(backendShareModel);
-        }
-        model.addAttribute("allShareList", backendShareModels);//文章列表model
-        model.addAttribute("pageNo",shareSearchModel.getPageNoStr());//当前页数
-        model.addAttribute("totalPages",shares.getTotalPages());//总页数
-        model.addAttribute("totalRecords", shares.getTotalElements());//总记录数
-        return "manager/share/goodsList";
-
+    @ResponseBody
+    public ResultModel goodsList(GoodSearchModel goodSearchModel,Model model) throws Exception {
+        ResultModel resultModel=new ResultModel();
+        //获取商品列表
+        List<MallGoodModel> goodses=dataCenterService.getMallGood(goodSearchModel.getCatPath(),goodSearchModel.getName(),goodSearchModel.getPageNoStr());
+        resultModel.setCode(1);
+        resultModel.setData(goodses);
+        return resultModel;
     }
 
     /**

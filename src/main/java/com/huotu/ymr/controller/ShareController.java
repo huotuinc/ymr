@@ -83,7 +83,7 @@ public class ShareController implements ShareSystem {
             throw new UserNotExitsException();
         }
 
-        List<Share> shares=shareService.findAppShareList(key, lastId, 10);//todo
+        List<Share> shares=shareService.findAppShareList(key, lastId, 3);//todo
         if(shares!=null) {
             AppShareListModel[] appShareListModels = new AppShareListModel[shares.size()];
             for (int i = 0; i < shares.size(); i++) {
@@ -118,6 +118,9 @@ public class ShareController implements ShareSystem {
         }
 
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);// todo 最后通过数据中心返回用户信息
+        if(Objects.isNull(mallUserModel)){
+            throw new UserNotExitsException();
+        }
         Share share=new Share();
         share.setOwnerId(userId);
         share.setName(mallUserModel.getNickName());
@@ -291,7 +294,7 @@ public class ShareController implements ShareSystem {
         if(Objects.isNull(user)){
             throw new UserNotExitsException();
         }
-        List<ShareComment> shareComments=shareCommentService.findShareComment(shareId,lastId,10);
+         List<ShareComment> shareComments=shareCommentService.findShareComment(shareId,lastId,3);
         if(!Objects.isNull(shareComments)&&!shareComments.isEmpty()){
             List<AppShareCommentListModel> appShareCommentListModels=new ArrayList<>();
             for(int i=0;i<shareComments.size();i++){
@@ -302,6 +305,7 @@ public class ShareController implements ShareSystem {
                     appShareCommentListModel.setPid(shareComment.getId());
                     appShareCommentListModel.setName(shareComment.getCommentName());
                     appShareCommentListModel.setLevel(shareComment.getLevel());
+                    appShareCommentListModel.setCommentUserId(shareComment.getUserId());
                     appShareCommentListModel.setUserHeadUrl(shareComment.getHeadUrl());
                     appShareCommentListModel.setContent(shareComment.getContent());
                     appShareCommentListModel.setTime(shareComment.getTime());
@@ -319,6 +323,8 @@ public class ShareController implements ShareSystem {
                                 appShareReplyModel.setRid(reply.getId());
                                 appShareReplyModel.setReplyId(reply.getUserId());
                                 appShareReplyModel.setUserId(reply.getUserId());
+                                ShareComment comment=shareCommentService.findOneShareComment(reply.getParentId());
+                                appShareReplyModel.setToReplyId(Objects.isNull(comment)?0:comment.getUserId());//todo
                                 appShareReplyModel.setReplyName(reply.getCommentName());
                                 appShareReplyModel.setToReplyName(reply.getParentName());
                                 appShareReplyModel.setContent(reply.getContent());
@@ -343,8 +349,8 @@ public class ShareController implements ShareSystem {
 
     @Override
     @RequestMapping(value = "/addReply")
-    public ApiResult addReply(Long userId, Long parentId, String content) throws Exception {
-        if(userId==null||parentId==null||content==null){
+    public ApiResult addReply(Long userId, Long parentId,Long commentId, String content) throws Exception {
+        if(userId==null||parentId==null||content==null||commentId==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(userId);
@@ -354,6 +360,9 @@ public class ShareController implements ShareSystem {
         User user=userRepository.findOne(userId);
         if(Objects.isNull(user)){
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
+        }
+        if(commentId!=0&&Objects.isNull(shareCommentService.findOneShareComment(commentId))){
+            return ApiResult.resultWith(CommonEnum.AppCode.ERROR_COMMENT_NOT_FOUND);
         }
         if(user.getUserStatus()== CommonEnum.UserStatus.freeze){
             return ApiResult.resultWith(CommonEnum.AppCode.USER_BE_FREEZE);
@@ -368,10 +377,10 @@ public class ShareController implements ShareSystem {
         ShareComment reply=new ShareComment();
         reply.setShare(shareComment.getShare());
         reply.setUserId(userId);
+        reply.setCommentId(commentId);
         reply.setCommentName(mallUserModel.getNickName());
         reply.setLevel(user.getUserLevel());
         reply.setHeadUrl(mallUserModel.getHeadUrl());
-//        reply.setHeadUrl(commonConfigService.getResoureServerUrl()+mallUser.getWxHeadUrl());//todo
         reply.setContent(content);
         reply.setTime(new Date());
         reply.setStatus(CommonEnum.ShareCommentStatus.normal);
@@ -380,6 +389,11 @@ public class ShareController implements ShareSystem {
         reply=shareCommentService.saveShareComment(reply);
         reply.setCommentPath(shareComment.getCommentPath()+reply.getId()+"|");
         shareCommentService.saveShareComment(reply);
+
+        //评论量+1
+        Share share=shareService.findOneShare(shareComment.getShare().getId());
+        share.setCommentQuantity(share.getCommentQuantity()+1);
+        shareService.saveShare(share);
         //todo 返回值需要讨论
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }
@@ -411,12 +425,12 @@ public class ShareController implements ShareSystem {
         if(userId==null||shareId==null||content==null){
             return ApiResult.resultWith(CommonEnum.AppCode.PARAMETER_ERROR);
         }
-        User user=userRepository.findOne(userId);
+//        User user=userRepository.findOne(userId);
         MallUserModel mallUserModel = dataCenterService.getUserInfoByUserId(userId);
         if (Objects.isNull(mallUserModel)) {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
-        user = userRepository.findOne(mallUserModel.getUserId());
+        User user = userRepository.findOne(mallUserModel.getUserId());
         if (Objects.isNull(user)) {
             return ApiResult.resultWith(CommonEnum.AppCode.ERROR_USER_NOT_FOUND);
         }
@@ -442,10 +456,16 @@ public class ShareController implements ShareSystem {
         shareComment.setStatus(CommonEnum.ShareCommentStatus.normal);
         shareComment.setTime(new Date());
         shareComment.setParentId(0L);
+        shareComment.setCommentId(0L);
         shareComment.setParentName("");
         shareComment=shareCommentService.saveShareComment(shareComment);
         shareComment.setCommentPath("|"+shareComment.getId()+"|");
         shareCommentService.saveShareComment(shareComment);
+        //文章评论量+1
+        share.setCommentQuantity(share.getCommentQuantity() + 1);
+        shareService.saveShare(share);
+
+
         //todo 返回值需要讨论
         return ApiResult.resultWith(CommonEnum.AppCode.SUCCESS);
     }

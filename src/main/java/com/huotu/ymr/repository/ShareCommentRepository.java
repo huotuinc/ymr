@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,6 +20,11 @@ public interface ShareCommentRepository extends JpaRepository<ShareComment,Long>
     @Query("select c from ShareComment as c where c.share.id=?1 and c.status=?2 and c.id>?3 order by c.id")
     List<ShareComment> findByShareOrderByTime(Long shareId,CommonEnum.ShareCommentStatus status,Long lastId,Pageable pageable);
 
+    @Query("select c from ShareComment as c where c.parentId=0 and c.share.id=?1 and c.status=?2 and c.id>?3")
+    List<ShareComment> findComment(Long shareId,CommonEnum.ShareCommentStatus status,Long lastId,Pageable pageable);
+
+    @Query("select c from ShareComment as c where c.share.id=?1 and c.commentId in ?2 and c.status=?3")
+    List<ShareComment> findCommentReply(Long shareId,Collection<Long> ids,CommonEnum.ShareCommentStatus status);
 
     @Transactional
     @Modifying

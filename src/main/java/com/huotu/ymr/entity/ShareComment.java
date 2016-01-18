@@ -64,6 +64,11 @@ public class ShareComment implements YmrReply {
     private Long parentId;
 
     /**
+     * 所属评论的ID,如果为0，则没有
+     */
+    private Long commentId;
+
+    /**
      * 被评论人的姓名，如果为空则是评论文章
      */
     private String parentName;

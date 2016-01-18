@@ -2,6 +2,7 @@ package com.huotu.ymr.service.impl;
 
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.entity.ShareComment;
+import com.huotu.ymr.exception.UserNotExitsException;
 import com.huotu.ymr.model.AppUserShareCommentModel;
 import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.repository.ShareCommentRepository;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 评论服务
@@ -31,8 +34,16 @@ public class ShareCommentServiceImpl implements ShareCommentService {
 
     @Override
     public List<ShareComment> findShareComment(Long shareId,Long lastId,Integer pageSize) throws Exception {
-        List<ShareComment> list= shareCommentRepository.findByShareOrderByTime(shareId, CommonEnum.ShareCommentStatus.normal, lastId, new PageRequest(0,pageSize));
-        return list;
+        List<ShareComment> listComment=shareCommentRepository.findComment(shareId, CommonEnum.ShareCommentStatus.normal, lastId, new PageRequest(0,pageSize));
+        if(!listComment.isEmpty()){
+            List<Long> commentIds= new ArrayList<>();
+            for(ShareComment s:listComment){
+                commentIds.add(s.getId());
+            }
+            List<ShareComment> listReply=shareCommentRepository.findCommentReply(shareId,commentIds, CommonEnum.ShareCommentStatus.normal);
+            listComment.addAll(listReply);
+        }
+        return listComment;
     }
 
     @Override
@@ -68,6 +79,9 @@ public class ShareCommentServiceImpl implements ShareCommentService {
     public AppUserShareCommentModel getCommentToModel(ShareComment shareComment) throws Exception {
         AppUserShareCommentModel appUserShareCommentModel=new AppUserShareCommentModel();
         MallUserModel mallUserModel=dataCenterService.getUserInfoByUserId(shareComment.getUserId());
+        if(Objects.isNull(mallUserModel)){
+            throw new UserNotExitsException();
+        }
         appUserShareCommentModel.setPId(shareComment.getShare().getId());
         appUserShareCommentModel.setCId(shareComment.getId());
         appUserShareCommentModel.setUserHeadUrl(mallUserModel.getHeadUrl());
