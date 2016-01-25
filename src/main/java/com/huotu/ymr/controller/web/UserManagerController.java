@@ -2,17 +2,18 @@ package com.huotu.ymr.controller.web;
 
 import com.huotu.ymr.common.CommonEnum;
 import com.huotu.ymr.common.EnumHelper;
-import com.huotu.ymr.entity.Report;
-import com.huotu.ymr.entity.ShareComment;
-import com.huotu.ymr.entity.User;
+import com.huotu.ymr.entity.*;
 import com.huotu.ymr.model.ResultModel;
 import com.huotu.ymr.model.backend.crowdFunding.Msg;
 import com.huotu.ymr.model.backend.share.BackendUserModel;
 import com.huotu.ymr.model.backend.user.ReportDetailModel;
+import com.huotu.ymr.model.backend.share.BackendChargeModel;
 import com.huotu.ymr.model.backend.user.ReportShowModel;
 import com.huotu.ymr.model.mall.MallUserModel;
 import com.huotu.ymr.model.searchCondition.ReportSearchModel;
 import com.huotu.ymr.model.searchCondition.UserSearchModel;
+import com.huotu.ymr.model.searchCondition.ChargeSearchModel;
+import com.huotu.ymr.repository.ChargeRepository;
 import com.huotu.ymr.repository.ReportRepository;
 import com.huotu.ymr.repository.ShareCommentRepository;
 import com.huotu.ymr.repository.UserRepository;
@@ -26,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,6 +61,9 @@ public class UserManagerController {
 
     @Autowired
     ReportRepository reportRepository;
+
+    @Autowired
+    ChargeRepository chargeRepository;
 
     @Autowired
     ShareCommentService shareCommentService;
@@ -99,6 +105,36 @@ public class UserManagerController {
         return "manager/user/DetailedUserInfo";
 
     }
+
+    @RequestMapping(value = "/showChargeList",method = RequestMethod.GET)
+    public String showChargeList(ChargeSearchModel chargeSearchModel,HttpServletRequest request)throws Exception{
+        if (chargeSearchModel.getPageNoStr() < 0) {
+            chargeSearchModel.setPageNoStr(0);
+        }
+
+        Page<ScoreFlow> charges=userService.findPcChargeList(chargeSearchModel);
+        List<BackendChargeModel> backendChargeModels=new ArrayList<>();
+        for(ScoreFlow s:charges)
+        {
+            BackendChargeModel backendChargeModel = new BackendChargeModel();
+            backendChargeModel.setDate(s.getTime());
+            backendChargeModel.setUserName("aaa");
+            backendChargeModel.setUserId(s.getId());
+            backendChargeModel.setScore(s.getScore());
+            backendChargeModel.setLevel("3");
+            backendChargeModels.add(backendChargeModel);
+        }
+            request.setAttribute("allChargeList", backendChargeModels);//积分流水列表model
+            System.out.println(charges.getNumber());
+            request.setAttribute("pageNoStr", charges.getNumber());//当前页数
+            request.setAttribute("totalPages", charges.getTotalPages());//总页数
+            request.setAttribute("totalRecords",charges.getTotalElements());//总记录数
+            return "manager/user/chargeList";
+    }
+
+
+
+
 
 
 
@@ -234,6 +270,7 @@ public class UserManagerController {
         reportDetailModel.setLevel(user.getUserLevel());
         return "manager/user/reportDetail";
     }
+
 
 
     /**

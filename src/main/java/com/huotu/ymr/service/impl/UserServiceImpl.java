@@ -2,17 +2,31 @@ package com.huotu.ymr.service.impl;
 
 import com.huotu.huobanplus.sdk.common.repository.UserRestRepository;
 import com.huotu.ymr.common.CommonEnum;
+import com.huotu.ymr.common.EnumHelper;
+import com.huotu.ymr.entity.Article;
+import com.huotu.ymr.entity.ScoreFlow;
 import com.huotu.ymr.common.PublicParameterHolder;
 import com.huotu.ymr.entity.User;
 import com.huotu.ymr.model.AppUserInfoModel;
 import com.huotu.ymr.model.mall.MallUserModel;
+import com.huotu.ymr.model.searchCondition.ArticleSearchModel;
+import com.huotu.ymr.model.searchCondition.ChargeSearchModel;
 import com.huotu.ymr.model.searchCondition.UserSearchModel;
+import com.huotu.ymr.repository.ChargeRepository;
 import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -22,15 +36,20 @@ import java.util.UUID;
  * Created by slt on 2015/12/1.
  */
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService
+{
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ChargeRepository chargeRepository;
+
 
     @Autowired
     UserRestRepository userRestRepository;
     @Override
-    public AppUserInfoModel getAppUserInfoModel(User user, MallUserModel mallUserModel) throws Exception {
-        AppUserInfoModel appUserInfoModel=new AppUserInfoModel();
+    public AppUserInfoModel getAppUserInfoModel(User user, MallUserModel mallUserModel) throws Exception
+    {
+        AppUserInfoModel appUserInfoModel = new AppUserInfoModel();
         appUserInfoModel.setUserId(mallUserModel.getUserId());
         appUserInfoModel.setUserName(mallUserModel.getUserName());
         appUserInfoModel.setHeadUrl(mallUserModel.getHeadUrl());
@@ -47,19 +66,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(Long userId) throws Exception {
-        User user=userRepository.findOne(userId);
-        if(Objects.isNull(user)){
-            user=new User();
+    public User getUser(Long userId) throws Exception
+    {
+        User user = userRepository.findOne(userId);
+        if (Objects.isNull(user))
+        {
+            user = new User();
             user.setId(userId);
             user.setUserStatus(CommonEnum.UserStatus.normal);
             user.setUserLevel(CommonEnum.UserLevel.one);
             user.setScore(0);
             user.setContinuedScore(0);
-
         }
         //创建一个新的token
-        String token= UUID.randomUUID().toString().replaceAll("-","");
+        String token = UUID.randomUUID().toString().replaceAll("-", "");
         user.setToken(token);
         //将设备号当作用户的推送别名
         user.setPushingToken(PublicParameterHolder.get().getImei());
@@ -135,4 +155,85 @@ public class UserServiceImpl implements UserService {
     public Set<String> findAllPushToken() {
         return userRepository.findAllPushToken();
     }
+
+    @Override
+    public Page<ScoreFlow> findPcChargeList(ChargeSearchModel chargeSearchModel)
+    {
+        Sort sort;
+        Sort.Direction direction = chargeSearchModel.getRaSortType() == 0 ? Sort.Direction.DESC : Sort.Direction.ASC;
+        switch (chargeSearchModel.getSort())
+        {
+            case 1:
+                //浏览量
+                sort = new Sort(direction, "view");
+                break;
+            case 2:
+                //转发量
+                sort = new Sort(direction, "relayQuantity");
+                break;
+            default:
+                sort = new Sort(direction, "time");
+                break;
+        }
+        //------------------------------------------------------------------------------------------------------
+       return chargeRepository.findAll(new Specification<ScoreFlow>(){
+           @Override
+        public Predicate toPredicate(Root<ScoreFlow> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+        Predicate predicate = null;
+
+                if(chargeSearchModel.getScoreFlowType() != -1){
+        predicate = cb.equal(root.get("scoreFlowType").as(CommonEnum.ScoreFlowType.class),
+                EnumHelper.getEnumType(CommonEnum.ScoreFlowType.class, chargeSearchModel.getScoreFlowType()));
+    }
+               //---------------------------------------2016/1/13
+
+           //         System.out.println(chargeSearchModel.getUserID());
+          //     System.out.println(root.get("id"));
+       //        predicate=cb.and(predicate,cb.equal(root.get("id"),"%"+chargeSearchModel.getUserID()+"%"));
+//---------------------------------------------------2016/1/13
+               if(!StringUtils.isEmpty(chargeSearchModel.getStartTime())){
+                   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                   Date date = null;
+                   try {
+                       date = sdf.parse(chargeSearchModel.getStartTime());
+                   } catch (ParseException e) {
+                       throw  new RuntimeException("字符串转日期失败");
+                   }
+                   if(predicate != null){
+                       predicate= cb.and(predicate,cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date));
+                   }else{
+                       predicate = cb.greaterThanOrEqualTo(root.get("time").as(Date.class),date);
+                   }
+
+               }
+               if(!StringUtils.isEmpty(chargeSearchModel.getEndTime())){
+                   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                   Date date = null;
+                   try {
+                       date = sdf.parse(chargeSearchModel.getEndTime());
+                   } catch (ParseException e) {
+                       throw  new RuntimeException("字符串转日期失败");
+                   }
+
+                   if(predicate != null){
+                       predicate= cb.and(predicate,cb.lessThanOrEqualTo(root.get("time").as(Date.class),date));
+                   }else{
+                       predicate = cb.lessThanOrEqualTo(root.get("time").as(Date.class), date);
+                   }
+
+               }
+
+
+
+
+          //===================================
+            return predicate;
+}
+        },new PageRequest(chargeSearchModel.getPageNoStr(), 20));
+
+
+    }
+
+
+
 }

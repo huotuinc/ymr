@@ -4,10 +4,7 @@ import com.huotu.ymr.common.CommonEnum;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * 用户

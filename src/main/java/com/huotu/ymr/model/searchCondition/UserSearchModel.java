@@ -34,14 +34,7 @@ public class UserSearchModel {
      * 排序方式 0：降序|1：升序
      */
     private Integer raSortType = 0;
-//    /**
-//     * 发布时间
-//     */
-//    private String startTime="";
-//    /**
-//     * 结束时间
-//     */
-//    private String endTime="";
+
     /**
      * 指定查询页码
      */

@@ -1,5 +1,6 @@
 package com.huotu.ymr.controller;
 
+import com.huotu.common.api.ApiResult;
 import com.huotu.common.base.StringHelper;
 import com.huotu.ymr.base.Device;
 import com.huotu.ymr.base.DeviceType;
@@ -26,6 +27,9 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.transaction.Transactional;
@@ -115,6 +119,7 @@ public class UserControllerTest extends SpringBaseTest {
     @Test
     public void testBindMobile() throws Exception {
 
+
     }
 
     @Test
@@ -183,10 +188,9 @@ public class UserControllerTest extends SpringBaseTest {
         }
     }
     @Test
-    @Rollback(false)
     public void saveOneLogin(){
        Manager manager=new Manager();
-        manager.setLoginName("3");
+        manager.setLoginName("4");
         String password = "123456";
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(password);

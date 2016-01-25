@@ -1,16 +1,21 @@
 package com.huotu.ymr.entity;
 
 import com.huotu.ymr.common.CommonEnum;
+import lombok.Getter;
+import lombok.Setter;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * 积分流水
  * Created by lgh on 2015/12/9.
  */
+@Entity
+@Setter
+@Getter
+@Cacheable(value = false)
+@Table(name = "scoreFlow")
 public class ScoreFlow {
 
     @Id
@@ -20,6 +25,7 @@ public class ScoreFlow {
     /**
      * 用户
      */
+    @OneToOne
     private User user;
 
     /**
@@ -41,5 +47,6 @@ public class ScoreFlow {
     /**
      * 时间
      */
+    @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 }

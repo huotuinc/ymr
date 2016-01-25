@@ -123,6 +123,7 @@ public class ArticleManagerController {
      *
      * @param articleId 前台传过来的文章参数
      * @param model
+     * &&_
      * @return
      * @throws Exception
      */
@@ -167,6 +168,4 @@ public class ArticleManagerController {
     public void testPost(String nickname){
         String str=nickname;
     }
-
-
 }

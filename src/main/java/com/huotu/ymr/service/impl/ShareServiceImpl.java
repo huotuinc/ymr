@@ -168,8 +168,7 @@ public class ShareServiceImpl implements ShareService {
                 Predicate predicate = cb.and(
                         cb.equal(
                                 root.get("ownerType").as(CommonEnum.UserType.class),
-                                EnumHelper.getEnumType(CommonEnum.UserType.class,
-                                shareSearchModel.getOwnerType())),
+                                EnumHelper.getEnumType(CommonEnum.UserType.class, shareSearchModel.getOwnerType())),
                         cb.notEqual(root.get("checkStatus").as(CommonEnum.CheckType.class),
                                 CommonEnum.CheckType.delete)
                 );
