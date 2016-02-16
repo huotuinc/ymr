@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head id="Head1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7"/>
+    <title>
+
+        积分流水列表
+    </title>
+    <link href="../../resource/3rdParty/css/admin.global.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.global.css}"/>
+    <link href="../../resource/3rdParty/css/admin.content.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/css/admin.content.css}" />
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery-1.8.3.min.js"
+            th:src="@{/resource/3rdParty/js/jquery-1.8.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/jquery.utils.js"
+            th:src="@{/resource/3rdParty/js/jquery.utils.js}"></script>
+    <link href="../../resource/3rdParty/jBox/Skins/Green/jbox.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/jBox/Skins/Green/jbox.css}"/>
+    <script type="text/javascript" src="../../resource/3rdParty/jBox/jquery.jBox-2.3.min.js"
+            th:src="@{/resource/3rdParty/jBox/jquery.jBox-2.3.min.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/js/admin.js"
+            th:src="@{/resource/3rdParty/js/admin.js}"></script>
+    <link href="../../resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css" rel="stylesheet" type="text/css"
+          th:href="@{/resource/3rdParty/omTabs/themes/default/operamasks-ui.min.css}"/>
+    <script src="../../resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js"
+            th:src="@{/resource/3rdParty/jqueryui/jquery-ui-1.8.20.min.js}"></script>
+    <link href="../../resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css" rel="stylesheet"
+          th:href="@{/resource/3rdParty/jqueryui/jquery-ui-1.10.3.custom.min.css}"/>
+    <script src="../../resource/3rdParty/Knockout/knockout-2.3.0.js"
+            th:src="@{/resource/3rdParty/Knockout/knockout-2.3.0.js}"></script>
+    <script type="text/javascript" src="../../resource/3rdParty/My97DatePicker/WdatePicker.js"
+            th:src="@{/resource/3rdParty/My97DatePicker/WdatePicker.js}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var _oldCass = ''
+        $(function () {
+            var authority = "";
+            if (authority != "") {
+                $(".aucontrol").hide();
+            }
+
+            $('tr').mouseover(function () {
+                _oldCass = this.className;
+                this.className = 'over';
+            }).mouseout(function () {
+                this.className = _oldCass;
+            });
+
+        });
+
+        function showList(statu) {
+            if (statu == 0) {
+                $("#articleType").attr("value", -1);
+                $('#form1').submit();
+            } else if (statu == 1) {
+                $("#articleType").attr("value", 1);
+                $('#form1').submit();
+                //$('.aparent3').parent().toggleClass('om-state-default om-corner-top  om-tabs-activated om-state-active');
+            } else if (statu == 2) {
+                $("#articleType").attr("value", 2);
+                $('#form1').submit();
+            } else if (statu == 3) {
+                $("#articleType").attr("value", 3);
+                $('#form1').submit();
+            }else if (statu == 4) {
+                $("#articleType").attr("value", 4);
+                $('#form1').submit();
+            }
+        }
+        function searchOrder() {
+            $('#btnSearch').click();
+        }
+
+        function searchOrderAll() {
+            $('#btnSearchAll').click();
+        }
+        /*]]>*/
+    </script>
+    <style type="text/css">
+        .over {
+            background-color: #00ff21;
+        }
+
+        .p_prt, .p_prted {
+            cursor: pointer;
+            width: 17px;
+            height: 18px;
+            display: inline-block;
+            display: -moz-inline-stack;
+            line-height: 18px;
+            vertical-align: top;
+            text-align: left;
+            margin: 2px 0 0 0;
+            color: #000;
+            font-weight: 400;
+        }
+    </style>
+    <script type="text/javascript">
+        /*<![CDATA[*/
+        //#region 选择行助手
+        var checkBoxHelper = {};
+        checkBoxHelper.init = function () {
+            $('input[name="chkOrder"]').click(function () {
+                checkBoxHelper.checkSingle(this);
+            });
+            $('#btnCancelSelect').click(function () {
+                checkBoxHelper.clearChecked();
+            });
+
+            $('#btnCheckAll').click(function () {
+                checkBoxHelper.checkAll(true);
+            });
+
+            $("#chkPageAll").click(function () {
+                checkBoxHelper.checkPageAll(this.checked);
+            });
+
+            checkBoxHelper.checkSelectedItem();
+            checkBoxHelper._toggleSelectedNote();
+        };
+        checkBoxHelper.checkPageAll = function (flg) {//选中当前页面
+
+            $('input[name="chkOrder"]').each(function () {
+
+                if (flg && this.checked == false) {
+                    checkBoxHelper._addItem(this.value);
+                }
+                if (flg == false && this.checked) {
+                    checkBoxHelper._removeItem(this.value);
+                }
+                this.checked = flg;
+            });
+            checkBoxHelper._toggleSelectedNote();
+        };
+
+        checkBoxHelper.checkAll = function (flg) {//选中所有
+            $.ajax({
+                type: "get",
+                url: '',
+                dataType: "json",
+                success: function (result) {
+                    checkBoxHelper._updateItems(result.join('|'));
+                    checkBoxHelper._toggleSelectedNote();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    jBox.closeTip();
+                    alert('提交失败，请重试');
+                }
+            });
+
+            $('input[name="chkOrder"]').each(function () {
+                this.checked = true;
+            });
+        };
+
+        checkBoxHelper.checkSingle = function (dom) {
+            //alert(dom.checked + ',' + dom.value);
+            if (dom.checked) {
+                this._addItem(dom.value);
+            } else {
+                this._removeItem(dom.value);
+            }
+            this.onCheckSingle();
+        };
+
+        checkBoxHelper.onCheckSingle = function () {
+            this._toggleSelectedNote();
+        };
+
+        checkBoxHelper._toggleSelectedNote = function () {
+            var idList = this._getItems();
+            if (idList == '') {
+                $('#trSelectNote').hide();
+                return false;
+            }
+            var arrIds = idList.split('|');
+            if (arrIds.length > 0) {
+                $('#trSelectNote').show();
+                $('#spSelectedNum').html(arrIds.length);
+            } else {
+                $('#trSelectNote').hide();
+            }
+        };
+
+        checkBoxHelper.checkSelectedItem = function () {//选中已经选择的元素
+            var idList = this._getItems();
+            if (idList == '') return false;
+            var pageAllChecked = true;
+            $('input[name="chkOrder"]').each(function () {
+                if (('|' + idList + '|').indexOf('|' + this.value + '|') != -1) {
+                    this.checked = true;
+                } else {
+                    pageAllChecked = false;
+                }
+            });
+            if (pageAllChecked) {
+                $("#chkPageAll").attr('checked', 'checked');
+            }
+        };
+
+        checkBoxHelper.isAllChecked = function () {//是否全部选中
+
+        };
+
+        checkBoxHelper.clearChecked = function () {//清除选中
+            checkBoxHelper._clearItems();
+            $('input[name="chkOrder"]').each(function () {
+                this.checked = false;
+            });
+            $('#chkPageAll').removeAttr('checked');
+            this._toggleSelectedNote();
+        };
+
+        var CHECKKEY = "OrderToExport";
+
+        checkBoxHelper._addItem = function (id) {
+            if (!this._existItem(id)) {
+                var idList = this._getItems();
+                if (idList != '') {
+                    idList += '|' + id;
+                } else {
+                    idList = id;
+                }
+                this._updateItems(idList);
+            }
+        };
+
+        checkBoxHelper._removeItem = function (id) {
+            if (this._existItem(id)) {
+                var idList = this._getItems();
+                idList = '|' + idList + '|';
+                idList = idList.replace('|' + id + '|', '');
+                this._updateItems(idList);
+            }
+        };
+
+        checkBoxHelper._getItems = function () {
+            return unescape(J.GetCookie(CHECKKEY));
+        };
+
+        checkBoxHelper._updateItems = function (ids) {
+            ids = ids.replace(/^\|/g, "").replace(/\|$/g, "");
+            J.SetCookie(CHECKKEY, ids);
+        }
+
+        checkBoxHelper._existItem = function (id) {
+            var idList = this._getItems();
+            idList = '|' + idList + '|';
+            if (idList.indexOf('|' + id + '|') != -1) {
+                return true;
+            }
+            return false;
+        };
+
+        checkBoxHelper._clearItems = function () {
+            J.RemoveCookie(CHECKKEY);
+        };
+        //#endregion
+
+        //#region 导出助手
+        var exportHelper = {};
+        exportHelper.init = function () {
+            $('.OnlyNum').OnlyNum();
+        };
+
+
+
+
+        $(function () {
+            checkBoxHelper.init();
+            exportHelper.init();
+
+            if (0 == 0) {
+                $(".shipFunc").hide();
+            }
+        });
+
+        var viewModel;
+
+        function alterArticle(obj) {
+            var settlementNo = $(obj).attr("articlesId");
+            var url="jumpToSaveArticle?articleId="+settlementNo;
+            J.PopupIFrame(url,"文章编辑",1300,700,"ifrm","","auto","");
+        }
+        function delArticle(obj) {
+            var settlementNo = $(obj).attr("articlesId");
+            var url="delArticle?articleId="+settlementNo;
+            var submit = function (v, h, f) {
+                if (v == 'ok') {
+                    jBox.tip(v, 'info');
+                    $.get(url);
+
+                    window.location.reload();
+                }
+                else if (v == 'cancel')
+                    jBox.tip(v, 'info');
+                return true;
+            };
+            $.jBox.confirm("确定删除此文章吗？", "提示",submit);
+
+
+        }
+        /*]]>*/
+        var firstin=function(){
+            var allChargeList=/*${allChargeList}*/'';
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#search").click(function(){
+                alert($("#userName").getText());
+            });
+        });
+    </script>
+</head>
+<body marginwidth="0" marginheight="0" onload="firstin()">
+<form method="get" action="showChargeList" id="form1"  th:object="${chargeSearchModel}">
+    <input hidden="hidden" id="pageNoStr" name="pageNoStr" th:value="*{pageNoStr}"/>
+    <input hidden="hidden" id="ownerType" name="ownerType" value="1"/>
+
+    <div class="aspNetHidden">
+        <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE"
+               value=""/>
+    </div>
+
+    <div class="aspNetHidden">
+        <input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION"
+               value=""/>
+    </div>
+    <div class="container">
+        <div class="blank10">
+        </div>
+        <div class="search block">
+            <div class="h">
+                <span class="icon-sprite icon-magnifier"></span>
+
+                <h3>积分流水搜索</h3>
+
+            </div>
+            <div class="tl corner">
+            </div>
+            <div class="tr corner">
+            </div>
+            <div class="bl corner">
+            </div>
+            <div class="br corner">
+            </div>
+            <div class="cnt-wp">
+                <div class="cnt">
+
+                    <div class="search-bar">
+                        <label class="first " id="userID" >用户ID：</label>
+                      <!--  <input name="userName" type="text" th:value="*{userId}" id="userName">-->
+
+                        <input name="userName" type="text" id="userName"
+                               class="input-small" style="width: 120px;" th:value="*{userID}" />
+                        <!--<input name="txtOrderId" type="text" th:value="*{txtOrderId}" id="txtOrderId" class="input-small" style="width: 120px;"/>-->
+                        <br/>
+                        <br/>
+
+                        <label class="first ">类型：</label>
+                        <select name="scoreFlowType" id="scoreFlowType">
+                            <option selected="selected" value="-1">==所有==</option>
+                            <option value="1" th:selected="*{scoreFlowType==1}">用户支付</option>
+                            <option value="2" th:selected="*{scoreFlowType==2}">用户充值</option>
+                            <option value="3" th:selected="*{scoreFlowType==3}">发布爱分享</option>
+                            <option value="4" th:selected="*{scoreFlowType==4}">转发爱分享</option>
+                            <option value="4" th:selected="*{scoreFlowType==5}">提取积分</option>
+                            <option value="4" th:selected="*{scoreFlowType==6}">管理员充值</option>
+                        </select>
+                        <label class="first ">充值时间：</label>
+                        <!--   th:value="*{score}"原来是在下下行的代码    -->
+                        <input name="startTime" type="text" id="startTime" placeholder=" [开始日期]"
+                               th:value="*{startTime}"
+                               class="input-normal Wdate"
+                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false})"/>
+                        <input name="endTime" type="text" id="endTime" placeholder=" [结束日期]"
+                               th:value="*{endTime}"
+                               class="input-normal Wdate"
+                               onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',isShowClear:false,minDate:'#F{$dp.$D(\'txtBeginTime\')}'})"/>
+
+                        <br/>
+                        <br/>
+
+                        <div style="display: none;">
+                            <input type="submit" name="btnSearch" value="" id="btnSearch"/>
+                            <input type="submit" name="btnSearchAll" value="" id="btnSearchAll"/>
+                        </div>
+                        <label><a class="btn-lit btn-middle" id="search" href="javascript:searchOrder();"
+                                  style="margin-bottom: 3px;"><span>搜索</span></a></label>
+                        <label><a class="btn-lit btn-middle" id="searchAll" href="javascript:searchOrderAll();"
+                                  style="margin-bottom: 3px;"><span>显示全部</span></a></label>
+
+                        <br/>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="blank10">
+        </div>
+        <div class="block">
+            <div class="h">
+                <span class="icon-sprite icon-list"></span>
+
+                <h3 style="float: left; width: 144px;">积分流水列表 </h3>
+
+                <div class="bar">
+
+
+                </div>
+
+            </div>
+            <div class="tl corner">
+            </div>
+            <div class="tr corner">
+            </div>
+            <div class="bl corner">
+            </div>
+            <div class="br corner">
+            </div>
+            <div class="cnt-wp">
+
+                <div id="Div1" class="om-tabs om-widget om-widget-content om-corner-all" style="height: auto;">
+
+                    <div class="om-tabs-panels om-widget-content om-corner-bottom">
+
+                        <div class="om-widget om-panel ">
+                            <div id="Div2"
+                                 class="om-panel-body om-widget-content om-panel-noheader om-state-nobd">
+                                <div class="cnt">
+                                    <table class="data-table even1" width="100%" border="0"
+                                           cellspacing="0"
+                                           cellpadding="0">
+                                        <tr>
+                                            <th scope="col"></th>
+
+                                            <th scope="col" class="txt80 c">用户ID
+                                            </th>
+
+                                            <th scope="col" class="txt80 c">充值时间
+                                            </th>
+
+                                            <th scope="col" class="txt80 c">用户昵称
+                                            </th>
+
+                                            <th scope="col" class="txt80 c">用户积分
+                                            </th>
+
+                                            <th scope="col" class="txt80 c">用户等级
+                                            </th>
+
+
+                                        </tr>
+
+<!--..................................................... th:value="*{userId}"...............................................................-->
+
+                                        <tbody th:remove="all-but-first" id="o1">
+
+                                        <tr th:each="charges:${allChargeList}" class="even">
+
+                                            <td class="txt80 c"   th:text="${chargesStat.count}" ></td>
+                                            <td class="txt80 c"   th:text="${charges.userId}" ></td>
+
+                                            <td class="txt80 c" th:text="${charges.date}"></td>
+
+                                            <td class="txt80 c" th:text="${charges.userName}"></td>
+                                            <td class="txt80 c" th:text="${charges.score}"></td>
+                                            <td class="txt80 c" th:text="${charges.level}"></td>
+                                        </tr>
+
+                                        </tbody>
+
+
+                                    </table>
+                                </div>
+                                <div class="pager-bar">
+                                    <div class="msg" style="margin-left: 10px;">共
+                                        <span th:text="${totalRecords}"></span>条记录，当前第
+                                        <span th:text="${pageNoStr+1}" id="noNumber">页</span>/共
+                                        <span  id="numberBug" th:text="${totalPages}"></span>页，每页
+                                        <span  id="sizePerPage">20</span>条记录
+                                    </div>
+                                    <a class="button-white" href="javascript:queryForst()"><span>首页</span></a>
+                                    <a class="button-white" href="javascript:queryUp(-1)">
+                                        <span>上一页</span>
+                                    </a>
+                                    <a class="button-white" href="javascript:queryVoid(1)">
+                                        <span>下一页</span>
+                                    </a>
+                                    <a class="button-white" href="javascript:queryLast()">
+                                        <span>未页</span>
+                                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;第
+                                    <input id="current-index" onkeydown="J.EnterSubmit(event, Pager.Jump);"
+                                           class="input-small" style="text-align:center;" type="text" value="1" th:value="${pageNoStr+1}"/>页&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="button-white" href="javascript:goToNo();"><span>跳转</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+
+    function searchOrder() {
+        $('#form1').submit();
+    }
+    function queryVoid(no) {//下页
+        var size = 0;
+        size = Number($("#noNumber").text()) + Number(no)-1;//前往的页数
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function queryUp(no) {//上页
+        var size = 0;
+        size = Number($("#noNumber").text()) + Number(no)-1;//前往的页数
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        if (size < 0) {
+            size = 0;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function queryForst() {//首页
+        var size = 1;
+        $("#pageNoStr").attr("value", 0);
+        $('#form1').submit();
+    }
+    function queryLast() {//尾页
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        $("#pageNoStr").attr("value", numberBug);
+        $('#form1').submit();
+    }
+    function goToNo() {
+        var size = Number($("#current-index").val())-1;
+        var numberBug = Number($("#numberBug").text())-1;//最大页数
+        if (size > numberBug) {
+            size = numberBug;
+        }
+        $("#pageNoStr").attr("value", size);
+        $('#form1').submit();
+    }
+    function searchOrderAll() {
+        $("#articleTitle").attr("value", "");
+        $("#articleType").attr("value", -1);
+        $("#managerName").attr("value", "");
+        $("#sort").attr("value", 0);
+        $("#raSortType").attr("value", 0);
+        $("#startTime").attr("value", "");
+        $("#endTime").attr("value","");
+        $("#pageNoStr").attr("value", 0);
+        $('#form1').submit();
+    }
+    function createRight() {//左页面点击事件
+        searchOrderAll();
+    }
+    /*]]>*/
+</script>
+</body>
+</html>
