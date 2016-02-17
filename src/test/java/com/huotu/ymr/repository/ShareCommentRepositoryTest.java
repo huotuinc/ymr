@@ -1,6 +1,7 @@
 package com.huotu.ymr.repository;
 
 import com.huotu.huobanplus.common.entity.Category;
+import com.huotu.huobanplus.common.entity.Goods;
 import com.huotu.huobanplus.sdk.common.repository.CategoryRestRepository;
 import com.huotu.huobanplus.sdk.common.repository.GoodsRestRepository;
 import com.huotu.ymr.boot.BootConfig;
@@ -106,5 +107,10 @@ public class ShareCommentRepositoryTest {
         map.put("nickname","史利挺");
         String response= HttpHelper.postRequest(url,map);
 
+    }
+
+    @Test
+    public void getGoodsTest()throws Exception{
+        Page<Goods> goodses1=goodsRestRepository.findByTitleAndCategory(null,null,4471L,0,new PageRequest(0,10));
     }
 }

@@ -3,12 +3,12 @@ package com.huotu.ymr;
 import org.junit.Test;
 
 /**
- * Created by Administrator on 2015/12/5.
+ * Created by Administrator on 2016/1/31.
  */
-public class otherTest {
+public class othertest {
     @Test
-    public void test1(){
-
+    public void otherTest(){
+        String s="[name]可以";
+        System.out.print(s.replaceAll("\\[name\\]","替换"));
     }
-
 }

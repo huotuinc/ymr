@@ -60,10 +60,10 @@ public class PushTest extends SpringBaseTest {
 
 
         // For push, all you need do is to build PushPayload object.
-//        PushPayload payload = buildPushObject_all_all_alert();
+        PushPayload payload = buildPushObject_all_all_alert();
         //生成推送的内容，这里我们先测试全部推送
 //        PushPayload payload=buildPushObject_all_alias_alert();
-        PushPayload payload=null;
+//        PushPayload payload=null;
 
 
 
@@ -84,7 +84,7 @@ public class PushTest extends SpringBaseTest {
     public static PushPayload buildPushObject_all_alias_alert() {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.all())//设置接受的平台
-                .setAudience(Audience.alias())
+                .setAudience(Audience.alias("4457d8d6ssssddf"))//别名
 //                .setAudience(Audience.all())//Audience设置为all，说明采用广播方式推送，所有用户都可以接收到
                 .setNotification(Notification.alert(ALERT))
                 .build();
