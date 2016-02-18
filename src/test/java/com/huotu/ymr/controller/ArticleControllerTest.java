@@ -20,6 +20,8 @@ import com.huotu.ymr.repository.UserRepository;
 import com.huotu.ymr.service.ArticleService;
 import com.huotu.ymr.service.StaticResourceService;
 import com.jayway.jsonpath.JsonPath;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +54,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @ContextConfiguration(classes = {BootConfig.class, MallBootConfig.class, MvcConfig.class})
 @Transactional
 @ActiveProfiles("test")
+
 public class ArticleControllerTest extends SpringBaseTest {
+
+    private static Log log = LogFactory.getLog(ArticleController.class);
 
     private Device device;
     private String mockUserName;
@@ -300,4 +305,9 @@ public class ArticleControllerTest extends SpringBaseTest {
     }
 
 
+    @Test
+    public  void  x()
+    {
+        log.info("abc");
+    }
 }

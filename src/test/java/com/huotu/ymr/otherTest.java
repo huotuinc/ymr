@@ -5,7 +5,7 @@ import org.junit.Test;
 /**
  * Created by Administrator on 2016/1/31.
  */
-public class othertest {
+public class otherTest {
     @Test
     public void otherTest(){
         String s="[name]可以";
