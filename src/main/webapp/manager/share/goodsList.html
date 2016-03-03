@@ -717,8 +717,8 @@
     }
     function queryVoid(no) {//下页
         var size = 0;
-        var numberBug = Number($("#numberBug").val());//最大页数
-        size = Number($("#noNumber").val()) + Number(no);//前往的页数
+        var numberBug = Number($("#numberBug").text());//最大页数
+        size = Number($("#noNumber").text()) + Number(no);//前往的页数
         if (size > numberBug) {
             size = numberBug;
         }
@@ -727,8 +727,8 @@
     }
     function queryUp(no) {//上页
         var size = 0;
-        var numberBug = Number($("#numberBug").val());//最大页数
-        size = Number($("#noNumber").val()) + Number(no);//前往的页数
+        var numberBug = Number($("#numberBug").text());//最大页数
+        size = Number($("#noNumber").text()) + Number(no);//前往的页数
         if (size > numberBug) {
             size = numberBug;
         }
@@ -743,13 +743,13 @@
         $('#form1').submit();
     }
     function queryLast() {//尾页
-        var numberBug = Number($("#numberBug").val());//最大页数
+        var numberBug = Number($("#numberBug").text());//最大页数
         $("#pageNoStr").attr("value", numberBug);
         $('#form1').submit();
     }
     function goToNo() {
         var size = Number($("#current-index").val());
-        var numberBug = Number($("#numberBug").val());//最大页数
+        var numberBug = Number($("#numberBug").text());//最大页数
         if (size > numberBug) {
             size = numberBug;
         }

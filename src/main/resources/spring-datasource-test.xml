@@ -9,7 +9,7 @@
   -->
 
 <!--suppress SpringModelInspection -->
-<beans profile="!prod" xmlns="http://www.springframework.org/schema/beans"
+<beans profile="test" xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
@@ -25,7 +25,7 @@
         <property name="jpaPropertyMap">
             <map>
                 <entry key="javax.persistence.jdbc.url"
-                       value="jdbc:mysql://120.24.243.104:3307/beauty?useUnicode=true&amp;characterEncoding=UTF8"/>
+                       value="jdbc:mysql://mysql.flashymall.com:3307/beauty?useUnicode=true&amp;characterEncoding=UTF8"/>
                 <entry key="javax.persistence.jdbc.user" value="dbuser"/>
                 <entry key="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
                 <entry key="javax.persistence.jdbc.password" value="ddbbuusseerr"/>

@@ -121,7 +121,7 @@ public class MvcConfig extends WebMvcConfigurerAdapter {
         ServletContextTemplateResolver rootTemplateResolver = new ServletContextTemplateResolver();
         rootTemplateResolver.setPrefix("/");
         rootTemplateResolver.setSuffix(".html");
-        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("development"))
+        if (environment.acceptsProfiles("test") || environment.acceptsProfiles("develop"))
             rootTemplateResolver.setCacheable(false);
         rootTemplateResolver.setCharacterEncoding("UTF-8");
 
